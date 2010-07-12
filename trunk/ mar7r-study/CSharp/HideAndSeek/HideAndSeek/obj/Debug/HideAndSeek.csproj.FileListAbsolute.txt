@@ -1,0 +1,8 @@
+D:\Projects\VisualStudio2008\C#\HideAndSeek\HideAndSeek\obj\Debug\ResolveAssemblyReference.cache
+D:\Projects\VisualStudio2008\C#\HideAndSeek\HideAndSeek\obj\Debug\HideAndSeek.Properties.Resources.resources
+D:\Projects\VisualStudio2008\C#\HideAndSeek\HideAndSeek\obj\Debug\HideAndSeek.csproj.GenerateResource.Cache
+D:\Projects\VisualStudio2008\C#\HideAndSeek\HideAndSeek\bin\Debug\HideAndSeek.exe
+D:\Projects\VisualStudio2008\C#\HideAndSeek\HideAndSeek\bin\Debug\HideAndSeek.pdb
+D:\Projects\VisualStudio2008\C#\HideAndSeek\HideAndSeek\obj\Debug\HideAndSeek.exe
+D:\Projects\VisualStudio2008\C#\HideAndSeek\HideAndSeek\obj\Debug\HideAndSeek.pdb
+D:\Projects\VisualStudio2008\C#\HideAndSeek\HideAndSeek\obj\Debug\HideAndSeek.Form1.resources

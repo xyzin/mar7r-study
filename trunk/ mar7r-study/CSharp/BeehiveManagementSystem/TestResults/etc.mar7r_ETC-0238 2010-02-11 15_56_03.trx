@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="75a0be41-09e0-4055-b5e8-54d33870264b" name="etc.mar7r@ETC-0238 2010-02-11 15:56:03" runUser="SSLIFENETWORK\etc.mar7r" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2006">
+  <TestRunConfiguration name="로컬 테스트 실행" id="a08ca533-0e62-4283-988a-b6dd0e1ff493">
+    <Description>로컬 테스트 실행의 기본 테스트 실행 구성입니다.</Description>
+    <Deployment runDeploymentRoot="D:\Projects\VisualStudio2008\C#\BeehiveManagementSystem\TestResults\etc.mar7r_ETC-0238 2010-02-11 15_56_03">
+      <DeploymentItem filename="D:\Projects\VisualStudio2008\C#\BeehiveManagementSystem\BeehiveManagementSystem\bin\Debug\BeehiveManagementSystem.exe" />
+    </Deployment>
+    <TestTypeSpecific />
+  </TestRunConfiguration>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="1" error="0" failed="1" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+  <Times creation="2010-02-11T15:56:03.4638658+09:00" queuing="2010-02-11T15:56:04.9035370+09:00" start="2010-02-11T15:56:05.2165090+09:00" finish="2010-02-11T15:56:05.8737502+09:00" />
+  <TestDefinitions>
+    <UnitTest name="TestWorker" storage="d:\projects\visualstudio2008\c#\beehivemanagementsystem\testbeehive\bin\debug\testbeehive.dll" id="ec47f250-e517-dfde-afea-4cc884b29c18">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="4f3ffbed-fb6d-424a-81cd-d8ef73392057" />
+      <TestMethod codeBase="D:\Projects\VisualStudio2008\C#\BeehiveManagementSystem\TestBeehive\bin\Debug\TestBeehive.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="TestBeehive.UnitTest1, TestBeehive" name="TestWorker" />
+    </UnitTest>
+    <UnitTest name="TestQueen" storage="d:\projects\visualstudio2008\c#\beehivemanagementsystem\testbeehive\bin\debug\testbeehive.dll" id="733439f6-98c3-7f37-ca3f-479fc44c82b9">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="d3203a83-1bca-4b44-b5fc-8d515b0018e4" />
+      <TestMethod codeBase="D:\Projects\VisualStudio2008\C#\BeehiveManagementSystem\TestBeehive\bin\Debug\TestBeehive.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="TestBeehive.UnitTest1, TestBeehive" name="TestQueen" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="목록에 없는 결과" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="로드된 모든 결과" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="733439f6-98c3-7f37-ca3f-479fc44c82b9" executionId="d3203a83-1bca-4b44-b5fc-8d515b0018e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ec47f250-e517-dfde-afea-4cc884b29c18" executionId="4f3ffbed-fb6d-424a-81cd-d8ef73392057" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="d3203a83-1bca-4b44-b5fc-8d515b0018e4" testId="733439f6-98c3-7f37-ca3f-479fc44c82b9" testName="TestQueen" computerName="ETC-0238" duration="00:00:00.0321099" startTime="2010-02-11T15:56:05.3260492+09:00" endTime="2010-02-11T15:56:05.7642100+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4f3ffbed-fb6d-424a-81cd-d8ef73392057" testId="ec47f250-e517-dfde-afea-4cc884b29c18" testName="TestWorker" computerName="ETC-0238" duration="00:00:00.0266253" startTime="2010-02-11T15:56:05.7642100+09:00" endTime="2010-02-11T15:56:05.7955072+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+        <ErrorInfo>
+          <Message>테스트 메서드 TestBeehive.UnitTest1.TestWorker에서 예외를 throw했습니다.  System.NullReferenceException: 개체 참조가 개체의 인스턴스로 설정되지 않았습니다.</Message>
+          <StackTrace>    위치: TestBeehive.UnitTest1.TestWorker() 파일 D:\Projects\VisualStudio2008\C#\BeehiveManagementSystem\TestBeehive\UnitTest1.cs:줄 94
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+</TestRun>
