@@ -1,0 +1,8 @@
+D:\Projects\VisualStudio2008\C#\GoFish\GoFish\obj\Debug\ResolveAssemblyReference.cache
+D:\Projects\VisualStudio2008\C#\GoFish\GoFish\obj\Debug\GoFish.Form1.resources
+D:\Projects\VisualStudio2008\C#\GoFish\GoFish\obj\Debug\GoFish.Properties.Resources.resources
+D:\Projects\VisualStudio2008\C#\GoFish\GoFish\obj\Debug\GoFish.csproj.GenerateResource.Cache
+D:\Projects\VisualStudio2008\C#\GoFish\GoFish\bin\Debug\GoFish.exe
+D:\Projects\VisualStudio2008\C#\GoFish\GoFish\bin\Debug\GoFish.pdb
+D:\Projects\VisualStudio2008\C#\GoFish\GoFish\obj\Debug\GoFish.exe
+D:\Projects\VisualStudio2008\C#\GoFish\GoFish\obj\Debug\GoFish.pdb

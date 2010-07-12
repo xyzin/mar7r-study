@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="HideAndSeek.Location">
+    <Position X="0.5" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAEAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Location.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HideAndSeek.Outside">
+    <Position X="3" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAgAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outside.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HideAndSeek.Room">
+    <Position X="3" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAIAAAACAAAAA=</HashCode>
+      <FileName>Room.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HideAndSeek.OutsideWithDoor">
+    <Position X="6.75" Y="3.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAEAAAABCAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>OutsideWithDoor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HideAndSeek.RoomWithDoor">
+    <Position X="6.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAEAAAABCAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>RoomWithDoor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HideAndSeek.OutsideWithHidingPlace">
+    <Position X="4.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>OutsideWithHidingPlace.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.335" />
+  </Class>
+  <Class Name="HideAndSeek.RoomWithHidingPlace">
+    <Position X="4.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>RoomWithHidingPlace.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HideAndSeek.Oppenent">
+    <Position X="6.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAIAAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAAA=</HashCode>
+      <FileName>Oppenent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="HideAndSeek.IHasExteriorDoor">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAACAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IHasExteriorDoor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HideAndSeek.IHidingPlace">
+    <Position X="2.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>IHidingPlace.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>

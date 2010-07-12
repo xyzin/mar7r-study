@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
+  <Class Name="BeehiveManagementSystem.Hive">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAECAAEJAAAQAAEAAAAAAAIAJAAAACAAAIAAAAAAA=</HashCode>
+      <FileName>Hive.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BeehiveManagementSystem.Job">
+    <Position X="5.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABkAAAAAAQAAAAAIAAAAQEACEEAAAAAAEAAAIABgA=</HashCode>
+      <FileName>Job.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BeehiveManagementSystem.Worker">
+    <Position X="2.25" Y="3.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAiCAAACEAAAAhAAIAAAAQAAAABAAAAAAA=</HashCode>
+      <FileName>Worker.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="currentJob" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="jobs" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="BeehiveManagementSystem.Bee">
+    <Position X="2.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAIAAAAAAAAAAAAAAQgAAABAAAAAAA=</HashCode>
+      <FileName>Bee.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BeehiveManagementSystem.Egg">
+    <Position X="0.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Egg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BeehiveManagementSystem.Baby">
+    <Position X="5.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Baby.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BeehiveManagementSystem.Queen">
+    <Position X="0.5" Y="3.25" Width="1.5" />
+    <AssociationLine Name="workers" Type="BeehiveManagementSystem.Worker">
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="-0.265" Y="-0.294" Height="0.182" Width="0.816" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="babies" Type="BeehiveManagementSystem.Baby" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="1.352" Y="3.25" />
+        <Point X="1.352" Y="0.291" />
+        <Point X="6.688" Y="0.291" />
+        <Point X="6.688" Y="3.25" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgACAAAAAIAAAAABAAAAAAASBAAAAAAgAAAAI=</HashCode>
+      <FileName>Queen.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="hive" />
+      <Field Name="eggs" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="workers" />
+      <Field Name="babies" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="BeehiveManagementSystem.StingPatrol">
+    <Position X="1.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAAAAAgAAAAAAQAAAAAAAAgAAAQ=</HashCode>
+      <FileName>StingPatrol.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BeehiveManagementSystem.NectarCollector">
+    <Position X="3.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAAAAAAAAAAAAAAEAAAQAAAAACAAA=</HashCode>
+      <FileName>NectarCollector.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="BeehiveManagementSystem.IStingPatrol">
+    <Position X="7.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IStingPatrol.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="BeehiveManagementSystem.INectarCollector">
+    <Position X="7.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>INectarCollector.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>

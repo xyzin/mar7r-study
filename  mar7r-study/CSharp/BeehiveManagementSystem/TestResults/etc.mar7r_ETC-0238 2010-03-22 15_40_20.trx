@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="601f6272-cb44-4f8e-8f42-053e415efad2" name="etc.mar7r@ETC-0238 2010-03-22 15:40:20" runUser="SSLIFENETWORK\etc.mar7r" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2006">
+  <TestRunConfiguration name="로컬 테스트 실행" id="a08ca533-0e62-4283-988a-b6dd0e1ff493">
+    <Description>로컬 테스트 실행의 기본 테스트 실행 구성입니다.</Description>
+    <Deployment runDeploymentRoot="D:\Projects\VisualStudio2008\C#\BeehiveManagementSystem\TestResults\etc.mar7r_ETC-0238 2010-03-22 15_40_20">
+      <DeploymentItem filename="D:\Projects\VisualStudio2008\C#\BeehiveManagementSystem\BeehiveManagementSystem\bin\Debug\BeehiveManagementSystem.exe" />
+    </Deployment>
+    <TestTypeSpecific />
+  </TestRunConfiguration>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" error="0" failed="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+  <Times creation="2010-03-22T15:40:20.9382278+09:00" queuing="2010-03-22T15:40:23.9225837+09:00" start="2010-03-22T15:40:24.2194568+09:00" finish="2010-03-22T15:40:25.0788263+09:00" />
+  <TestDefinitions>
+    <UnitTest name="TestWorker" storage="d:\projects\visualstudio2008\c#\beehivemanagementsystem\testbeehive\bin\debug\testbeehive.dll" id="ec47f250-e517-dfde-afea-4cc884b29c18">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="00399594-a1eb-493e-95f4-855b5002ddd6" />
+      <TestMethod codeBase="D:\Projects\VisualStudio2008\C#\BeehiveManagementSystem\TestBeehive\bin\Debug\TestBeehive.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="TestBeehive.UnitTest1, TestBeehive" name="TestWorker" />
+    </UnitTest>
+    <UnitTest name="TestHive" storage="d:\projects\visualstudio2008\c#\beehivemanagementsystem\testbeehive\bin\debug\testbeehive.dll" id="46c35b9a-e028-ba76-4cc2-22341bc060e4">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="653024a8-923a-4570-869c-c0f32f806771" />
+      <TestMethod codeBase="D:\Projects\VisualStudio2008\C#\BeehiveManagementSystem\TestBeehive\bin\Debug\TestBeehive.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="TestBeehive.UnitTest1, TestBeehive" name="TestHive" />
+    </UnitTest>
+    <UnitTest name="TestQueen" storage="d:\projects\visualstudio2008\c#\beehivemanagementsystem\testbeehive\bin\debug\testbeehive.dll" id="733439f6-98c3-7f37-ca3f-479fc44c82b9">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="69ce0bd7-730b-41df-8b05-08db69367168" />
+      <TestMethod codeBase="D:\Projects\VisualStudio2008\C#\BeehiveManagementSystem\TestBeehive\bin\Debug\TestBeehive.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="TestBeehive.UnitTest1, TestBeehive" name="TestQueen" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="목록에 없는 결과" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="로드된 모든 결과" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="ec47f250-e517-dfde-afea-4cc884b29c18" executionId="00399594-a1eb-493e-95f4-855b5002ddd6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="733439f6-98c3-7f37-ca3f-479fc44c82b9" executionId="69ce0bd7-730b-41df-8b05-08db69367168" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="46c35b9a-e028-ba76-4cc2-22341bc060e4" executionId="653024a8-923a-4570-869c-c0f32f806771" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="00399594-a1eb-493e-95f4-855b5002ddd6" testId="ec47f250-e517-dfde-afea-4cc884b29c18" testName="TestWorker" computerName="ETC-0238" duration="00:00:00.3741894" startTime="2010-03-22T15:40:24.2975813+09:00" endTime="2010-03-22T15:40:25.0007018+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="69ce0bd7-730b-41df-8b05-08db69367168" testId="733439f6-98c3-7f37-ca3f-479fc44c82b9" testName="TestQueen" computerName="ETC-0238" duration="00:00:00.0005819" startTime="2010-03-22T15:40:25.0007018+09:00" endTime="2010-03-22T15:40:25.0163267+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="653024a8-923a-4570-869c-c0f32f806771" testId="46c35b9a-e028-ba76-4cc2-22341bc060e4" testName="TestHive" computerName="ETC-0238" duration="00:00:00.0064451" startTime="2010-03-22T15:40:25.0163267+09:00" endTime="2010-03-22T15:40:25.0163267+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+  </Results>
+</TestRun>

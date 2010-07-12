@@ -1,0 +1,8 @@
+D:\Projects\VisualStudio2008\C#\PorkerCards\PorkerCards\bin\Debug\PorkerCards.exe
+D:\Projects\VisualStudio2008\C#\PorkerCards\PorkerCards\bin\Debug\PorkerCards.pdb
+D:\Projects\VisualStudio2008\C#\PorkerCards\PorkerCards\obj\Debug\ResolveAssemblyReference.cache
+D:\Projects\VisualStudio2008\C#\PorkerCards\PorkerCards\obj\Debug\PorkerCards.Properties.Resources.resources
+D:\Projects\VisualStudio2008\C#\PorkerCards\PorkerCards\obj\Debug\PorkerCards.csproj.GenerateResource.Cache
+D:\Projects\VisualStudio2008\C#\PorkerCards\PorkerCards\obj\Debug\PorkerCards.exe
+D:\Projects\VisualStudio2008\C#\PorkerCards\PorkerCards\obj\Debug\PorkerCards.pdb
+D:\Projects\VisualStudio2008\C#\PorkerCards\PorkerCards\obj\Debug\PorkerCards.Form1.resources
