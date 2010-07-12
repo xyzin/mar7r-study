@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content" 
+  android:orientation="vertical">
+	<LinearLayout 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content">
+		<TextView 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:text="Left Move :" android:layout_marginLeft="10px"/>
+		<TextView 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:id="@+id/txtLeft"
+		android:layout_marginLeft="10px" android:layout_marginRight="10px"/>
+	</LinearLayout>
+	<LinearLayout 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content">
+		<TextView 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:text="Right Move :"
+		android:layout_marginLeft="10px"/>
+		<TextView 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:id="@+id/txtRight"
+		android:layout_marginLeft="10px" android:layout_marginRight="10px"/>
+	</LinearLayout>
+	<LinearLayout 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content">
+		<TextView 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:text="Up Move :"
+		android:layout_marginLeft="10px"/>
+		<TextView 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:id="@+id/txtUp"
+		android:layout_marginLeft="10px" android:layout_marginRight="10px"/>
+	</LinearLayout>
+	<LinearLayout 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content">
+		<TextView 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:text="Down Move :"
+		android:layout_marginLeft="10px"/>
+		<TextView 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:id="@+id/txtDown"
+		android:layout_marginLeft="10px" android:layout_marginRight="10px"/>
+	</LinearLayout>
+	<LinearLayout 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content">
+		<TextView 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:text="elapst secound :"
+		android:layout_marginLeft="10px"/>
+		<TextView 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:id="@+id/txtSecond"
+		android:layout_marginLeft="10px" android:layout_marginRight="10px"/>
+	
+</LinearLayout>				
+	<LinearLayout 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content" android:gravity="center">
+		<Button 
+			android:text="Restart" 
+			android:id="@+id/btnRestart" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+		/>
+		<Button 
+			android:text="Quit" 
+			android:id="@+id/btnQuit" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+		/>
+	</LinearLayout>
+</LinearLayout>
