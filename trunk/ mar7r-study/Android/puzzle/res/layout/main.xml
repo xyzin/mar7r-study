@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    >
+
+    <h2o.puzzle.GameView
+    	xmlns:myspacee="http://schemas.android.com/apk/res/h2o.puzzle"
+    	android:id="@+id/game_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dip"
+        android:layout_weight="1"
+        android:layout_gravity="center"/>
+    <TextView
+    	android:id="@+id/elapsed_time"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:gravity="center_horizontal"
+    android:text="00:00:00" android:layout_marginBottom="10px"/>
+
+    <Button
+        android:id="@+id/shuffle"
+        android:text="Shuffle!"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        />
+
+</LinearLayout>
