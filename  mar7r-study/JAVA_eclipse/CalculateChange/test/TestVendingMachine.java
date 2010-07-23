@@ -4,7 +4,7 @@ import org.junit.Test;
 
 
 
-public class TestCalculateChange {
+public class TestVendingMachine {
 	/**
 	 * 잔액확인 테스트	
 	 * @throws Exception
