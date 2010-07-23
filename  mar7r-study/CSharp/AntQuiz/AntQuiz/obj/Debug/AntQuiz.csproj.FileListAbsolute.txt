@@ -1,0 +1,8 @@
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuiz\bin\Debug\AntQuiz.exe
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuiz\bin\Debug\AntQuiz.pdb
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuiz\obj\Debug\ResolveAssemblyReference.cache
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuiz\obj\Debug\AntQuiz.Form1.resources
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuiz\obj\Debug\AntQuiz.Properties.Resources.resources
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuiz\obj\Debug\AntQuiz.csproj.GenerateResource.Cache
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuiz\obj\Debug\AntQuiz.exe
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuiz\obj\Debug\AntQuiz.pdb
