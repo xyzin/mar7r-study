@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRunConfiguration name="로컬 테스트 실행" id="c770444a-51f8-49e4-a94c-db6b81a5abf7" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2006">
+  <Description>로컬 테스트 실행의 기본 테스트 실행 구성입니다.</Description>
+  <TestTypeSpecific />
+</TestRunConfiguration>

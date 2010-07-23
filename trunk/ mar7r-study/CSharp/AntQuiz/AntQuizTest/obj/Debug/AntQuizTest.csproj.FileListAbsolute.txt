@@ -1,0 +1,9 @@
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuizTest\obj\Debug\ResolveAssemblyReference.cache
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuizTest\bin\Debug\AntQuizTest.dll
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuizTest\bin\Debug\AntQuizTest.pdb
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuizTest\bin\Debug\AntQuiz.exe
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuizTest\bin\Debug\AntQuiz.pdb
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuizTest\bin\Debug\AntQuiz_Accessor.dll
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuizTest\bin\Debug\AntQuiz_Accessor.pdb
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuizTest\obj\Debug\AntQuizTest.dll
+D:\Projects\mar7r-study\CSharp\AntQuiz\AntQuizTest\obj\Debug\AntQuizTest.pdb
