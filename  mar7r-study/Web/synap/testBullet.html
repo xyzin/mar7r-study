@@ -1,0 +1,99 @@
+<html>
+<head>
+	<title>Test Page for multiplyAndAddFive(value1, value2)</title>
+	<script language="javascript" src="./jsunit/app/jsUnitCore.js"></script>
+	<script language="javascript" src="common.js"></script>
+	<script language="javascript" src="bullet.js"></script>
+</head>
+<body>
+	<script language="javascript">
+		function testGetRadian() {
+			assertEquals("180/PI degree is 1 RAD", 1, commonUtil.getRadian(180 / Math.PI));
+		}
+
+		function testGetSin() {
+			assertEquals("sin(0) is 0", 0, commonUtil.getSin(0));
+			assertEquals("sin(90) is 1", 1, commonUtil.getSin(90));
+		}
+
+		function testGetCos() {
+			assertEquals("cos(0) is 1", 1, commonUtil.getCos(0));
+			assertEquals("cos(90) is 0", 0, commonUtil.getCos(90));
+		}
+
+		function testGetVerticalVelocity() {
+			Bullet.init(90, 10)
+			assertEquals("when degree is 90, VerticalVelocity is equals Velocity",
+					10, Bullet.getVerticalVelocity());
+			Bullet.init(0, 10)
+			assertEquals("when degree is 0, VerticalVelocity is 0",
+					0, Bullet.getVerticalVelocity()); 
+		}
+
+		function testGetHorizontalVelocity() {
+			Bullet.init(90, 10)
+			assertEquals("when degree is 90, VerticalVelocity is 0",
+					0, Bullet.getHorizontalVelocity());
+			Bullet.init(0, 10)
+			assertEquals("when degree is 0, VerticalVelocity is equals Velocity",
+					10, Bullet.getHorizontalVelocity());
+		}
+
+		//function testGetSecondForMoving8px() {
+			// 0.1m is 1px
+		//	Bullet.init(0, 0.8); //HorizontalVelocity is 0.8m/s
+		//	assertEquals("when v is 0.8m/s, For 1s, bullet is moved 8px",
+		//			1, Bullet.getSecondForMoving8px());
+		//}
+
+		function testGetNewVerticalDistance() {
+			Bullet.init(0, 8);
+			assertEquals(0, Bullet.getNewVerticalDistance());
+			Bullet.init(45, 10);
+			assertEquals(8, Bullet.getNewVerticalDistance());				
+		}
+		function testGetNewHorizontalDistance() {
+			// 속도에 상관없이 수평이동거리는 항상 0.8m 즉 8px 이다.
+			Bullet.init(0, 10);
+			assertEquals(8, Bullet.getNewHorizontalDistance());			
+			Bullet.init(0, 50);
+			assertEquals(8, Bullet.getNewHorizontalDistance());
+			Bullet.init(45, 10);
+			assertEquals(8, Bullet.getNewHorizontalDistance());			
+		}
+
+		function testGetRivisedHorizontalDistance() {
+			Bullet.init(45, 10);
+			assertEquals(7, Bullet.getRevisedVerticalDistance());
+
+			Bullet.init(45, 45);
+			assertEquals(8, Bullet.getRevisedVerticalDistance());
+			assertEquals(8, Bullet.getRevisedVerticalDistance());
+			assertEquals(7, Bullet.getRevisedVerticalDistance());
+			assertEquals(7, Bullet.getRevisedVerticalDistance());
+			assertEquals(7, Bullet.getRevisedVerticalDistance());
+			assertEquals(7, Bullet.getRevisedVerticalDistance());
+			assertEquals(7, Bullet.getRevisedVerticalDistance());
+			assertEquals(7, Bullet.getRevisedVerticalDistance());
+			assertEquals(6, Bullet.getRevisedVerticalDistance());
+			assertEquals(6, Bullet.getRevisedVerticalDistance());
+			assertEquals(6, Bullet.getRevisedVerticalDistance());
+			assertEquals(6, Bullet.getRevisedVerticalDistance());
+			
+			Bullet.init(35, 23);
+			assertEquals(8, Bullet.getRevisedVerticalDistance());
+			assertEquals(7, Bullet.getRevisedVerticalDistance());
+			assertEquals(7, Bullet.getRevisedVerticalDistance());
+			assertEquals(7, Bullet.getRevisedVerticalDistance());
+			assertEquals(6, Bullet.getRevisedVerticalDistance());
+			assertEquals(6, Bullet.getRevisedVerticalDistance());
+			assertEquals(6, Bullet.getRevisedVerticalDistance());
+			assertEquals(5, Bullet.getRevisedVerticalDistance());
+			assertEquals(5, Bullet.getRevisedVerticalDistance());
+			assertEquals(5, Bullet.getRevisedVerticalDistance());
+			assertEquals(4, Bullet.getRevisedVerticalDistance());
+			assertEquals(4, Bullet.getRevisedVerticalDistance());						
+		}
+	</script>
+</body>
+</html>

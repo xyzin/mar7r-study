@@ -1,0 +1,17 @@
+<html>
+<head>
+	<title>Test Page for multiplyAndAddFive(value1, value2)</title>
+	<script language="javascript" src="./jsunit/app/jsUnitCore.js"></script>
+	<script language="javascript" src="common.js"></script>
+	<script language="javascript" src="target.js"></script>
+</head>
+<body>
+	<script language="javascript">
+		function testMakeTarget() {
+			Target.init();
+			assertTrue(300 <= Target.getPosition());
+			assertTrue(600 >= Target.getPosition());
+		}
+	</script>
+</body>
+</html>
