@@ -1,6 +1,8 @@
 var backGround;
 var degree;
 var velocity;
+var target;
+var CLOSED_ENOUGH = 10;
 
 window.onload = function() {
 	backGround = document.createElement("div");
@@ -9,14 +11,14 @@ window.onload = function() {
 	backGround.style.border = 'thin solid #FF0000';
 	backGround.style.position = 'absolute';
 	
-	Target.init();
-	var target = document.createElement("div");
-	target.appendChild(document.createTextNode("#"));
-	target.style.top = '390px';
-	target.style.left = Target.getPosition() + 'px';
-	target.style.position = 'absolute';
+	target = new Target();
+	var target_div = document.createElement("div");
+	target_div.appendChild(document.createTextNode("#"));
+	target_div.style.top = target.getTop() + 'px';
+	target_div.style.left = target.getLeft() + 'px';
+	target_div.style.position = 'absolute';
 	
-	backGround.appendChild(target);
+	backGround.appendChild(target_div);
 	
 	degree = document.createElement("input");
 	degree.style.width = '30px';
@@ -36,21 +38,31 @@ window.onload = function() {
 };
 
 function Shoot() {
-	Bullet.init(degree.value, velocity.value);
-	var bullet_Top = 390;
-	var bullet_Left = 0;
-	var bullet;
+	var bullet = new Bullet(degree.value, velocity.value);
+
+	var bullet_div;
 	
-	while(bullet_Top <= 390 && bullet_Left <= 590)
+	while(bullet.useful())
 	{
-		bullet = document.createElement("div");
-		bullet.appendChild(document.createTextNode("*"));
-		bullet_Top -= Bullet.getRevisedVerticalDistance();
-		bullet_Left += 8;
-		bullet.style.top = bullet_Top + 'px';
-		bullet.style.left = bullet_Left + 'px';
-		bullet.style.position = 'absolute';
-		
-		backGround.appendChild(bullet);
+		bullet_div = document.createElement("div");
+		bullet_div.appendChild(document.createTextNode("*"));
+		bullet_div.style.position = 'absolute';
+
+		if(bullet.isVisible())
+		{
+			bullet_div.style.top = bullet.getTop() + 'px';
+			bullet_div.style.left = bullet.getLeft() + 'px';
+		}
+		bullet.doNext();
+		backGround.appendChild(bullet_div);
+		checkCollision(bullet);
 	}
-}
+};
+
+function checkCollision(bullet) {
+	if( Math.abs(bullet.getLeft() - target.getLeft()) < CLOSED_ENOUGH &&
+			Math.abs(bullet.getTop() - target.getTop()) < CLOSED_ENOUGH )
+	{
+		alert("ИэСп");		
+	}
+};

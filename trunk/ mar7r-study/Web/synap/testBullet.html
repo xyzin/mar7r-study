@@ -14,29 +14,32 @@
 		function testGetSin() {
 			assertEquals("sin(0) is 0", 0, commonUtil.getSin(0));
 			assertEquals("sin(90) is 1", 1, commonUtil.getSin(90));
+			assertEquals(0.25, commonUtil.getSin(23));
 		}
 
 		function testGetCos() {
 			assertEquals("cos(0) is 1", 1, commonUtil.getCos(0));
-			assertEquals("cos(90) is 0", 0, commonUtil.getCos(90));
+			assertTrue("cos(90) is 0", 0.0001 > commonUtil.getCos(90));
 		}
 
 		function testGetVerticalVelocity() {
-			Bullet.init(90, 10)
+			var bullet = new Bullet(90, 10);
 			assertEquals("when degree is 90, VerticalVelocity is equals Velocity",
-					10, Bullet.getVerticalVelocity());
-			Bullet.init(0, 10)
-			assertEquals("when degree is 0, VerticalVelocity is 0",
-					0, Bullet.getVerticalVelocity()); 
+					10, bullet.getVerticalVelocity());
+			var bullet = new Bullet(0, 10)
+			assertTrue("when degree is 0, VerticalVelocity is 0",
+					0.0001 > bullet.getVerticalVelocity()); 
+			var bullet = new Bullet(23, 10);
+			assertEquals(3.91, bullet.getVerticalVelocity());
 		}
 
 		function testGetHorizontalVelocity() {
-			Bullet.init(90, 10)
+			var bullet = new Bullet(90, 10)
 			assertEquals("when degree is 90, VerticalVelocity is 0",
-					0, Bullet.getHorizontalVelocity());
-			Bullet.init(0, 10)
+					0, bullet.getHorizontalVelocity());
+			var bullet = new Bullet(0, 10)
 			assertEquals("when degree is 0, VerticalVelocity is equals Velocity",
-					10, Bullet.getHorizontalVelocity());
+					10, bullet.getHorizontalVelocity());
 		}
 
 		//function testGetSecondForMoving8px() {
@@ -46,53 +49,30 @@
 		//			1, Bullet.getSecondForMoving8px());
 		//}
 
-		function testGetNewVerticalDistance() {
-			Bullet.init(0, 8);
-			assertEquals(0, Bullet.getNewVerticalDistance());
-			Bullet.init(45, 10);
-			assertEquals(8, Bullet.getNewVerticalDistance());				
+		function testGetVerticalDistanceForPixelUnit() {
+			var bullet = new Bullet(0, 8);
+			assertEquals(0, bullet.getVerticalDistanceForPixelUnit());
+			var bullet = new Bullet(45, 10);
+			assertEquals(8, bullet.getVerticalDistanceForPixelUnit());
+			var bullet = new Bullet(23, 10);
+			assertEquals(3.4, bullet.getVerticalDistanceForPixelUnit());			
 		}
 		function testGetNewHorizontalDistance() {
 			// 속도에 상관없이 수평이동거리는 항상 0.8m 즉 8px 이다.
-			Bullet.init(0, 10);
-			assertEquals(8, Bullet.getNewHorizontalDistance());			
-			Bullet.init(0, 50);
-			assertEquals(8, Bullet.getNewHorizontalDistance());
-			Bullet.init(45, 10);
-			assertEquals(8, Bullet.getNewHorizontalDistance());			
+			var bullet = new Bullet(0, 10);
+			assertEquals(8, bullet.getHorizontalDistanceForPixelUnit());			
+			var bullet = new Bullet(0, 50);
+			assertEquals(8, bullet.getHorizontalDistanceForPixelUnit());
+			var bullet = new Bullet(45, 10);
+			assertEquals(8, bullet.getHorizontalDistanceForPixelUnit());			
 		}
 
 		function testGetRivisedHorizontalDistance() {
-			Bullet.init(45, 10);
-			assertEquals(7, Bullet.getRevisedVerticalDistance());
+			var bullet = new Bullet(45, 10);
+			assertEquals(7, Math.round(bullet.getRevisedVerticalUnit()));
 
-			Bullet.init(45, 45);
-			assertEquals(8, Bullet.getRevisedVerticalDistance());
-			assertEquals(8, Bullet.getRevisedVerticalDistance());
-			assertEquals(7, Bullet.getRevisedVerticalDistance());
-			assertEquals(7, Bullet.getRevisedVerticalDistance());
-			assertEquals(7, Bullet.getRevisedVerticalDistance());
-			assertEquals(7, Bullet.getRevisedVerticalDistance());
-			assertEquals(7, Bullet.getRevisedVerticalDistance());
-			assertEquals(7, Bullet.getRevisedVerticalDistance());
-			assertEquals(6, Bullet.getRevisedVerticalDistance());
-			assertEquals(6, Bullet.getRevisedVerticalDistance());
-			assertEquals(6, Bullet.getRevisedVerticalDistance());
-			assertEquals(6, Bullet.getRevisedVerticalDistance());
-			
-			Bullet.init(35, 23);
-			assertEquals(8, Bullet.getRevisedVerticalDistance());
-			assertEquals(7, Bullet.getRevisedVerticalDistance());
-			assertEquals(7, Bullet.getRevisedVerticalDistance());
-			assertEquals(7, Bullet.getRevisedVerticalDistance());
-			assertEquals(6, Bullet.getRevisedVerticalDistance());
-			assertEquals(6, Bullet.getRevisedVerticalDistance());
-			assertEquals(6, Bullet.getRevisedVerticalDistance());
-			assertEquals(5, Bullet.getRevisedVerticalDistance());
-			assertEquals(5, Bullet.getRevisedVerticalDistance());
-			assertEquals(5, Bullet.getRevisedVerticalDistance());
-			assertEquals(4, Bullet.getRevisedVerticalDistance());
-			assertEquals(4, Bullet.getRevisedVerticalDistance());						
+			var bullet = new Bullet(45, 45);
+			assertEquals(8, Math.round(bullet.getRevisedVerticalUnit()));
 		}
 	</script>
 </body>

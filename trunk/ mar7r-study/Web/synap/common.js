@@ -1,11 +1,14 @@
 var commonUtil = {};
 
 commonUtil.getRadian = function(degree) {
-	return Math.round(degree / 180 * Math.PI);
+	return degree / 180 * Math.PI;
 };
 commonUtil.getSin = function(degree) {
-	return Math.round(Math.sin(commonUtil.getRadian(degree)));
+	return Math.sin(commonUtil.getRadian(degree));
 };
 commonUtil.getCos = function(degree) {
-	return Math.round(Math.cos(commonUtil.getRadian(degree)));
+	return Math.cos(commonUtil.getRadian(degree));
+};
+commonUtil.Round = function(value) {
+	return Math.round(value * 100) / 100;
 };
