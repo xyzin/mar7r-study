@@ -1,61 +1,56 @@
-var backGround;
-var degree;
-var velocity;
+var div_background;
+var input_degree;
+var input_velocity;
 var target;
 var CLOSED_ENOUGH = 10;
 
 window.onload = function() {
-	backGround = document.createElement("div");
-	backGround.style.height = '400px';
-	backGround.style.width = '600px';
-	backGround.style.border = 'thin solid #FF0000';
-	backGround.style.position = 'absolute';
-	
+	init();
+	createTarget();
+	createButton();
+};
+
+function init() {
+	div_background = document.getElementById("div_background");
+	input_degree = document.getElementById("degree");
+	input_velocity = document.getElementById("velocity");		
+}
+
+function createTarget() {
 	target = new Target();
-	var target_div = document.createElement("div");
-	target_div.appendChild(document.createTextNode("#"));
-	target_div.style.top = target.getTop() + 'px';
-	target_div.style.left = target.getLeft() + 'px';
-	target_div.style.position = 'absolute';
-	
-	backGround.appendChild(target_div);
-	
-	degree = document.createElement("input");
-	degree.style.width = '30px';
-	velocity = document.createElement("input");
-	velocity.style.width = '30px';
+	var div_target = document.createElement("div");
+	div_target.appendChild(document.createTextNode("#"));
+	div_target.style.top = target.getTop() + 'px';
+	div_target.style.left = target.getLeft() + 'px';
+	div_background.appendChild(div_target);
+}
+
+function createButton() {
 	var button = document.createElement("button");
 	button.appendChild(document.createTextNode("launch"));
 	button.onclick = Shoot;
-	
-	backGround.appendChild(document.createTextNode("angle (1 ~ 89) : "));
-	backGround.appendChild(degree);
-	backGround.appendChild(document.createTextNode("velocity (1 ~ 99) : "));
-	backGround.appendChild(velocity);
-	backGround.appendChild(button);
-	var body = document.getElementsByTagName("body")[0];
-	body.appendChild(backGround);
-};
+	div_background.appendChild(button);	
+}
 
 function Shoot() {
-	var bullet = new Bullet(degree.value, velocity.value);
+	var bullet = new Bullet(input_degree.value, input_velocity.value);
 
-	var bullet_div;
+	var div_bullet;
 	
 	while(bullet.useful())
 	{
-		bullet_div = document.createElement("div");
-		bullet_div.appendChild(document.createTextNode("*"));
-		bullet_div.style.position = 'absolute';
+		div_bullet = document.createElement("div");
+		div_bullet.appendChild(document.createTextNode("*"));
 
 		if(bullet.isVisible())
 		{
-			bullet_div.style.top = bullet.getTop() + 'px';
-			bullet_div.style.left = bullet.getLeft() + 'px';
+			div_bullet.style.top = bullet.getTop() + 'px';
+			div_bullet.style.left = bullet.getLeft() + 'px';
 		}
 		bullet.doNext();
-		backGround.appendChild(bullet_div);
-		checkCollision(bullet);
+		div_background.appendChild(div_bullet);
+		if (checkCollision(bullet))
+			break;
 	}
 };
 
@@ -63,6 +58,8 @@ function checkCollision(bullet) {
 	if( Math.abs(bullet.getLeft() - target.getLeft()) < CLOSED_ENOUGH &&
 			Math.abs(bullet.getTop() - target.getTop()) < CLOSED_ENOUGH )
 	{
-		alert("명중");		
+		alert("명중");
+		return true;
 	}
+	return false;
 };

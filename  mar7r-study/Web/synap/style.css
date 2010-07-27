@@ -1,0 +1,34 @@
+@CHARSET "EUC-KR";
+div {
+	position : absolute;
+}
+div#backGround {
+	height : 400px;
+	width : 600px;
+	border : thin solid #FF0000;
+}
+div#TXT_degree {
+	top : 420px;
+	left : 10px;	
+}
+div#TXT_velocity {
+	top : 420px;
+	left : 170px;	
+}
+
+input {
+	width : 30px;
+	position : absolute;
+	top : 420px;
+}
+input#degree {
+	left : 130px;
+}
+input#velocity {
+	left : 300px;
+	}
+button {
+	position : absolute;
+	top : 410px;
+	left : 340px;
+}
