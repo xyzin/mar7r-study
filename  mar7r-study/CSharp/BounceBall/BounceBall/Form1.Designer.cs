@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.baseball = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
@@ -50,6 +51,7 @@
             // 
             // baseball
             // 
+            this.baseball.BackColor = System.Drawing.Color.Transparent;
             this.baseball.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.baseball.Image = global::BounceBall.Properties.Resources.baseball;
             this.baseball.Location = new System.Drawing.Point(3, 3);
@@ -60,6 +62,7 @@
             // 
             // pictureBox1
             // 
+            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = global::BounceBall.Properties.Resources.golf;
             this.pictureBox1.Location = new System.Drawing.Point(3, 381);
             this.pictureBox1.Name = "pictureBox1";
@@ -70,8 +73,10 @@
             // 
             // pictureBox2
             // 
+            this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox2.Image = global::BounceBall.Properties.Resources.soccer;
             this.pictureBox2.Location = new System.Drawing.Point(549, 3);
+            this.pictureBox2.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(48, 48);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -80,7 +85,8 @@
             // 
             // pictureBox3
             // 
-            this.pictureBox3.Image = global::BounceBall.Properties.Resources.basketball;
+            this.pictureBox3.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox3.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox3.Image")));
             this.pictureBox3.Location = new System.Drawing.Point(533, 333);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(64, 64);
@@ -179,7 +185,8 @@
             this.Controls.Add(this.btnDo);
             this.Controls.Add(this.panel1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "BounceBall";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.baseball)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
