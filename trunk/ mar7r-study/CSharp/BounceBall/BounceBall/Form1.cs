@@ -131,10 +131,12 @@ namespace BounceBall
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (isMoving)
+            {
                 isMoving = false;
-            thread.Abort();
-            while (thread.IsAlive)
-                System.Threading.Thread.Sleep(500);
+                thread.Abort();
+                while (thread.IsAlive)
+                    System.Threading.Thread.Sleep(500);
+            }
         }
     }
 }
