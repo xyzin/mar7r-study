@@ -14,8 +14,12 @@ namespace BounceBall
     {
 
         List<Ball> balls = new List<Ball>();
-        private bool isMoving = false;
+        private volatile bool isMoving = false;
+        private Thread thread;
         private Random random;
+
+        delegate void ballMoveCallback();
+
         public Form1()
         {
             InitializeComponent();
@@ -31,20 +35,51 @@ namespace BounceBall
                 new Point(random.Next(500), random.Next(300)));
             this.panel1.Controls.Add(ball.getPictureBox());
             balls.Add(ball);
+
         }
 
         private void btnDo_Click(object sender, EventArgs e)
         {
             isMoving = isMoving ? false : true ;
             this.btnDo.Text = isMoving ? "Stop" : "Start";
+
+            if (isMoving)
+            {
+                thread = new Thread(ballMove);
+                thread.Start();
+                while (!thread.IsAlive) ;
+            }
+            else
+            {
+                thread.Join();
+            }
+        }
+
+        private void ballMove()
+        {
             while (isMoving)
             {
-                foreach (Ball ball in balls)
+                Ball[] ballArray;
+                Monitor.Enter(this);
+                ballArray = new Ball[balls.Count];
+                balls.CopyTo(ballArray);
+                Monitor.Exit(this);
+                foreach (Ball ball in ballArray)
                 {
-                    ball.move();
-                    Refresh();
+                    if (ball.pb.InvokeRequired)
+                    {
+                        ballMoveCallback m = new ballMoveCallback(ball.move);
+                        this.Invoke(m);
+                    }
+                    else
+                    {
+
+                        ball.move();
+                    }
                 }
+                
                 Thread.Sleep(50);
+//                Refresh();
             }
         }
 
@@ -53,7 +88,20 @@ namespace BounceBall
             Ball ball = new BasketBall(random.Next(600) / 100, random.Next(20) + 1,
                 new Point(random.Next(500), random.Next(300)));
             this.panel1.Controls.Add(ball.getPictureBox());
-            balls.Add(ball);
+            AddBall(ball);
+        }
+
+        private void AddBall(Ball ball)
+        {
+            if (Monitor.TryEnter(this) == false)
+            {
+                Console.WriteLine("임계 영역에 들어가는데 실패");
+            }
+            else
+            {
+                balls.Add(ball);
+                Monitor.Exit(this);
+            }
         }
 
         private void btnSoccer_Click(object sender, EventArgs e)
@@ -61,7 +109,7 @@ namespace BounceBall
             Ball ball = new Soccer(random.Next(600) / 100, random.Next(20) + 1,
                 new Point(random.Next(500), random.Next(300)));
             this.panel1.Controls.Add(ball.getPictureBox());
-            balls.Add(ball);
+            AddBall(ball);
         }
 
         private void btnBaseball_Click(object sender, EventArgs e)
@@ -69,7 +117,7 @@ namespace BounceBall
             Ball ball = new BaseBall(random.Next(600) / 100, random.Next(20) + 1,
                 new Point(random.Next(500), random.Next(300)));
             this.panel1.Controls.Add(ball.getPictureBox());
-            balls.Add(ball);
+            AddBall(ball);
         }
 
         private void btnGolf_Click(object sender, EventArgs e)
@@ -77,7 +125,16 @@ namespace BounceBall
             Ball ball = new Golf(random.Next(600) / 100, random.Next(20) + 1,
                 new Point(random.Next(500), random.Next(300)));
             this.panel1.Controls.Add(ball.getPictureBox());
-            balls.Add(ball);
+            AddBall(ball);
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (isMoving)
+                isMoving = false;
+            thread.Abort();
+            while (thread.IsAlive)
+                System.Threading.Thread.Sleep(500);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Threading;
 
 namespace BounceBall
 {
@@ -11,34 +12,57 @@ namespace BounceBall
     {
         private double radian;
         private int velocity;
+        private int ballSize;
 
-        protected PictureBox pb;
+        public PictureBox pb;
         protected const int MAX_LEFT = 600;
         protected const int MAX_TOP = 400;
 
-        public Ball(double radian, int velocity)
+        public Ball(double radian, int velocity, int ballSize)
         {
             this.radian = radian;
             this.velocity = velocity;
+            this.ballSize = ballSize;
 
             pb = new PictureBox();
             initImage(new Point(30, 150));
         }
 
-        public Ball(double radian, int velocity, Point initPosition)
+        public Ball(double radian, int velocity, Point initPosition, int ballSize)
         {
             this.radian = radian;
             this.velocity = velocity;
+            this.ballSize = ballSize;
 
             pb = new PictureBox();
             initImage(initPosition);
         }
 
-        protected abstract void initImage(Point initPosition);
-        public abstract bool rightCollision();
-        public abstract bool leftCollision();
-        public abstract bool topCollision();
-        public abstract bool bottomCollision();
+        public bool rightCollision()
+        {
+            return this.pb.Left + (int)Math.Round(getXfactor()) > MAX_LEFT - ballSize;
+        }
+        public bool leftCollision()
+        {
+            return this.pb.Left + (int)Math.Round(getXfactor()) < 0;
+        }
+        public bool topCollision()
+        {
+            return this.pb.Top - (int)Math.Round(getYfactor()) < 0;
+        }
+        public bool bottomCollision()
+        {
+            return this.pb.Top - (int)Math.Round(getYfactor()) > MAX_TOP - ballSize;
+        }
+
+        protected void initImage(Point initPosition)
+        {
+            this.pb.BackColor = Color.Transparent;
+            this.pb.Size = new Size(ballSize, ballSize);
+            this.pb.Location = initPosition;
+            setImage();
+        }
+        protected abstract void setImage();
 
         public PictureBox getPictureBox()
         {
