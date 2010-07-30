@@ -1,0 +1,1241 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 27 -- Multitasking with Windows Threads</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch26/ch26.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch28/ch28.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 27 -</H1>
+</CENTER>
+<CENTER>
+<H1>Multitasking with Windows Threads</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Understanding Simple Threads</A>
+	<LI><A HREF="#Heading2">Understanding Thread Communication</A>
+	<UL>
+		<LI><A HREF="#Heading3">Communicating with Global Variables</A>
+		<LI><A HREF="#Heading4">Communicating with User-Defined Messages</A>
+		<LI><A HREF="#Heading5">Communicating with Event Objects</A>
+	</UL>
+	<LI><A HREF="#Heading6">Using Thread Synchronization</A>
+	<UL>
+		<LI><A HREF="#Heading7">Using Critical Sections</A>
+		<LI><A HREF="#Heading8">Using Mutexes</A>
+		<LI><A HREF="#Heading9">Using Semaphores</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>When using Windows 95 (and other modern operating systems), you know that you
+can run several programs simultaneously. This capability is called <I>multitasking.</I>
+What you may not know is that many of today's operating systems also enable <I>threads,</I>
+which are separate processes that are not complete applications. A thread is a lot
+like a subprogram. An application can create several threads--several different flows
+of execution--and run them concurrently. Threads give you the ability to have multitasking
+inside multitasking. The user knows that he can run several applications at a time.
+The programmer knows that each application can run several threads at a time. In
+this chapter, you'll learn how to create and manage threads in your applications.</P>
+<P>
+<H2><A NAME="Heading1"></A>Understanding Simple Threads</H2>
+<P>A thread is a path of execution through a program. In a multithreaded program,
+each thread has its own stack and operates independently of other threads running
+within the same program. MFC distinguishes between <I>UI threads</I>, which have
+a message pump and typically perform user interface tasks, and <I>worker threads</I>,
+which do not.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Any application always has at least one thread, which is the program's
+	primary or main thread. You can start and stop as many additional threads as you
+	need, but the main thread keeps running as long as the application is active.&#160;
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>A thread is the smallest unit of execution, much smaller than a <I>process</I>.
+Generally each running application on your system is a process. If you start the
+same application (for example, Notepad) twice, there will be two processes, one for
+each instance. It is possible for several instances of an application to share a
+single process: for example, if you choose File, New Window in Internet Explorer,
+there are two applications on your taskbar, and they share a process. The unfortunate
+consequence is that if one instance crashes, they all do.</P>
+<P>To create a worker thread using MFC, all you have to do is write a function that
+you want to run parallel with the rest of your application. Then call AfxBeginThread()
+to start a thread that will execute your function. The thread remains active as long
+as the thread's function is executing: When the thread function exits, the thread
+is destroyed. A simple call to AfxBeginThread() looks like this:</P>
+<P>
+<PRE>AfxBeginThread(ProcName, param, priority);
+</PRE>
+<P>In the preceding line, ProcName is the name of the thread's function, param is
+any 32-bit value you want to pass to the thread, and priority is the thread's priority,
+which is represented by a number of predefined constants. Table 27.1 shows those
+constants and their descriptions.</P>
+<P>
+<H4>Table 27.1&#160;&#160;Thread Priority Constants</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Constant</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">THREAD_PRIORITY_ABOVE_NORMAL</TD>
+		<TD ALIGN="LEFT">Sets a priority one point higher than normal.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">THREAD_PRIORITY_BELOW_NORMAL</TD>
+		<TD ALIGN="LEFT">Sets a priority one point lower than normal.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">THREAD_PRIORITY_HIGHEST</TD>
+		<TD ALIGN="LEFT">Sets a priority two points above normal.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">THREAD_PRIORITY_IDLE</TD>
+		<TD ALIGN="LEFT">Sets a base priority of 1. For a REALTIME_PRIORITY_CLASS process, this sets a priority
+			of 16.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">THREAD_PRIORITY_LOWEST</TD>
+		<TD ALIGN="LEFT">Sets a priority two points below normal.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">THREAD_PRIORITY_NORMAL</TD>
+		<TD ALIGN="LEFT">Sets normal priority.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">THREAD_PRIORITY_TIME_CRITICAL</TD>
+		<TD ALIGN="LEFT">Sets a base priority of 15. For a REALTIME_PRIORITY_CLASS process, this sets a priority
+			of 30.</TD>
+	</TR>
+</TABLE>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> A thread's priority determines how often the thread takes control
+	of the system, relative to the other running threads. Generally, the higher the priority,
+	the more running time the thread gets, which is why the value of THREAD_PRIORITY_TIME_CRITICAL
+	is so high.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>To see a simple thread in action, build the Thread application as detailed in
+the following steps.</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Start a new AppWizard project workspace called <B>Thread</B>, as shown
+	in Figure 27.1.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('27uvc01.gif')"><B>FIG. 27.1</B></A><B> </B><I>Start
+an AppWizard project workspace called </I><B>Thread</B><I>.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>2. </B>Give the new project the following settings in the AppWizard dialog
+	boxes. The New Project Information dialog box will then look like Figure 27.2.
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<P>Step 1: Single document</P>
+
+	<P>Step 2: Default settings</P>
+
+	<P>Step 3: Default settings</P>
+
+	<P>Step 4: Turn off all options</P>
+
+	<P>Step 5: Default settings</P>
+
+	<P>Step 6: Default settings</P>
+
+</BLOCKQUOTE>
+
+<P><A HREF="javascript:popUp('27uvc02.gif')"><B>FIG. 27.2</B></A><B> </B><I>These
+are the AppWizard settings for the Thread project.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>3. </B>Use the resource editor to add a Thread menu to the application's IDR_MAINFRAME
+	menu. Give the menu one command called <B>Start Thread</B> with a command ID of <B>ID_STARTTHREAD</B>,
+	and enter a sensible prompt and ToolTip, as shown in Figure 27.3.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('27uvc03.gif')"><B>FIG. 27.3</B></A><B> </B><I>Add a
+Thread menu with a Start Thread command.</I></P>
+
+<DL>
+	<DD><B>4. </B>Use ClassWizard to associate the ID_STARTTHREAD command with the OnStartthread()
+	message-response function, as shown in Figure 27.4. Make sure that you have <B>CThreadView</B>
+	selected in the Class Name box before you add the function.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('27uvc04.gif')"><B>FIG. 27.4</B></A><B> </B><I>Add the
+OnStartthread() message-response function to the view class.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>5. </B>Click the Edit Code button and then add the following lines to the
+	new OnStartthread() function, replacing the TODO: Add your command handler code here
+	comment:
+	<P>
+</DL>
+
+<PRE>    HWND hWnd = GetSafeHwnd();
+    AfxBeginThread(ThreadProc, hWnd, THREAD_PRIORITY_NORMAL);
+</PRE>
+<P>This code will call a function called ThreadProc within a worker thread of its
+own. Next, add ThreadProc, shown in Listing 27.1, to ThreadView.cpp, placing it right
+before the OnStartthread() function. Note that ThreadProc() is a global function
+and not a member function of the CThreadView class, even though it is in the view
+class's implementation file.</P>
+<P>
+<H4>Listing 27.1&#160;&#160;ThreadView.cpp--ThreadProc()</H4>
+<PRE>UINT ThreadProc(LPVOID param)
+{
+    ::MessageBox((HWND)param, &quot;Thread activated.&quot;, &quot;Thread&quot;, MB_OK);
+    return 0;
+</PRE>
+<PRE>}
+</PRE>
+<P>This threaded function doesn't do much, just reports that it was started. The
+SDK function MessageBox() is very much like AfxMessageBox(), but because this isn't
+a member function of a class derived from CWnd, you can't use AfxMessageBox().</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> The double colons in front of a function name indicate a call to a
+	global function, instead of an MFC class member function. For Windows programmers,
+	this usually means an API or SDK call. For example, inside an MFC window class, you
+	can call MessageBox(&quot;Hi, There!&quot;) to display <I>Hi, There!</I> to the user.
+	This form of MessageBox() is a member function of the MFC window classes. To call
+	the original Windows version, you write something like ::MessageBox(0, &quot;Hi,
+	There!&quot;, &quot;Message&quot;, MB_OK). Notice the colons in front of the function
+	name and the additional arguments. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>When you run the Thread program, the main window appears. Select the Thread, Start<B>
+</B>Thread command, and the system starts the thread represented by the ThreadProc()
+function and displays a message box, as shown in Figure 27.5.</P>
+<P><A HREF="javascript:popUp('27uvc05.gif')"><B>FIG. 27.5</B></A><B> </B><I>The simple
+secondary thread in the Thread program displays a message box and then ends.</I></P>
+
+<P><I></I>
+<H2><A NAME="Heading2"></A>Understanding Thread Communication</H2>
+<P>Usually, a secondary thread performs some sort of task for the main program, which
+implies that there needs to be a channel of communication between the program (which
+is also a thread) and its secondary threads. There are several ways to accomplish
+these communications tasks: with global variables, event objects, and messages. In
+this section, you'll explore these thread-communication techniques.</P>
+<P>
+<H3><A NAME="Heading3"></A>Communicating with Global Variables</H3>
+<P>Suppose you want your main program to be able to stop the thread. You need a way,
+then, to tell the thread when to stop. One method is to set up a global variable
+and then have the thread monitor the global variable for a value that signals the
+thread to end. Because the threads share the same address space, they have the same
+global variables. To see how this technique works, modify the Thread application
+as follows:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Use the resource editor to add a <B>Stop Thread</B> command to the
+	application's Thread menu. Give this new command the <B>ID_STOPTHREAD</B> ID, as
+	shown in Figure 27.6.
+</DL>
+
+<P><A HREF="javascript:popUp('27uvc06.gif')"><B>FIG. 27.6</B></A><B> </B><I>Add a
+Stop Thread command to the Thread menu.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+	<P>
+	<DD><B>2.</B> Use ClassWizard to associate the ID_STOPTHREAD command with the OnStopthread()
+	message-response function, as shown in Figure 27.7. Make sure that you have <B>CThreadView</B>
+	selected in the Class Name box before you add the function. Add the following line
+	to the OnStopthread() function, replacing the TODO: Add your command handler code
+	here comment:
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>threadController = 0;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+<P><A HREF="javascript:popUp('27uvc07.gif')"><B>FIG. 27.7</B></A><B> </B><I>Add the
+OnStopthread() message-response function.</I></P>
+
+<P><I></I></P>
+
+<DL>
+	<DD>This refers to a new global variable you are about to declare.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Add the following line to the top of the ThreadView.cpp file, right
+	after the endif directive:
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>volatile int threadController;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD>The volatile keyword means that you expect this variable will be changed from
+	outside a thread that uses it. The keyword requests that the compiler not cache the
+	variable in a register or in any way count on the value staying unchanged just because
+	code in one thread doesn't seem to change it.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Add the following line to the OnStartthread() function, before the
+	two lines you added earlier:
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>    threadController = 1;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD>By now, perhaps, you've guessed that the value of threadController determines
+	whether the thread will continue. Replace the ThreadProc() function with the one
+	shown in Listing 27.2.
+	<P>
+</DL>
+
+<H4>Listing 27.2&#160;&#160;The New ThreadProc() Function</H4>
+<PRE>UINT ThreadProc(LPVOID param)
+{
+    ::MessageBox((HWND)param, &quot;Thread activated.&quot;, &quot;Thread&quot;, MB_OK);
+    
+     while (threadController == 1)
+     {
+          ;
+     }
+    ::MessageBox((HWND)param, &quot;Thread stopped.&quot;, &quot;Thread&quot;, MB_OK);
+    return 0;
+</PRE>
+<PRE>}
+</PRE>
+<P>Now the thread first displays a message box, telling the user that the thread
+is starting. Then a while loop continues to check the threadController global variable,
+waiting for its value to change to 0. Although this while loop is trivial, it is
+here that you would place the code that performs whatever task you want the thread
+to perform, making sure not to tie things up for too long before rechecking the value
+of threadController.</P>
+<P>Try a test: Build and run the program, and choose Thread, Start Thread to start
+the secondary thread. When you do, a message box appears, telling you that the new
+thread was started. To stop the thread, select the Thread, Stop Thread command. Again,
+a message box appears, this time telling you that the thread is stopping.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>CAUTION:</strong><B> </B>Using global variables to communicate between threads is,
+	to say the least, an unsophisticated approach to thread communication and can be
+	a dangerous technique if you're not sure how C++ handles variables from an assembly-language
+	level. Other thread-communication techniques are safer and more elegant. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading4"></A>Communicating with User-Defined Messages</H3>
+<P>Now you have a simple, albeit unsophisticated, method for communicating information
+from your main program to your thread. How about the reverse? That is, how can your
+thread communicate with the main program? The easiest method to accomplish this communication
+is to incorporate user-defined Windows messages into the program.</P>
+<P>The first step is to define a user message, which you can do easily, like this:</P>
+<P>
+<PRE>const WM_USERMSG = WM_USER + 100;
+</PRE>
+<P>The WM_USER constant, defined by Windows, holds the first available user-message
+number. Because other parts of your program may use some user messages for their
+own purposes, the preceding line sets WM_USERMSG to WM_USER+100.</P>
+<P>After defining the message, you call ::PostMessage() from the thread to send the
+message to the main program whenever you need to. (Message handling was discussed
+in Chapter 3, &quot;Messages and Commands.&quot; Sending your own messages allows
+you to take advantage of the message-handling facility built into MFC.) A typical
+call to ::PostMessage() might look like this:</P>
+<P>
+<PRE>::PostMessage((HWND)param, WM_USERMSG, 0, 0);
+</PRE>
+<P>PostMessage()'s four arguments are the handle of the window to which the message
+should be sent, the message identifier, and the message's WPARAM and LPARAM parameters.</P>
+<P>Modify the Thread application according to the next steps to see how to implement
+posting user messages from a thread.</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Add the following line to the top of the ThreadView.h header file,
+	right before the beginning of the class declaration:
+	<P>
+</DL>
+
+<PRE>const WM_THREADENDED = WM_USER + 100;
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>2.</B> Still in the header file, add the following line to the message map,
+	right after the //{{AFX_MSG(CThreadView) comment and before DECLARE_MESSAGE_MAP:
+	<P>
+</DL>
+
+<PRE>    afx_msg LONG OnThreadended(WPARAM wParam, LPARAM lParam);
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>3. </B>Switch to the ThreadView.cpp file and add the following line to the
+	class's message map, making sure to place it right <I>after</I> the }}AFX_MSG_MAP
+	comment:
+	<P>
+</DL>
+
+<PRE>    ON_MESSAGE(WM_THREADENDED, OnThreadended)
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>4. </B>Replace the ThreadProc() function with the one shown in Listing 27.3.
+	<P>
+</DL>
+
+<H4>Listing 27.3&#160;&#160;The Message-Posting ThreadProc()</H4>
+<PRE>UINT ThreadProc(LPVOID param)
+{
+    ::MessageBox((HWND)param, &quot;Thread activated.&quot;, &quot;Thread&quot;, MB_OK);
+    
+     while (threadController == 1)
+     {
+          ;
+     }
+    ::PostMessage((HWND)param, WM_THREADENDED, 0, 0);
+    return 0;
+</PRE>
+<PRE>}
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>5. </B>Add the function shown in Listing 27.4 to the end of the ThreadView.cpp
+	file.
+	<P>
+</DL>
+
+<H4>Listing 27.4&#160;&#160;CThreadView::OnThreadended()</H4>
+<PRE>LONG CThreadView::OnThreadended(WPARAM wParam, LPARAM lParam)
+{
+    AfxMessageBox(&quot;Thread ended.&quot;);
+    return 0;
+</PRE>
+<PRE>}
+</PRE>
+<P>When you run the new version of the Thread program, select the Thread, Start Thread
+command to start the thread. When you do, a message box appears, telling you that
+the thread has started. To end the thread, select the Thread, Stop Thread command.
+Just as with the previous version of the program, a message box appears, telling
+you that the thread has ended.</P>
+<P>Although this version of the Thread application seems to run identically to the
+previous version, there's a subtle difference. Now the program displays the message
+box that signals the end of the thread in the main program rather than from inside
+the thread. The program can do this because, when the user selects the Stop Thread
+command, the thread sends a WM_THREADENDED message to the main program. When the
+program receives that message, it displays the final message box.</P>
+<P>
+<H3><A NAME="Heading5"></A>Communicating with Event Objects</H3>
+<P>A slightly more sophisticated method of signaling between threads is to use <I>event
+objects,</I> which under MFC are represented by the CEvent class. An event object
+can be in one of two states: signaled and nonsignaled. Threads can watch for events
+to be signaled and so perform their operations at the appropriate time. Creating
+an event object is as easy as declaring a global variable, like this:</P>
+<P>
+<PRE>CEvent threadStart;
+</PRE>
+<P>Although the CEvent constructor has a number of optional arguments, you can usually
+get away with creating the default object, as shown in the previous line of code.
+On creation, the event object is automatically in its nonsignaled state. To signal
+the event, you call the event object's SetEvent() member function, like this:</P>
+<P>
+<PRE>threadStart.SetEvent();
+</PRE>
+<P>After the preceding line executes, the threadStart event object will be in its
+signaled state. Your thread should be watching for this signal so that the thread
+knows it's okay to get to work. How does a thread watch for a signal? By calling
+the Windows API function, WaitForSingleObject():</P>
+<P>
+<PRE>::WaitForSingleObject(threadStart.m_hObject, INFINITE);
+</PRE>
+<P>This function's two arguments are</P>
+
+<UL>
+	<LI>The handle of the event for which to check (stored in the event object's m_hObject
+	data member)
+	<P>
+	<LI>The length of time the function should wait for the event
+</UL>
+
+<P>The predefined INFINITE constant tells WaitForSingleObject() not to return until
+the specified event is signaled. In other words, if you place the preceding line
+at the beginning of your thread, the system suspends the thread until the event is
+signaled. Even though you've started the thread execution, it's halted until whatever
+you need to happen happens. When your program is ready for the thread to perform
+its duty, you call the SetEvent() function, as previously described.</P>
+<P>When the thread is no longer suspended, it can go about its business. However,
+if you want to signal the end of the thread from the main program, the thread must
+watch for this next event to be signaled. The thread can do this by polling for the
+event. To poll for the event, you again call WaitForSingleObject(), only this time
+you give the function a wait time of 0, like this:</P>
+<P>
+<PRE>::WaitForSingleObject(threadend.m_hObject, 0);
+</PRE>
+<P>In this case, if WaitForSingleObject() returns WAIT_OBJECT_0, the event has been
+signaled. Otherwise, the event is still in its nonsignaled state.</P>
+<P>To better see how event objects work, follow these steps to further modify the
+Thread application:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Add the following line to the top of the ThreadView.cpp file, right
+	after the line #include &quot;ThreadView.h&quot;:
+	<P>
+</DL>
+
+<PRE>#include &quot;afxmt.h&quot;
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>2. </B>Add the following lines near the top of the ThreadView.cpp file, after
+	the volatile int threadController line that you placed there previously:
+	<P>
+</DL>
+
+<PRE>CEvent threadStart;
+CEvent threadEnd;
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>3. </B>Delete the volatile int threadController line from the file.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Replace the ThreadProc() function with the one shown in Listing 27.5.
+	<P>
+</DL>
+
+<H4>Listing 27.5&#160;&#160;Yet Another ThreadProc()</H4>
+<PRE>UINT ThreadProc(LPVOID param)
+{
+    ::WaitForSingleObject(threadStart.m_hObject, INFINITE);
+    ::MessageBox((HWND)param, &quot;Thread activated.&quot;,
+        &quot;Thread&quot;, MB_OK);
+    BOOL keepRunning = TRUE;
+    while (keepRunning)
+    {
+        int result =
+            ::WaitForSingleObject(threadEnd.m_hObject, 0);
+        if (result == WAIT_OBJECT_0)
+            keepRunning = FALSE;
+    }
+    ::PostMessage((HWND)param, WM_THREADENDED, 0, 0);
+    return 0;
+</PRE>
+<PRE>}
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>5. </B>Replace all the code in the OnStartthread() function with the following
+	line:
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>    threadStart.SetEvent();</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>6. </B>Replace the code in the OnStopthread() function with the following
+	line:
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>    threadEnd.SetEvent();</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>7.</B> Use ClassWizard to add an OnCreate() function that handles the WM_CREATE
+	message, as shown in Figure 27.8. Make sure that you have <B>CThreadView</B> selected
+	in the Class Name box before you add the function.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('27uvc08.gif')"><B>FIG. 27.8</B></A><B> </B><I>Use ClassWizard
+to add the OnCreate() function.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>8. </B>Add the following lines to the OnCreate() function, replacing the TODO:
+	Add your specialized creation code here comment:
+	<P>
+</DL>
+
+<PRE>    HWND hWnd = GetSafeHwnd();
+    AfxBeginThread(ThreadProc, hWnd);
+</PRE>
+<P>Again, this new version of the program seems to run just like the preceding version.
+However, the program is now using both event objects and user-defined Windows messages
+to communicate between the main program and the thread. No more messing with clunky
+global variables.</P>
+<P>One big difference from previous versions of the program is that the secondary
+thread is begun in the OnCreate() function, which is called when the application
+first runs and creates the view. However, because the first line of the thread function
+is the call to WaitForSingleObject(), the thread immediately suspends execution and
+waits for the threadStart event to be signaled.</P>
+<P>When the threadStart event object is signaled, the thread is free to display the
+message box and then enter its while loop, where it polls the threadEnd event object.
+The while loop continues to execute until threadEnd is signaled, at which time the
+thread sends the WM_THREADENDED message to the main program and exits. Because the
+thread is started in OnCreate(), after the thread ends, it can't be restarted.</P>
+<P>
+<H2><A NAME="Heading6"></A>Using Thread Synchronization</H2>
+<P>Using multiple threads can lead to some interesting problems. For example, how
+do you prevent two threads from accessing the same data at the same time? What if,
+for example, one thread is in the middle of trying to update a data set when another
+thread tries to read that data? The second thread will almost certainly read corrupted
+data because only some of the data set will have been updated.</P>
+<P>Trying to keep threads working together properly is called <I>thread synchronization</I>.
+Event objects, about which you just learned, are a form of thread synchronization.
+In this section, you'll learn about <I>critical sections, mutexes,</I> and <I>semaphores</I>--thread
+synchronization objects that make your thread programming even safer.</P>
+<P>
+<H3><A NAME="Heading7"></A>Using Critical Sections</H3>
+<P>Critical sections are an easy way to ensure that only one thread at a time can
+access a data set. When you use a critical section, you give your threads an object
+that they have to share. Whichever thread possesses the critical-section object has
+access to the guarded data. Other threads have to wait until the first thread releases
+the critical section, after which another thread can grab the critical section to
+access the data in turn.</P>
+<P>Because the guarded data is represented by a single critical-section object and
+because only one thread can own the critical section at any given time, the guarded
+data can never be accessed by more than a single thread at a time.</P>
+<P>To create a critical-section object in an MFC program, you create an instance
+of the CCriticalSection class, like this:</P>
+<P>
+<PRE>CCriticalSection criticalSection;
+</PRE>
+<P>Then, when program code is about to access the data that you want to protect,
+you call the critical-section object's Lock() member function, like this:</P>
+<P>
+<PRE>criticalSection.Lock();
+</PRE>
+<P>If another thread doesn't already own the critical section, Lock() gives the object
+to the calling thread. That thread can then access the guarded data, after which
+it calls the critical-section object's Unlock() member function:</P>
+<P>
+<PRE>criticalSection.Unlock();
+</PRE>
+<P>Unlock() releases the ownership of the critical-section object so that another
+thread can grab it and access the guarded data.</P>
+<P>The best way to implement something like critical sections is to build the data
+you want to protect into a thread-safe class. When you do this, you no longer have
+to worry about thread synchronization in the main program; the class handles it all
+for you. As an example, look at Listing 27.6, which is the header file for a thread-safe
+array class.</P>
+<P>
+<H4>Listing 27.6&#160;&#160;COUNTARRAY.H--The CCountArray Class Header File</H4>
+<PRE>#include &quot;afxmt.h&quot;
+class CCountArray
+{
+private:
+    int array[10];
+    CCriticalSection criticalSection;
+public:
+    CCountArray() {};
+    ~CCountArray() {};
+    void SetArray(int value);
+    void GetArray(int dstArray[10]);
+</PRE>
+<PRE>};
+</PRE>
+<P>The header file starts by including the MFC header file, afxmt.h, which gives
+the program access to the CCriticalSection class. Within the CCountArray class declaration,
+the file declares a 10-element integer array, which is the data that the critical
+section will guard, and declares the critical-section object, here called criticalSection.
+The CCountArray class's public member functions include the usual constructor and
+destructor, as well as functions for setting and reading the array. These latter
+two member functions must deal with the critical-section object because these functions
+access the array.</P>
+<P>Listing 27.7 is the CCountArray class's implementation file. Notice that, in each
+member function, the class takes care of locking and unlocking the critical-section
+object. This means that any thread can call these member functions without worrying
+about thread synchronization. For example, if thread 1 calls SetArray(), the first
+thing SetArray() does is call criticalSection.Lock(), which gives the critical-section
+object to thread 1. The complete for loop then executes, without any fear of being
+interrupted by another thread. If thread 2 calls SetArray() or GetArray(), the call
+to criticalSection.Lock() suspends thread 2 until thread 1 releases the critical-section
+object, which it does when SetArray() finishes the for loop and executes the criticalSection.Unlock()
+line. Then the system wakes up thread 2 and gives it the critical-section object.
+In this way, all threads have to wait politely for their chance to access the guarded
+data.</P>
+<P>
+<H4>Listing 27.7&#160;&#160;COUNTARRAY.CPP--The CCountArray Class Implementation
+<BR>
+File</H4>
+<PRE>#include &quot;stdafx.h&quot;
+#include &quot;CountArray.h&quot;
+void CCountArray::SetArray(int value)
+{
+    criticalSection.Lock();
+    for (int x=0; x&lt;10; ++x)
+        array[x] = value;
+    criticalSection.Unlock();
+}
+void CCountArray::GetArray(int dstArray[10])
+{
+    criticalSection.Lock();
+    for (int x=0; x&lt;10; ++x)
+        dstArray[x] = array[x];
+    criticalSection.Unlock();
+</PRE>
+<PRE>}
+</PRE>
+<P>Now that you've had a chance to see what a thread-safe class looks like, it's
+time to put the class to work. Perform the following steps, which modify the Thread
+application to test the CCountArray class:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1.</B> Use the File, New command to add a new C++ header file called <B>CountArray.h</B>
+	to the project, as shown in Figure 27.9. Enter the code from Listing 27.6.
+	<P>
+	<DT></DT>
+	<DD><B>2.</B> Again choose File, New, and create a new C++ source file called <B>CountArray.cpp</B>
+	in this project. Enter the code from Listing 27.7.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Switch to ThreadView.cpp and add the following line near the top of
+	the file, after the line #include &quot;afxmt.h&quot;, which you placed there previously:
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>#include &quot;CountArray.h&quot;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>4. </B>Add the following line near the top of the file, after the CEvent threadEnd
+	line you placed there previously:
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>CCountArray countArray;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>5. </B>Delete the CEvent threadStart and CEvent threadEnd lines from the file.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('27uvc09.gif')"><B>FIG. 27.9</B></A><B> </B><I>Add CountArray.h
+to the Thread project.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>6. </B>Delete the lines ON_MESSAGE(WM_THREADENDED, OnThreadended), ON_COMMAND(ID_STOPTHREAD,
+	OnStopthread), and ON_WM_CREATE() from the message map.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Replace the ThreadProc() function with the thread functions shown in
+	Listing 27.8.
+	<P>
+</DL>
+
+<H4>Listing 27.8&#160;&#160;WriteThreadProc() and ReadThreadProc()</H4>
+<PRE>UINT WriteThreadProc(LPVOID param)
+{
+    for(int x=0; x&lt;10; ++x)
+    {
+        countArray.SetArray(x);
+        ::Sleep(1000);
+    }
+    return 0;
+}
+UINT ReadThreadProc(LPVOID param)
+{
+    int array[10];
+    for (int x=0; x&lt;20; ++x)
+    {
+        countArray.GetArray(array);
+        char str[50];
+        str[0] = 0;
+        for (int i=0; i&lt;10; ++i)
+        {
+            int len = strlen(str);
+            wsprintf(&amp;str[len], &quot;%d &quot;, array[i]);
+        }
+        ::MessageBox((HWND)param, str, &quot;Read Thread&quot;, MB_OK);
+    }
+    return 0;
+</PRE>
+<PRE>}
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>8. </B>Replace all the code in the OnStartthread() function with the following
+	lines:
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>    HWND hWnd = GetSafeHwnd();
+    AfxBeginThread(WriteThreadProc, hWnd);
+    AfxBeginThread(ReadThreadProc, hWnd);</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>9. </B>Delete the OnStopthread(), OnThreadended, and OnCreate() functions
+	from the file.
+	<P>
+	<DT></DT>
+	<DD><B>10. </B>Switch to the ThreadView.h file and delete the line const WM_THREADENDED
+	= WM_USER + 100 from the listing.
+	<P>
+	<DT></DT>
+	<DD><B>11. </B>Also, in ThreadView.h, delete the lines afx_msg LONG OnThreadended(WPARAM
+	wParam, LPARAM lParam), afx_msg void OnStopthread(), and afx_msg int OnCreate(LPCREATESTRUCT
+	lpCreateStruct) from the message map.
+	<P>
+	<DT></DT>
+	<DD><B>12. </B>Using the resource editor, remove the Stop Thread command from the
+	Thread menu.
+	<P>
+</DL>
+
+<P>Now build and run the new version of the Thread application. When you do, the
+main window appears. Select the Thread, Start Thread command to get things hopping.
+The first thing you'll see is a message box (see Figure 27.10) displaying the current
+values in the guarded array. Each time you dismiss the message box, it reappears
+with the array's new contents. The message box will reappear 20 times. The values
+listed in the message box depend on how often you dismiss the message box. The first
+thread is writing new values into the array once a second, even as you're viewing
+the array's contents in the second thread.</P>
+<P><A HREF="javascript:popUp('27uvc10.gif')"><B>FIG. 27.10</B></A><B> </B><I>This
+message box displays the current contents of the guarded array.</I></P>
+
+<P>The important thing to notice is that at no time does the second thread interrupt
+when the first thread is changing the values in the array. You can tell that this
+is true because the array always contains 10 identical values. If the first thread
+were interrupted as it modified the array, the 10 values in the array would not be
+identical, as shown in Figure 27.11.</P>
+<P>If you examine the source code carefully, you'll see that the first thread, named
+WriteThreadProc(), is calling the array class's SetArray() member function 10 times
+within a for loop. Each time through the loop, SetArray() gives the thread the critical-section
+object, changes the array contents to the passed number, and then takes the critical-section
+object away again. Note the call to the Sleep() function, which suspends the thread
+for the number of milliseconds given as the function's single argument.</P>
+<P><A HREF="javascript:popUp('27uvc11.gif')"><B>FIG. 27.11</B></A><B> </B><I>Without
+thread synchronization, you might see something like this in the message box.</I></P>
+
+<P>The second thread, named ReadThreadProc(), is also trying to access the same critical-section
+object to construct a display string of the values contained in the array. However,
+if WriteThreadProc() is currently trying to fill the array with new values, ReadThreadProc()
+has to wait. The inverse is also true. That is, WriteThreadProc() can't access the
+guarded data until it can regain ownership of the critical section from ReadThreadProc().</P>
+<P>If you really want to prove that the critical-section object is working, remove
+the criticalSection.Unlock() line from the end of the CCountArray class's SetArray()
+member function. Then compile and run the program. This time when you start the threads,
+no message box appears. Why? Because WriteThreadProc() takes the critical-section
+object and never lets it go, which forces the system to suspend ReadThreadProc()
+forever (or at least until you exit the program).</P>
+<P>
+<H3><A NAME="Heading8"></A>Using Mutexes</H3>
+<P>Mutexes are a lot like critical sections but a little more complicated because
+they enable safe sharing of resources, not only between threads in the same application
+but also between threads of different applications. Although synchronizing threads
+of different applications is beyond the scope of this chapter, you can get a little
+experience with mutexes by using them in place of critical sections.</P>
+<P>Listing 27.9 is the CCountArray2 class's header file. Except for the new classname
+and the mutex object, this header file is identical to the original CountArray.h.
+Listing 27.10 is the modified class's implementation file. As you can see, the member
+functions look a lot different when they are using mutexes instead of critical sections,
+even though both objects provide essentially the same type of services.</P>
+<P>
+<H4>Listing 27.9&#160;&#160;CCOUNTARRAY2.H--The CCountArray2 Class Header File</H4>
+<PRE>#include &quot;afxmt.h&quot;
+class CCountArray2
+{
+private:
+    int array[10];
+    CMutex mutex;
+public:
+    CCountArray2() {};
+    ~CCountArray2() {};
+    void SetArray(int value);
+    void GetArray(int dstArray[10]);
+</PRE>
+<PRE>};
+</PRE>
+<H4>Listing 27.10&#160;&#160;COUNTARRAY2.CPP--The CCountArray2 Class <BR>
+Implementation File</H4>
+<PRE>#include &quot;stdafx.h&quot;
+#include &quot;CountArray2.h&quot;
+void CCountArray2::SetArray(int value)
+{
+    CSingleLock singleLock(&amp;mutex);
+    singleLock.Lock();
+    for (int x=0; x&lt;10; ++x)
+        array[x] = value;
+}
+void CCountArray2::GetArray(int dstArray[10])
+{
+    CSingleLock singleLock(&amp;mutex);
+    singleLock.Lock();
+    for (int x=0; x&lt;10; ++x)
+        dstArray[x] = array[x];
+</PRE>
+<PRE>}
+</PRE>
+<P>To access a mutex object, you must create a CSingleLock or CMultiLock object,
+which performs the actual access control. The CCountArray2 class uses CSingleLock
+objects because this class is dealing with only a single mutex. When the code is
+about to manipulate guarded resources (in this case, the array), you create a CSingleLock
+object, like this:</P>
+<P>
+<PRE>CSingleLock singleLock(&amp;mutex);
+</PRE>
+<P>The constructor's argument is a pointer to the thread-synchronization object that
+you want to control. Then, to gain access to the mutex, you call the CSingleLock
+object's Lock() member function:</P>
+<P>
+<PRE>singleLock.Lock();
+</PRE>
+<P>If the mutex is unowned, the calling thread becomes the owner. If another thread
+already owns the mutex, the system suspends the calling thread until the mutex is
+released, at which time the waiting thread is awakened and takes control of the mutex.</P>
+<P>To release the mutex, you call the CSingleLock object's Unlock() member function.
+However, if you create your CSingleLock object on the stack (rather than on the heap,
+using the new operator) as shown in Listing 27.10, you don't have to call Unlock()
+at all. When the function exits, the object goes out of scope, which causes its destructor
+to execute. The destructor automatically unlocks the object for you.</P>
+<P>To try out the new CCountArray2 class in the Thread application, add new CountArray2.h
+and CountArray2.cpp files to the Thread project and then delete the original CountArray.h
+and CountArray.cpp files. Finally, in ThreadView.cpp, change all references to CCountArray
+to CCountArray2. Because all the thread synchronization is handled in the CCountArray2
+class, no further changes are necessary to use mutexes instead of critical sections.</P>
+<P>
+<H3><A NAME="Heading9"></A>Using Semaphores</H3>
+<P>Although semaphores are used like critical sections and mutexes in an MFC program,
+they serve a slightly different function. Rather than enable only one thread to access
+a resource at a time, semaphores enable multiple threads to access a resource, but
+only to a point. That is, semaphores enable a maximum number of threads to access
+a resource simultaneously.</P>
+<P>When you create the semaphore, you tell it how many threads should be allowed
+simultaneous access to the resource. Then, each time a thread grabs the resource,
+the semaphore decrements its internal counter. When the counter reaches 0, no further
+threads are allowed access to the guarded resource until another thread releases
+the resource, which increments the semaphore's counter.</P>
+<P>You create a semaphore by supplying the initial count and the maximum count, like
+this:</P>
+<P>
+<PRE>CSemaphore Semaphore(2, 2);
+</PRE>
+<P>Because in this section you'll be using a semaphore to create a thread-safe class,
+it's more convenient to declare a CSemaphore pointer as a data member of the class
+and then create the CSemaphore object dynamically in the class's constructor, like
+this:</P>
+<P>
+<PRE>semaphore = new CSemaphore(2, 2);
+</PRE>
+<P>You should do this because you have to initialize a data member in the constructor
+rather than at the time you declare it. With the critical-section and mutex objects,
+you didn't have to supply arguments to the class's constructors, so you were able
+to create the object at the same time you declared it.</P>
+<P>After you have created the semaphore object, it's ready to start counting resource
+access. To implement the counting process, you first create a CSingleLock object
+(or CMultiLock, if you're dealing with multiple thread-synchronization objects),
+giving it a pointer to the semaphore you want to use, like this:</P>
+<P>
+<PRE>CSingleLock singleLock(semaphore);
+</PRE>
+<P>Then, to decrement the semaphore's count, you call the CSingleLock object's Lock()
+member function:</P>
+<P>
+<PRE>singleLock.Lock();
+</PRE>
+<P>At this point, the semaphore object has decremented its internal counter. This
+new count remains in effect until the semaphore object is released, which you can
+do explicitly by calling the object's Unlock() member function:</P>
+<P>
+<PRE>singleLock.Unlock();
+</PRE>
+<P>Alternatively, if you've created the CSingleLock object locally on the stack,
+you can just let the object go out of scope, which not only automatically deletes
+the object but also releases the hold on the semaphore. In other words, both calling
+Unlock() and deleting the CSingleLock object increment the semaphore's counter, enabling
+a waiting thread to access the guarded resource.</P>
+<P>Listing 27.11 is the header file for a class called CSomeResource. CSomeResource
+is a mostly useless class whose only calling is to demonstrate the use of semaphores.
+The class has a single data member, which is a pointer to a CSemaphore object. The
+class also has a constructor and destructor, as well as a member function called
+UseResource(), which is where the semaphore will be used.</P>
+<P>
+<H4>Listing 27.11&#160;&#160;SOMERESOURCE.H</H4>
+<PRE>#include &quot;afxmt.h&quot;
+class CSomeResource
+{
+private:
+    CSemaphore* semaphore;
+public:
+    CSomeResource();
+    ~CSomeResource();
+    void UseResource();
+</PRE>
+<PRE>};
+</PRE>
+<P>Listing 27.12 shows the CSomeResource class's implementation file. You can see
+that the CSemaphore object is constructed dynamically in the class's constructor
+and deleted in the destructor. The UseResource() member function simulates accessing
+a resource by attaining a count on the semaphore and then sleeping for five seconds,
+after which the hold on the semaphore is released when the function exits and the
+CSingleLock object goes out of scope.</P>
+<P>
+<H4>Listing 27.12&#160;&#160;SOMERESOURCE.CPP</H4>
+<PRE>#include &quot;stdafx.h&quot;
+#include &quot;SomeResource.h&quot;
+CSomeResource::CSomeResource()
+{
+    semaphore = new CSemaphore(2, 2);
+}
+CSomeResource::~CSomeResource()
+{
+    delete semaphore;
+}
+void CSomeResource::UseResource()
+{
+    CSingleLock singleLock(semaphore);
+    singleLock.Lock();
+    Sleep(5000);
+</PRE>
+<PRE>}
+</PRE>
+<P>If you modify the Thread application to use the CSomeResource object, you can
+watch semaphores at work. Follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Delete any CountArray files that are still in the project. (In FileView,
+	click the file once to select it; then press Del to delete the file from the project.)
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Create the new empty <B>SomeResource.h</B> and <B>SomeResource.cpp</B>
+	files in the project.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Add the code from Listings 27.11 and 27.12 to these empty files.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Load ThreadView.cpp and replace the line #include &quot;CountArray2.h&quot;
+	with the following:
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>#include &quot;SomeResource.h&quot;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>5. </B>Replace the line CCountArray2 countArray with the following:
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>CSomeResource someResource;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>6. </B>Replace the WriteThreadProc() and ReadThreadProc() functions with the
+	functions shown in Listing 27.13.
+	<P>
+</DL>
+
+<H4>Listing 27.13&#160;&#160;ThreadProc1(), ThreadProc2(), and ThreadProc3()</H4>
+<PRE>UINT ThreadProc1(LPVOID param)
+{
+    someResource.UseResource();
+    ::MessageBox((HWND)param,
+        &quot;Thread 1 had access.&quot;, &quot;Thread 1&quot;, MB_OK);
+    return 0;
+}
+UINT ThreadProc2(LPVOID param)
+{
+    someResource.UseResource();
+    ::MessageBox((HWND)param,
+        &quot;Thread 2 had access.&quot;, &quot;Thread 2&quot;, MB_OK);
+    return 0;
+}
+UINT ThreadProc3(LPVOID param)
+{
+    someResource.UseResource();
+    ::MessageBox((HWND)param,
+        &quot;Thread 3 had access.&quot;, &quot;Thread 3&quot;, MB_OK);
+    return 0;
+</PRE>
+<PRE>}
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>7. </B>Replace the code in the OnStartthread() function with that shown in
+	Listing 27.14.
+	<P>
+</DL>
+
+<H4>Listing 27.14&#160;&#160;LST27_14.TXT--New Code for the OnStartthread() Function</H4>
+<PRE>    HWND hWnd = GetSafeHwnd();
+    AfxBeginThread(ThreadProc1, hWnd);
+    AfxBeginThread(ThreadProc2, hWnd);
+</PRE>
+<PRE>    AfxBeginThread(ThreadProc3, hWnd);
+</PRE>
+<P>Now compile and run the new version of the Thread application. When the main window
+appears, select the Thread, Start Thread command. In about five seconds, two message
+boxes will appear, informing you that thread 1 and thread 2 had access to the guarded
+resource. About five seconds after that, a third message box will appear, telling
+you that thread 3 also had access to the resource. Thread 3 took five seconds longer
+because thread 1 and thread 2 grabbed control of the resource first. The semaphore
+is set to allow only two simultaneous resource accesses, so thread 3 had to wait
+for thread 1 or thread 2 to release its hold o

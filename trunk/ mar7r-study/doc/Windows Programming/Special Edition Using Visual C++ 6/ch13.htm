@@ -1,0 +1,604 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 13 -- ActiveX Concepts</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch12/ch12.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch14/ch14.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 13 -</H1>
+
+<H1>ActiveX Concepts</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">The Purpose of ActiveX</A>
+	<LI><A HREF="#Heading2">Object Linking</A>
+	<LI><A HREF="#Heading3">Object Embedding</A>
+	<LI><A HREF="#Heading4">Containers and Servers</A>
+	<LI><A HREF="#Heading5">Toward a More Intuitive User Interface</A>
+	<LI><A HREF="#Heading6">The Component Object Model</A>
+	<LI><A HREF="#Heading7">Automation</A>
+	<LI><A HREF="#Heading8">ActiveX Controls</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>The Purpose of ActiveX</H2>
+<P>This chapter covers the theory and concepts of ActiveX, which is built on the
+Component Object Model (COM). Until recently, the technology built on COM was called
+OLE, and OLE still exists, but the emphasis now is on ActiveX. Most new programmers
+have found OLE intimidating, and the switch to ActiveX is unlikely to lessen that.
+However, if you think of ActiveX technology as a way to use code already written
+and tested by someone else, and as a way to save yourself the trouble of reinventing
+the wheel, you'll see why it's worth learning. Developer Studio and MFC make ActiveX
+much easier to understand and implement by doing much of the groundwork for you.
+There are four chapters in Part V, &quot;Internet Programming,&quot; and together
+they demonstrate what ActiveX has become. In addition, ActiveX controls, which to
+many developers represent the way of the future, are discussed in Chapter 20, &quot;Building
+an Internet ActiveX Control,&quot; and Chapter 21, &quot;The Active Template Library.&quot;
+These are best read after Chapters 18 and 19.</P>
+<P>Windows has always been an operating system that allows several applications running
+at once, and right from the beginning, programmers wanted to have a way for those
+applications to exchange information while running. The Clipboard was a marvelous
+innovation, though, of course, the user had to do a lot of the work. DDE (Dynamic
+Data Exchange) allowed applications to &quot;talk&quot; to each other but had some
+major limitations. Then came OLE 1 (Object Linking and Embedding). Later there was
+OLE 2, and then Microsoft just called it OLE, until it moved so far beyond its original
+roots that it was renamed ActiveX.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Experienced Windows users will probably be familiar with the examples
+	presented in the early part of this chapter. If you know what ActiveX can do for
+	users and are interested in why it works jump ahead to the &quot;Component Object
+	Model&quot; section, which looks under the hood a little.&#160;n
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>ActiveX lets users and applications be document-centered, and this is probably
+the most important thing about it. If a user wants to create an annual report, by
+choosing ActiveX-enabled applications, the user stays focused on that annual report.
+Perhaps parts of it are being done with Word and parts with Excel, but, to the user,
+these applications are not really the point. This shift in focus is happening on
+many fronts and corresponds to a more object-oriented way of thinking among many
+programmers. It seems more natural now to share work among several different applications
+and arrange for them to communicate than to write one huge application that can do
+everything.</P>
+<P>Here's a simple test to see whether you are document centered or application centered:
+How is your hard drive organized?</P>
+<P>The directory structure in Figure 13.1 is application centered: The directories
+are named for the applications that were used to create the documents they hold.
+All Word documents are together, even though they might be for very different clients
+or projects.</P>
+<P><A HREF="javascript:popUp('13uvc01.gif')"><B>FIG. 13.1</B></A><B> </B><I>An application-centered
+directory structure arranges documents by type.</I></P>
+
+<P>The directory structure in Figure 13.2 is document centered: The directories are
+named for the client or project involved. All the sales files are together, even
+though they can be accessed with a variety of different applications.</P>
+<P><A HREF="javascript:popUp('13uvc02.gif')"><B>FIG. 13.2</B></A><B> </B><I>A document-centered
+directory structure arranges documents by meaning or content.</I></P>
+
+<P>If you've been using desktop computers long enough, you remember when using a
+program involved a program disk and a data disk. Perhaps you remember installing
+software that demanded to know the data directory where you would keep all the files
+created with that product. That was application-centered thinking, and it's fast
+being supplanted by document- centered thinking.</P>
+<P>Why? What's wrong with application-centered thinking? Well, where do you put the
+documents that are used with two applications equally often? There was a time when
+each product could read its own file formats and no others. But these days, the lines
+between applications are blurring; a document created in one word processor can easily
+be read into another, a spreadsheet file can be used as a database, and so on. If
+a client sends you a WordPerfect document and you don't have WordPerfect, do you
+make a \WORDPERFECT\DOCS directory to put it in, or add it to your \MSOFFICE\WORD\DOCS
+directory? If you have your hard drive arranged in a more document-centered manner,
+you can just put it in the directory for that client.</P>
+<P>The Windows 95 interface, now incorporated into Windows NT as well, encourages
+document-centered thinking by having users double-click documents to automatically
+launch the applications that created them. This wasn't new--File Manager had that
+capability for years--but it feels very different to double-click an icon that's
+just sitting on the desktop than it does to start an application and then double-click
+an entry in a list box. More and more it doesn't matter what application or applications
+were involved in creating this document; you just want to see and change your data,
+and you want to do that quickly and simply.</P>
+<P>After you become document-centered, you see the appeal of <I>compound documents</I>--files
+created with more than one application. If your report needs an illustration, you
+create it in some graphic program and then stick it in with your text when it's done.
+If your annual report needs a table, and you already have the numbers in a spreadsheet,
+you don't retype them into the table feature of your word processor or even import
+them; you incorporate them as a spreadsheet excerpt, right in the middle of your
+text. This isn't earth-shatteringly new, of course. Early desktop publishing programs
+such as Ventura pulled together text and graphics from a variety of sources into
+one complex compound document. What's exciting is being able to do it simply, intuitively,
+and with so many different applications.</P>
+<P>
+<H2><A NAME="Heading2"></A>Object Linking</H2>
+<P>Figure 13.3 shows a Word document with an Excel spreadsheet linked into it.</P>
+<P>Follow these steps to create a similar document yourself:</P>
+<P>
+
+<DL>
+	<DD><B>1. </B>Start Word and enter your text.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Click where you want the table to go.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Choose Insert, Object.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Select the Create from File tab.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Enter or select the filename as though this were a File Open dialog
+	box.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Be sure to check the Link to File box.
+	<P>
+	<DT></DT>
+	<DD><B>7.</B> Click OK.
+</DL>
+
+<P>The entire file appears in your document. If you make a change in the file on
+disk, the change is reflected in your document. You can edit the file in its own
+application by double-clicking it within Word. The other application is launched
+to edit it, as shown in Figure 13.4. If you delete the file from disk, your Word
+document still displays what the file last looked like, but you aren't able to edit
+it.</P>
+
+<P><A HREF="javascript:popUp('13uvc03.gif')"><B>FIG. 13.3</B></A><B> </B><I>A Microsoft
+Word document can contain a link to an Excel file.</I></P>
+
+<P><A HREF="javascript:popUp('13uvc04.gif')"><B>FIG. 13.4</B></A><B> </B><I>Double-clicking
+a linked object launches the application that created it.</I></P>
+
+<P>You link files into your documents if you plan to use the same file in many documents
+and contexts, because your changes to that file are automatically reflected everywhere
+that you have linked it. Linking doesn't increase the size of your document files
+dramatically because only the location of the file and a little bit of presentation
+information needs to be kept in your document.</P>
+<P>
+<H2><A NAME="Heading3"></A>Object Embedding</H2>
+<P>Embedding is similar to linking, but a copy of the object is made and placed into
+your document. If you change the original, the changes aren't reflected in your document.
+You can't tell by looking whether the Excel chart you see in your Word document is
+linked or embedded. Figure 13.5 shows a spreadsheet embedded within a Word document.</P>
+<P><A HREF="javascript:popUp('13uvc05.gif')"><B>FIG. 13.5</B></A><B> </B><I>A file
+embedded within another file looks just like a linked file.</I></P>
+
+<P>Follow these steps to create a similar document yourself:</P>
+<P>
+
+<DL>
+	<DD><B>1. </B>Start Word and enter your text.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Click where you want the table to go.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Choose Insert, Object.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Select the Create from File tab.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Enter or select the filename as though this were a File Open dialog
+	box.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Do not check the Link to File box.
+	<P>
+	<DT></DT>
+	<DD><B>7.</B> Click OK.
+	<P>
+</DL>
+
+<P>What's the difference? You'll see when you double-click the object to edit it.
+The Word menus and toolbars disappear and are replaced with their Excel equivalents,
+as shown in Figure 13.6. Changes you make here aren't made in the file you originally
+embedded. They are made in the copy of that file that has become part of your Word
+document.</P>
+<P><A HREF="javascript:popUp('13uvc06.gif')"><B>FIG. 13.6</B></A><B> </B><I>Editing
+in place is the magic of OLE embedding.</I></P>
+
+<P>You embed files into your documents if you plan to build a compound document and
+then use it as a self-contained whole, without using the individual parts again.
+Changes you make don't affect any other files on your disk, not even the one you
+copied from in the first place. Embedding makes your document much larger than it
+was, but you can delete the original if space is a problem.</P>
+<P>
+<H2><A NAME="Heading4"></A>Containers and Servers</H2>
+<P>To embed or link one object into another, you need a <I>container</I> and a <I>server</I>.
+The container is the application into which the object is linked or embedded--Word
+in these examples. The server is the application that made them, and that can be
+launched (perhaps in place) when the object is double-clicked--Excel in these examples.</P>
+<P>Why would you develop a container application? To save yourself work. Imagine
+you have a product already developed and in the hands of your users. It does a specific
+task like organize a sales team, schedule games in a league sport, or calculate life
+insurance rates. Then your users tell you that they wish it had a spreadsheet capability
+so they could do small calculations on-the-fly. How long will it take you to add
+that functionality? Do you really have time to learn how spreadsheet programs parse
+the functions that users type?</P>
+<P>If your application is a container app, it doesn't take any time at all. Tell
+your users to link or embed in an Excel sheet and let Excel do the work. If they
+don't own a copy of Excel, they need some spreadsheet application that can be an
+ActiveX server. You get to piggyback on the effort of other developers.</P>
+<P>It's not just spreadsheets, either. What if users want a scratch pad, a place
+to scribble a few notes? Let them embed a Word document. (What about bitmaps and
+other illustrations? Microsoft Paint, or a more powerful graphics package if they
+have one, and it can act as an ActiveX server.) You don't have to concern yourself
+with adding functionality like this to your programs because you can just make your
+application a container and your users can embed whatever they want without any more
+work on your part.</P>
+<P>Why would you develop a server application, then? Look back over the reasons for
+writing a container application. A lot of users are going to contact developers asking
+for a feature to be added, and be told they can have that feature immediately--they
+just need an application that does spreadsheets, text, pictures, or whatever, and
+can act as an ActiveX server. If your application is an ActiveX server, people will
+buy it so that they can add its functionality to their container apps.</P>
+<P>Together, container and server apps enable users to build the documents they want.
+They represent a move toward building-block software and a document-centered approach
+to work. If you want your application to carry the Windows 95 logo, it must be a
+server, a container, or both. But there is much more to ActiveX than linking and
+embedding.</P>
+<P>
+<H2><A NAME="Heading5"></A>Toward a More Intuitive User Interface</H2>
+<P>What if the object you want to embed is not in a file but is part of a document
+you have open at the moment? You may have already discovered that you can use the
+Clipboard to transfer ActiveX objects. For example, to embed part of an Excel spreadsheet
+into a Word document, you can follow these steps:</P>
+<P>
+
+<DL>
+	<DD><B>1. </B>Open the spreadsheet in Excel.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Open the document in Word.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>In Excel, select the portion you want to copy.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Choose Edit, Copy to copy the block onto the Clipboard.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Switch to Word and choose Edit, Paste Special.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Select the Paste radio button.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Select Microsoft Excel Worksheet Object from the list box.
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>Make sure that Display as Icon is not selected.
+	<P>
+	<DT></DT>
+	<DD><B>9.</B> The dialog box should look like Figure 13.7. Click OK.
+</DL>
+
+<P>A copy of the block is now embedded into the document. If you choose Paste Link,
+changes in the spreadsheet are reflected immediately in the Word document, not just
+when you save them. (You might have to click the selection in Word to update it.)
+This is true even if the spreadsheet has no name and has never been saved. Try it
+yourself! This is certainly better than saving dummy files just to embed them into
+compound documents and then deleting them, isn't it?</P>
+
+<P><A HREF="javascript:popUp('13uvc07.gif')"><B>FIG. 13.7</B></A><B> </B><I>The Paste
+Special dialog box is used to link or embed selected portions of a document.</I></P>
+
+<P>Another way to embed part of a document into another is drag and drop. This is
+a user- interface paradigm that works in a variety of contexts. You click something
+(an icon, a highlighted block of text, a selection in a list box) and hold the mouse
+button down while moving it. The item you clicked moves with the mouse, and when
+you let go of the mouse button, it drops to the new location. That's very intuitive
+for moving or resizing windows, but now you can use it to do much, much more. For
+example, here's how that Excel-in-Word example would be done with drag and drop:</P>
+<P>
+
+<DL>
+	<DD><B>1. </B>Open Word and size it to less than full screen.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Open Excel and size it to less than full screen. If you can arrange
+	the Word and Excel windows so they don't overlap, that's great.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>In Excel, select the portion you want to copy by highlighting it with
+	the mouse or cursor keys.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Click the border of the selected area (the thick black line) and hold.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Drag the block into the Word window and let go.
+	<P>
+</DL>
+
+<P>The selected block is embedded into the Word document. If you double-click it,
+you are editing in place with Excel. Drag and drop also works within a document to
+move or copy a selection.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> The block is moved by default, which means it is deleted from the
+	Excel sheet. If you want a copy, hold down the Ctrl key while dragging, and release
+	the mouse button before the Ctrl key.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>You can also use drag and drop with icons. On your desktop, if you drag a file
+to a folder, it is moved there. (Hold down Ctrl while dragging to copy it.) If you
+drag it to a program icon, it is opened with that program. This is very useful when
+you have a document you use with two applications. For example, pages on the World
+Wide Web are HTML documents, often created with an HTML editor but viewed with a
+World Wide Web browser such as Netscape Navigator or Microsoft Internet Explorer.
+If you double-click an HTML document icon, your browser is launched to view it. If
+you drag that icon onto the icon for your HTML editor, the editor is launched and
+opens the file you dragged. After you realize you can do this, you will find your
+work speeds up dramatically.</P>
+<P>All of this is ActiveX, and all of this requires a little bit of work from programmers
+to make it happen. So what's going on?</P>
+<P>
+<H2><A NAME="Heading6"></A>The Component Object Model</H2>
+<P>The heart of ActiveX is the Component Object Model (COM). This is an incredibly
+complex topic that deserves a book of its own. Luckily, the Microsoft Foundation
+Classes and the Visual C++ AppWizard do much of the behind-the-scenes work for you.
+The discussion in these chapters is just what you need to know to use COM as a developer.</P>
+<P>COM is a binary standard for Windows objects. That means that the executable code
+(in a DLL or EXE) that describes an object can be executed by other objects. Even
+if two objects were written in different languages, they are able to interact using
+the COM standard.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Because the code in a DLL executes in the same process as the calling
+	code, it's the fastest way for applications to communicate. When two separate applications
+	communicate through COM, function calls from one application to another must be <I>marshaled</I>:
+	COM gathers up all the parameters and invokes the function itself. A standalone server
+	(EXE) is therefore slower than an in-process server (DLL).&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>How do they interact? Through an <I>interface</I>. An ActiveX interface is a collection
+of functions, or really just function names. It's a C++ class with no data, only
+pure virtual functions. Your objects inherit from this class and provide code for
+the functions. (Remember, as discussed in Appendix A, &quot;C++ Review and Object-Oriented
+Concepts,&quot; a class that inherits a pure virtual function doesn't inherit code
+for that function.) Other programs get to your code by calling these functions. All
+ActiveX objects must have an interface named IUnknown (and most have many more, all
+with names that start with I, the prefix for interfaces).</P>
+<P>The IUnknown interface has only one purpose: finding other interfaces. It has
+a function called QueryInterface() that takes an interface ID and returns a pointer
+to that interface for this object. All the other interfaces inherit from IUnknown,
+so they have a QueryInterface() too, and you have to write the code--or you would
+if there was no MFC. MFC implements a number of macros that simplify the job of writing
+interfaces and their functions, as you will shortly see. The full declaration of
+IUnknown is in Listing 13.1. The macros take care of some of the work of declaring
+an interface and won't be discussed here. There are three functions declared: QueryInterface(),
+AddRef(), and Release(). These latter two functions are used to keep track of which
+applications are using an interface. All three functions are inherited by all interfaces
+and must be implemented by the developer of the interface.</P>
+<P>
+<H4>Listing 13.1&#160;&#160;IUnknown, Defined in \Program Files\Microsoft Visual
+Studio\VC98\Include\unknwn.h</H4>
+<PRE>MIDL_INTERFACE(&quot;00000000-0000-0000-C000-000000000046&quot;)
+   IUnknown
+    {
+    public:
+        BEGIN_INTERFACE
+        virtual HRESULT STDMETHODCALLTYPE QueryInterface(
+            /* [in] */ REFIID riid,
+            /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject) = 0;
+        virtual ULONG STDMETHODCALLTYPE AddRef( void) = 0;
+        virtual ULONG STDMETHODCALLTYPE Release( void) = 0;
+#if (_MSC_VER &gt;= 1200)   // VC6 or greater
+      template &lt;class Q&gt;
+      HRESULT STDMETHODCALLTYPE QueryInterface(Q** pp)
+      {
+         return QueryInterface(__uuidof(Q), (void**)pp);
+      }
+#endif
+        END_INTERFACE
+</PRE>
+<PRE>    };
+</PRE>
+<H2><A NAME="Heading7"></A>Automation</H2>
+<P>An Automation server lets other applications tell it what to do. It <I>exposes</I>
+functions and data, called <I>methods</I> and <I>properties</I>. For example, Microsoft
+Excel is an Automation server, and programs written in Visual C++ or Visual Basic
+can call Excel functions and set properties like column widths. That means you don't
+need to write a scripting language for your application any more. If you expose all
+the functions and properties of your application, any programming language that can
+control an Automation server can be a scripting language for your application. Your
+users may already know your scripting language. They essentially will have no learning
+curve for writing macros to automate your application (although they will need to
+learn the names of the methods and properties you expose).</P>
+<P>The important thing to know about interacting with automation is that one program
+is always in control, calling the methods or changing the properties of the other
+running application. The application in control is called an Automation controller.
+The application that exposes methods and functions is called an Automation server.
+Excel, Word, and other members of the Microsoft Office suite are Automation servers,
+and your programs can use the functions of these applications to really save you
+coding time.</P>
+<P>For example, imagine being able to use the function called by the Word menu item
+Format, Change Case to convert the blocks of text your application uses to all uppercase,
+all lowercase, sentence case (the first letter of the first word in each sentence
+is uppercase, the rest are not), or title case (the first letter of every word is
+uppercase; the rest are not).</P>
+<P>The description of how automation really works is far longer and more complex
+than the interface summary of the previous section. It involves a special interface
+called IDispatch, a simplified interface that works from a number of different languages,
+including those like Visual Basic that can't use pointers. The declaration of IDispatch
+is shown in Listing 13.2.</P>
+<P>
+<H4>Listing 13.2&#160;&#160;IDispatch, Defined in \Program Files\Microsoft Visual
+Studio\VC98\Include\oaidl.h</H4>
+<PRE>MIDL_INTERFACE(&quot;00020400-0000-0000-C000-000000000046&quot;)
+    IDispatch : public IUnknown
+    {
+    public:
+        virtual HRESULT STDMETHODCALLTYPE GetTypeInfoCount(
+            /* [out] */ UINT __RPC_FAR *pctinfo) = 0;
+        virtual HRESULT STDMETHODCALLTYPE GetTypeInfo(
+            /* [in] */ UINT iTInfo,
+            /* [in] */ LCID lcid,
+            /* [out] */ ITypeInfo __RPC_FAR *__RPC_FAR *ppTInfo) = 0;
+        virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames(
+            /* [in] */ REFIID riid,
+            /* [size_is][in] */ LPOLESTR __RPC_FAR *rgszNames,
+            /* [in] */ UINT cNames,
+            /* [in] */ LCID lcid,
+            /* [size_is][out] */ DISPID __RPC_FAR *rgDispId) = 0;
+        virtual /* [local] */ HRESULT STDMETHODCALLTYPE Invoke(
+            /* [in] */ DISPID dispIdMember,
+            /* [in] */ REFIID riid,
+            /* [in] */ LCID lcid,
+            /* [in] */ WORD wFlags,
+            /* [out][in] */ DISPPARAMS __RPC_FAR *pDispParams,
+            /* [out] */ VARIANT __RPC_FAR *pVarResult,
+            /* [out] */ EXCEPINFO __RPC_FAR *pExcepInfo,
+            /* [out] */ UINT __RPC_FAR *puArgErr) = 0;
+</PRE>
+<PRE>    };
+</PRE>
+<P>Although IDispatch seems more complex than IUnknown, it declares only a few more
+functions: GetTypeInfoCount(), GetTypeInfo(), GetIDsOfNames(), and Invoke(). Because
+it inherits from IUnknown, it has also inherited QueryInterface(), AddRef(), and
+Release(). They are all pure virtual functions, so any COM class that inherits from
+IDispatch must implement these functions. The most important of these is Invoke(),
+used to call functions of the Automation server and to access its properties.</P>
+<P>
+<H2><A NAME="Heading8"></A>ActiveX Controls</H2>
+<P>ActiveX controls are tiny little Automation servers that load <I>in process</I>.
+This means they are remarkably fast. They were originally called OLE Custom Controls
+and were designed to replace VBX controls, 16-bit controls written for use in Visual
+Basic and Visual C++. (There are a number of good technical reasons why the VBX technology
+could not be extended to the 32-bit world.) Because OLE Custom Controls were traditionally
+kept in files with the extension .OCX, many people referred to an OLE Custom Control
+as an OCX control or just an OCX. Although the OLE has been supplanted by ActiveX,
+ActiveX controls produced by Visual C++ 6.0 are still kept in files with the .OCX
+extension.</P>
+<P>The original purpose of VBX controls was to allow programmers to provide unusual
+interface controls to their users. Controls that looked like gas gauges or volume
+knobs became easy to develop. But almost immediately, VBX programmers moved beyond
+simple controls to modules that involved significant amounts of calculation and processing.
+In the same way, many ActiveX controls are far more than just controls; they are
+<I>components</I> that can be used to build powerful applications quickly and easily.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> If you have built an OCX in earlier versions of Visual C++, you might
+	think it is a difficult thing to do. The Control Developer Kit, now integrated into
+	Visual C++, takes care of the ActiveX aspects of the job and allows you to concentrate
+	on the calculations, display, or whatever else it is that makes your control worth
+	using. The ActiveX Control Wizard makes getting started with an empty ActiveX control
+	simple.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Because controls are little Automation servers, they need to be used by an Automation
+controller, but the terminology is too confusing if there are controls and controllers,
+so we say that ActiveX controls are used by <I>container</I> applications. Visual
+C++ and Visual Basic are both container applications, as are many members of the
+Office suite and many non-Microsoft products.</P>
+<P>In addition to properties and methods, ActiveX controls have <I>events</I>. To
+be specific, a control is said to <I>fire</I> an event, and it does so when there
+is something that the container needs to be aware of. For example, when the user
+clicks a portion of the control, the control deals with it, perhaps changing its
+appearance or making a calculation, but it may also need to pass on word of that
+click to the container application so that a file can be opened or some other container
+action can be performed.</P>
+
+<P>This chapter has given you a brief tour through the concepts and terminology used
+in ActiveX technology, and a glimpse of the power you can add to your applications
+by incorporating ActiveX into them. The remainder of the chapters in this part lead
+you through the creation of ActiveX applications, using MFC and the wizards in Visual
+C++.</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch12/ch12.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch14/ch14.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+<BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

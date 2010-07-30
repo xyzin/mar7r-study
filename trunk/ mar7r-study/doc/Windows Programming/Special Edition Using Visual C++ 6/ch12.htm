@@ -1,0 +1,875 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 12 -- Property Pages and Sheets</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch11/ch11.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch13/ch13.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 12 -</H1>
+</CENTER>
+<CENTER>
+<H1>Property Pages and Sheets</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Introducing Property Sheets</A>
+	<LI><A HREF="#Heading2">Creating the Property Sheet Demo Application</A>
+	<UL>
+		<LI><A HREF="#Heading3">Creating the Basic Files</A>
+		<LI><A HREF="#Heading4">Editing the Resources</A>
+		<LI><A HREF="#Heading5">Adding New Resources</A>
+		<LI><A HREF="#Heading6">Associating Your Resources with Classes</A>
+		<LI><A HREF="#Heading7">Creating a Property Sheet Class</A>
+	</UL>
+	<LI><A HREF="#Heading8">Running the Property Sheet Demo Application</A>
+	<LI><A HREF="#Heading9">Adding Property Sheets to Your Applications</A>
+	<LI><A HREF="#Heading10">Changing Property Sheets to Wizards</A>
+	<UL>
+		<LI><A HREF="#Heading11">Running the Wizard Demo Application</A>
+		<LI><A HREF="#Heading12">Creating Wizard Pages</A>
+		<LI><A HREF="#Heading13">Displaying a Wizard</A>
+		<LI><A HREF="#Heading14">Setting the Wizard's Buttons</A>
+		<LI><A HREF="#Heading15">Responding to the Wizard's Buttons</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Introducing Property Sheets</H2>
+<P>One of the newest types of graphical objects is the tabbed dialog box, also known
+as a <I>property sheet.</I> A property sheet is a dialog box with two or more pages.
+Windows and NT are loaded with property sheets, which organize the many options that
+users can modify. You flip the pages by clicking labeled tabs at the top of the dialog
+box. Using such dialog boxes to organize complex groups of options enables users
+to more easily find the information and settings they need. As you've probably guessed,
+Visual C++ 6 supports property sheets, with the classes CPropertySheet and CPropertyPage.</P>
+<P>Similar to property sheets are <I>wizards,</I> which use buttons instead of tabs
+to move from one page to another. You've seen a lot of wizards, too. These special
+types of dialog boxes guide users step by step through complicated processes. For
+example, when you use AppWizard to generate source code for a new project, the wizard
+guides you through the entire process. To control the wizard, you click buttons labeled
+Back, Next, and Finish.</P>
+<P>Finding a sample property sheet is as easy as finding sand at the beach. Just
+click virtually any Properties command or bring up an Options dialog in most applications.
+For example, Figure 12.1 shows the dialog box that you see when you choose Tools,
+Options from within Visual C++. This property sheet contains 12 pages in all, each
+covering a different set of options.</P>
+<P><A HREF="javascript:popUp('12uvc01.gif')"><B>FIG. 12.1</B></A><B> </B><I>The Options
+properties sheet contains many tabbed pages.</I></P>
+<P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Many people forget the difference between a property sheet and a
+	property page. A <I>property sheet</I> is a window that contains property pages.
+	<I>Property pages</I> are windows that hold controls. They appear on the property
+	sheet.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>As you can see, property sheets are a great way to organize many types of related
+options. Gone are the days of dialog boxes so jam-packed with options that you needed
+a college-level course just to figure them out. In the following sections, you'll
+learn to program your own tabbed property sheets by using MFC's CPropertySheet and
+CPropertyPage classes.</P>
+<P>
+<H2><A NAME="Heading2"></A>Creating the Property Sheet Demo Application</H2>
+<P>Now that you've had an introduction to property sheets, it's time to learn how
+to build an application that uses these handy specialized dialog boxes. You're about
+to build the Property Sheet Demo application, which demonstrates the creation and
+manipulation of property sheets. Follow the steps in the following sections to create
+the basic application and modify its resources.</P>
+<P>
+<H3><A NAME="Heading3"></A>Creating the Basic Files</H3>
+<P>First, use AppWizard to create the basic files for the Property Sheet Demo program,
+selecting the options listed in the following table. When you're done, the New Project
+Information dialog box appears; it will look like Figure 12.2. Click OK to create
+the project files.</P>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Dialog Box Name</B></TD>
+		<TD ALIGN="LEFT"><B>Options to Select</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">New, Project tab</TD>
+		<TD ALIGN="LEFT">Name the project Propsheet and then set the project path to the directory in which
+			you want to store the project's files. Make sure that MFC AppWizard (exe) is highlighted.
+			Leave the other options set to their defaults.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Step 1</TD>
+		<TD ALIGN="LEFT">Select Single Document.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Step 2 of 6</TD>
+		<TD ALIGN="LEFT">Leave set to defaults.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Step 3 of 6</TD>
+		<TD ALIGN="LEFT">Leave set to defaults.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Step 4 of 6</TD>
+		<TD ALIGN="LEFT">Turn off all application features.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Step 5 of 6</TD>
+		<TD ALIGN="LEFT">Leave set to defaults.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Step 6 of 6</TD>
+		<TD ALIGN="LEFT">Leave set to defaults.</TD>
+	</TR>
+</TABLE>
+</P>
+<P><A HREF="javascript:popUp('12uvc02.gif')"><B>FIG. 12.2</B></A><B> </B><I>Your
+New Project Information dialog box looks like this.</I></P>
+<P>
+<H3><A NAME="Heading4"></A>Editing the Resources</H3>
+<P>Now you'll edit the resources in the application generated for you by AppWizard,
+removing unwanted menus and accelerators, editing the About box, and most importantly,
+adding a menu item that will bring up a property sheet. Follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Select the ResourceView tab in the project workspace window. Developer
+	Studio displays the ResourceView window (see Figure 12.3).
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('12uvc03.gif')"><B>FIG. 12.3</B></A><B> </B><I>The ResourceView
+tab displays the ResourceView window.</I></P>
+
+<DL>
+	<DD><B>2. </B>In the ResourceView window, click the plus sign next to Propsheet Resources
+	to display the application's resources. Click the plus sign next to Menu and then
+	double-click the IDR_MAINFRAME menu ID. Visual C++'s menu editor appears, displaying
+	the IDR_MAINFRAME menu generated by AppWizard.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Click the Property Sheet Demo application's Edit menu (not Visual C++'s
+	Edit menu) and then press Delete to delete the Edit menu. A dialog box asks for verification
+	of the Delete command; click OK.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Double-click the About Propsheet... item in the Help menu to bring
+	up its properties dialog box. Change the caption to <B>&amp;About Property Sheet
+	Demo</B>. Pin the properties dialog box in place by clicking the pushpin in the upper-left
+	corner.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>On the application's File menu, delete all menu items except Exit.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Select the blank menu item at the end of the File menu, and change
+	the caption to <B>&amp;Property Sheet...</B> and the command ID to <B>ID_PROPSHEET</B>
+	(see Figure 12.4). Then use your mouse to drag the new command above the Exit command
+	so that it's the first command in the File menu.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('12uvc04.gif')"><B>FIG. 12.4</B></A><B> </B><I>Add a
+Property Sheet command to the File menu.</I></P>
+<P>
+
+<DL>
+	<DD><B>7. </B>Click the + next to Accelerator in the ResourceView window and highlight
+	the IDR_MAINFRAME accelerator ID. Press Delete to delete all accelerators from the
+	application.
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>Click the + next to Dialog in the ResourceView window. Double-click
+	the IDD_ABOUTBOX dialog box ID to bring up the dialog box editor.
+	<P>
+	<DT></DT>
+	<DD><B>9. </B>Modify the dialog box by clicking the title so that the properties
+	box refers to the whole dialog box. Change the caption to<B> About Property Sheet
+	Demo</B>.
+	<P>
+	<DT></DT>
+	<DD><B>10. </B>Click the first static text string and change the caption to <B>Property
+	Sheet Demo, Version 1.0</B>. Click the second and add <B>Que Books</B> to the end
+	of the copyright string.
+	<P>
+	<DT></DT>
+	<DD><B>11. </B>Add a third static string with the text <B>Special Edition</B> <B>Using
+	Visual C++ 6</B> so that your About box resembles the one in Figure 12.5. Close the
+	dialog box editor.
+	<P>
+	<DT></DT>
+	<DD><B>12. </B>Click the + next to String Table in the ResourceView window. Double-click
+	the String Table ID to bring up the string table editor.
+	<P>
+	<DT></DT>
+	<DD><B>13. </B>Double-click the IDR_MAINFRAME string and then change the first segment
+	of the string to <B>Property Sheet Demo</B> (see Figure 12.6). The meanings of these
+	strings are discussed in Chapter 15, &quot;Building an ActiveX Server Application,&quot;
+	in the &quot;Shortcomings of This Server&quot; section. The one you just changed
+	is the Window Title, used in the title bar of the application.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('12uvc05.gif')"><B>FIG. 12.5</B></A><B> </B><I>The About
+box looks like this.</I></P>
+<P><A HREF="javascript:popUp('12uvc06.gif')"><B>FIG. 12.6</B></A><B> </B><I>The first
+segment of the IDR_MAINFRAME string appears in your main window's title bar.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading5"></A>Adding New Resources</H3>
+<P>Now that you have the application's basic resources the way you want them, it's
+time to add the resources that define the application's property sheet. This means
+creating dialog box resources for each page in the property sheet. Follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Click the New Dialog button on the Resource toolbar, or press Ctrl+1,
+	to create a new dialog box resource. The new dialog box, IDD_DIALOG1, appears in
+	the dialog box editor. This dialog box, when set up properly, will represent the
+	first page of the property sheet.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Delete the OK and Cancel buttons by selecting each with your mouse
+	and then pressing Delete.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>If the Properties box isn't still up, bring it up by choosing View,
+	Properties. Change the ID of the dialog box to <B>IDD_PAGE1DLG</B> and the caption
+	to <B>Page 1</B> (see Figure 12.7).
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('12uvc07.gif')"><B>FIG. 12.7</B></A><B> </B><I>Change
+the caption and resource ID of the new dialog box.</I></P>
+
+<DL>
+	<DD><B>4. </B>Click the Styles tab of the dialog box's property sheet. In the Style
+	drop-down box select Child, and in the Border drop-down box select Thin. Turn off
+	the System Menu check box. Your properties dialog box will resemble Figure 12.8.
+	<P>
+	<DT></DT>
+	<DD>The Child style is necessary because the property page will be a child window
+	of the property sheet. The property sheet itself will provide the container for the
+	property pages.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('12uvc08.gif')"><B>FIG. 12.8</B></A><B> </B><I>A property
+page uses styles different from those used in regular dialog boxes.</I></P>
+<P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>5. </B>Add an edit box to the property page, as shown in Figure 12.9. In most
+	applications you would change the resource ID from IDC_EDIT1, but for this demonstration
+	application, leave it unchanged.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Create a second property page by following steps 1 through 5 again.
+	For this property page, use the ID IDD_PAGE2DLG, a caption of Page 2, and add a check
+	box rather than an edit control (see Figure 12.10).
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('12uvc09.gif')"><B>FIG. 12.9</B></A><B> </B><I>A property
+page can hold whatever controls you like.</I></P>
+<P><A HREF="javascript:popUp('12uvc10.gif')"><B>FIG. 12.10</B></A><B> </B><I>The
+second property page looks like this.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading6"></A>Associating Your Resources with Classes</H3>
+<P>You now have all your resources created. Next, associate your two new property-page
+resources with C++ classes so that you can control them in your program. You also
+need a class for your property sheet, which will hold the property pages that you've
+created. Follow these steps to create the new classes:</P>
+
+<DL>
+	<DD><B>1. </B>Make sure that the Page 1 property page is visible in the dialog box
+	edit area and then double-click it. If you prefer, choose View, ClassWizard from
+	the menu bar. The MFC ClassWizard property sheet appears, displaying the Adding a
+	Class dialog box first discussed in Chapter 2, &quot;Dialogs and Controls.&quot;
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Select the Create New Class option and then click OK. The New Class
+	dialog box appears.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>In the Name box, type <B>CPage1</B>. In the Base Class box, select
+	CPropertyPage. (Don't accidentally select CPropertySheet.) Then click OK to create
+	the class.
+	<P>
+	<DT></DT>
+	<DD>You've now associated the property page with an object of the CPropertyPage class,
+	which means that you can use the object to manipulate the property page as needed.
+	The CPropertyPage class will be especially important when you learn about wizards.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Select the Member Variables tab of the MFC ClassWizard property sheet.
+	With IDC_EDIT1 highlighted, click the Add Variable button. The Add Member Variable
+	dialog box appears.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Name the new member variable <B>m_edit</B>, as shown in Figure 12.11,
+	and then click OK. ClassWizard adds the member variable, which will hold the value
+	of the property page's control, to the new CPage1 class.
+</DL>
+
+<P><A HREF="javascript:popUp('12uvc11.gif')"><B>FIG 12.11</B></A><B> </B><I>ClassWizard
+makes it easy to connect controls on a dialog box to member variables of the class
+representing the dialog box.</I></P>
+
+<DL>
+	<DD><B>6. </B>Click OK on the MFC ClassWizard properties sheet to finalize the creation
+	of the CPage1 class.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Follow steps 1 through 6 for the second property sheet. Name the class
+	<B>CPage2</B> and add a Boolean member variable called m_check for the IDC_CHECK1
+	control, as shown in Figure 12.12.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('12uvc12.gif')"><B>FIG. 12.12</B></A><B> </B><I>The
+second property page needs a Boolean member variable called m_checkbox.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading7"></A>Creating a Property Sheet Class</H3>
+<P>At this point, you've done all the resource editing and don't need to have so
+many windows open. Choose Window, Close All from the menu bar and close the properties
+box. You'll now create a property sheet class that displays the property pages already
+created. Follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Bring up ClassWizard and click the Add Class button. A tiny menu appears
+	below the button; choose New. The New Class dialog box appears.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>In the Name box, type <B>CPropSheet</B>, select CPropertySheet in the
+	Base Class box, and then click OK.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>ClassWizard creates the CPropSheet class. Click the MFC ClassWizard
+	Properties sheet's OK button to finalize the class.
+	<P>
+</DL>
+
+<P>Mow you have three new classes--CPage1, CPage2, and CPropSheet--in your program.
+The first two classes are derived from MFC's CPropertyPage class, and the third is
+derived from CPropertySheet. Although ClassWizard has created the basic source-code
+files for these new classes, you still have to add code to the classes to make them
+work the way you want. Follow these steps to complete the Property Sheet Demo application:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Click the ClassView tab to display the ClassView window. Expand the
+	Propsheet classes, as shown Figure 12.13.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Double-click CPropSheet to open the header file for your property sheet
+	class. Because the name of this class (CPropSheet) is so close to the name of the
+	application as a whole (PropSheet), you'll find CPropSheet in PropSheet1.h, generated
+	by ClassWizard when you created the new class.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Add the following lines near the middle of the file, right before the
+	CPropSheet class declaration:
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>#include &quot;page1.h&quot;
+#include &quot;page2.h&quot;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD>These lines give the CPropSheet class access to the CPage1 and CPage2 classes
+	so that the property sheet can declare member variables of these property page classes.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('12uvc13.gif')"><B>FIG. 12.13</B></A><B> </B><I>The
+ClassView window lists the classes that make up your project.</I></P>
+
+<DL>
+	<DD><B>4. </B>Add the following lines to the CPropSheet class's //Attributes section,
+	right after the public keyword:
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>CPage1 m_page1;
+CPage2 m_page2;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD>These lines declare the class's data members, which are the property pages that
+	will be displayed in the property sheet.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Expand the CPropSheet class in the ClassView pane, and double-click
+	the first constructor, CPropSheet. Add these lines to it:
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>AddPage(&amp;m_page1);
+AddPage(&amp;m_page2);</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD>This will add the two property pages to the property sheet whenever the sheet
+	is constructed.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>The second constructor is right below the first; add the same lines
+	there.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Double-click CPropsheetView in ClassView to edit the header file, and
+	add the following lines to the //Attributes section, right after the line CPropsheetDoc*
+	GetDocument();:
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>protected:
+    CString m_edit;
+    BOOL m_check;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD>These lines declare two data members of the view class to hold the selections
+	made in the property sheet by users.
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>Add the following lines to the CPropsheetView constructor:
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>m_edit = &quot;Default&quot;;
+m_check = FALSE;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD>These lines initialize the class's data members so that when the property sheet
+	appears, these default values can be copied into the property sheet's controls. After
+	users change the contents of the property sheet, these data members will always hold
+	the last values from the property sheet, so those values can be restored to the sheet
+	when needed.
+	<P>
+	<DT></DT>
+	<DD><B>9. </B>Edit CPropsheetView::OnDraw() so that it resembles Listing 12.1. The
+	new code displays the current selections from the property sheet. At the start of
+	the program, the default values are displayed.
+	<P>
+</DL>
+
+<H4>Listing 12.1&#160;&#160;CPropsheetView::OnDraw()</H4>
+<PRE>void CPropsheetView::OnDraw(CDC* pDC)
+{
+     CPropsheetDoc* pDoc = GetDocument();
+     ASSERT_VALID(pDoc);
+    pDC-&gt;TextOut(20, 20, m_edit);
+    if (m_check)
+        pDC-&gt;TextOut(20, 50, &quot;TRUE&quot;);
+    else
+        pDC-&gt;TextOut(20, 50, &quot;FALSE&quot;);
+</PRE>
+<PRE>}
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>10. </B>At the top of PropsheetView.cpp, after the #include of propsheet.h,
+	add another include statement:
+	<P>
+</DL>
+
+<PRE>#include &quot;propsheet1.h&quot;
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>11. </B>Bring up ClassWizard, click the Message Maps tab, and make sure that
+	CPropsheetView is selected in the Class Name box. In the Object IDs box, select ID_PROPSHEET,
+	which is the ID of the new item you added to the File menu. In the Messages box,
+	select COMMAND. Click Add Function to add a function that will handle the command
+	message generated when users choose this menu item. Name the function OnPropsheet(),
+	as shown in Figure 12.14.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('12uvc14.gif')"><B>FIG. 12.14</B></A><B> </B><I>Use
+ClassWizard to add the OnPropsheet() member function.</I></P>
+<P>
+
+<DL>
+	<DD>The OnPropsheet() function is now associated with the Property Sheet command
+	that you previously added to the File menu. That is, when users select the Property
+	Sheet command, MFC calls OnPropsheet(), where you can respond to the command.
+	<P>
+	<DT></DT>
+	<DD><B>12.</B> Click the Edit Code button to jump to the OnPropsheet() function,
+	and add the lines shown in Listing 12.2.
+	<P>
+</DL>
+
+<H4>Listing 12.2&#160;&#160;CPropsheetView::OnPropsheet()</H4>
+<PRE>void CPropsheetView::OnPropsheet() 
+{
+    CPropSheet propSheet(&quot;Property Sheet&quot;, this, 0);
+    propSheet.m_page1.m_edit = m_edit;
+    propSheet.m_page2.m_checkbox = m_check;
+    int result = propSheet.DoModal();
+    if (result == IDOK)
+    {
+        m_edit = propSheet.m_page1.m_edit;
+        m_check = propSheet.m_page2.m_checkbox;
+        Invalidate();
+    }
+     
+</PRE>
+<PRE>}
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD>The code segment in Listing 12.2, discussed in more detail later in this chapter,
+	creates an instance of the CPropSheet class and sets the member variables of each
+	of its pages. It displays the sheet by using the familiar DoModal function first
+	discussed in Chapter 2, &quot;Dialogs and Controls.&quot; If users click OK, it updates
+	the view member variables to reflect the changes made on each page and forces a redraw
+	with a call to Invalidate().
+	<P>
+</DL>
+
+<H2><A NAME="Heading8"></A>Running the Property Sheet Demo Application</H2>
+<P>You've finished the complete application. Click the Build button on the Build
+minibar (or choose Build, Build) to compile and link the application. Run it by choosing
+Build, Execute or by clicking the Execute button on the Build minibar. When you do,
+you see the window shown in Figure 12.15.</P>
+<P>As you can see, the window displays two values--the default values for the controls
+in the application's property sheet. You can change these values by using the property
+sheet. Choose File, Property Sheet; the property sheet appears (see Figure 12.16).
+The property sheet contains two pages, each of which holds a single control. When
+you change the settings of these controls and click the property sheet's OK button,
+the application's window displays the new values. Try it!</P>
+<P><A HREF="javascript:popUp('12uvc15.gif')"><B>FIG. 12.15</B></A><B> </B><I>When
+it first starts, the Property Sheet Demo application displays default values for
+the property sheet's controls.</I></P>
+<P><A HREF="javascript:popUp('12uvc16.gif')"><B>FIG. 12.16</B></A><B> </B><I>The
+application's property sheet contains two pages.</I></P>
+<H2><A NAME="Heading9"></A>Adding Property Sheets to Your Applications</H2>
+<P>To add a property sheet to one of your own applications, you follow steps very
+similar to those you followed in the previous section to create the demo application:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Create a dialog box resource for each page in the property sheet. These
+	resources should have the Child and Thin styles and should have no system menu.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Associate each property page resource with an object of the CPropertyPage
+	class. You can do this easily with ClassWizard. Connect controls on the property
+	page to members of the class you create.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Create a class for the property sheet, deriving the class from MFC's
+	CPropertySheet class. You can generate this class by using ClassWizard.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>In the property sheet class, add member variables for each page you'll
+	be adding to the property sheet. These member variables must be instances of the
+	property page classes that you created in step 2.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>In the property sheet's constructor, call AddPage() for each page in
+	the property sheet.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>To display the property sheet, call the property sheet's constructor
+	and then call the property sheet's DoModal() member function, just as you would with
+	a dialog box.
+	<P>
+</DL>
+
+<P>After you write your application and define the resources and classes that represent
+the property sheet (or sheets--you can have more than one), you need a way to enable
+users to display the property sheet when it's needed. In Property Sheet Demo, this
+is done by associating a menu item with a message-response function. However you
+handle the command to display the property sheet, the process of creating the property
+sheet is the same. First, you must call the property sheet class's constructor, which
+Property Sheet Demo does like this:</P>
+<P>
+<PRE>CPropSheet propSheet(&quot;Property Sheet&quot;, this, 0);
+</PRE>
+<P>Here, the program creates an instance of the CPropSheet class. This instance (or
+object) is called propSheet. The three arguments are the property sheet's title string,
+a pointer to the parent window (which, in this case, is the view window), and the
+zero-based index of the first page to display. Because the property pages are created
+in the property sheet's constructor, creating the property sheet also creates the
+property pages.</P>
+<P>After you create the property sheet object, you can initialize the data members
+that hold the values of the property page's controls, which Property Sheet Demo does
+like this:</P>
+<P>
+<PRE>propSheet.m_page1.m_edit = m_edit;
+propSheet.m_page2.m_checkbox = m_check;
+</PRE>
+<P>Now it's time to display the property sheet, which you do just as though it were
+a dialog box, by calling the property sheet's DoModal() member function:</P>
+<P>
+<PRE>int result = propSheet.DoModal();
+</PRE>
+<P>DoModal() doesn't take any arguments, but it does return a value indicating which
+button users clicked to exit the property sheet. In a property sheet or dialog box,
+you'll usually want to process the information entered into the controls only if
+users clicked OK, which is indicated by a return value of IDOK. If users exit the
+property sheet by clicking the Cancel button, the changes are ignored and the view
+or document member variables aren't updated.</P>
+<P>
+<H2><A NAME="Heading10"></A>Changing Property Sheets to Wizards</H2>
+<P>Here's a piece of information that surprises most people: A wizard is just a special
+property sheet. Instead of tabbed pages on each sheet that allow users to fill in
+the information in any order or to skip certain pages entirely, a wizard has Back,
+Next, and Finish buttons to move users through a process in a certain order. This
+forced sequence makes wizards terrific for guiding your application's users through
+the steps needed to complete a complex task. You've already seen how AppWizard in
+Visual C++ makes it easy to start a new project. You can create your own wizards
+suited to whatever application you want to build. In the following sections, you'll
+see how easy it is to convert a property sheet to a wizard.</P>
+<P>
+<H3><A NAME="Heading11"></A>Running the Wizard Demo Application</H3>
+<P>To understand Wizards, this section will show you the Wizard Demo application,
+which is built in much the same way as the Property Sheet Demo application that you
+created earlier in this chapter. This chapter won't present step-by-step instructions
+to build Wizard Demo. You will be able to build it yourself if you want, using the
+general steps presented earlier and the code snippets shown here.</P>
+<P>When you run the Wizard Demo application, the main window appears, looking very
+much like the Property Sheet Demo main window. The File menu now includes a Wizard
+item; choosing File Wizard brings up the wizard shown in Figure 12.17.</P>
+<P><A HREF="javascript:popUp('12uvc17.gif')"><B>FIG. 12.17</B></A><B> </B><I>The
+Wizard Demo application displays a wizard rather than a property sheet.</I></P>
+<P>The wizard isn't too fancy, but it does demonstrate what you need to know to program
+more complex wizards. As you can see, this wizard has three pages. On the first page
+is an edit control and three buttons: Back, Next, and Cancel. The Back button is
+disabled because there's no previous page to go back to. The Cancel button enables
+users to dismiss the wizard at any time, canceling whatever process the wizard was
+guiding users through. The Next button causes the next page in the wizard to appear.</P>
+<P>You can change whatever is displayed in the edit control if you like. However,
+the magic really starts when you click the Next button, which displays Page 2 of
+the wizard (see Figure 12.18). Page 2 contains a check box and the Back, Next, and
+Cancel buttons. Now the Back button is enabled, so you can return to Page 1 if you
+want to. Go ahead and click the Back button. The wizard tells you that the check
+box must be checked (see Figure 12.19). As you'll soon see, this feature of a wizard
+enables you to verify the contents of a specific page before allowing users to advance
+to another step.</P>
+<P><A HREF="javascript:popUp('12uvc18.gif')"><B>FIG. 12.18</B></A><B> </B><I>In Page
+2 of the wizard, the Back button is enabled.</I></P>
+<P>After checking the check box, you can click the Back button to move back to Page
+1 or click Next to advance to Page 3. Assuming that you advance to Page 3, you see
+the display shown in Figure 12.20. Here, the Next button has changed to the Finish
+button because you are on the wizard's last page. If you click the Finish button,
+the wizard disappears.</P>
+<P><A HREF="javascript:popUp('12uvc19.gif')"><B>FIG. 12.19</B></A><B> </B><I>You
+must select the check box before the wizard will let you leave Page 2.</I></P>
+<P><A HREF="javascript:popUp('12uvc20.gif')"><B>FIG. 12.20</B></A><B> </B><I>This
+is the last page of the Wizard Demo Application's wizard.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading12"></A>Creating Wizard Pages</H3>
+<P>As far as your application's resources go, you create wizard pages exactly as
+you create property sheet pages--by creating dialog boxes and changing the dialog
+box styles. The dialog titles--Page 1 of 3, Page 2 of 3, and Page 3 of 3--are hardcoded
+onto each dialog box. You associate each dialog box resource with an object of the
+CPropertyPage class. Then, to take control of the pages in your wizard and keep track
+of what users are doing with the wizard, you override the OnSetActive(), OnWizardBack(),
+OnWizardNext(), and OnWizardFinish() functions of your property page classes. Read
+on to see how to do this.</P>
+<P>
+<H3><A NAME="Heading13"></A>Displaying a Wizard</H3>
+<P>The File, Wizard command is caught by CWizView's OnFileWizard() function. It's
+very similar to the OnPropSheet() function in the Property Sheet demo, as you can
+see from Listing 12.3. The first difference is the call to SetWizardMode() before
+the call to DoModal(). This function call tells MFC that it should display the property
+sheet as a wizard rather than as a conventional property sheet. The only other difference
+is that users arrange for property sheet changes to be accepted by clicking Finish,
+not OK, so this code checks for ID_WIZFINISH rather than IDOK as a return from DoModal().</P>
+<P>
+<H4>Listing 12.3&#160;&#160;CWizView::OnFileWizard()</H4>
+<PRE>void CWizView::OnFileWizard() 
+{
+     CWizSheet wizSheet(&quot;Sample Wizard&quot;, this, 0);
+     wizSheet.m_page1.m_edit = m_edit;
+     wizSheet.m_page2.m_check = m_check;
+     wizSheet.SetWizardMode();
+     int result = wizSheet.DoModal();
+     if (result == ID_WIZFINISH)
+     {
+          m_edit = wizSheet.m_page1.m_edit;
+          m_check = wizSheet.m_page2.m_check;
+          Invalidate();
+     }
+</PRE>
+<PRE>}
+</PRE>
+<H3><A NAME="Heading14"></A>Setting the Wizard's Buttons</H3>
+<P>MFC automatically calls the OnSetActive() member function immediately upon displaying
+a specific page of the wizard. So, when the program displays Page 1 of the wizard,
+the CPage1 class's OnSetActive() function is called. You add code to this function
+that makes the wizard behave as you want. CPage1::OnSetActive() looks like Listing
+12.4.</P>
+<P>
+<H4>Listing 12.4&#160;&#160;CPage1::OnSetActive()</H4>
+<PRE>BOOL CPage1::OnSetActive() 
+{
+     CPropertySheet* parent = (CPropertySheet*)GetParent();
+     parent-&gt;SetWizardButtons(PSWIZB_NEXT);
+     return CPropertyPage::OnSetActive();
+</PRE>
+<PRE>}
+</PRE>
+<P>OnSetActive() first gets a pointer to the wizard's property sheet window, which
+is the page's parent window. Then the program calls the wizard's SetWizardButtons()
+function, which determines the state of the wizard's buttons. SetWizardButtons()
+takes a single argument, which is a set of flags indicating how the page should display
+its buttons. These flags are PSWIZB_BACK, PSWIZB_NEXT, PSWIZB_FINISH, and PSWIZB_DISABLEDFINISH.
+Because the call to SetWizardButtons() in Listing 12.4 includes only the PSWIZB_NEXT
+flag, only the Next button in the page will be enabled.</P>
+<P>Because the CPage2 class represents Page 2 of the wizard, its call to SetWizardButtons()
+enables the Back and Next buttons by combining the appropriate flags with the bitwise
+OR operator (|), like this:</P>
+<P>
+<PRE>parent-&gt;SetWizardButtons(PSWIZB_BACK | PSWIZB_NEXT);
+</PRE>
+<P>Because Page 3 of the wizard is the last page, the CPage3 class calls SetWizardButtons()
+like this:</P>
+<P>
+<PRE>parent-&gt;SetWizardButtons(PSWIZB_BACK | PSWIZB_FINISH);
+</PRE>
+<P>This set of flags enables the Back button and provides a Finish button instead
+of a Next button.</P>
+<P>
+<H3><A NAME="Heading15"></A>Responding to the Wizard's Buttons</H3>
+<P>In the simplest case, MFC takes care of everything that needs to be done in order
+to flip from one wizard page to the next. That is, when users click a button, MFC
+springs into action and performs the Back, Next, Finish, or Cancel command. However,
+you'll often want to perform some action of your own when users click a button. For
+example, you may want to verify that the information that users entered into the
+currently displayed page is correct. If there's a problem with the data, you can
+force users to fix it before moving on.</P>
+<P>To respond to the wizard's buttons, you override the OnWizardBack(), OnWizardNext(),
+and OnWizardFinish() member functions. Use the Message Maps tab of ClassWizard to
+do this; you'll find the names of these functions in the Messages window when a property
+page class is selected in the Class Name box. When users click a wizard button, MFC
+calls the matching function which does whatever is needed to process that page. An
+example is the way the wizard in the Wizard Demo application won't let you leave
+Page 2 until you've checked the check box. This is accomplished by overriding the
+functions shown in Listing 12.5.</P>
+<P>
+<H4>Listing 12.5&#160;&#160;Responding to Wizard Buttons</H4>
+<PRE>LRESULT CPage2::OnWizardBack() 
+{
+     CButton *checkBox = (CButton*)GetDlgItem(IDC_CHECK1);
+     if (!checkBox-&gt;GetCheck())
+     {
+          MessageBox(&quot;You must check the box.&quot;);
+          return -1;
+     }
+     return CPropertyPage::OnWizardBack();
+}
+LRESULT CPage2::OnWizardNext() 
+{
+     UpdateData();
+     if (!m_check)
+     {
+          MessageBox(&quot;You must check the box.&quot;);
+          return -1;
+     }
+     return CPropertyPage::OnWizardNext();
+</PRE>
+<PRE>}
+</PRE>
+<P>These functions demonstrate two ways 

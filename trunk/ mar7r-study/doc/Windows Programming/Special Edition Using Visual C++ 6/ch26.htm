@@ -1,0 +1,1197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 26 -- Exceptions and Templates</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch25/ch25.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch27/ch27.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 26 -</H1>
+
+<H1>Exceptions and Templates</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Understanding Exceptions</A>
+	<UL>
+		<LI><A HREF="#Heading2">Simple Exception Handling</A>
+		<LI><A HREF="#Heading3">Exception Objects</A>
+		<LI><A HREF="#Heading4">Placing the catch Block</A>
+		<LI><A HREF="#Heading5">Handling Multiple Types of Exceptions</A>
+		<LI><A HREF="#Heading6">The Old Exception Mechanism</A>
+	</UL>
+	<LI><A HREF="#Heading7">Exploring Templates</A>
+	<UL>
+		<LI><A HREF="#Heading8">Introducing Templates</A>
+		<LI><A HREF="#Heading9">Creating Function Templates</A>
+		<LI><A HREF="#Heading10">Creating Class Templates</A>
+	</UL>
+	<LI><A HREF="#Heading11">The Standard Template Library</A>
+	<UL>
+		<LI><A HREF="#Heading12">Managed Pointer Templates: auto_ptr</A>
+		<LI><A HREF="#Heading13">Other Useful STL Templates</A>
+	</UL>
+	<LI><A HREF="#Heading14">Understanding Namespaces</A>
+	<UL>
+		<LI><A HREF="#Heading15">Defining a Namespace</A>
+		<LI><A HREF="#Heading16">Namespace Scope Resolution</A>
+		<LI><A HREF="#Heading17">Unnamed Namespaces</A>
+		<LI><A HREF="#Heading18">Namespace Aliases</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>C++ is an evolving language and frequently undergoes review and improvement. Two
+important features that were added to C++ after many developers had already learned
+the language are exceptions and templates. Although most programmers delay learning
+these concepts until they have six months to a year of Visual C++ programming experience,
+you should consider learning them now. These concepts are not much more difficult
+than the ones covered earlier in this book and can add extra power to your programs.</P>
+<P>
+<H2><A NAME="Heading1"></A>Understanding Exceptions</H2>
+<P>When writing applications using Visual C++, sooner or later you're going to run
+into error-handling situations that don't seem to have a solution. Perhaps you are
+writing a function that returns a numeric value and need a way to send back an error
+response. Sometimes you can come up with one special return value, perhaps 0 or -1,
+that indicates a problem. Other times there doesn't seem to be a way to signal trouble.
+Perhaps you use special return values but find yourself writing code that starts
+out like this:</P>
+<P>
+<PRE>while (somefunction(x))
+{
+    for (int i=0; i&lt;limit; i++)
+    {
+        y = someotherfunction(i);
+    }
+}
+</PRE>
+<P>After writing that, perhaps you realize that if someotherfunction() returns -1,
+you should not move on to the next i, and you should leave the while loop. Your code
+becomes the following:</P>
+<P>
+<PRE>int timetostop = 0;
+while (somefunction(x) &amp;&amp; !timetostop)
+{
+    for (int i=0; i&lt;limit &amp;&amp; !timetostop; i++)
+    {
+        if ( (y = someotherfunction(i)) == -1)
+            timetostop = 1;
+    }
+}
+</PRE>
+<P>This isn't bad, but it is hard to read. If there are two or three things that
+could go wrong, your code becomes unmanageably complex.</P>
+<P>Exceptions are designed to handle these sorts of problems. The exception mechanism
+allows programs to signal each other about serious and unexpected problems. Three
+places in your code participate in most exceptions:</P>
+<P>
+
+<UL>
+	<LI>The try<I> block</I> marks the code you believe might run into difficulty.
+	<P>
+	<LI>The catch<I> block</I> immediately follows the try block and holds the code that
+	deals with the problem.
+	<P>
+	<LI>The throw<I> statement</I> is how the code with a problem notifies the calling
+	code.
+</UL>
+
+<H3><A NAME="Heading2"></A>Simple Exception Handling</H3>
+<P>The mechanism used by exception-handling code is simple. Place the source code
+that you want guarded against errors inside a try block. Then construct a catch program
+block that acts as the error handler. If the code in the try block (or any code called
+from the try block) throws an exception, the try block immediately ceases execution,
+and the program continues inside the catch block.</P>
+<P>For example, memory allocation is one place in a program where you might expect
+to run into trouble. Listing 26.1 shows a nonsensical little program that allocates
+some memory and then immediately deletes it. Because memory allocation could fail,
+the code that allocates the memory is enclosed in a try program block. If the pointer
+returned from the memory allocation is NULL, the try block throws an exception. In
+this case, the exception object is a string.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> The sample applications in this chapter are console applications,
+	which can run from a DOS prompt and don't have a graphical interface. This keeps
+	them small enough to be shown in their entirety in the listings. To try them, create
+	a console application as discussed in Chapter 28, &quot;Future Explorations,&quot;
+	add a file to the project, and add the code shown here.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H4>Listing 26.1&#160;&#160;EXCEPTION1.CPP--Simple Exception Handling</H4>
+<PRE>#include &lt;iostream.h&gt;
+int main()
+{
+    int* buffer;
+    try
+    {
+        buffer = new int[256];
+        if (buffer == NULL)
+            throw &quot;Memory allocation failed!&quot;;
+        else
+            delete buffer;
+    }
+    catch(char* exception)
+    {
+        cout &lt;&lt; exception &lt;&lt; endl;
+    }
+    return 0;
+</PRE>
+<PRE>}
+</PRE>
+<P>When the program throws the exception, program execution jumps to the first line
+of the catch program block. (The remainder of the code inside the try block is not
+executed.) In the case of Listing 26.1, this line prints out a message, after which
+the function's return line is executed and the program ends.</P>
+<P>If the memory allocation is successful, the program executes the entire try block,
+deleting the buffer. Then program execution skips over the catch block completely,
+in this case going directly to the return statement.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> The catch program block does more than direct program execution.
+	It actually catches the exception object thrown by the program. For example, in Listing
+	26.1, you can see the exception object being caught inside the parentheses following
+	the catch keyword. This is very similar to a parameter being received by a method.
+	In this case, the type of the &quot;parameter&quot; is char* and the name of the
+	parameter is exception.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading3"></A>Exception Objects</H3>
+<P>The beauty of C++ exceptions is that the exception object thrown can be just about
+any kind of data structure you like. For example, you might want to create an exception
+class for certain kinds of exceptions that occur in your programs. Listing 26.2 shows
+a program that defines a general-purpose exception class called MyException. In the
+case of a memory-allocation failure, the main program creates an object of the class
+and throws it. The catch block catches the MyException object, calls the object's
+GetError() member function to get the object's error string, and then displays the
+string on the screen.</P>
+<P>
+<H4>Listing 26.2&#160;&#160;EXCEPTION2.CPP--Creating an Exception Class</H4>
+<PRE>#include &lt;iostream.h&gt;
+class MyException
+{
+protected:
+    char* m_msg;
+public:
+    MyException(char *msg) { m_msg = msg; }
+    ~MyException(){}
+    char* GetError() {return m_msg; };
+};
+int main()
+{
+    int* buffer;
+    
+    try
+    {
+        buffer = new int[256];
+        if (buffer == NULL)
+        {
+            MyException* exception =
+                new MyException(&quot;Memory allocation failed!&quot;);
+            throw exception;
+        }
+        else
+            delete buffer;
+    }
+    catch(MyException* exception)
+    {
+        char* msg = exception-&gt;GetError();
+        cout &lt;&lt; msg &lt;&lt; endl;
+    }
+    return 0;
+</PRE>
+<PRE>}
+</PRE>
+<P>An exception object can be as simple as an integer error code or as complex as
+a fully developed class. MFC provides a number of exception classes, including CException
+and several classes derived from it. The abstract class CException has a constructor
+and three member functions: Delete(), which deletes the exception, GetErrorMessage(),
+which returns a string describing the exception, and ReportError(), which reports
+the error in a message box.</P>
+<P>
+<H3><A NAME="Heading4"></A>Placing the catch Block</H3>
+<P>The catch program block doesn't have to be in the same function as the one in
+which the exception is thrown. When an exception is thrown, the system starts &quot;unwinding
+the stack,&quot; looking for the nearest catch block. If the catch block is not found
+in the function that threw the exception, the system looks in the function that called
+the throwing function. This search continues up the function-call stack. If the exception
+is never caught, the program halts.</P>
+<P>Listing 26.3 is a short program that demonstrates this concept. The program throws
+the exception from the AllocateBuffer() function but catches the exception in main(),
+which is the function from which AllocateBuffer() is called.</P>
+<P>
+<H4>Listing 26.3&#160;&#160;EXCEPTION3.CPP--Catching Exceptions Outside the <BR>
+Throwing Function</H4>
+<PRE>#include &lt;iostream.h&gt;
+class MyException
+{
+protected:
+    char* m_msg;
+public:
+    MyException(char *msg) { m_msg = msg;}
+    ~MyException(){}
+    char* GetError() {return m_msg;}
+};
+class BigObject
+{
+private:
+     int* intarray;
+public:
+     BigObject() {intarray = new int[1000];}
+     ~BigObject() {delete intarray;}
+};
+int* AllocateBuffer();
+int main()
+{
+    int* buffer;
+    
+    try
+    {
+        buffer = AllocateBuffer();
+        delete buffer;
+    }
+    catch (MyException* exception)
+    {
+        char* msg = exception-&gt;GetError();
+        cout &lt;&lt; msg &lt;&lt; endl;
+    }
+    return 0;
+}
+int* AllocateBuffer()
+{
+    BigObject bigarray;
+    float* floatarray = new float[1000];
+    int* buffer = new int[256];
+    if (buffer == NULL)
+    {
+        MyException* exception =
+            new MyException(&quot;Memory allocation failed!&quot;);
+        throw exception;
+    }
+    delete floatarray;
+    return buffer;
+</PRE>
+<PRE>}
+</PRE>
+<P>When the exception is thrown in AllocateBuffer(), the remainder of the function
+is not executed. The dynamically allocated floatarray will not be deleted. The BigObject
+that was allocated on the stack will go out of scope, and its destructor will be
+executed, deleting the intarray member variable that was allocated with new in the
+constructor. This is an important concept to grasp: Objects created on the stack
+will be destructed as the stack unwinds. Objects created on the heap will not. Your
+code must take care of these. For example, AllocateBuffer() should include code to
+delete floatarray before throwing the exception, like this:</P>
+<P>
+<PRE>if (buffer == NULL)
+    {
+        MyException* exception =
+            new MyException(&quot;Memory allocation failed!&quot;);
+        delete floatarray;
+        throw exception;
+    }
+</PRE>
+<P>In many cases, using an object with a carefully written destructor can save significant
+code duplication when you are using exceptions. If you are using objects allocated
+on the heap, you may need to catch and rethrow exceptions so that you can delete
+them. Consider the code in Listing 26.4, in which the exception is thrown right past
+an intermediate function up to the catching function.</P>
+<P>
+<H4>Listing 26.4&#160;&#160;EXCEPTION4.CPP--Unwinding the Stack</H4>
+<PRE>#include &lt;iostream.h&gt;
+class MyException
+{
+protected:
+    char* m_msg;
+public:
+    MyException(char *msg) { m_msg = msg;}
+    ~MyException(){}
+    char* GetError() {return m_msg;}
+};
+class BigObject
+{
+private:
+     int* intarray;
+public:
+     BigObject() {intarray = new int[1000];} 
+     ~BigObject() {delete intarray;}
+};
+int* AllocateBuffer();
+int* Intermediate();
+int main()
+{
+    int* buffer;
+    
+    try
+    {
+        buffer = Intermediate();
+        delete buffer;
+    }
+    catch (MyException* exception)
+    {
+        char* msg = exception-&gt;GetError();
+        cout &lt;&lt; msg &lt;&lt; endl;
+    }
+    return 0;
+}
+int* Intermediate()
+{
+    BigObject bigarray;
+    float* floatarray = new float[1000];
+    int* retval = AllocateBuffer();
+    delete floatarray;
+    return retval; 
+}
+int* AllocateBuffer()
+{
+    int* buffer = new int[256];
+    if (buffer == NULL)
+    {
+        MyException* exception =
+            new MyException(&quot;Memory allocation failed!&quot;);
+        throw exception;
+    }
+    
+    return buffer;
+</PRE>
+<PRE>}
+</PRE>
+<P>If the exception is thrown, execution of AllocateBuffer() is abandoned immediately.
+The stack unwinds. Because there is no catch block in Intermediate(), execution of
+that function will be abandoned after the call to AllocateBuffer(). The delete for
+floatarray will not happen, but the destructor for bigarray will be executed. Listing
+26.5 shows a way around this problem.</P>
+<P>
+<H4>Listing 26.5&#160;&#160;Rethrowing Exceptions</H4>
+<PRE>int* Intermediate()
+{
+    BigObject bigarray; 
+    float* floatarray = new float[1000];
+    int* retval = NULL;
+    try
+    {
+    retval = AllocateBuffer();
+    }
+    catch (MyException e)
+    {
+      delete floatarray;
+    throw;
+    }
+    delete floatarray;
+    return retval; 
+</PRE>
+<PRE>}
+</PRE>
+<P>This revised version of Intermediate() catches the exception so that it can delete
+floatarray and throw it farther up to the calling function. (Notice that the name
+of the exception is not in this throw statement; it can throw only the exception
+it just caught.) There are a few things you should notice about this revised code:</P>
+<P>
+
+<UL>
+	<LI>The line that deletes floatarray has been duplicated.
+	<P>
+	<LI>The declaration of retval has had to move out of the try block so that it will
+	still be in scope after the try block.
+	<P>
+	<LI>retval has been initialized to a default value.
+</UL>
+
+<P>This is really starting to get ugly. Through this entire process, the BigObject
+called bigarray has been quietly handled properly and easily, with an automatic call
+to the destructor no matter which function allocated it or where the exception was
+called. When you write code that uses exceptions, wrapping all your heap-allocated
+objects in classes such as BigObject makes your life easier. BigObject uses a <I>managed
+pointer</I>: When a BigObject object such as bigarray goes out of scope, the memory
+it pointed to is deleted. A very flexible approach to managed pointers is described
+at the end of the section on templates in this chapter.</P>
+<P>
+<H3><A NAME="Heading5"></A>Handling Multiple Types of Exceptions</H3>
+<P>Often, a block of code generates more than one type of exception, so you may want
+to use multiple catch blocks with a try block. You might, for example, need to be
+on the lookout for both CException and char* exceptions. Because a catch block must
+receive a specific type of exception object, you need two different catch blocks
+to watch for both CException and char* exception objects. You can also set up a catch
+block to catch whatever type of exception hasn't been caught yet, by placing ellipses
+(...) in the parentheses, rather than a specific argument. The problem with this
+sort of multipurpose catch block is that you have no access to the exception object
+received and so must handle the exception in a general way.</P>
+<P>Listing 26.6 is a program that generates three different types of exceptions based
+on a user's input. (In a real program, you shouldn't use exceptions to deal with
+user errors. It's a slow mechanism, and checking what the user typed can usually
+be handled more efficiently in another way.)</P>
+<P>Running the program, you're instructed to enter a value between 4 and 8, except
+for 6. If you enter a value less than 4, the program throws a MyException exception;
+if you enter a value greater than 8, the program throws a char* exception; and, finally,
+if you happen to enter 6, the program throws the entered value as an exception.</P>
+<P>Although the program throws the exceptions in the GetValue() function, the program
+catches them all in main(). The try block in main() is associated with three catch
+blocks. The first catches the MyException object, the second catches the char* object,
+and the third catches any other exception that happens to come down the pike.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Similar to if...else statements, the order in which you place catch
+	program blocks can have a profound effect on program execution. You should always
+	place the most specific catch blocks first. For example, in Listing 26.6, if the
+	catch(...) block were first, none of the other catch blocks would ever be called.
+	This is because the catch(...) is as general as you can get, catching every single
+	exception that the program throws. In this case (as in most cases), you want to use
+	catch(...) to receive only the leftover exceptions.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H4>Listing 26.6&#160;&#160;EXCEPTION6.CPP--Using Multiple catch Blocks</H4>
+<PRE>#include &lt;iostream.h&gt;
+class MyException
+{
+protected:
+    char* m_msg;
+public:
+    MyException(char *msg) { m_msg = msg;}
+    ~MyException(){}
+    char* GetError() {return m_msg;}
+};
+int GetValue();
+int main()
+{
+    try
+    {
+        int value = GetValue();
+        cout &lt;&lt; &quot;The value you entered is okay.&quot; &lt;&lt; endl;
+    }
+    catch(MyException* exception)
+    {
+        char* msg = exception-&gt;GetError();
+        cout &lt;&lt; msg &lt;&lt; endl;
+    }
+    catch(char* msg)
+    {
+        cout &lt;&lt; msg &lt;&lt; endl;
+    }
+    catch(...)
+    {
+        cout &lt;&lt; &quot;Caught unknown exception!&quot; &lt;&lt; endl;
+    }
+    return 0;
+}
+int GetValue(){
+    int value;
+    cout &lt;&lt; &quot;Type a number from 4 to 8 (except 6):&quot; &lt;&lt; endl;
+    cin &gt;&gt; value;
+    if (value &lt; 4)
+    {
+        MyException* exception =
+            new MyException(&quot;Value less than 4!&quot;);
+        throw exception; 
+    }
+    else if (value &gt; 8)
+    {
+        throw &quot;Value greater than 8!&quot;;
+    }
+    else if (value == 6)
+    {
+        throw value;
+    }
+    return value;
+</PRE>
+<PRE>}
+</PRE>
+<H3><A NAME="Heading6"></A>The Old Exception Mechanism</H3>
+<P>Before try, catch, and throw were added to Visual C++, there was a rudimentary
+form of exception handling available to both C and C++ programmers through macros
+called TRY, CATCH, and THROW. These macros are a little slower than the standard
+exception mechanisms and can throw only exceptions that are objects of a class derived
+from CException. Don't use these in your programs. If you have an existing program
+that uses them, you may want to convert to the new mechanism. There's a helpful article
+on this topic in the Visual C++ documentation: search for TRY and you'll find it.</P>
+<P>
+<H2><A NAME="Heading7"></A>Exploring Templates</H2>
+<P>It's a good guess that, at one time or another, you wished you could develop a
+single function or class that could handle any kind of data. Sure, you can use function
+overloading to write several versions of a function, or you can use inheritance to
+derive several different classes from a base class. But, in these cases, you still
+end up writing many different functions or classes. If only there were a way to make
+functions and classes a little smarter so that you could write just one function
+that handled any kind of data you wanted to throw at it. There is a way to accomplish
+this seemingly impossible task. You need to use something called <I>templates,</I>
+the focus of this section.</P>
+<P>
+<H3><A NAME="Heading8"></A>Introducing Templates</H3>
+<P>A <I>template</I> is a kind of blueprint for a function or class. You write the
+template in a general way, supplying placeholders, called <I>parameters</I>, for
+the data objects that the final function or class will manipulate. A template always
+begins with the keyword template followed by a list of parameters between angle brackets,
+like this:</P>
+<P>
+<PRE>template&lt;class Type&gt;
+</PRE>
+<P>You can have as many parameters as you need, and you can name them whatever you
+like, but each must begin with the class keyword and must be separated by commas,
+like this:</P>
+<P>
+<PRE>template&lt;class Type1, class Type2, class Type3&gt;
+</PRE>
+<P>As you may have guessed from previous discussion, there are two types of templates:
+function and class. The following sections describe how to create and use both types
+of templates.</P>
+<P>
+<H3><A NAME="Heading9"></A>Creating Function Templates</H3>
+<P>A function template starts with the template line you just learned about, followed
+by the function's declaration, as shown in Listing 26.7. The template line specifies
+the types of arguments that will be used when calling the function, whereas the function's
+declaration specifies how those arguments are to be received as parameters by the
+function. Every parameter specified in the template line must be used by the function
+declaration. Notice the Type1 immediately before the function name. Type1 is a placeholder
+for the function's return type, which will vary, depending on how the template is
+used.</P>
+<P>
+<H4>Listing 26.7&#160;&#160;The Basic Form of a Function Template</H4>
+<PRE>template&lt;class Type1, class Type2&gt;
+Type1 MyFunction(Type1 data1, Type1 data2, Type2 data3)
+{
+    // Place the body of the function here.
+</PRE>
+<PRE>}
+</PRE>
+<P>An actual working example will help you understand how function templates become
+functions. A common example is a Min() function that can accept any type of arguments.
+Listing 26.8 is a short program that defines a template for a Min() function and
+then uses that function in main(). When you run the program, the program displays
+the smallest value of whatever data is sent as arguments to Min(). This is possible
+because the compiler takes the template and creates functions for each of the data
+types that are compared in the program.</P>
+<P>
+<H4>Listing 26.8&#160;&#160;TEMPLATE1.CPP--Using a Typical Function Template</H4>
+<PRE>#include &lt;iostream.h&gt;
+template&lt;class Type&gt;
+Type Min(Type arg1, Type arg2)
+{
+    Type min;
+    if (arg1 &lt; arg2)
+        min = arg1;
+    else
+        min = arg2;
+    return min;
+}
+int main()
+{
+    cout &lt;&lt; Min(15, 25) &lt;&lt; endl;
+    cout &lt;&lt; Min(254.78, 12.983) &lt;&lt; endl;
+    cout &lt;&lt; Min(`A', `Z') &lt;&lt; endl;
+    return 0;
+</PRE>
+<PRE>}
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong>otice how, in Listing 26.8, the Min() template uses the data type
+	Type not only in its parameter list and function argument list but also in the body
+	of the function in order to declare a local variable. This illustrates how you can
+	use the parameter types just as you would use any specific data type such as int
+	or char.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Because function templates are so flexible, they often lead to trouble. For example,
+in the Min() template, you have to be sure that the data types you supply as parameters
+can be compared. If you tried to compare two classes, your program would not compile
+unless the classes overloaded the &lt; and &gt; operators.</P>
+<P>Another way you can run into trouble is when the arguments you supply to the template
+are not used as you think. For example, what about adding the following line to main()
+in Listing 26.6?</P>
+<P>
+<PRE>cout &lt;&lt; Min(&quot;APPLE&quot;, &quot;ORANGE&quot;) &lt;&lt; endl;
+</PRE>
+<P>If you don't think about what you're doing in the previous line, you may jump
+to the conclusion that the returned result will be APPLE. The truth is that the preceding
+line may or may not give you the result you expect. Why? Because the &quot;APPLE&quot;
+and &quot;ORANGE&quot; string constants result in pointers to char. This means that
+the program will compile smoothly, with the compiler creating a version of Min()
+that compares char pointers. But there's a big difference between comparing two pointers
+and comparing the data to which the pointers point. If &quot;ORANGE&quot; happens
+to be stored at a lower address than &quot;APPLE&quot;, the preceding call to Min()
+results in &quot;ORANGE&quot;.</P>
+<P>A way to avoid this problem is to provide a specific replacement function for
+Min() that defines exactly how you want the two string constants compared. When you
+provide a specific function, the compiler uses that function rather than create one
+from the template. Listing 26.9 is a short program that demonstrates this important
+technique. When the program needs to compare the two strings, it doesn't call a function
+created from the template but instead uses the specific replacement function.</P>
+<P>
+<H4>Listing 26.9&#160;&#160;TEMPLATE2.CPP--Using a Specific Replacement Function</H4>
+<PRE>#include &lt;iostream.h&gt;
+#include &lt;string.h&gt;
+template&lt;class Type&gt;
+Type Min(Type arg1, Type arg2)
+{
+    Type min;
+    if (arg1 &lt; arg2)
+        min = arg1;
+    else
+        min = arg2;
+    return min;
+}
+char* Min(char* arg1, char* arg2)
+{
+    char* min;
+    int result = strcmp(arg1, arg2);
+    if (result &lt; 0)
+        min = arg1;
+    else
+        min = arg2;
+    return min;
+}
+int main()
+{
+    cout &lt;&lt; Min(15, 25) &lt;&lt; endl;
+    cout &lt;&lt; Min(254.78, 12.983) &lt;&lt; endl;
+    cout &lt;&lt; Min(`A', `Z') &lt;&lt; endl;
+    cout &lt;&lt; Min(&quot;APPLE&quot;, &quot;ORANGE&quot;) &lt;&lt; endl;
+    return 0;
+</PRE>
+<PRE>}
+</PRE>
+<H3><A NAME="Heading10"></A>Creating Class Templates</H3>
+<P>Just as you can create abstract functions with function templates, so too can
+you create abstract classes with class templates. A class template represents a class,
+which in turn represents an object. When you define a class template, the compiler
+takes the template and creates a class. You then declare (instantiate) objects of
+the class. As you can see, class templates add another layer of abstraction to the
+concept of classes.</P>
+<P>You define a class template much as you define a function template--by supplying
+the template line followed by the class's declaration, as shown in Listing 26.10.
+Notice that, just as with a function template, you use the abstract data types given
+as parameters in the template line in the class's body. They might be the types for
+member variables, return types, and other data objects.</P>
+<P>
+<H4>Listing 26.10&#160;&#160;Defining a Class Template</H4>
+<PRE>template&lt;class Type&gt;
+class CMyClass
+{
+protected:
+    Type data;
+public:
+    CMyClass(Type arg) { data = arg; }
+    ~CMyClass() {};
+</PRE>
+<PRE>};
+</PRE>
+<P>When ready to instantiate objects from the template class, you must supply the
+data type that will replace the template parameters. For example, to create an object
+of the CMyClass class, you might use a line like this:</P>
+<P>
+<PRE>CMyClass&lt;int&gt; myClass(15);
+</PRE>
+<P>The preceding line creates a CMyClass object that uses integers in place of the
+abstract data type. If you wanted the class to deal with floating-point values, you'd
+create an object of the class something like this:</P>
+<P>
+<PRE>CMyClass&lt;float&gt; myClass(15.75);
+</PRE>
+<P>For a more complete example, suppose you want to create a class that stores two
+values and has member functions that compare those values. Listing 26.11 is a program
+that does just that. First, the listing defines a class template called CCompare.
+This class stores two values that are supplied to the constructor. The class also
+includes the usual constructor and destructor, as well as member functions for determining
+the larger or smaller of the values, or whether the values are equal.</P>
+<P>
+<H4>Listing 26.11&#160;&#160;TEMPLATE3.CPP--Using a Class Template</H4>
+<PRE>#include &lt;iostream.h&gt;
+template&lt;class Type&gt;
+class CCompare
+{
+protected:
+    Type arg1;
+    Type arg2;
+public:
+    CCompare(Type arg1, Type arg2)
+    {
+        CCompare::arg1 = arg1;
+        CCompare::arg2 = arg2;
+    }
+    ~CCompare() {}
+    Type GetMin()
+    {
+        Type min;
+        if (arg1 &lt; arg2)
+            min = arg1;
+        else
+            min = arg2;
+        return min;
+    }
+    Type GetMax()
+    {
+        Type max;
+        if (arg1 &gt; arg2)
+            max = arg1;
+        else
+            max = arg2;
+        return max;
+    }
+    int Equal()
+    {
+        int equal;
+        if (arg1 == arg2)
+            equal = 1;
+        else
+            equal = 0;
+        return equal;
+    }
+};
+int main()
+{
+    CCompare&lt;int&gt; compare1(15, 25);
+    CCompare&lt;double&gt; compare2(254.78, 12.983);
+    CCompare&lt;char&gt; compare3(`A', `Z');
+    cout &lt;&lt; &quot;THE COMPARE1 OBJECT&quot; &lt;&lt; endl;
+    cout &lt;&lt; &quot;Lowest: &quot; &lt;&lt; compare1.GetMin() &lt;&lt; endl;
+    cout &lt;&lt; &quot;Highest: &quot; &lt;&lt; compare1.GetMax() &lt;&lt; endl;
+    cout &lt;&lt; &quot;Equal: &quot; &lt;&lt; compare1.Equal() &lt;&lt; endl;
+    cout &lt;&lt; endl;
+    cout &lt;&lt; &quot;THE COMPARE2 OBJECT&quot; &lt;&lt; endl;
+    cout &lt;&lt; &quot;Lowest: &quot; &lt;&lt; compare2.GetMin() &lt;&lt; endl;
+    cout &lt;&lt; &quot;Highest: &quot; &lt;&lt; compare2.GetMax() &lt;&lt; endl;
+    cout &lt;&lt; &quot;Equal: &quot; &lt;&lt; compare2.Equal() &lt;&lt; endl;
+    cout &lt;&lt; endl;
+    cout &lt;&lt; &quot;THE COMPARE2 OBJECT&quot; &lt;&lt; endl;
+    cout &lt;&lt; &quot;Lowest: &quot; &lt;&lt; compare3.GetMin() &lt;&lt; endl;
+    cout &lt;&lt; &quot;Highest: &quot; &lt;&lt; compare3.GetMax() &lt;&lt; endl;
+    cout &lt;&lt; &quot;Equal: &quot; &lt;&lt; compare3.Equal() &lt;&lt; endl;
+    cout &lt;&lt; endl;
+    return 0;
+</PRE>
+<PRE>}
+</PRE>
+<P>The main program instantiates three objects from the class template: one that
+deals with integers, one that uses floating-point values, and one that stores and
+compares character values. After creating the three CCompare objects, main() calls
+the objects' member functions in order to display information about the data stored
+in each object. Figure 26.1 shows the program's output.</P>
+<P><A HREF="javascript:popUp('26uvc01.gif')"><B>FIG. 26.1</B></A><B> </B><I>The template3
+program creates three different objects from a class template.</I></P>
+
+<P>You can pass as many parameters as you like to a class template, just like a function
+template. Listing 26.12 shows a class template that uses two different types of data.</P>
+<P>
+<H4>Listing 26.12&#160;&#160;Using Multiple Parameters with a Class Template</H4>
+<PRE>template&lt;class Type1, class Type2&gt;
+class CMyClass
+{
+protected:
+    Type1 data1;
+    Type2 data2;
+public:
+    CMyClass(Type1 arg1, Type2 arg2)
+    {
+        data1 = arg1;
+        data2 = arg2;
+    }
+    ~CMyClass() {}
+</PRE>
+<PRE>};
+</PRE>
+<P>To instantiate an object of the CMyClass class, you might use a line like this:</P>
+<P>
+<PRE>CMyClass&lt;int, char&gt; myClass(15, `A');
+</PRE>
+<P>Finally, you can use specific data types, as well as the placeholder data types,
+as parameters in a class template. Just add the specific data type to the parameter
+list, as you add any other parameter. Listing 26.13 is a short program that creates
+an object from a class template, using two abstract parameters and one specific data
+type.</P>
+<P>
+<H4>Listing 26.13&#160;&#160;Using Specific Data Types as Parameters in a Class Template</H4>
+<PRE>#include &lt;iostream.h&gt;
+template&lt;class Type1, class Type2, int num&gt;
+class CMyClass
+{
+protected:
+    Type1 data1;
+    Type2 data2;
+    int data3;
+public:
+    CMyClass(Type1 arg1, Type2 arg2, int num)
+    {
+	data1 = arg1;
+       data2 = arg2;
+       data3 = num;
+    }
+    ~CMyClass() {}
+};
+int main()
+{
+    CMyClass&lt;int, char, 0&gt; myClass(15, `A', 10);
+    return 0;
+</PRE>
+<PRE>}
+</PRE>
+<H2><A NAME="Heading11"></A>The Standard Template Library</H2>
+<P>Before running off to write templates that implement linked lists, binary trees,
+sorting, and other common tasks, you might like to know that somebody else already
+has. Visual C++ incorporates the Standard Template Library (STL), which includes
+hundreds of function and class templates to tackle common tasks. Would you like a
+stack of ints or a stack of floats? Don't write lots of different stack classes.
+Don't even write one stack class template. Simply use the stack template included
+in the STL. This applies to almost every common data structure.</P>
+<P>
+<H3><A NAME="Heading12"></A>Managed Pointer Templates: auto_ptr</H3>
+<P>Earlier in this chapter you saw applications that use exceptions and allocate
+memory on the heap (dynamic allocation with new) can run into trouble when exceptions
+are thrown. If the delete statement for that memory gets bypassed, the memory will
+leak. If there were an object on the stack whose destructor called delete for the
+memory, you would prevent this problem. STL implements a managed pointer called auto_ptr.
+Here's the declaration:</P>
+<P>
+<PRE>template&lt;class T&gt;
+    class auto_ptr {
+public:
+    typedef T element_type;
+    explicit auto_ptr(T *p = 0) ;
+    auto_ptr(const auto_ptr&lt;T&gt;&amp; rhs) ;
+    auto_ptr&lt;T&gt;&amp; operator=(auto_ptr&lt;T&gt;&amp; rhs);
+    ~auto_ptr();
+    T&amp; operator*() const ;
+    T *operator-&gt;() const;
+    T *get() const ;
+    T *release() const;
+    };
+</PRE>
+<P>After you create a pointer to an int, float, Employee, or any other type of object,
+you can make an auto_ptr and use that like a pointer. For example, imagine a code
+fragment like this:</P>
+<P>
+<PRE>// ...
+    Employee* emp = new Employee(stuff);
+    emp-&gt;ProcessEmployee;
+    delete emp;
+// ...
+</PRE>
+<P>When you realize that ProcessEmployee() might throw an EmployeeException, you
+can change this code to read like this:</P>
+<P>
+<PRE>// ...
+    Employee* emp = new Employee(stuff);
+    try
+    {
+        emp-&gt;ProcessEmployee;
+    }
+    catch (EmployeeException e)
+    {
+        delete emp;
+        throw;
+    }
+    delete emp;
+// ...
+</PRE>
+<P>But you think this is ugly and hard to maintain, so you go with an auto_ptr instead:</P>
+<P>
+<PRE>#include &lt;memory&gt;
+// ...
+    auto_ptr&lt;Employee&gt; emp (new Employee(stuff));
+    emp-&gt;ProcessEmployee;
+// ...
+</PRE>
+<P>This looks like the first example, but it works like the second: Whether you leave
+this code snippet normally or because of an exception, emp will go out of scope,
+and when it does, the Employee object that was allocated on the heap will be deleted
+for you automatically. No extra try or catch blocks, and as an extra bonus you don't
+even have to remember to delete the memory in the routine--it's done for you.</P>
+<P>Look again at the functions declared in the template: a constructor, a copy constructor,
+an address-of (&amp;) operator, a destructor, a contents of (*) operator, a dereferencing
+(-&gt;) operator, and functions called get() and release(). These work together to
+ensure that you can treat your pointer exactly as though it were an ordinary pointer.</P>
+<P>
+<H3><A NAME="Heading13"></A>Other Useful STL Templates</H3>
+<P>STL is especially useful to ATL programmers, who may not be using MFC. Why drag
+in all of MFC because you want to do a little string manipulation or manage a lookup
+table or linked list? Use the STL versions of these common data structures instead.
+The full details are in the online documentation, but be sure to look for these classes
+or functions:</P>
+<P>
+
+<UL>
+	<LI>deque
+	<P>
+	<LI>list
+	<P>
+	<LI>map
+	<P>
+	<LI>multimap
+	<P>
+	<LI>set
+	<P>
+	<LI>multiset
+	<P>
+	<LI>vector
+	<P>
+	<LI>basic_string
+	<P>
+	<LI>stack
+	<P>
+	<LI>swap
+	<P>
+	<LI>min, max
+</UL>
+
+<P>There are many more, but these will give you an idea of the amount of work you
+can save with templates, especially with templates you don't have to write.</P>
+<P>
+<H2><A NAME="Heading14"></A>Understanding Namespaces</H2>
+<P>A <I>namespace</I> defines a scope in which duplicate identifiers cannot be used.
+For example, you already know that you can have a global variable named value and
+then also define a function with a local variable called value. Because the two variables
+are in different namespaces, your program knows that it should use the local value
+when inside the function and the global value everywhere else.</P>
+<P>Namespaces, however, do not extend far enough to cover some very thorny problems.
+One example is duplicate names in external classes or libraries. This issue crops
+up when a programmer is using several external files within a single project. None
+of the external variables and functions can have the same name as other external
+variables or functions. To avoid this type of problem, third-party vendors frequently
+add prefixes or suffixes to variable and function names in order to reduce the likeliness
+of some other vendor using the same name.</P>
+<P>Obviously, the C++ gurus have come up with a solution to such scope-resolution
+problems. The solution is user-defined namespaces.</P>
+<P>
+<H3><A NAME="Heading15"></A>Defining a Namespace</H3>
+<P>In its simplest form, a namespace is not unlike a structure or a class. You start
+the namespace definition with the namespace keyword, followed by the namespace's
+name and the declaration of the identifiers that will be valid within the scope of
+that namespace.</P>
+<P>Listing 26.16 shows a namespace definition. The namespace is called A and includes
+two identifiers, i and j, and a function, Func(). Notice that the Func() function
+is completely defined within the namespace definition. You can also choose to define
+the function outside the namespace definition. In that case, you must preface the
+function definition's name with the namespace's name, much as you would preface a
+class's member-function definition with the class's name. Listing 26.17 shows this
+form of namespace function definition.</P>
+<P>
+<H4>Listing 26.16&#160;&#160;Defining a Namespace</H4>
+<PRE>namespace A
+{
+    int i;
+    int j;
+    int Func()
+    {
+        return 1;
+    }
+</PRE>
+<PRE>}
+</PRE>
+<H4>Listing 26.17&#160;&#160;Defining a Function Outside the Namespace Definition</H4>
+<PRE>namespace A
+{
+    int i;
+    int j;
+    int Func();
+}
+int A::Func()
+{
+    return 1;
+</PRE>
+<PRE>}
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong>amespaces must be defined at the file level of scope or within another
+	namespace definition. They cannot be defined, for example, inside a function.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading16"></A>Namespace Scope Resolution</H3>
+<P>Namespaces add a new layer of scope to your programs, but this means that you
+need some way of identifying that scope. The identification is, of course, the namespace's
+name, which you must use in your programs to resolve references to identifiers. For
+example, to refer to the variable i in namespace A, you'd write something like this:</P>
+<P>
+<PRE>A::i = 0;
+</PRE>
+<P>You can nest one namespace definition within another, as shown in Listing 26.18.
+In that case, however, you have to use more complicated scope resolutions in order
+to differentiate between the i variable declared in A and B, like this:</P>
+<P>
+<PRE>A::i = 0;
+A::B::i = 0;
+</PRE>
+<H4>Listing 26.18&#160;esting Namespace Definitions</H4>
+<PRE>namespace A
+{
+    int i;
+    int j;
+    int Func()
+    {
+        return 1;
+    }
+    namespace B
+    {
+        int i;
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>If you're going to frequently reference variables and functions within namespace
+A, you can avoid using the A:: resolution by preceding the program statements with
+a using line, as shown in Listing 26.19. This is very common in programs that use
+STL templates, most of which are in the std namespace.</P>
+<P>
+<H4>Listing 26.19&#160;&#160;Resolving Scope with the using Keyword</H4>
+<PRE>using namespace A;
+i = 0;
+j = 0;
+</PRE>
+<PRE>int num1 = Func();
+</PRE>
+<H3><A NAME="Heading17"></A>Unnamed Namespaces</H3>
+<P>To thoroughly confuse you, Visual C++ allows you to have unnamed namespaces. You
+define an unnamed namespace exactly as you would any other namespace, without attaching
+a name. Listing 26.20 shows the definition of an unnamed namespace. It lets you arrange
+variables whose names are valid only within one namespace and cannot be accessed
+from elsewhere because no other code can know the name of the unnamed namespace.</P>
+<P>
+<H4>Listing 26.20&#160;&#160;Defining an Unnamed Namespace</H4>
+<PRE>namespace
+{
+    int i;
+    int j;
+    int Func()
+    {
+        return 1;
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>Refer to the identifiers in the unnamed namespace without any sort of extra scope
+resolution, like this:</P>
+<P>
+<PRE>i = 0;
+j = 0;
+int num1 = Func();
+</PRE>
+<H3><A NAME="Heading18"></A>Namespace Aliases</H3>
+<P>Often you run into namespaces that have long names. In these cases, having to
+use the long name over and over in your program in order to access the identifiers
+defined in the namespace can be a major chore. To solve this problem, Visual C++
+enables you to create <I>namespace aliases</I>, which are just replacement names
+for a namespace. You create an alias like this:</P>
+<P>
+<PRE>namespace A = LongName;
+</PRE>
+<P>LongName is the original name of the namespace, and A is the alias. After the
+preceding line executes, you can access the LongName namespace, using either A or
+LongName. You can think of an alias as a nickname or short form. Listing 26.21 is
+a short program that demonstrates namespace aliases.</P>
+<P>
+<H4>Listing 26.21&#160;&#160;Using a Namespace Alias</H4>
+<PRE>namespace ThisIsANamespaceName
+{
+    int i;
+    int j;
+    int Func()
+    {
+        return 2;
+    }
+}
+int main()
+{
+    namespace ns = ThisIsANamespaceName;
+    ns::i = 0;
+    ns::j = 0;
+    int num1 = ns::Func();
+    return 0;
+</PRE>
+
+<PRE>}</PRE>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch25/ch25.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch27/ch27.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+<BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

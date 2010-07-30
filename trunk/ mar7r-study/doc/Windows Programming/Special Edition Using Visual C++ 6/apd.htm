@@ -1,0 +1,563 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Appendix D -- Debugging</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../apc/apc.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ape/ape.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- D -</H1>
+</CENTER>
+<CENTER>
+<H1>Debugging</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Debugging Vocabulary</A>
+	<LI><A HREF="#Heading2">Debugging Commands and Windows</A>
+	<UL>
+		<LI><A HREF="#Heading3">Menu Items</A>
+		<LI><A HREF="#Heading4">Setting Breakpoints</A>
+		<LI><A HREF="#Heading5">Examining Variable Values</A>
+		<LI><A HREF="#Heading6">Stepping Through Code</A>
+		<LI><A HREF="#Heading7">Edit and Continue</A>
+		<LI><A HREF="#Heading8">Other Debug Windows</A>
+	</UL>
+	<LI><A HREF="#Heading9">Using MFC Tracer</A>
+	<LI><A HREF="#Heading10">Defining a Dump Member Function</A>
+	<UL>
+		<LI><A HREF="#Heading11">An Example Using CDumpContext, CFile, and axfDump</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>Debugging is a vital part of programming. Whenever a program doesn't do what you
+expect, even if it doesn't blow up, you should turn to the debugger to see what's
+really going on. Some of the philosophies and techniques of debugging have been explained
+elsewhere in this book, especially in Chapter 24, &quot;Improving Your Application's
+Performance.&quot; This appendix concentrates on the nuts and bolts of how to use
+the debugger: the menus, toolbars, and windows that were not covered in Appendix
+C, &quot;The Visual Studio User Interface, Menus, and Toolbars.&quot;</P>
+<P>
+<H2><A NAME="Heading1"></A>Debugging Vocabulary</H2>
+<P>Probably the most important word in debugging is <I>breakpoint</I>. A breakpoint
+is a spot in your program, a single line of code, where you would like to pause.
+Perhaps you are wondering how many times a loop is executed, whether control transfers
+inside a certain if statement, or whether a function is even called. Setting a breakpoint
+on a line will make execution stop when that line is about to be executed. At that
+point you may want the program to be off and running again or want to move through
+your code a line or so at a time. You may want to know some of your variables' values
+or see how control transferred to this point by examining the call stack. Often,
+you'll spot the cause of a bug and correct your code on the spot.</P>
+<P>When it's time to move along, there are a number of ways you might like execution
+to resume. These are explained in the following list:</P>
+
+<UL>
+	<LI><I>Go</I>--Execute to the next breakpoint or, if there are no more breakpoints,
+	until the program completes.
+	<P>
+	<LI><I>Restart</I>--Start again from the beginning.
+	<P>
+	<LI><I>Step Over</I>--Execute only the next statement, and then pause again. If it
+	is a function call, run the whole function and pause after returning from it.
+	<P>
+	<LI><I>Step Into</I>--Execute just the next statement, but if it is a function, go
+	into it and pause before executing the first statement in the function.
+	<P>
+	<LI><I>Step Out</I>--Execute the rest of the current function and pause in the function
+	that called this one.
+	<P>
+	<LI><I>Run to Cursor</I>--Start running and stop a few (or many) lines from here,
+	where the cursor is positioned.
+</UL>
+
+<P>Most information made available to you by the debugger is in the form of new windows.
+These are discussed in the following sections.</P>
+<P>
+<H2><A NAME="Heading2"></A>Debugging Commands and Windows</H2>
+<P>Developer Studio has a powerful debugger with a rich interface. There are menu
+items, toolbar buttons, and windows (output areas) that are used only when debugging.</P>
+<P>
+<H3><A NAME="Heading3"></A>Menu Items</H3>
+<P>The user interface for debugging starts with items on some ordinary menus that
+are used only in debugging and are not discussed in Appendix C. These include</P>
+
+<UL>
+	<LI>Edit, Breakpoints
+	<P>
+	<LI>View, Debug Windows, Watch
+	<P>
+	<LI>View, Debug Windows, Call Stack
+	<P>
+	<LI>View, Debug Windows, Memory
+	<P>
+	<LI>View, Debug Windows, Variables
+	<P>
+	<LI>View, Debug Windows, Registers
+	<P>
+	<LI>View, Debug Windows, Disassembly
+	<P>
+	<LI>Build, Start Debug, Go
+	<P>
+	<LI>Build, Start Debug, Step Into
+	<P>
+	<LI>Build, Start Debug, Run to Cursor
+	<P>
+	<LI>Build, Start Debug, Attach to Process
+	<P>
+	<LI>Build, Debugger Remote Connection
+</UL>
+
+<P>These are not the only menu items you'll use, of course. For example, the Edit,
+Go To dialog box can be used to scroll the editor to a specific breakpoint as easily
+as a line, bookmark, or address. Many menu items you've already learned about are
+useful during debugging.</P>
+<P>When you start debugging, the Build menu disappears and a Debug menu appears.
+The items on that menu are as follows:</P>
+
+<UL>
+	<LI>Debug, Go
+	<P>
+	<LI>Debug, Restart
+	<P>
+	<LI>Debug, Stop Debugging
+	<P>
+	<LI>Debug, Break
+	<P>
+	<LI>Debug, Apply Code Changes
+	<P>
+	<LI>Debug, Step Into
+	<P>
+	<LI>Debug, Step Over
+	<P>
+	<LI>Debug, Step Out
+	<P>
+	<LI>Debug, Run to Cursor
+	<P>
+	<LI>Debug, Step into Specific Function
+	<P>
+	<LI>Debug, Exceptions
+	<P>
+	<LI>Debug, Threads
+	<P>
+	<LI>Debug, Show Next Statement
+	<P>
+	<LI>Debug, QuickWatch
+</UL>
+
+<P>As you can see, some items from the Build, Start Debug cascading menu are also
+on the Debug menu, along with many other items. The sections that follow discuss
+the individual items.</P>
+<P>
+<H3><A NAME="Heading4"></A>Setting Breakpoints</H3>
+<P>Probably the simplest way to set a breakpoint is to place the cursor on the line
+of code where you would like to pause. Then, toggle a breakpoint by pressing F9 or
+by clicking the Insert/Remove Breakpoint button on the Build MiniBar, which looks
+like an upraised hand (you're supposed to think &quot;Stop!&quot;). A red dot appears
+in the margin to indicate you have placed a breakpoint here, as shown in Figure D.1.</P>
+<P><A HREF="javascript:popUp('xduvc01.gif')"><B>FIG. D.1</B></A><B> </B><I>The F9
+key toggles a breakpoint on the line containing the cursor.</I></P>
+<P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> The application being debugged throughout this appendix is ShowString,
+	as built in Chapter 8, &quot;Building a Complete Application: ShowString.&quot;&#160;n
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Choosing Edit, Breakpoints displays a tabbed dialog box to set simple or conditional
+breakpoints. For example, you may want to pause whenever a certain variable's value
+changes. Searching through your code for lines that change that variable's value
+and setting breakpoints on them all is tiresome. Instead, use the Data tab of the
+Breakpoints dialog box, shown in Figure D.2. When the value of the variable changes,
+a message box tells you why execution is pausing; then you can look at code and variables,
+as described next.</P>
+<P>You can also set conditional breakpoints, such as break on this line when i exceeds
+100, that spare you from mindlessly clicking Go, Go, Go until you have been through
+a loop 100 times.</P>
+<P><A HREF="javascript:popUp('xduvc02.gif')"><B>FIG. D.2</B></A><B> </B><I>You can
+arrange for execution to pause whenever a variable or expression changes value.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading5"></A>Examining Variable Values</H3>
+<P>When you set a breakpoint and debug the program, everything proceeds normally
+until the breakpoint line of code is about to execute. Then Developer Studio comes
+up on top of your application, with some extra windows in the display and a yellow
+arrow in the red margin dot that indicates your breakpoint, as shown in Figure D.3.
+This shows you the line of code that is about to execute.</P>
+<P><A HREF="javascript:popUp('xduvc03.gif')"><B>FIG. D.3</B></A><B> </B><I>A yellow
+arrow indicates the line of code about to execute.</I></P>
+<P>Move the mouse over a variable name, like color or horizcenter. A DataTip appears,
+telling you the current value of this variable. You can check as many local variables
+as you want like this, then continue executing, and check them again. There are other
+ways, though, to examine variable values.</P>
+<P>You could click on the variable (or move the cursor to it some other way) and
+choose Debug, QuickWatch or click the QuickWatch button (a pair of glasses) on the
+toolbar. This brings up the QuickWatch window, which shows you the value of a variable
+or expression and lets you add it to the Watch window, if you want. You're probably
+wondering why anyone uses this feature now that DataTips will show you a variable's
+value without even clicking. DataTips can't handle expressions, even simple ones
+like dlg.m_horizcenter, but QuickWatch can, as you see in Figure D.4. You can also
+change a variable's value with this dialog box to recover from horrible errors and
+see what happens.</P>
+<P><A HREF="javascript:popUp('xduvc04.gif')"><B>FIG. D.4</B></A><B> </B><I>The QuickWatch
+dialog box evaluates expressions. You add them to the Watch window by clicking Add
+Watch.</I></P>
+<P>Figure D.5 shows a debug session after running forward a few lines from the original
+breakpoint (you'll see how to do this in a moment). The Watch and Variable windows
+have been undocked to show more clearly which is which, and two watches have been
+added: one for horizcenter and one for dlg.m_horizcenter. The program is paused immediately
+after the user clicks OK on the Options dialog, and in this case the user changed
+the string, the color, and both kinds of centering.</P>
+<P>The Watch window simply shows the values of the two variables that were added
+to it. horizcenter is still TRUE (1) because the line of code that sets it has not
+yet been executed. dlg.m_horizcenter is FALSE (0) because the user deselected the
+check box associated with the member variable. (Dialogs, controls, and associating
+controls with member variables are discussed in Chapter 2, &quot;Dialogs and Controls.&quot;)</P>
+<P>The Variables window has a lot more information in it, which sometimes makes it
+harder to use. The local variable dlg and the pointer to the object for whom this
+member function was invoked, this, are both in the Variables window in tree form:
+Click on a + to expand the tree and on a - to collapse it. In addition, the return
+value from DoModal(), 1, is displayed.</P>
+<P>At the top of the Variables window is a drop-down box labeled <I>Context</I>.
+Dropping it down shows how control got here: It lists the names of a series of functions.
+The top entry is the function in which the line about to be executed is contained,
+CShowStringDoc::OnToolsOptions(). The second entry is the function that called this
+one, _AfxDispatchCmdMsg(), which dispatches command messages. Chapter 3, &quot;Messages
+and Commands,&quot; introduces commands and messages and discusses the way that control
+passes to a message-handling function like OnToolsOptions(). Here, the debugger gives
+proof of this process right before your eyes.</P>
+<P><A HREF="javascript:popUp('xduvc05.gif')"><B>FIG. D.5</B></A><B> </B><I>The Watch
+window and the Variable window make it easy to know the values of all your variables.</I></P>
+<P>Click on any function name in the drop-down box and the code for that function
+is displayed. You can look at variables local to that function, and so on.</P>
+<P>The Call Stack window, shown in Figure D.6, is easier to examine than the drop-down
+box in the Variables window, and it shows the same information. As well as the function
+names, you can see the parameters that were passed to each function. You may notice
+the number 32771 recurring in most of the function calls. Choose View, Resource Symbols,
+and you'll see that 32771 means ID_TOOLS_OPTIONS, the resource ID associated with
+the menu item Tools, Options in ShowString (see Figure D.7).</P>
+<P><A HREF="javascript:popUp('xduvc06.gif')"><B>FIG. D.6</B></A><B> </B><I>The Call
+Stack window shows how you arrived here.</I></P>
+<P>
+<H3><A NAME="Heading6"></A>Stepping Through Code</H3>
+<P>Double-clicking a function name in the call stack or the context drop-down box
+of the Variables window doesn't make any code execute: It simply gives you a chance
+to examine the local variables and code of the functions that called the function
+now executing. After you've looked at everything you want to look at, it's time to
+move on. Although there are items on the Debug menu to Step Over, Step Into, and
+so on, most developers use the toolbar buttons or the keyboard shortcuts. The Debug
+toolbar can be seen in Figures D.1, D.3, and D.5. Pause your mouse over each button
+to see the command it is connected to and a reminder of the keyboard shortcut. For
+example, the button showing an arrow going down into a pair of braces is Step Into,
+and the shortcut key is F11.</P>
+<P><A HREF="javascript:popUp('xduvc07.gif')"><B>FIG. D.7</B></A><B> </B><I>The number
+32771 corresponds to ID_TOOLS_OPTIONS.</I></P>
+<P>As you move through code, the yellow arrow in the margin moves with you to show
+which line is about to execute. Whenever the program is paused, you can add or remove
+breakpoints, examine variables, or resume execution. These are the mechanics of debugging.</P>
+<P>
+<H3><A NAME="Heading7"></A>Edit and Continue</H3>
+<P>Most developers are familiar with the cycle of debugging work. You build your
+project, you run it, and something unusual happens. You debug for a while to understand
+why. You find the bad code, change it, rebuild, rerun, and either find another bug
+or convince yourself that the application works. Sometimes you think you've fixed
+it, but you haven't. As your project grows, these rebuilds can take a very long time,
+and they break the rhythm of your work. It can also take a significant amount of
+time to run the application to the trouble spot each time. It's very boring to enter
+the same information every time on a dialog box, for example, trying to set up an
+error condition.</P>
+<P>In version 6.0 of Visual C++, in many cases you can keep right on debugging after
+making a code change--without rebuilding and without rerunning. This feature is called
+Edit and Continue and is sure to be a major time-saver.</P>
+<P>To use Edit and Continue, you should start by confirming that it's enabled both
+for the product as a whole and for this specific project. First, choose Tools, Options
+and click the Debug tab. Make sure that Debug commands Invoke Edit and Continue is
+selected, as in Figure D.8. Second, choose Project, Settings and click the C/C++
+tab. In the left pane, make sure you are editing your Debug settings. Ensure that
+the Debug Info drop-down box contains Program Database for Edit and Continue. If
+not, drop the box down, select this option, as in Figure D.9 (it's last on the list),
+and then rebuild the project after exiting the Project Settings dialog. Always check
+the project settings when you start a new project, to confirm that Edit and Continue
+is enabled.</P>
+<P><A HREF="javascript:popUp('xduvc08.gif')"><B>FIG. D.8</B></A><B> </B><I>Enable
+Edit And Continue on the Debug tab of the Options dialog.</I></P>
+<P><A HREF="javascript:popUp('xduvc09.gif')"><B>FIG. D.9</B></A><B> </B><I>Your project
+must generate Edit and Continue information.</I></P>
+<P>Now, debug as you always did, but don't automatically click Build after making
+a code change: Try to step to the next line. If it's not possible to continue without
+a build, you will receive a line of output in the Build tab of the Output window
+telling you so and the familiar One or More Files Are out of Date message box offering
+you a chance to rebuild your project. If it's possible to continue, you will have
+saved a tremendous amount of time.</P>
+<P>Most simple code changes, such as changing the condition in an if or for statement
+or changing the value to which you set a variable, should work immediately. More
+complex changes will require a rebuild. For example, you must rebuild after any one
+of these changes:</P>
+
+<UL>
+	<LI>Any change to a header file, including changing code in an inline function
+	<P>
+	<LI>Changing a C++ class definition
+	<P>
+	<LI>Changing a function prototype
+	<P>
+	<LI>Changing the code in a global (nonmember) function or a static member function
+</UL>
+
+<P>Try it yourself: Imagine that you can't remember why the string originally displayed
+by ShowString is black, and you'd like it to be red. You suspect that the OnNewDocument()
+function is setting it, so you expand CShowStringDoc in the ClassView and double-click
+OnNewDocument(). Then you place a breakpoint (F9) on this line:</P>
+<P>
+<PRE>string = &quot;Hello, world!&quot;;
+</PRE>
+<P>Click Go (F5), or choose Build, Start Debug, Go; ShowString will run, create a
+new document, and stop at your breakpoint. Change the next line of code to read</P>
+<P>
+<PRE>color = 1;   //red
+</PRE>
+<P>Click Go again and wait. Watch your output window and you will see that showstringdoc.cpp
+is recompiling. After a short wait, the familiar Hello, world! will appear--in red.
+Your changes went into effect immediately.</P>
+<P>When you finish your debugging session, it's a good idea to do a build because
+the changes used by Edit and Continue may be in memory only and not written out to
+your executable file.</P>
+<P>
+<H3><A NAME="Heading8"></A>Other Debug Windows</H3>
+<P>Three debug windows have not yet been mentioned: Memory, Registers, and Disassembly.
+These windows provide a level of detail rarely required in ordinary debugging. With
+each release of Visual C++, the circumstances under which these windows are needed
+dwindle. For example, the Registers window used to be the only way to see the value
+just returned from a function call. Now that information is in the Variables window
+in a more accessible format.</P>
+<P><B>The Memory Window&#160;&#160;</B>This window, shown in Figure D.10, shows you
+the hex values in every byte of the memory space from 0x00000000 to 0xFFFFFFFF. It's
+a very long list, which makes the dialog box hard to scroll--use the Address box
+to enter an address that interests you. Typically, these addresses are copied (through
+the Clipboard, not by hand) from the Variables window. It is a handy way to look
+through a large array or to track down subtle platform- dependent problems.</P>
+<P><A HREF="javascript:popUp('xduvc10.gif')"><B>FIG. D.10</B></A><B> </B><I>You can
+examine raw memory, though you'll rarely need to.</I></P>
+<P><B>The Registers Window&#160;&#160;</B>If you are debugging at the assembler level,
+it might be useful to examine the registers. Figure D.11 shows the Registers window.
+This shot was taken at the same point of execution as Figure D.5, and you can see
+that the EAX register contains the value 1, which is the return value from DoModal().</P>
+<P><A HREF="javascript:popUp('xduvc11.gif')"><B>FIG. D.11</B></A><B> </B><I>All the
+registers are available for examination.</I></P>
+<P><B>The Disassembly Window&#160;&#160;</B>By default, the Disassembly window comes
+up full screen, replacing the C++ code in the main working area. You can see the
+assembly language statements generated for your C++ code, shown in Figure D.12. Debugging
+at the assembly level is beyond the scope of this book, though perhaps you might
+be curious to see the assembly code generated for parts of your program.</P>
+<P><A HREF="javascript:popUp('xduvc12.gif')"><B>FIG. D.12</B></A><B> </B><I>You can
+debug the assembler that was generated for you.</I></P>
+<P>
+<H2><A NAME="Heading9"></A>Using MFC Tracer</H2>
+<P>The MFC Tracer utility is a standalone application with an integrated menu item
+in the Developer Studio. To run it, choose Tools, MFC Tracer. Figure D.13 shows the
+Tracer dialog that appears.</P>
+<P><A HREF="javascript:popUp('xduvc13.gif')"><B>FIG. D.13</B></A><B> </B><I>A standalone
+utility simplifies setting trace flags.</I></P>
+<P>Tracer doesn't do very much: It's just an easy way to set trace flags that govern
+the kind of debug output you get. Try setting all the flags on and running ShowString,
+simply starting it up and shutting it down. Turn off a few flags and see how the
+output changes.</P>
+<P>With all the trace flags on, your application will be slow. Use Tracer to set
+only the ones you're interested in, while you're interested in them. It's much easier
+than changing a variable on- the-fly.</P>
+<P>
+<H2><A NAME="Heading10"></A>Defining a Dump Member Function</H2>
+<P>All MFC classes have a Dump() member function. When things go wrong, some error-handling
+code calls this function to show you the object's contents. You can write Dump()
+functions for your objects, too. Although you won't normally call these functions
+yourself, you could do so as part of your own error handling.</P>
+<P>MFC classes inherit Dump() from Cobject, where it is defined like this:</P>
+<P>
+<PRE>virtual void Dump(CDumpContext&amp; dc ) const;
+</PRE>
+<P>The keyword virtual suggests you should override the method in your derived classes,
+and const indicates that Dump() will not modify the object state.</P>
+<P>Like trace and assert statements, the Dump() member function disappears in a release
+build. This saves users seeing output they can't deal with and makes a smaller, faster,
+release version for you. You have to make this happen yourself for any Dump() function
+you write, with conditional compilation, as discussed in the &quot;Adding Debug-Only
+Features&quot; section of Chapter 24.</P>
+<P>In the header file, declare Dump() like this:</P>
+<P>
+<PRE>class CNewClass : public CObject
+{
+public:
+     // other class stuff
+     #ifdef _DEBUG
+     virtual void Dump( CDumpContext&amp; dc) const
+     #endif
+     // ...
+};
+</PRE>
+<P>In the implementation file, the definition, which includes a code body, might
+look like this:</P>
+<P>
+<PRE>#include &quot;cnewclass.h&quot;
+#ifdef _DEBUG
+void CNewClass::Dump( CDumpContext&amp; dc ) const
+{
+     CObject::Dump( dc );     // Dump parent;
+     // perhaps dump individual members, works like cout
+     dc &lt;&lt; &quot;member: &quot; &lt;&lt; /* member here */ endl;
+}
+#endif
+</PRE>
+<P>As you see in the code for the Dump() function, writing the code is much like
+writing to standard output with the cout object or serializing to an archive. You
+are provided with a CDumpContext object called dc, and you send text and values to
+that object with the &lt;&lt; operator. If this is unfamiliar to you, read Chapter
+7, &quot;Persistence and File I/O.&quot;</P>
+<P>
+<H3><A NAME="Heading11"></A>An Example Using CDumpContext, CFile, and axfDump</H3>
+<P>The sample application in this section uses the MFC debugging class CDumpContext
+and the global axfDump object. The debug window output from this demo and the output
+CFile code are in Listing D.1. To run this application yourself, create a console
+application as described in Chapter 28, &quot;Future Explorations,&quot; and create
+an empty C++ source file called Dump.cpp. Enter this code, build, and run a debug
+version of the project.</P>
+<P>When linking a debug version of this product, if you receive error messages that
+refer to _beginthreadex and _endthreadex, you need to change some settings. By default,
+console applications are single-threaded, but MFC is multithreaded. By including
+afx.h and bringing in MFC, this application is making itself incompatible with the
+single-threaded default. To fix this, choose Project Settings and click the C/C++
+tab. From the drop-down box at the top of the dialog box, choose Code Generation.
+In the drop-down box labeled Use Runtime Library, choose Debug Multithreaded. (Figure
+D.15 shows the completed dialog.) Click OK and rebuild the project. You should usually
+change the settings for release as well, but because the calls to Dump() aren't surrounded
+by tests of _DEBUG, this code won't compile a release version anyway.</P>
+<P>
+<H4>Listing D.1&#160;&#160;Dump.Cpp--Demonstrating the MFC Debugging Class CDumpContext
+and the Output CFile Code</H4>
+<PRE>#include &lt;afx.h&gt;
+// _DEBUG defined for debug build
+class CPeople : public CObject
+{
+public:
+    // constructor
+        CPeople( const char * name );
+        // destructor
+        virtual ~CPeople();
+        #ifdef _DEBUG
+            virtual void Dump(CDumpContext&amp; dc) const;
+        #endif
+    private:
+        CString * person;
+    };
+    // constructor
+    CPeople::CPeople( const char * name) : person( new CString(name)) {};
+    // destructor
+    CPeople::~CPeople(){ delete person; }
+#ifdef _DEBUG
+    void CPeople::Dump( CDumpContext&amp; dc ) const
+    {
+        CObject::Dump(dc);
+        dc &lt;&lt; person-&gt;GetBuffer( person-&gt;GetLength() + 1);
+    }
+#endif
+int main()
+    {
+        CPeople person1(&quot;Kate Gregory&quot;);
+        CPeople person2(&quot;Clayton Walnum&quot;);
+        CPeople person3(&quot;Paul Kimmel&quot;);
+        // Use existing afxDump with virtual dump member function
+        person1.Dump( afxDump );
+        // Instantiate a CFile object
+        CFile dumpFile(&quot;dumpout.txt&quot;, CFile::modeCreate | 
+            CFile::modeWrite);
+        if( !dumpFile )
+        {
+            afxDump &lt;&lt; &quot;File open failed.&quot;;
+        }
+        else
+        {
+            // Dump with other CDumpContext
+            CDumpContext context(&amp;dumpFile);
+            person2.Dump(context);
+        }
+        return 0;
+</PRE>
+<PRE>    }
+</PRE>
+<P>This single file contains a class definition, all the code for the class member
+functions, and a main() function to run as a console application. Each of these parts
+of the file is explained in the next few paragraphs. The class is a simple wrapper
+around a CString pointer, which allocates the CString with new in the constructor
+and deletes it in the destructor. It's so simple that it's actually useless for anything
+other than demonstrating the Dump() function.</P>
+<P>First, the &lt;afx.h&gt; header file is included, which contains the CObject class
+definition and provides access to afxDump.</P>
+<P>Next, this code defines the class CPeople derived from CObject. Notice the placement
+of the override of the virtual Dump() method and the conditional compiler wrap. (Any
+calls to Dump() should be wrapped in the same way, or that code will not compile
+in a release build.)</P>
+<P>Following the constructor and destructor comes the code for CPeople::Dump(). Notice
+how it, too, is wrapped in conditional compiler directives. The call to CObject::Dump()
+takes advantage of the work done by the MFC programmers, dumping information all
+objects keep.</P>
+<P>Finally, the main() function exercises this little class. It creates three instances
+of the CPeople class and dumps the first one.</P>
+<P>For the second CPeople object, this code creates and opens a CFile object by passing
+a text string to the constructor. If the open succeeds, it creates a CDumpContextObject
+from the file and passes this context to Dump instead of the usual afxDump().</P>
+<P>If you run this program, you'll see output like that in Figure D.14. The fi

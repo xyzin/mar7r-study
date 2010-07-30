@@ -1,0 +1,1536 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Appendix F -- Useful Classes</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ape/ape.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../index.htm"><IMG
+SRC="../button/contents.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Contents"
+BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- F -</H1>
+</CENTER>
+<CENTER>
+<H1>Useful Classes</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">The Array Classes</A>
+	<UL>
+		<LI><A HREF="#Heading2">Introducing the Array Application</A>
+		<LI><A HREF="#Heading3">Declaring and Initializing the Array</A>
+		<LI><A HREF="#Heading4">Adding Elements to the Array</A>
+		<LI><A HREF="#Heading5">Reading Through the Array</A>
+		<LI><A HREF="#Heading6">Removing Elements from the Array</A>
+	</UL>
+	<LI><A HREF="#Heading7">The List Classes</A>
+	<UL>
+		<LI><A HREF="#Heading8">Introducing the List Application</A>
+		<LI><A HREF="#Heading9">Declaring and Initializing the List</A>
+		<LI><A HREF="#Heading10">Adding a Node to the List</A>
+		<LI><A HREF="#Heading11">Deleting a Node from the List</A>
+		<LI><A HREF="#Heading12">Iterating Over the List</A>
+		<LI><A HREF="#Heading13">Cleaning Up the List</A>
+	</UL>
+	<LI><A HREF="#Heading14">The Map Classes</A>
+	<UL>
+		<LI><A HREF="#Heading15">Introducing the Map Application</A>
+		<LI><A HREF="#Heading16">Creating and Initializing the Map</A>
+		<LI><A HREF="#Heading17">Retrieving a Value from the Map</A>
+		<LI><A HREF="#Heading18">Iterating Over the Map</A>
+	</UL>
+	<LI><A HREF="#Heading19">Collection Class Templates</A>
+	<LI><A HREF="#Heading20">The String Class</A>
+	<LI><A HREF="#Heading21">The Time Classes</A>
+	<UL>
+		<LI><A HREF="#Heading22">Using a CTime Object</A>
+		<LI><A HREF="#Heading23">Using a CTimeSpan Object</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>MFC includes a lot more than classes for programming the Windows graphical user
+interface. It also features many utility classes for handling such things as lists,
+arrays, times and dates, and mapped collections. By using these classes, you gain
+extra power over data in your programs and simplify many operations involved in using
+complex data structures such as lists.</P>
+<P>For example, because MFC's array classes can change their size dynamically, you
+are relieved of creating oversized arrays in an attempt to ensure that the arrays
+are large enough for the application. In this way, you save memory. You don't have
+to worry about resizing the arrays yourself, and you avoid many of the subtle bugs
+and memory leaks that occur from mistakes in array-resizing code. The other collection
+classes provide many other similar conveniences.</P>
+<P>
+<H2><A NAME="Heading1"></A>The Array Classes</H2>
+<P>MFC's array classes enable you to create and manipulate one-dimensional array
+objects that can hold virtually any type of data. These array objects work much like
+the standard arrays that you're familiar with using in your programs, except that
+MFC can enlarge or shrink an array object dynamically at runtime. This means that
+you don't have to be concerned with dimensioning your array just right when it's
+declared. Because MFC's arrays can grow dynamically, you can forget about the memory
+waste that often occurs with conventional arrays, which must be dimensioned to hold
+the maximum number of elements needed in the program, whether or not you actually
+use every element.</P>
+<P>The array classes include CByteArray, CDWordArray, CObArray, CPtrArray, CUIntArray,
+CWordArray, and CStringArray. As you can tell from the classnames, each class is
+designed to hold a specific type of data. For example, the CUIntArray, which is used
+in this section's examples, is an array class that can hold unsigned integers. The
+CPtrArray class, on the other hand, represents an array of pointers to void, and
+the CObArray class represents an array of objects. The array classes are all nearly
+identical, differing only in the type of data that they store. When you've learned
+to use one of the array classes, you've learned to use them all. Table F.1 lists
+the member functions of the array classes and their descriptions.</P>
+<P>
+<H4>Table F.1&#160;&#160;Member Functions of the Array Classes</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Function</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Add()</TD>
+		<TD ALIGN="LEFT">Appends a value to the end of the array, increasing the size of the array, as needed.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ElementAt()</TD>
+		<TD ALIGN="LEFT">Gets a reference to an array element's pointer.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">FreeExtra()</TD>
+		<TD ALIGN="LEFT">Releases unused array memory.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetAt()</TD>
+		<TD ALIGN="LEFT">Gets the value at the specified array index.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetSize()</TD>
+		<TD ALIGN="LEFT">Gets the number of elements in the array.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetUpperBound()</TD>
+		<TD ALIGN="LEFT">Gets the array's <I>upper bound,</I> which is the highest valid index at which a
+			value can be stored.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">InsertAt()</TD>
+		<TD ALIGN="LEFT">Inserts a value at the specified index, shifting existing elements upward, as necessary,
+			to accommodate the insert.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">RemoveAll()</TD>
+		<TD ALIGN="LEFT">Removes all the array's elements.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">RemoveAt()</TD>
+		<TD ALIGN="LEFT">Removes the value at the specified index.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetAt()</TD>
+		<TD ALIGN="LEFT">Places a value at the specified index. Because this function will not increase the
+			array's size, the index must be currently valid.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetAtGrow()</TD>
+		<TD ALIGN="LEFT">Places a value at the specified index, increasing the array's size, as needed.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetSize()</TD>
+		<TD ALIGN="LEFT">Sets the array's initial size and the amount by which it grows when needed. By allocating
+			more than one element's worth of space at a time, you save time but might waste memory.</TD>
+	</TR>
+</TABLE>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B>Array Templates</B></P>
+	<P>Because the only difference between all these array classes is the type of data
+	they hold, they seem like an obvious use for templates. In fact, they predate the
+	implementation of templates in Visual C++. There is a vector template in the Standard
+	Template Library, discussed in Chapter 26, &quot;Exceptions and Templates,&quot;
+	which holds simple lists of any single data type. Many developers find the MFC array
+	classes much easier to use than templates. There are also MFC collection templates,
+	discussed later in this chapter. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading2"></A>Introducing the Array Application</H3>
+<P>To illustrate how the array classes work, this chapter includes the Array application.
+When you run the program, you see the window shown in Figure F.1. The window displays
+the array's current contents. Because the application's array object (which is an
+instance of CUIntArray) starts off with 10 elements, the values for these elements
+(indexed as 0 through 9) are displayed onscreen. The application enables you to change,
+add, or delete elements in the array and see the results.</P>
+<P><A HREF="javascript:popUp('xfuvc01.gif')"><B>FIG. F.1</B></A><B> </B><I>The Array
+application enables you to experiment with MFC's array classes.</I></P>
+<P>You can add an element to the array in several ways. To see these choices, click
+in the application's window. The dialog box shown in Figure F.2 appears. Type an
+array index in the Index box and the new value in the Value box. Then select whether
+you want to set, insert, or add the element. When you choose Set, the value of the
+element you specify in the Index field is changed to the value in the Value field.
+The Insert operation creates a new array element at the location specified by the
+index, pushing succeeding elements forward. Finally, the Add operation tacks the
+new element on the end of the array. In this case, the program ignores the Index
+field of the dialog box.</P>
+<P><A HREF="javascript:popUp('xfuvc02.gif')"><B>FIG. F.2</B></A><B> </B><I>The Add
+to Array dialog box enables you to add elements to the array.</I></P>
+<P>Suppose, for example, that you enter <B>3</B> in the dialog box's Index field
+and <B>15</B> in the Value field, leaving the Set radio button selected. Figure F.3
+shows the result: The program has placed the value 15 in element 3 of the array,
+overwriting the previous value. Now type <B>2</B> in Index, <B>25</B> in Value, select
+the Insert radio button, and click OK. Figure F.4 shows the result: The program stuffs
+a new element in the array, shoving the other elements forward.</P>
+<P><A HREF="javascript:popUp('xfuvc03.gif')"><B>FIG. F.3</B></A><B> </B><I>The value
+15 has been placed in array element 3.</I></P>
+<P>An interesting thing to try--something that really shows how dynamic MFC's arrays
+are--is to set an array element beyond the end of the array. For example, given the
+program's state shown in Figure F.4, if you type <B>20 </B>in Index and <B>45</B>
+in Value and then choose the Set radio button, you get the results shown in Figure
+F.5. Because there was no element 20, the array class created the new elements that
+it needed to get to 20. You don't need to keep track of how many elements are in
+the array. Try that with an old-fashioned array.</P>
+<P><A HREF="javascript:popUp('xfuvc04.gif')"><B>FIG. F.4</B></A><B> </B><I>The screen
+now shows the new array element, giving 11 elements in all.</I></P>
+<P><A HREF="javascript:popUp('xfuvc05.gif')"><B>FIG. F.5</B></A><B> </B><I>The array
+class has added the elements needed to set element 20.</I></P>
+<P>Besides adding new elements to the array, you can also delete elements in one
+of two ways. To do this, first right-click in the window. When you do, you see the
+dialog box shown in Figure F.6. If you type an index in the Remove field and then
+click OK, the program deletes the selected element from the array. This has the opposite
+effect of the Insert command because the Remove command shortens the array, rather
+than lengthen it. If you want, you can select the Remove All option in the dialog
+box. Then the program deletes all elements from the array, leaving it empty.</P>
+<P><A HREF="javascript:popUp('xfuvc06.gif')"><B>FIG. F.6</B></A><B> </B><I>The Remove
+From Array dialog box enables you to delete elements from the array.</I></P>
+<P>
+<H3><A NAME="Heading3"></A>Declaring and Initializing the Array</H3>
+<P>Now you'd probably like to see how all this array trickery works. It's really
+pretty simple. First, the program declares the array object as a data member of the
+view class, like this:</P>
+<P>
+<PRE>CUIntArray array;
+</PRE>
+<P>Then, in the view class's constructor, the program initializes the array to 10
+elements:</P>
+<P>
+<PRE>array.SetSize(10, 5);
+</PRE>
+<P>The SetSize() function takes as parameters the number of elements to give the
+array initially and the number of elements by which the array should grow whenever
+it needs to. You don't need to call SetSize() to use the array class. If you don't,
+MFC adds elements to the array one at a time, as needed, which can be slow. Unless
+you're doing some heavy processing, though, you're not likely to notice any difference
+in speed. If your application doesn't often add elements to its arrays and you are
+concerned about memory consumption, don't use SetSize(). If your application repeatedly
+adds elements and you have lots of memory available, using SetSize() to arrange for
+many elements to be allocated at once will reduce the number of allocations performed,
+giving you a faster application.</P>
+<P>
+<H3><A NAME="Heading4"></A>Adding Elements to the Array</H3>
+<P>After setting the array size, the program waits for the user to click the left
+or right mouse buttons in the window. When the user does, the program springs into
+action, displaying the appropriate dialog box and processing the values entered in
+the dialog box. Listing F.1 shows the Array application's OnLButtonDown() function,
+which handles the left mouse button clicks.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>TIP:</STRONG> Chapter 3, &quot;Messages and Commands,&quot; shows you how
+	to catch mouse clicks and arrange for a message handler such as OnLButtonDown() to
+	be called. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H4>Listing F.1&#160;&#160;CArrayView::OnLButtonDown()</H4>
+<PRE>void CArrayView::OnLButtonDown(UINT nFlags, CPoint point) 
+{
+    ArrayAddDlg dialog(this);
+    dialog.m_index = 0;
+    dialog.m_value = 0;
+    dialog.m_radio = 0;
+    int result = dialog.DoModal();
+    if (result == IDOK)
+    {
+        if (dialog.m_radio == 0)
+            array.SetAtGrow(dialog.m_index, dialog.m_value);
+        else if (dialog.m_radio == 1)
+            array.InsertAt(dialog.m_index, dialog.m_value, 1);
+        else
+            array.Add(dialog.m_value);
+        Invalidate();
+    }
+    CView::OnLButtonDown(nFlags, point);
+</PRE>
+<PRE>}
+</PRE>
+<P>This code starts by creating a dialog object and initializing it, as discussed
+in Chapter 2, &quot;Dialogs and Controls.&quot; If the user exits the dialog box
+by clicking the OK button, the OnLButtonDown() function checks the value of the dialog
+box's m_radio data member. A value of 0 means that the first radio button (Set) is
+selected, 1 means that the second button (Insert) is selected, and 2 means that the
+third button (Add) is selected.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>TIP:</STRONG> Chapter 2, &quot;Dialogs and Controls,&quot; discusses displaying
+	dialog boxes and getting values from them. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>If the user wants to set an array element, the program calls SetAtGrow(), giving
+the array index and the new value as arguments. Unlike the regular SetAt() function,
+which you can use only with a currently valid index number, SetAtGrow() will enlarge
+the array as necessary to set the specified array element. That's how the extra array
+elements were added when you chose to set element 20.</P>
+<P>When the user has selected the Insert radio button, the program calls the InsertAt()
+function, giving the array index and new value as arguments. This causes MFC to create
+a new array element at the index specified, shoving the other array elements forward.
+Finally, when the user has selected the Add option, the program calls the Add() function,
+which adds a new element to the end of the array. This function's single argument
+is the new value to place in the added element. The call to Invalidate() forces the
+window to redraw the data display with the new information.</P>
+<P>
+<H3><A NAME="Heading5"></A>Reading Through the Array</H3>
+<P>So that you can see what's happening as you add, change, and delete array elements,
+the Array application's OnDraw() function reads through the array, displaying the
+values that it finds in each element. Listing F.2 shows the code for this function.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>TIP:</STRONG> Chapter 5, &quot;Drawing on the Screen,&quot; shows you how
+	to write an OnDraw() function and how it is called. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H4>Listing F.2&#160;&#160;CArrayView::OnDraw()</H4>
+<PRE>void CArrayView::OnDraw(CDC* pDC)
+{
+    CArrayDoc* pDoc = GetDocument();
+    ASSERT_VALID(pDoc);
+    // Get the current font's height.
+    TEXTMETRIC textMetric;
+    pDC-&gt;GetTextMetrics(&amp;textMetric);
+    int fontHeight = textMetric.tmHeight;
+    // Get the size of the array.
+    int count = array.GetSize();
+    int displayPos = 10;
+    // Display the array data.
+    for (int x=0; x&lt;count; ++x)
+    {
+        UINT value = array.GetAt(x);
+        char s[81];
+        wsprintf(s, &quot;Element %d contains the value %u.&quot;, x, value);
+        pDC-&gt;TextOut(10, displayPos, s);
+        displayPos += fontHeight;
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>Here, the program first gets the current font's height so that it can properly
+space the lines of text that it displays in the window. It then gets the number of
+elements in the array by calling the array object's GetSize() function. Finally,
+the program uses the element count to control a for loop, which calls the array object's
+GetAt() member function to get the value of the currently indexed array element.
+The program converts this value to a string for display purposes.</P>
+<P>
+<H3><A NAME="Heading6"></A>Removing Elements from the Array</H3>
+<P>Because it is a right button click in the window that brings up the Remove from
+Array dialog box, it is the program's OnRButtonDown() function that handles the element-deletion
+duties. Listing F.3 shows this function.</P>
+<P>
+<H4>Listing F.3&#160;&#160;CArrayView::OnRButtonDown()</H4>
+<PRE>void CArrayView::OnRButtonDown(UINT nFlags, CPoint point) 
+{
+    ArrayRemoveDlg dialog(this);
+    dialog.m_remove = 0;
+    dialog.m_removeAll = FALSE;
+    int result = dialog.DoModal();
+    if (result == IDOK)
+    {
+        if (dialog.m_removeAll)
+            array.RemoveAll();
+        else
+            array.RemoveAt(dialog.m_remove);
+        Invalidate();
+    }
+    
+    CView::OnRButtonDown(nFlags, point);
+</PRE>
+<PRE>}
+</PRE>
+<P>In this function, after displaying the dialog box, the program checks the value
+of the dialog box's m_removeAll data member. A value of TRUE means that the user
+has checked this option and wants to delete all elements from the array. In this
+case, the program calls the array object's RemoveAll() member function. Otherwise,
+the program calls RemoveAt(), whose single argument specifies the index of the element
+to delete. The call to Invalidate() forces the window to redraw the data display
+with the new information.</P>
+<P>
+<H2><A NAME="Heading7"></A>The List Classes</H2>
+<P>Lists are like fancy arrays. The MFC list classes use <I>linked lists</I>, which
+use pointers to link their elements (called <I>nodes</I>) rather than depend on contiguous
+memory locations to order values. Lists are a better data structure to use when you
+need to be able to insert and delete items quickly. However, finding items in a list
+can be slower than finding items in an array because a list often needs to be traversed
+sequentially to follow the pointers from one item to the next.</P>
+<P>When using lists, you need to know some new vocabulary. Specifically, you need
+to know that the <I>head</I> of a list is the first node in the list and the <I>tail</I>
+of the list is the last node in the list (see Figure F.7). Each node knows how to
+reach the <I>next</I> node, the one after it in the list. You'll see these terms
+used often as you explore MFC's list classes.</P>
+<P><A HREF="javascript:popUp('xfuvc07.gif')"><B>FIG. F.7</B></A><B> </B><I>A linked
+list has a head and a tail, with the remaining nodes in between.</I></P>
+<P>MFC provides three list classes that you can use to create your lists. These classes
+are CObList (which represents a list of objects), CPtrList (which represents a list
+of pointers), and CStringList (which represents a list of strings). Each of these
+classes has similar member functions, and the classes differ in the type of data
+that they can hold in their lists. Table F.2 lists and describes the member functions
+of the list classes.</P>
+<P>
+<H4>Table F.2&#160;&#160;Member Functions of the List Classes</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Function</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AddHead()</TD>
+		<TD ALIGN="LEFT">Adds a node to the head of the list, making the node the new head</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AddTail()</TD>
+		<TD ALIGN="LEFT">Adds a node to the tail of the list, making the node the new tail</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Find()</TD>
+		<TD ALIGN="LEFT">Searches the list sequentially to find the given object pointer and returns a POSITION
+			value</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">FindIndex()</TD>
+		<TD ALIGN="LEFT">Scans the list sequentially, stopping at the node indicated by the given index, and
+			returns a POSITION value for the node</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetAt()</TD>
+		<TD ALIGN="LEFT">Gets the node at the specified position</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetCount()</TD>
+		<TD ALIGN="LEFT">Gets the number of nodes in the list</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetHead()</TD>
+		<TD ALIGN="LEFT">Gets the list's head node</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetHeadPosition()</TD>
+		<TD ALIGN="LEFT">Gets the head node's position</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetNext()</TD>
+		<TD ALIGN="LEFT">Gets the next node in the list when iterating over a list</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetPrev()</TD>
+		<TD ALIGN="LEFT">Gets the previous node in the list when iterating over a list</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetTail()</TD>
+		<TD ALIGN="LEFT">Gets the list's tail node</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetTailPosition()</TD>
+		<TD ALIGN="LEFT">Gets the tail node's position</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">InsertAfter()</TD>
+		<TD ALIGN="LEFT">Inserts a new node after the specified position</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">InsertBefore()</TD>
+		<TD ALIGN="LEFT">Inserts a new node before the specified position</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">IsEmpty()</TD>
+		<TD ALIGN="LEFT">Returns TRUE if the list is empty and returns FALSE otherwise</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">RemoveAll()</TD>
+		<TD ALIGN="LEFT">Removes all nodes from a list</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">RemoveAt()</TD>
+		<TD ALIGN="LEFT">Removes a single node from a list</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">RemoveHead()</TD>
+		<TD ALIGN="LEFT">Removes the list's head node</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">RemoveTail()</TD>
+		<TD ALIGN="LEFT">Removes the list's tail node</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetAt()</TD>
+		<TD ALIGN="LEFT">Sets the node at the specified position</TD>
+	</TR>
+</TABLE>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B>List Templates</B></P>
+	<P>Linked lists are another good use for templates. There is a list and a deque (double-ended
+	queue) in the Standard Template Library, discussed in Chapter 26, &quot;Exceptions
+	and Templates.&quot; Many developers find the MFC list classes much easier to use
+	than templates. There are also MFC collection templates, discussed later in this
+	chapter. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading8"></A>Introducing the List Application</H3>
+<P>As you've no doubt guessed, now that you know a little about list classes and
+their member functions, you're going to get a chance to see lists in action--in the
+List application. When you run the application, you see the window shown in Figure
+F.8. The window displays the values of the single node with which the list begins.
+Each node in the list can hold two different values, both of which are integers.</P>
+<P><A HREF="javascript:popUp('xfuvc08.gif')"><B>FIG. F.8</B></A><B> </B><I>The List
+application begins with one node in its list.</I></P>
+<P>Using the List application, you can experiment with adding and removing nodes
+from a list. To add a node, left-click in the application's window. You then see
+the dialog box shown in Figure F.9. Enter the two values that you want the new node
+to hold and then click OK. When you do, the program adds the new node to the tail
+of the list and displays the new list in the window. For example, if you enter the
+values <B>55</B> and <B>65</B> in the dialog box, you see the display shown in Figure
+F.10.</P>
+<P><A HREF="javascript:popUp('xfuvc09.gif')"><B>FIG. F.9</B></A><B> </B><I>A left
+click in the window brings up the Add Node dialog box.</I></P>
+<P><A HREF="javascript:popUp('xfuvc10.gif')"><B>FIG. F.10</B></A><B> </B><I>Each
+node you add to the list can hold two different values.</I></P>
+<P>You can also delete nodes from the list. To do this, right-click in the window
+to display the Remove Node dialog box (see Figure F.11). Using this dialog box, you
+can choose to remove the head or tail node. If you exit the dialog box by clicking
+OK, the program deletes the specified node and displays the resulting list in the
+window.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>NOTE:</STRONG> If you try to delete nodes from an empty list, the List application
+	displays a message box, warning you of your error. If the application didn't catch
+	this possible error, the program could crash when it tries to delete a nonexistent
+	node. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><A HREF="javascript:popUp('xfuvc11.gif')"><B>FIG. F.11</B></A><B> </B><I>Right-click
+in the window to delete a node.</I></P>
+<P>
+<H3><A NAME="Heading9"></A>Declaring and Initializing the List</H3>
+<P>Declaring a list is as easy as declaring any other data type. Just include the
+name of the class you're using, followed by the name of the object. For example,
+the List application declares its list like this:</P>
+<P>
+<PRE>CPtrList list;
+</PRE>
+<P>Here, the program is declaring an object of the CPtrList class. This class holds
+a linked list of pointers, which means that the list can reference nearly any type
+of information.</P>
+<P>Although there's not much you need to do to initialize an empty list, you do need
+to decide what type of information will be pointed to by the pointers in the list.
+That is, you need to declare exactly what a node in the list will look like. The
+List application declares a node as shown in Listing F.4.</P>
+<P>
+<H4>Listing F.4&#160;&#160;CNode Structure</H4>
+<PRE>struct CNode
+{
+    int value1;
+    int value2;
+</PRE>
+<PRE>};
+</PRE>
+<P>Here, a node is defined as a structure holding two integer values. However, you
+can create any type of data structure you like for your nodes. To add a node to a
+list, you use the new operator to create a node structure in memory, and then you
+add the returned pointer to the pointer list. The List application begins its list
+with a single node, which is created in the view class's constructor, as shown in
+Listing F.5.</P>
+<P>
+<H4>Listing F.5&#160;&#160;CMyListView Constructor</H4>
+<PRE>CMyListView::CMyListView()
+{
+     CNode* pNode = new CNode;
+     pNode-&gt;value1 = 11;
+     pNode-&gt;value2 = 22;
+     list.AddTail(pNode);
+</PRE>
+<PRE>}
+</PRE>
+<P>In Listing F.5, the program first creates a new CNode structure on the heap and
+then sets the node's two members. After initializing the new node, a quick call to
+the list's AddTail() member function adds the node to the list. Because the list
+was empty, adding a node to the tail of the list is the same as adding the node to
+the head of the list. That is, the program could have also called AddHead() to add
+the node. In either case, the new single node is now both the head and tail of the
+list.</P>
+<P>
+<H3><A NAME="Heading10"></A>Adding a Node to the List</H3>
+<P>Although you can insert nodes at any position in a list, the easiest way to add
+to a list is to add a node to the head or tail, making the node the new head or tail.
+In the List application, you left-click in the window to bring up the Add Node dialog
+box, so you'll want to examine the OnLButtonDown() function, which looks like Listing
+F.6.</P>
+<P>
+<H4>Listing F.6&#160;&#160;CMyListView::OnLButtonDown()</H4>
+<PRE>void CMyListView::OnLButtonDown(UINT nFlags, CPoint point) 
+{
+    // Create and initialize the dialog box.
+    AddNodeDlg dialog;
+    dialog.m_value1 = 0;
+    dialog.m_value2 = 0;
+    // Display the dialog box.
+    int result = dialog.DoModal();
+    // If the user clicked the OK button...
+    if (result == IDOK)
+    {
+        // Create and initialize the new node.
+        CNode* pNode = new CNode;
+        pNode-&gt;value1 = dialog.m_value1;
+        pNode-&gt;value2 = dialog.m_value2;
+        // Add the node to the list.
+        list.AddTail(pNode);
+        // Repaint the window.
+        Invalidate();
+    }
+    CView::OnLButtonDown(nFlags, point);
+</PRE>
+<PRE>}
+</PRE>
+<P>In Listing F.6, after displaying the dialog box, the program checks whether the
+user exited the dialog with the OK button. If so, the user wants to add a new node
+to the list. In this case, the program creates and initializes the new node, as it
+did previously for the first node that it added in the view class's constructor.
+The program adds the node in the same way, too, by calling the AddTail(). If you
+want to modify the List application, one thing you could try is to give the user
+a choice between adding the node at the head or the tail of the list, instead of
+just at the tail.</P>
+<P>
+<H3><A NAME="Heading11"></A>Deleting a Node from the List</H3>
+<P>Deleting a node from a list can be easy or complicated, depending on where in
+the list you want to delete the node. As with adding a node, dealing with nodes other
+than the head or tail requires that you first locate the node that you want and then
+get its position in the list. You'll learn about node positions in the next section,
+which demonstrates how to iterate over a list. To keep things simple, however, this
+program enables you to delete nodes only from the head or tail of the list, as shown
+in Listing F.7.</P>
+<P>
+<H4>Listing F.7&#160;&#160;CMyListView::OnRButtonDown()</H4>
+<PRE>void CMyListView::OnRButtonDown(UINT nFlags, CPoint point) 
+{
+    // Create and initialize the dialog box.
+    RemoveNodeDlg dialog;
+    dialog.m_radio = 0;
+    // Display the dialog box.
+    int result = dialog.DoModal();
+    // If the user clicked the OK button...
+    if (result == IDOK)
+    {
+        CNode* pNode;
+        // Make sure the list isn't empty.
+        if (list.IsEmpty())
+            MessageBox(&quot;No nodes to delete.&quot;);
+        else
+        {
+            // Remove the specified node.
+            if (dialog.m_radio == 0)
+                pNode = (CNode*)list.RemoveHead();
+            else
+                pNode = (CNode*)list.RemoveTail();
+            // Delete the node object and repaint the window.
+            delete pNode;
+            Invalidate();
+        }
+    }
+    CView::OnRButtonDown(nFlags, point);
+</PRE>
+<PRE>}
+</PRE>
+<P>Here, after displaying the dialog box, the program checks whether the user exited
+the dialog box via the OK button. If so, the program must then check whether the
+user wants to delete a node from the head or tail of the list. If the Remove Head
+radio button was checked, the dialog box's m_radio data member will be 0. In this
+case, the program calls the list class's RemoveHead() member function. Otherwise,
+the program calls RemoveTail(). Both of these functions return a pointer to the object
+that was removed from the list. Before calling either of these member functions,
+however, notice how the program calls IsEmpty() to determine whether the list contains
+any nodes. You can't delete a node from an empty list.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>NOTE:</STRONG>otice that when removing a node from the list, the List application
+	calls delete on the pointer returned by the list. It's important to remember that
+	when you remove a node from a list, the node's pointer is removed from the list,
+	but the object to which the pointer points is still in memory, where it stays until
+	you delete it.&#160;n 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading12"></A>Iterating Over the List</H3>
+<P>Often, you'll want to <I>iterate over</I> (read through) a list. For example,
+you might want to display the values in each node of the list, starting from the
+head of the list and working your way to the tail. The List application does exactly
+this in its OnDraw() function, as shown in Listing F.8.</P>
+<P>
+<H4>Listing F.8&#160;&#160;CMyListView::OnDraw()</H4>
+<PRE>void CMyListView::OnDraw(CDC* pDC)
+{
+    CListDoc* pDoc = GetDocument();
+    ASSERT_VALID(pDoc);
+// Get the current font's height.
+    TEXTMETRIC textMetric;
+    pDC-&gt;GetTextMetrics(&amp;textMetric);
+    int fontHeight = textMetric.tmHeight;
+    // Initialize values used in the loop.
+    POSITION pos = list.GetHeadPosition();
+    int displayPosition = 10;
+    int index = 0;
+    // Iterate over the list, displaying each node's values.
+    while (pos != NULL)
+    {
+        CNode* pNode = (CNode*)list.GetNext(pos);
+        char s[81];
+        wsprintf(s, &quot;Node %d contains %d and %d.&quot;,
+            index, pNode-&gt;value1, pNode-&gt;value2);
+        pDC-&gt;TextOut(10, displayPosition, s);
+        displayPosition += fontHeight;
+        ++index;
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>In Listing F.8, the program gets the position of the head node by calling the
+GetHeadPosition() member function. The position is a value that many of the list
+class's member functions use to quickly locate nodes in the list. You must have this
+starting position value to iterate over the list.</P>
+<P>In the while loop, the iteration actually takes place. The program calls the list
+object's GetNext() member function, which requires as its single argument the position
+of the node to retrieve. The function returns a pointer to the node and sets the
+position to the next node in the list. When the position is NULL, the program has
+reached the end of the list. In Listing F.8, this NULL value is the condition that's
+used to terminate the while loop.</P>
+<P>
+<H3><A NAME="Heading13"></A>Cleaning Up the List</H3>
+<P>There's one other time when you need to iterate over a list. That's when the program
+is about to terminate and you need to delete all the objects pointed to by the pointers
+in the list. The List application performs this task in the view class's destructor,
+as shown in Listing F.9.</P>
+<P>
+<H4>Listing F.9&#160;&#160;CMyListView Destructor</H4>
+<PRE>CMyListView::~CMyListView()
+{
+    // Iterate over the list, deleting each node.
+    while (!list.IsEmpty())
+    {
+        CNode* pNode = (CNode*)list.RemoveHead();
+        delete pNode;
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>The destructor in Listing F.9 iterates over the list in a while loop until the
+IsEmpty() member function returns TRUE. Inside the loop, the program removes the
+head node from the list (which makes the next node in the list the new head) and
+deletes the node from memory. When the list is empty, all the nodes that the program
+allocated have been deleted.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>CAUTION:</STRONG><B> </B>Don't forget that you're responsible for deleting
+	every node that you create with the new operator. If you fail to delete nodes, you
+	might cause a memory leak. In a small program like this, a few wasted bytes don't
+	matter, but in a long-running program adding and deleting hundreds or thousands of
+	list nodes, you could create serious errors in your program. It's always good programming
+	practice to delete any objects you allocate in memory. 
+<HR>
+</P>
+	<P>
+<HR>
+<STRONG>]TIP:</STRONG> Chapter 24, &quot;Improving Your Application's Performance,&quot;
+	discusses memory management and preventing memory leaks. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H2><A NAME="Heading14"></A>The Map Classes</H2>
+<P>You can use MFC's mapped collection classes for creating lookup tables. For example,
+you might want to convert digits to the words that represent the numbers. That is,
+you might want to use the digit 1 as a key to find the word <I>one.</I> A mapped
+collection is perfect for this sort of task. Thanks to the many MFC map classes,
+you can use various types of data for keys and values.</P>
+<P>The MFC map classes are CMapPtrToPtr, CMapPtrToWord, CMapStringToOb, CMapStringToPtr,
+CMapStringToString, CMapWordToOb, and CMapWordToPtr. The first data type in the name
+is the key, and the second is the value type. For example, CMapStringToOb uses strings
+as keys and objects as values, whereas CMapStringToString, which this section uses
+in its examples, uses strings as both keys and values. All the map classes are similar
+and so have similar member functions, which are listed and described in Table F.3.</P>
+<P>
+<H4>Table F.3&#160;&#160;Functions of the Map Classes</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Function</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetCount()</TD>
+		<TD ALIGN="LEFT">Gets the number of map elements</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetNextAssoc()</TD>
+		<TD ALIGN="LEFT">Gets the next element when iterating over the map</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetStartPosition()</TD>
+		<TD ALIGN="LEFT">Gets the first element's position</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">IsEmpty()</TD>
+		<TD ALIGN="LEFT">Returns TRUE if the map is empty and returns FALSE otherwise</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Lookup()</TD>
+		<TD ALIGN="LEFT">Finds the value associated with a key</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">RemoveAll()</TD>
+		<TD ALIGN="LEFT">Removes all the map's elements</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">RemoveKey()</TD>
+		<TD ALIGN="LEFT">Removes an element from the map</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetAt()</TD>
+		<TD ALIGN="LEFT">Adds a map element or replaces an element with a matching key</TD>
+	</TR>
+</TABLE>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B>Map Templates</B></P>
+	<P>Maps and lookup tables are another good use for templates. There are set, multiset,
+	map, and multimap templates in the Standard Template Library, discussed in Chapter
+	26, &quot;Exceptions and Templates.&quot; Many developers find the MFC map classes
+	much easier to use than templates. There are also MFC collection templates, discussed
+	later in this chapter. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading15"></A>Introducing the Map Application</H3>
+<P>This section's sample program, Map, displays the contents of a map and enables
+you to retrieve values from the map by giving the program the appropriate key. When
+you run the program, you see the window shown in Figure F.12.</P>
+<P>The window displays the contents of the application's map object, in which digits
+are used as keys to access the words that represent the numbers. To retrieve a value
+from the map, click in the window. You then see the dialog box shown in Figure F.13.
+Type the digit that you want to use for a key and click OK. The program finds the
+matching value in the map and displays it in another message box. For example, if
+you type <B>8</B> as the key, you see the message box shown in Figure F.14. If the
+key doesn't exist, the program's message box tells you so.</P>
+<P><A HREF="javascript:popUp('xfuvc12.gif')"><B>FIG. F.12</B></A><B> </B><I>The Map
+application displays the contents of a map object.</I></P>
+<P><A HREF="javascript:popUp('xfuvc13.gif')"><B>FIG. F.13</B></A><B> </B><I>The Get
+Map Value dialog box enables you to match a key with the key's value in the map.</I></P>
+<P><A HREF="javascript:popUp('xfuvc14.gif')"><B>FIG. F.14</B></A><B> </B><I>This
+message box displays the requested map value.</I></P>
+<P>
+<H3><A NAME="Heading16"></A>Creating and Initializing the Map</H3>
+<P>The Map application begins with a 10-element map. The map object is declared as
+a data member of the view class, like this:</P>
+<P>
+<PRE>CMapStringToString map;
+</PRE>
+<P>This is an object of the CMapStringToString class, which means that the map uses
+strings as keys and strings as values.</P>
+<P>Declaring the map object doesn't, of course, fill it with values. You have to
+do that on your own, which the Map application does in its view class constructor,
+shown in Listing F.10.</P>
+<P>
+<H4>Listing F.10&#160;&#160;CMapView Constructor</H4>
+<PRE>CMapView::CMapView()
+{
+     map.SetAt(&quot;1&quot;, &quot;One&quot;);
+     map.SetAt(&quot;2&quot;, &quot;Two&quot;);
+     map.SetAt(&quot;3&quot;, &quot;Three&quot;);
+     map.SetAt(&quot;4&quot;, &quot;Four&quot;);
+     map.SetAt(&quot;5&quot;, &quot;Five&quot;);
+     map.SetAt(&quot;6&quot;, &quot;Six&quot;);
+     map.SetAt(&quot;7&quot;, &quot;Seven&quot;);
+     map.SetAt(&quot;8&quot;, &quot;Eight&quot;);
+     map.SetAt(&quot;9&quot;, &quot;Nine&quot;);
+     map.SetAt(&quot;10&quot;, &quot;Ten&quot;);
+</PRE>
+<PRE>}
+</PRE>
+<P>The SetAt() function takes as parameters the key and the value to associate with
+the key in the map. If the key already exists, the function replaces the value associated
+with the key with the new value given as the second argument.</P>
+<P>
+<H3><A NAME="Heading17"></A>Retrieving a Value from the Map</H3>
+<P>When you click in Map's window, the Get Map Value dialog box appears, so it's
+probably not surprising that the view class OnLButtonDown() member function comes
+into play somewhere. Listing F.11 shows this function.</P>
+<P>
+<H4>Listing F.11&#160;&#160;CMapView::OnLButtonDown()</H4>
+<PRE>void CMapView::OnLButtonDown(UINT nFlags, CPoint point) 
+{
+// Initialize the dialog box.    
+    GetMapDlg dialog(this);
+    dialog.m_key = &quot;&quot;;
+    // Display the dialog box.
+    int result = dialog.DoModal();
+    // If the user exits with the OK button...
+    if (result == IDOK)
+    {
+        // Look for the requested value.
+        CString value;
+        BOOL found = map.Lookup(dialog.m_key, value);
+        if (found)
+            MessageBox(value);
+        else
+            MessageBox(&quot;No matching value.&quot;);
+    }
+    CView::OnLButtonDown(nFlags, point);
+</PRE>
+<PRE>}
+</PRE>
+<P>In OnLButtonDown(), the program displays the dialog box in the usual way, checking
+whether the user exited the dialog box by clicking the OK button. If the user did,
+the program calls the map object's Lookup() member function, using the key that the
+user entered in the dialog box as the first argument. The second argument is a reference
+to the string in which the function can store the value it retrieves from the map.
+If the key can't be found, the Lookup() function returns FALSE; otherwise, it returns
+TRUE. The program uses this return value to determine whether it should display the
+string value retrieved from the map or a message box indicating an error.</P>
+<P>
+<H3><A NAME="Heading18"></A>Iterating Over the Map</H3>
+<P>To display the keys and values used in the map, the program must iterate over
+the map, moving from one entry to the next, retrieving and displaying the information
+for each map element. As with the array and list examples, the Map application accomplishes
+this in its OnDraw() function, which is shown in Listing F.12.</P>
+<P>
+<H4>Listing F.12&#160;&#160;CMapView::OnDraw()</H4>
+<PRE>void CMapView::OnDraw(CDC* pDC)
+{
+    CMapDoc* pDoc = GetDocument();
+    ASSERT_VALID(pDoc);
+    TEXTMETRIC textMetric;
+    pDC-&gt;GetTextMetrics(&amp;textMetric);
+    int fontHeight = textMetric.tmHeight;
+    int displayPosition = 10;
+    POSITION pos = map.GetStartPosition();
+    CString key;
+    CString value;
+    while (pos != NULL)
+    {
+        map.GetNextAssoc(pos, key, value);
+        CString str = &quot;Key `&quot; + key + 
+            &quot;` is associated with the value `&quot; +
+            value + &quot;`&quot;;
+        pDC-&gt;TextOut(10, displayPosition, str);
+        displayPosition += fontHeight;
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>Much of this OnDraw() function is similar to other versions that you've seen in
+this chapter. The map iteration, however, begins when the program calls the map object's
+GetStartPosition() member function, which returns a position value for the first
+entry in the map (not necessarily the first entry that you added to the map). Inside
+a while loop, the program calls the map object's GetNextAssoc() member function,
+giving the position returned from GetStartPosition() as the single argument. GetNextAssoc()
+retrieves the key and value at the given position and then updates the position to
+the next element in the map. When the position value becomes NULL, the program has
+reached the end of the map.</P>
+<P>
+<H2><A NAME="Heading19"></A>Collection Class Templates</H2>
+<P>MFC includes class templates that you can use to create your own special types
+of collection classes. (For more information on templates, please refer to the section
+&quot;Exploring Templates&quot; in Chapter 26.) Although the subject of templates
+can be complex, using the collection class templates is easy enough. For example,
+suppose that you want to create an array class that can hold structures of the type
+shown in Listing F.13.</P>
+<P>
+<H4>Listing F.13&#160;&#160;A Sample Structure</H4>
+<PRE>struct MyValues
+{
+    int value1;
+    int value2;
+    int value3;
+</PRE>
+<PRE>};
+</PRE>
+<P>The first step is to use the template to create your class, like this:</P>
+<P>
+<PRE>CArray&lt;MyValues, MyValues&amp;&gt; myValueArray;
+</PRE>
+<P>Here, CArray is the template you use for creating your own array classes. The
+template's two arguments are the type of data to store in the array and the type
+of data that the new array class's member functions should use as arguments where
+appropriate. In this case, the type of data to store in the array is structures of
+the MyValues type. The second argument specifies that class member functions should
+expect references to MyValues structures as arguments, where needed.</P>
+<P>To build your array, you optionally set the array's initial size:</P>
+<P>
+<PRE>myValueArray.SetSize(10, 5);
+</PRE>
+<P>Then you can start adding elements to the array, like this:</P>
+<P>
+<PRE>MyValues myValues;
+myValueArray.Add(myValues);
+</PRE>
+<P>After you create your array class from the template, you use the array as you
+do any of MFC's array classes, described earlier in this chapter. Other collection
+class templates you can use are CList and CMap. This means you can take advantage
+of all the design work put in by the MFC team to create an array of Employee objects,
+or a linked list of Order objects, or a map linking names to Customer objects.</P>
+<P>
+<H2><A NAME="Heading20"></A>The String Class</H2>
+<P>There are few programs that don't have to deal with text strings of one sort or
+another. Unfortunately, C++ is infamous for its weak string-handling capabilities,
+whereas languages such as BASIC and Pascal have always enjoyed superior power when
+it comes to these ubiquitous data types. MFC's CString class addresses C++'s string
+problems by providing member functions that are as handy to use as those found in
+other languages. Table F.4 lists the commonly used member functions of the CString
+class.</P>
+<P>
+<H4>Table F.4&#160;&#160;Commonly Used Member Functions of the CString Class</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Function</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Compare()</TD>
+		<TD ALIGN="LEFT">A case-sensitive compare of two strings</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CompareNoCase()</TD>
+		<TD ALIGN="LEFT">Not a case-sensitive compare of two strings</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Empty()</TD>
+		<TD ALIGN="LEFT">Clears a string</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Find()</TD>
+		<TD ALIGN="LEFT">Locates a substring</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Format()</TD>
+		<TD ALIGN="LEFT">&quot;Prints&quot; variables in a CString much like the C sprintf function</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetAt()</TD>
+		<TD ALIGN="LEFT">Gets a character at a specified position in the string</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetBuffer()</TD>
+		<TD ALIGN="LEFT">Gets a pointer to the string's contents</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetLength()</TD>
+		<TD ALIGN="LEFT">Gets the number of characters in the string</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">IsEmpty()</TD>
+		<TD ALIGN="LEFT">Returns TRUE if the string holds no characters</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Left()</TD>
+		<TD ALIGN="LEFT">Gets a string's left segment</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MakeLower()</TD>
+		<TD ALIGN="LEFT">Lowercases a string</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MakeReverse()</TD>
+		<TD ALIGN="LEFT">Reverses a string's contents</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MakeUpper()</TD>
+		<TD ALIGN="LEFT">Uppercases a string</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Mid()</TD>
+		<TD ALIGN="LEFT">Gets a string's middle segment</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Right()</TD>
+		<TD ALIGN="LEFT">Gets a string's right segment</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetAt()</TD>
+		<TD ALIGN="LEFT">Sets a character at a specified position in the string</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TrimLeft()</TD>
+		<TD ALIGN="LEFT">Removes leading whitespace characters from a string</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TrimRight()</TD>
+		<TD ALIGN="LEFT">Removes trailing whitespace characters from a string</TD>
+	</TR>
+</TABLE>
+</P>
+<P>Besides the functions listed in the table, the CString class also defines a full
+set of operators for dealing with strings. Using these operators, you can do things
+like <I>concatenate</I> (join together) strings with the plus sign (+), assign values
+to a string object with the equal sign (=), access the string as a C-style string
+with the LPCTSTR operator, and more.</P>
+<P>Creating a string object is quick and easy, like this:</P>
+<P>
+<PRE>CString str = &quot;This is a test string&quot;;
+</PRE>
+<P>Of course, there are lots of ways to construct your string object. The previous
+example is only one possibility. You can create an empty string object and assign
+characters to it later, you can create a string object from an existing string object,
+and you can even create a string from a repeating character. The one thing you don't
+have to do is decide the size of your string as you make it. Managing the memory
+isn't your problem any more.</P>
+<P>After you have created the string object, you can call its member functions and
+manipulate the string in a number of ways. For example, to convert all the characters
+in the string to uppercase, you'd make a function call like this:</P>
+<P>
+<PRE>str.MakeUpper();
+</PRE>
+<P>To lengthen a string, use the + or += operators, like this:</P>
+<P>
+<PRE>CString sentence = &quot;hello &quot; + str;
+sentence += &quot; there.&quot;
+</PRE>
+<P>To compare two strings, you'd make a function call like this:</P>
+<P>
+<PRE>str.Compare(&quot;Test String&quot;);
+</PRE>
+<P>You can also compare two CString objects:</P>
+<P>
+<PRE>CString testStr = &quot;Test String&quot;;
+str.Compare(testStr);
+</PRE>
+<P>or neater still:</P>
+<P>
+<PRE>if (testStr == str)
+</PRE>
+<P>If you peruse your online documentation, you'll find that most of the other CString
+member functions are equally easy to use.</P>
+<P>
+<H2><A NAME="Heading21"></A>The Time Classes</H2>
+<P>If you've ever tried to manipulate time values returned from a computer, you'll
+be pleased to learn about MFC's CTime and CTimeSpan classes, which represent absolute
+times and elapsed times, respectively. The use of these classes is straightforward,
+so there's no sample program for this section. However, the following sections get
+you started with these handy classes. Before you start working with the time classes,
+look over Table F.5, which lists the member functions of the CTime class, and Table
+F.6, which lists the member functions of the CTimeSpan class.</P>
+<P>
+<H4>Table F.5&#160;&#160;Member Functions of the CTime Class</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Function</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Format()</TD>
+		<TD ALIGN="LEFT">Constructs a string representing the time object's time.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">FormatGmt()</TD>
+		<TD ALIGN="LEFT">Constructs a string representing the time object's GMT (or UTC) time. This is Greenwich
+			Mean Time.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetCurrentTime()</TD>
+		<TD ALIGN="LEFT">Creates a CTime object for the current time.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetDay()</TD>
+		<TD ALIGN="LEFT">Gets the time object's day as an integer.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetDayOfWeek()</TD>
+		<TD ALIGN="LEFT">Gets the time object's day of the week, starting with 1 for Sunday.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetGmtTm()</TD>
+		<TD ALIGN="LEFT">Gets a time object's second, minute, hour, day, month, year, day of the week, and
+			day of the year as a tm structure.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetHour()</TD>
+		<TD ALIGN="LEFT">Gets the time object's hour as an integer.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetLocalTm()</TD>
+		<TD ALIGN="LEFT">Gets a time object's local time, returning the second, minute, hour, day, month,
+			year, day of the week, and day of the year in a tm structure.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetMinute()</TD>
+		<TD ALIGN="LEFT">Gets the time object's minutes as an integer.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetMonth()</TD>
+		<TD ALIGN="LEFT">Gets the time object's month as an integer.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetSecond()</TD>
+		<TD ALIGN="LEFT">Gets the time object's second as an integer.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetTime()</TD>
+		<TD ALIGN="LEFT">Gets the time object's time as a time_t value.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetYear()</TD>
+		<TD ALIGN="LEFT">Gets the time object's year as an integer.</TD>
+	</TR>
+</TABLE>
+
+<H4>Table F.6&#160;&#160;Member Functions of the CTimeSpan Class</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Function</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Format()</TD>
+		<TD ALIGN="LEFT">Constructs a string representing the time-span object's time</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetDays()</TD>
+		<TD ALIGN="LEFT">Gets the time-span object's days</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetHours()</TD>
+		<TD ALIGN="LEFT">Gets the time-span object's hours for the current day</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetMinutes()</TD>
+		<TD ALIGN="LEFT">Gets the time-span object's minutes for the current hour</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetSeconds()</TD>
+		<TD ALIGN="LEFT">Gets the time-span object's seconds for the current minute</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetTotalHours()</TD>
+		<TD ALIGN="LEFT">Gets the time-span objects total hours</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetTotalMinutes()</TD>
+		<TD ALIGN="LEFT">Gets the time-span object's total minutes</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetTotalSeconds()</TD>
+		<TD ALIGN="LEFT">Gets the time-span object's total seconds</TD>
+	</TR>
+</TABLE>
+
+<H3><A NAME="Heading22"></A>Using a CTime Object</H3>
+<P>Creating a CTime object for the current time is a simple matter of calling the
+GetCurrentTime() function, like this:</P>
+<P>
+<PRE>CTime time = CTime::GetCurrentTime();
+</PRE>
+<P>Because GetCurrentTime() is a static member function of the CTime class, you can
+call it without actually creating a CTime object. You do, however, have to include
+the class's name as part of the function call, as shown in the preceding code. As
+you can see, the function returns a CTime object. This object represents the current
+time. If you wanted to display this time, you could call on the Format() member function,
+like this:</P>
+<P>
+<PRE>CString str = time.Format(&quot;DATE: %A, %B %d, %Y&quot;);
+</PRE>
+<P>The Format() function takes as its single argument a format string that tells
+the function how to create the string representing the time. The previous example
+creates a string that looks like this:</P>
+<P>
+<PRE>DATE: Saturday, April 19, 1998
+</PRE>
+<P>The format string used with Format() is not unlike the format string used with
+functions like the old DOS favorite, printf(), or the Windows conversion function
+wsprintf(). That is, you specify the string's format by including literal characters
+along with control characters. The literal characters, such as the &quot;DATE:&quot;
+and the commas in the previous string example, are added to the string exactly as
+you type them, whereas the format codes are replaced with the appropriate values.
+For example, the %A in the previous code example will be replaced by the name of
+the day, and the %B will be replaced by the name of the month. Although the format-string
+concept is the same as that used with printf(), the Format() function has its own
+set of format codes, which are listed in Table F.7.</P>
+<P>
+<H4>Table F.7&#160;&#160;Format Codes for the Format() Function</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Code</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%a</TD>
+		<TD ALIGN="LEFT">Day name, abbreviated (such as Sat for Saturday)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%A</TD>
+		<TD ALIGN="LEFT">Day name, no abbreviation</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%b</TD>
+		<TD ALIGN="LEFT">Month name, abbreviated (such as Mar for March)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%B</TD>
+		<TD ALIGN="LEFT">Month name, no abbreviation</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%c</TD>
+		<TD ALIGN="LEFT">Localized date and time (for the U.S., that would be something like 03/17/98 12:15:34)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%d</TD>
+		<TD ALIGN="LEFT">Day of the month as a number (01-31)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%H</TD>
+		<TD ALIGN="LEFT">Hour in the 24-hour format (00-23)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%I</TD>
+		<TD ALIGN="LEFT">Hour in the normal 12-hour format (01-12)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%j</TD>
+		<TD ALIGN="LEFT">Day of the year as a number (001-366)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%m</TD>
+		<TD ALIGN="LEFT">Month as a number (01-12)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%M</TD>
+		<TD ALIGN="LEFT">Minute as a number (00-59)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%p</TD>
+		<TD ALIGN="LEFT">Localized a.m./p.m. indicator for 12-hour clock</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%S</TD>
+		<TD ALIGN="LEFT">Second as a number (00-59)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%U</TD>
+		<TD ALIGN="LEFT">Week of the year as a number (00-51, considering Sunday to be the first day of the
+			week)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%w</TD>
+		<TD ALIGN="LEFT">Day of the week as a number (0-6, with Sunday being 0)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%W</TD>
+		<TD ALIGN="LEFT">Week of the year as a number (00-51, considering Monday to be the first day of the
+			week)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%x</TD>
+		<TD ALIGN="LEFT">Localized date representation</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%X</TD>
+		<TD ALIGN="LEFT">Localized time representation</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%y</TD>
+		<TD ALIGN="LEFT">Year without the century prefix as a number (00-99)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%Y</TD>
+		<TD ALIGN="LEFT">Year with the century prefix as a decimal number (such as 1998)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%z</TD>
+		<TD ALIGN="LEFT">Name of time zone, abbreviated</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%Z</TD>
+		<TD ALIGN="LEFT">Name of time zone, not abbreviated</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">%%</TD>
+		<TD ALIGN="LEFT">Percent sign</TD>
+	</TR>
+</TABLE>
+</P>
+<P>Other CTime member functions such as GetMinute(), GetYear(), and GetMonth() are
+obvious in their use. However, you may like an example of using a function like GetLocalTm(),
+which is what the following shows:</P>
+<P>
+<PRE>struct tm* timeStruct;
+timeStruct = time.GetLocalTm();
+</PRE>
+<P>The first line of the previous code declares a pointer to a tm structure. (The
+tm structure is defined by Visual C++ and shown in Listing F.14.) The second line
+sets the pointer to the tm structure created by the call to GetLocalTm().</P>
+<P>
+<H4>Listing F.14&#160;&#160;The tm Structure</H4>
+<PRE>struct tm {
+        int tm_sec;     /* seconds after the minute - [0,59] */
+        int tm_min;     /* minutes after the hour - [0,59] */
+        int tm_hour;    /* hours since midnight - [0,23] */
+        int tm_mday;    /* day of the month - [1,31] */
+        int tm_mon;     /* months since January - [0,11] */
+        int tm_year;    /* years since 1900 */
+        int tm_wday;    /* days since Sunday - [0,6] */
+        int tm_yday;    /* days since January 1 - [0,365] */
+        int tm_isdst;   /* daylight saving time flag */
+</PRE>
+<PRE>        };
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>NOOTE:</STRONG> The CTime class features a number of overloaded constructors,
+	enabling you to create CTime objects in various ways and using various times.&#160;n
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading23"></A>Using a CTimeSpan Object</H3>
+<P>A CTimeSpan object is nothing more complex than the difference between two times.
+You can use CTime objects in conjunction with CTimeSpan objects to easily determine
+the amount of time that's elapsed between two absolute times. To do this, first create
+a CTime object for the current time. Then, when the time you're measuring has elapsed,
+create a second CTime object for the current time. Subtracting the old time object
+from the new one gives you a CTimeSpan object representing the amount of time that
+has elapsed. The example in Listing F.15 shows how this process works.</P>
+<P>
+<H4>Listing F.15&#160;&#160;Calculating a Time Span</H4>
+<PRE>CTime startTime = CTime::GetCurrentTime();
+    //.
+    //. Time elapses...
+    //.
+CTime endTime = CTime::GetCurrentTime();
+</PRE>
+<PRE>CTimeSpan timeSpan = endTime - startTime;</PRE>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ape/ape.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../index.htm"><IMG
+SRC="../button/contents.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Contents"
+BORDER="0"></A></P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

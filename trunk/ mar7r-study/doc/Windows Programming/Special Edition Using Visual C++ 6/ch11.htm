@@ -1,0 +1,1247 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 11 -- Help</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch10/ch10.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch12/ch12.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 11 -</H1>
+</CENTER>
+<CENTER>
+<H1>Help</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Different Kinds of Help</A>
+	<UL>
+		<LI><A HREF="#Heading2">Getting Help</A>
+		<LI><A HREF="#Heading3">Presenting Help</A>
+		<LI><A HREF="#Heading4">Using Help</A>
+		<LI><A HREF="#Heading5">Programming Help</A>
+	</UL>
+	<LI><A HREF="#Heading6">Components of the Help System</A>
+	<LI><A HREF="#Heading7">Help Support from AppWizard</A>
+	<LI><A HREF="#Heading8">Planning Your Help Approach</A>
+	<LI><A HREF="#Heading9">Programming for Command Help</A>
+	<LI><A HREF="#Heading10">Programming for Context Help</A>
+	<LI><A HREF="#Heading11">Writing Help Text</A>
+	<UL>
+		<LI><A HREF="#Heading12">Changing Placeholder Strings</A>
+		<LI><A HREF="#Heading13">Adding Topics</A>
+		<LI><A HREF="#Heading14">Changing the How to Modify Text Topic</A>
+	</UL>
+	<LI><A HREF="#Heading15">Adjustments to the Contents</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>Too many programmers entirely neglect online Help. Even those who add Help to
+an application tend to leave it to the end of a project, and when the inevitable
+time squeeze comes, guess what? There's no time to write the Help text or make the
+software adjustments that arrange for that text to display when the user requests
+Help. One reason people do this is because they believe implementing Help is really
+hard. With Visual C++, though, it's a lot easier than you might anticipate. Visual
+C++ even writes some of your Help text for you! This chapter is going to add Help,
+after the fact, to the ShowString application built in Chapter 8, &quot;Building
+a Complete Application: ShowString.&quot;</P>
+<P>
+<H2><A NAME="Heading1"></A>Different Kinds of Help</H2>
+<P>You can characterize Help in a variety of ways. This section presents four different
+questions you might ask about Help:</P>
+
+<UL>
+	<LI>How does the user invoke it?
+	<P>
+	<LI>How does it look onscreen?
+	<P>
+	<LI>What sort of answers does the user want?
+	<P>
+	<LI>How does the developer implement it in code?
+</UL>
+
+<P>None of these questions has a single answer. There are at least nine different
+ways for a user to invoke Help, three standard Help appearances, and three different
+programming tasks you must implement in order to display Help. These different ways
+of looking at Help can help you understand why the implementation involves a number
+of different techniques, which can be confusing at first.</P>
+<P>
+<H3><A NAME="Heading2"></A>Getting Help</H3>
+<P>The first way of characterizing Help is to ask &quot;How does the user open it
+up?&quot; There are a number of ways to open Help:</P>
+
+<UL>
+	<LI>By choosing an item from the Help menu, such as Help, Contents (choosing What's
+	This? or About doesn't open Help immediately)
+	<P>
+	<LI>By pressing the F1 key
+	<P>
+	<LI>By clicking the Help button on a dialog box
+	<P>
+	<LI>By clicking a What's This? button on a toolbar and then clicking something else
+	<P>
+	<LI>By choosing What's This? from the Help menu (the System menu for dialog box-based
+	applications) and then clicking something
+	<P>
+	<LI>By clicking a Question button on a dialog box and then clicking part of the dialog
+	box
+	<P>
+	<LI>By right-clicking something and choosing What's This? from the pop-up menu
+	<P>
+	<LI>In some older applications, by pressing Shift+F1 and then clicking something
+	<P>
+	<LI>Outside the application completely, by double-clicking the HLP file
+</UL>
+
+<P>For the first three actions in this list, the user does one thing (chooses a menu
+item, presses F1, or clicks a button), and Help appears immediately. For the next
+five actions, there are two steps: typically, one click to go into Help mode (more
+formally called What's This? mode) and another to indicate which Help is required.
+Users generally divide Help into single-step Help and two-step Help, accordingly.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> You will become confused if you try to use Visual Studio to understand
+	Help, in general. Much of the information is presented as HTML Help in a separate
+	product, typically MSDN, though there are some circumstances under which more traditional
+	Help appears. Use simple utilities and accessories that come with your operating
+	system or use your operating system itself to follow along.&#160; 
+<HR>
+</P>
+	<P>
+<HR>
+<B>HTML Help</B></P>
+	<P>Until fairly recently, all Help files were built from RTF files, as described
+	in this chapter, and displayed with the Microsoft Help engine. Microsoft has now
+	started to use HTML files for its Help, and has released a number of tools to simplify
+	the job of creating and maintaining HTML Help.</P>
+	<P>There are a number of advantages to an HTML Help system: Your Help files can contain
+	links to Internet resources, for example. You can incorporate any active content
+	that your browser understands, including ActiveX controls, Java applets, and scripting.
+	Many developers find attractive Help systems quicker to build in HTML.</P>
+	<P>Unfortunately, there are also disadvantages. The interface is not as rich as the
+	traditional Help interface, for example. Many developers take one look at the HTML
+	Help provided with Visual Studio and vow never to produce HTML Help files for their
+	own products.</P>
+	<P>If you would like to use HTML Help rather than the traditional Help files discussed
+	in this chapter, start by visiting <A target="_new" HREF="http://www.microsoft.com/workshop/author/htmlhelp"><B>http://www.microsoft.com/workshop/author/htmlhelp</B></A>
+	to get a copy of the HTML Help Workshop and plenty of documentation and examples.</P>
+	<P>Most of the work involved in creating HTML Help is the same as the traditional
+	Help techniques presented here, but involves, for example, calling HTMLHelp() instead
+	of ::WinHelp(). Instead of editing RTF files with Word, you edit HTML files with
+	the HTML Help Workshop editor. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading3"></A>Presenting Help</H3>
+<P>The second way of characterizing Help is to ask, &quot;How does it look?&quot;
+You can display Help in several ways:</P>
+
+<UL>
+	<LI><I>Help Topics dialog box</I>. As shown in Figure 11.1, this dialog box enables
+	users to scroll through an index, look at a table of contents, or find a word within
+	the Help text. (To open this dialog on Windows, choose Start, Help.)
+	<P>
+	<LI><I>Ordinary Help window</I><B>.</B> As shown in Figure 11.2, this window has
+	buttons such as Help Topics, Back, and Options. It can be resized, minimized, maximized,
+	or closed and in many cases is always on top, like the system clock and other popular
+	utilities. (To see this one, open the calculator, usually by choosing Start, Programs,
+	Accessories, Calculator; then press F1. Expand a closed book by double-clicking it;
+	then double-click a topic from the list that appears. Finding Out What a Calculator
+	Button Does appears under Tips and Tricks.)
+	<P>
+	<LI><I>Pop-up windows</I><B>.</B> As shown in Figure 11.3, pop-up windows are relatively
+	small and don't have buttons or menus. They disappear when you click outside them,
+	cannot be resized or moved, and are perfect for a definition or quick explanation.
+	To re-create Figure 11.3, right-click the MC button and choose What's This?
+</UL>
+
+<P><A HREF="javascript:popUp('11fig01.gif')"><B>FIG. 11.1</B></A><B> </B><I>The Help
+Topics dialog box enables users to go through the contents or index or search the
+Help text with Find.</I></P>
+<P><I><BR>
+</I><A HREF="javascript:popUp('11fig02.gif')"><B>FIG. 11.2</B></A><B> </B><I>An ordinary
+Help window has buttons and sometimes menus. It can be treated like any other window.</I></P>
+<P><I><BR>
+</I><A HREF="javascript:popUp('11fig03.gif')"><B>FIG. 11.3</B></A><B> </B><I>A pop-up
+Help topic window gives the user far less control and should be used only for short
+explanations.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading4"></A>Using Help</H3>
+<P>A third way of characterizing Help is according to the user's reasons for invoking
+it. In the book<I> The Windows Interface Guidelines for Software Design,</I> Microsoft
+categorizes Help in this way and lists these kinds of Help:</P>
+
+<UL>
+	<LI><I>Contextual user assistance</I> answers questions such as What does this button
+	do? or What does this setting mean?
+	<P>
+	<LI><I>Task-oriented Help</I> explains how to accomplish a certain task, such as
+	printing a document. (It often contains numbered steps.)
+	<P>
+	<LI><I>Reference Help</I> looks up function parameters, font names, or other material
+	that expert users need to refer to from time to time.
+	<P>
+	<LI><I>Wizards </I>walk a user through a complicated task, just as AppWizard walks
+	you through creating an application.
+</UL>
+
+<P>These describe the content of the material presented to the user. Although these
+content descriptions are important to a Help designer and writer, they're not very
+useful from a programming point of view.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> The book mentioned previously is provided with the MSDN CDs included
+	with Visual Studio. In Visual Studio, press F1 to bring up MSDN. On the Contents
+	tab of MSDN, expand the Books item, then expand the interface guidelines book. Chapter
+	12, &quot;User Assistance,&quot; gives Help guidelines. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading5"></A>Programming Help</H3>
+<P>The final way of characterizing Help, and perhaps the most important to a developer,
+is by examining the code behind the scenes. Three Windows messages are sent when
+the user invokes Help:</P>
+
+<UL>
+	<LI>WM_COMMAND
+	<P>
+	<LI>WM_HELP
+	<P>
+	<LI>WM_CONTEXTMENU
+</UL>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Windows messages are discussed in Chapter 3, &quot;Messages and Commands.&quot;
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>When the user chooses a Help item from a menu or clicks the Help button on a dialog
+box, the system sends a WM_COMMAND message, as always. To display the associated
+Help, you catch these messages and call the WinHelp system.</P>
+<P>When the user right-clicks an element of your application, a WM_CONTEXTMENU message
+is sent. You catch the message and build a shortcut menu on the spot. Because in
+most cases you will want a shortcut menu with only one item on it, What's This?,
+you can use a prebuilt menu with only that item and delegate the display of that
+menu to the Help system--more on this later in the &quot;Programming for Context
+Help&quot; section.</P>
+<P>When the user opens Help in any other way, the framework handles most of it. You
+don't catch the message that puts the application into What's This? mode, you don't
+change the cursor, and you don't deal with clicks while in that mode. You catch a
+WM_HELP message that identifies the control, dialog box, or menu for which Help is
+required, and you provide that Help. Whether the user pressed F1 or went into What's
+This? mode and clicked the item doesn't matter. In fact, you can't tell from within
+your application.</P>
+<P>The WM_HELP and WM_CONTEXTMENU messages are handled almost identically, so from
+the point of view of the developer, there are two kinds of help. We'll call these
+<I>command help</I> and <I>context help</I>. Each is discussed later in this chapter
+in the &quot;Programming for Command Help&quot; and &quot;Programming for Context
+Help&quot; sections, but keep in mind that there's no relationship between this split
+(between command and context help) and the split between one-step and two-step Help
+that users think of.</P>
+<P>
+<H2><A NAME="Heading6"></A>Components of the Help System</H2>
+<P>As you might expect, a large number of files interact to make online Help work.
+The final product, which you deliver to your user, is the Help file, with the .hlp
+extension. It is built from component files. In the list that follows, <I>appname</I>
+refers to the name of your application's .exe file. If no name appears, there might
+be more than one file with a variety of names. The component files produced by AppWizard
+are as follows:</P>
+<P><BR>
+
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">h</TD>
+		<TD ALIGN="LEFT">These Header files define resource IDs and Help topic IDs for use within your C++
+			code.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">.hm</TD>
+		<TD ALIGN="LEFT">These Help Mapping files define Help topic IDs. appname.hm is generated every time
+			you build your application--don't change it yourself.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">.rtf</TD>
+		<TD ALIGN="LEFT">These Rich Text Format files contain the Help text for each Help topic.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">appname.cnt</TD>
+		<TD ALIGN="LEFT">You use this table of contents file to create the Contents tab of the Help Topics
+			dialog box. (You should distribute this contents file with your application in addition
+			to the Help file.)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">appname.hpj</TD>
+		<TD ALIGN="LEFT">This Help ProJect file pulls together .hm and .rtf files to produce, when compiled,
+			a .hlp file.</TD>
+	</TR>
+</TABLE>
+</P>
+<P>While being used, the Help system generates other files. When you uninstall your
+application from the user's hard disk, be sure to look for and remove the following
+files, in addition to the .hlp and .cnt files:</P>
+
+<UL>
+	<LI><I>appname.gid</I> is a configuration file, typically hidden.
+	<P>
+	<LI><I>appname.fts</I> is a full text search file, generated when your user does
+	a Find through your Help text.
+	<P>
+	<LI><I>appname.ftg</I> is a full text search group list, also generated when your
+	user does a Find.
+</UL>
+
+<P>Help topic IDs are the connection between your Help text and the Help system.
+Your program eventually directs the Help system to display a Help topic, using a
+name such as HID_FILE_OPEN, and the system looks for this Help topic ID in the Help
+file, compiled from the .rtf files, including the .rtf file that contains your Help
+text for that Help topic ID. (This process is illustrated in Figure 11.4.) These
+topic IDs have to be defined twice--once for use by the Help system and once for
+use by your program. When the Help system is displaying a topic or the Help Topics
+dialog box, it takes over displaying other Help topics as the user requests them,
+with no work on your part.</P>
+<P><A HREF="javascript:popUp('11fig04.gif')"><B>FIG. 11.4</B></A><B> </B><I>Your
+program, the Help system, and your Help files all work together to display a topic.</I></P>
+<H2><I></I></H2>
+<H2><A NAME="Heading7"></A>Help Support from AppWizard</H2>
+<P>When you build an MDI application (no database or OLE support) with AppWizard
+and choose the Context-Sensitive Help option (in Step 4), here's what you find:</P>
+
+<UL>
+	<LI>Message map entries are added to catch the commands ID_HELP_FINDER, ID_HELP,
+	ID_CONTEXT_HELP, and ID_DEFAULT_HELP. No code is added to handle these; they are
+	passed to CMDIFrameWnd member functions.
+	<P>
+	<LI>A What's This? button is added to the toolbar.
+	<P>
+	<LI>A Help Topics item is added to the Help menu for both menus provided by AppWizard:
+	the one used when a file is open and the smaller one used when no files are open.
+	<P>
+	<LI>Accelerators for F1 (ID_HELP) and Shift+F1 (ID_CONTEXT_HELP) are added.
+	<P>
+	<LI>The default message in the status bar is changed from Ready to For Help, press
+	F1.
+	<P>
+	<LI>A status bar prompt is added, to be displayed while in What's This? mode: Select
+	an object on which to get Help.
+	<P>
+	<LI>Status bar prompts are added for the Help menu and its items.
+	<P>
+	<LI>afxcore.rtf, a Help text file for standard menu items such as File, Open, is
+	copied into the project.
+	<P>
+	<LI>afxprint.rtf, a Help text file for printing and print previewing, is copied into
+	the project. (These files are added separately because not all projects include printing
+	and print previewing. If this project has database- or OLE-related features, more
+	help is provided.)
+	<P>
+	<LI>Twenty-two .bmp files, included as illustrations in Help for topics such as File,
+	Open, are copied into the project.
+</UL>
+
+<P>With this solid foundation, the task of implementing Help for this application
+breaks down into three steps:</P>
+
+<DL>
+	<DD><B>1. </B>You must plan your Help. Do you intend to provide reference material
+	only, task-oriented instructions only, or both? To what extent will you supplement
+	these with context pop-ups?
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>You must provide the programming hooks that will result in the display
+	of the Help topics you have designed. This is done differently for command and context
+	Help, as you will see in the sections that follow.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>You must build the .rtf files with the Help topic IDs and text to explain
+	your application. If you have designed the Help system well and truly understand
+	your application, this should be simple, though time-consuming.
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> On large projects, often a technical writer rather than a programmer
+	writes the Help text. This requires careful coordination: For example, you have to
+	provide topic IDs to the Help writer, and you might have to explain some functions
+	so that they can be described in the Help. You have to work closely together throughout
+	a project like this and respect each other's area of expertise. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H2><A NAME="Heading8"></A>Planning Your Help Approach</H2>
+<P>Developing Help is like developing your software. You shouldn't do it without
+a plan. Strictly speaking, you shouldn't do it last. A famous experiment decades
+ago split a programming class into two groups. One group was required to hand in
+a completed user manual for a program before writing the program, the other to finish
+the program before writing the manual. The group who wrote the manual first produced
+better programs: They noticed design errors early, before the errors were carved
+in code, and they found writing programs much easier as well.</P>
+<P>If your application is of any size, the work involved in developing a Help system
+for it would fill a book. If you need further information on how to do this, consider
+the book <I>Designing Windows 95 Help: A Guide to Creating Online Documents</I>,
+written by Mary Deaton and Cheryl Lockett Zubak, published by Que. In this section,
+there is room for only a few basic guidelines.</P>
+<P>The result of this planning process is a list of Help topics and the primary way
+they will be reached. The topics you plan are likely to include the following:</P>
+
+<UL>
+	<LI>A page or so of Help on each menu item, reached by getting into What's This?
+	mode and clicking the item (or by pressing F1 on a highlighted menu item).
+	<P>
+	<LI>A page, reachable from the Contents, that lists all the menus and their menu
+	items, with links to the pages for those items.
+	<P>
+	<LI>A page, reachable from the Contents, for each major task that a user might perform
+	with the application. This includes examples or tutorials.
+	<P>
+	<LI>Context Help for the controls on all dialog boxes.
+</UL>
+
+<P>Although that might seem like a lot of work, remember that all the boilerplate
+resources have been documented already in the material provided by AppWizard. This
+includes menu items, common dialog boxes, and more.</P>
+<P>After you have a complete list of material and the primary way each page is reached,
+think about links between pages (for example, the AppWizard-supplied Help for File,
+Open mentions using File, New and vice versa) and pop-up definitions for jargon and
+keywords.</P>
+<P>In this section, you plan Help for ShowString, the application introduced in Chapter
+8. This simple application displays a string that the user can set. The string can
+be centered vertically or horizontally, and it can be black, green, or red. A new
+menu (Tools) with one item (Options) opens a dialog box on which the user can set
+all these options at once. The Help tasks you need to tackle include the following:</P>
+
+<UL>
+	<LI>Changing AppWizard's placeholder strings to ShowString or other strings specific
+	to this application
+	<P>
+	<LI>Adding a topic about the Tools menu and the Options item
+	<P>
+	<LI>Adding a topic about each control on the Options dialog box
+	<P>
+	<LI>Adding a Question button to the Options dialog box
+	<P>
+	<LI>Changing the text supplied by AppWizard and displayed when the user requests
+	context Help about the view
+	<P>
+	<LI>Adding an Understanding Centering topic to the Help menu and writing it
+	<P>
+	<LI>Adjusting the Contents to point to the new pages
+</UL>
+
+<P>The remainder of this chapter tackles this list of tasks.</P>
+<P>
+<H2><A NAME="Heading9"></A>Programming for Command Help</H2>
+<P>Command Help is simple from a developer's point of view. (Of course, you probably
+still have to write the explanations, so don't relax too much.) As you've seen, AppWizard
+added the Help Topics menu item and the message map entries to catch it, and the
+MFC class CMDIChildFrame has the member function to process it, so you have no work
+to do for that. However, if you choose to add another menu item to your Help menu,
+you do so just like any other menu, using the ResourceView. Then, have your application
+class, CShowStringApp, catch the message.</P>
+<P>Say, for example, that ShowString deserves an item named Understanding Centering
+on the Help menu. Here's how to make that happen:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Open ShowString, either your own copy from working along with Chapter
+	8 or a copy you have downloaded from the book's Web site, in Visual Studio. You may
+	want to make a copy of the old project before you start, because ShowString is the
+	foundation for many of the projects in this book.
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you aren't familiar with editing menus and dialogs or catching
+	messages, you should read Chapter 9 before this one. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+
+<DL>
+	<DT></DT>
+	<DD><B>2. </B>Open the IDR_MAINFRAME menu by switching to ResourceView, expanding
+	Menus, and double-clicking IDR_MAINFRAME. Add the Understanding Centering item to
+	the Help menu (just below Help Topics) and let Developer Studio assign it the resource
+	ID ID_HELP_UNDERSTANDINGCENTERING. This is one occasion when a slightly shorter resource
+	ID wouldn't hurt, but this chapter presents it with the longer ID.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Add the item to the other menu, IDR_SHOWSTTYPE, as well. Use the same
+	resource ID.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Use ClassWizard to arrange for CShowStringApp to catch this message,
+	as discussed in Chapter 8. Add the code for the new function, which looks like this:
+	<P>
+</DL>
+
+<PRE>void CShowStringApp::OnHelpUnderstandingcentering() 
+{
+    WinHelp(HID_CENTERING);
+}
+</PRE>
+<P>This code fires up the Help system, passing it the Help topic ID HID_CENTERING.
+For this to compile, that Help topic ID has to be known to the compiler, so in ShowString.h
+add this line:</P>
+<P>
+<PRE><B>#define HID_CENTERING 0x01</B>
+</PRE>
+<P>The Help topic IDs in the range 0x0000 to 0xFFFF are reserved for user-defined
+Help topics, so 0x01 is a fine choice. Now the C++ compiler is happy, but when this
+runs, the call to WinHelp() isn't going to find the topic that explains centering.
+You need to add a <I>help mapping entry</I>. This should be done in a new file named
+ShowStringx.hm. (The <I>x</I> is for extra, because extra Help mapping entries are
+added here.) Choose File, New; select the Files tab; highlight Text File; fill in
+the filename as ShowStringx.hm; and click OK. In the new file, type this line:</P>
+<P>
+<PRE><B>HID_CENTERING      0x01</B>
+</PRE>
+<P>Save the file. Next, you need to edit the Help project file, ShowString.hpj. If
+you double-click this from a folder such as Windows 95 Explorer, the Help Compiler
+opens it. In this case, you want to edit it as text, so you should open it with Developer
+Studio by double-clicking it in the FileView (and you wondered what the FileView
+was good for). Add this line at the very bottom:</P>
+<P>
+<PRE><B>#include &lt;ShowStringX.hm&gt;</B>
+</PRE>
+<P>Press Enter at the end of this line so that there's a blank line after this last
+directive. The Help compiler can be weird if there isn't a blank line after the last
+include.</P>
+<P>Now, both the Help system and the compiler know about this new Help topic ID.
+Later in this chapter, when you write the Help text, you will add a section that
+explains centering and connect it to this Help topic ID.</P>
+<P>The other common use of command Help is to add a Help button to a dialog box that
+gives an overview of the dialog box. This used to be standard behavior but is now
+recommended only for large dialog boxes, especially those with complex interactions
+between the various controls. For simple boxes, the What's This? Help is a better
+choice, because the information comes up in a small pop-up rather than an entire
+page of explanations. To add a Help button to a dialog, follow the same process steps
+you followed to add the menu item Help, Understanding Centering, but add a button
+to a dialog rather than an item to a menu. You wouldn't create a new .hm file; add
+the button's Help topic ID to ShowStringX.hm, which continues to grow in the next
+section.</P>
+<P>
+<H2><A NAME="Heading10"></A>Programming for Context Help</H2>
+<P>Your first task in arranging for context Help is to get a Question button onto
+the Options dialog box, because AppWizard already added one to the toolbar. Open
+the Options dialog box by double-clicking it in the ResourceView and then choose
+View, Properties. Click the Extended Styles tab and then make sure that the Context
+Help check box is selected, as shown in Figure 11.5.</P>
+<P><A HREF="javascript:popUp('11fig05.gif')"><B>FIG. 11.5</B></A><B> </B><I>Turn
+on the Question box on the Options dialog box of ShowString.</I></P>
+<P>As mentioned earlier, two messages are relevant to context Help: WM_HELP when
+a user clicks something while in What's This? mode, and WM_CONTEXTMENU when a user
+right-clicks something. You need to arrange for your dialog box class, COptionsDialog,
+to catch these messages. Because ClassWizard doesn't include them in the list of
+messages it will catch, you will add entries outside the special ClassWizard comments.
+The message map in OptionsDialog.h should look like this:</P>
+<P>
+<PRE>// Generated message map functions
+//{{AFX_MSG(COptionsDialog)
+    // NOTE: the ClassWizard will add member functions here
+//}}AFX_MSG
+afx_msg BOOL OnHelpInfo(HELPINFO* lpHelpInfo);
+afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+ DECLARE_MESSAGE_MAP()
+</PRE>
+<P>The message map in OptionsDialog.cpp should look like this:</P>
+<P>
+<PRE>BEGIN_MESSAGE_MAP(COptionsDialog, CDialog)
+    //{{AFX_MSG_MAP(COptionsDialog)
+        // NOTE: the ClassWizard will add message map macros here
+    //}}AFX_MSG_MAP
+    ON_WM_HELPINFO()
+    ON_WM_CONTEXTMENU()
+END_MESSAGE_MAP()
+</PRE>
+<P>These macros arrange for WM_HELP to be caught by OnHelpInfo()and for WM_CONTEXTMENU
+to be caught by OnContextMenu(). The next step is to write these functions. They
+both need to use a table to connect resource IDs to Help topic IDs. To create this
+table, add these lines at the be-ginning of OptionsDialog.cpp, after the comment
+block that reads // COptionsDialog dialog:</P>
+<P>
+<PRE>static DWORD aHelpIDs[] =
+{
+    IDC_OPTIONS_STRING, HIDD_OPTIONS_STRING,
+    IDC_OPTIONS_BLACK, HIDD_OPTIONS_BLACK,
+    IDC_OPTIONS_RED, HIDD_OPTIONS_RED,
+    IDC_OPTIONS_GREEN, HIDD_OPTIONS_GREEN,
+    IDC_OPTIONS_HORIZCENTER, HIDD_OPTIONS_HORIZCENTER,
+    IDC_OPTIONS_VERTCENTER, HIDD_OPTIONS_VERTCENTER,
+    IDOK, HIDD_OPTIONS_OK,
+    IDCANCEL, HIDD_OPTIONS_CANCEL,
+    0, 0
+};
+</PRE>
+<P>The Help system uses this array (you pass the address to the WinHelp() function)
+to connect resource IDs and Help topic IDs. The compiler, however, has never heard
+of HIDD_OPTIONS_STRING, so add these lines to OptionsDialog.h before the definition
+of the COptionsDialog class:</P>
+<P>
+<PRE>#define HIDD_OPTIONS_STRING 2
+#define HIDD_OPTIONS_BLACK 3
+#define HIDD_OPTIONS_RED 4
+#define HIDD_OPTIONS_GREEN 5
+#define HIDD_OPTIONS_HORIZCENTER 6
+#define HIDD_OPTIONS_VERTCENTER 7
+#define HIDD_OPTIONS_OK 8
+#define HIDD_OPTIONS_CANCEL 9
+</PRE>
+<P>The numbers are chosen arbitrarily. Now, after the two functions are written,
+the compiler will be happy because all these constants are defined. The Help system,
+however, doesn't know what's going on because these topics aren't in the Help mapping
+file yet. Therefore, add these lines to ShowStringX.hm:</P>
+<P>
+<PRE>HIDD_OPTIONS_STRING      0x02
+HIDD_OPTIONS_BLACK      0x03
+HIDD_OPTIONS_RED      0x04
+HIDD_OPTIONS_GREEN      0x05
+HIDD_OPTIONS_HORIZCENTER      0x06
+HIDD_OPTIONS_VERTCENTER      0x07
+HIDD_OPTIONS_OK      0x08
+HIDD_OPTIONS_CANCEL       0x09
+</PRE>
+<P>Be sure to use the same numbers as in the #define statements in OptionsDialog.h.
+The stage is set; all that remains is to add the code for the functions at the end
+of OptionsDialog.cpp. Here's what OnHelpInfo() looks like:</P>
+<P>
+<PRE>BOOL COptionsDialog::OnHelpInfo(HELPINFO *lpHelpInfo)
+{
+    if (lpHelpInfo-&gt;iContextType == HELPINFO_WINDOW) // must be for a control
+    {
+        // have to call SDK WinHelp not CWinApp::WinHelp
+        // because CWinApp::WinHelp doesn't take a
+        // handle as a parameter.
+        ::WinHelp((HWND)lpHelpInfo-&gt;hItemHandle, 
+            AfxGetApp()-&gt;m_pszHelpFilePath, 
+            HELP_WM_HELP, (DWORD)aHelpIDs);
+    }
+    return TRUE;
+}
+</PRE>
+<P>This function calls the SDK WinHelp() function and passes the handle to the control,
+the path to the Help file, the command HELP_WM_HELP to request a context-sensitive
+pop-up Help topic, and the table of resource IDs and Help topic IDs built earlier.
+There's no other work for your function to do after kicking WinHelp() into action.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you've never seen the :: scope resolution operator used without
+	a classname before it, it means &quot;call the function that isn't in any class,&quot;
+	and in Windows programming, that generally means the SDK function. 
+<HR>
+<BR>
+	</P>
+
+	<P>
+<HR>
+<strong>NOTE:</strong> The third parameter of this call to WinHelp() directs the Help system
+	to put up a certain style of Help window. HELP_WM_HELP gives you a pop-up menu, as
+	does HELP_WM_CONTEXTMENU. HELP_CONTEXT produces an ordinary Help window, which can
+	be resized and moved, and enables Help navigation. HELP_FINDER opens the Help Topics
+	dialog box. </P>
+
+	<P>HELP_CONTENTS and HELP_INDEX are obsolete and should be replaced with HELP_FINDER
+	if you maintain code that uses them.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>OnContextMenu() is even simpler. Add this code at the end of OptionsDialog.cpp:</P>
+<P>
+<PRE>void COptionsDialog::OnContextMenu(CWnd *pWnd, CPoint /*point*/)
+{
+     ::WinHelp((HWND)*pWnd, AfxGetApp()-&gt;m_pszHelpFilePath, 
+          HELP_CONTEXTMENU, (DWORD)aHelpIDs);
+}
+</PRE>
+<P>This function doesn't need to check that the right-click is on a control as OnHelpInfo()
+did, so it just calls the SDK WinHelp(). WinHelp() takes care of displaying the shortcut
+menu with only a What's This item and then displays Help when that item is chosen.</P>
+<P>To check your typing, build the project by choosing Build, Build and then compile
+the Help file by giving focus to ShowString.hpj and choosing Build, Compile. (You
+can also right-click ShowString.hpj in the FileView of the Project Workspace window
+and choose Compile from the shortcut menu.) There's not much point in testing it,
+though; the AppWizard stuff is sure to work, and without Help content connected to
+those topics, none of the code you just added can succeed in displaying content.</P>
+<P>
+<H2><A NAME="Heading11"></A>Writing Help Text</H2>
+<P>You write Help text in an RTF file, using special formatting codes that mean something
+rather different than they usually do. The traditional way to do this has been in
+Microsoft Word, but a large crop of Help authoring tools have sprung up that are
+far easier to use than Word. Rather than teach you yet another tool, this section
+presents instructions for writing Help text in Word. However, do keep in mind that
+there are easier ways, and on a project of a decent size, you easily save the time
+and money you invest in a Help authoring tool. An entire chapter in <I>Designing
+Windows 95 Help</I> discusses choosing an authoring tool.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> You can open Word documents from within Developer Studio. Simply choose
+	File, Open and select the file--the starter RTF files for ShowString are in the HLP
+	folder. The Word menus and toolbars will appear. This works because Word documents
+	are ActiveX Document Objects, discussed in Chapter 15, &quot;Building an ActiveX
+	Server Application.&quot; Most developers prefer to switch from Word to Developer
+	Studio with the taskbar rather than have a number of files open in Developer Studio
+	and switch among them with the Window menu, so the explanations in this section assume
+	that you are running Word separately. If you would rather work entirely within Developer
+	Studio, feel free to so do. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Figure 11.6 shows afxcore.rtf open in Word. Choose View, Footnotes to display
+the footnotes across the bottom of the screen--they are vital. This is how the text
+connects to the Help topic IDs. Choose Tools, Options; select the View tab; and make
+sure the Hidden Text check box is selected. This is how links between topics are
+entered. The topics are separated by page breaks.</P>
+<P><A HREF="javascript:popUp('11fig06.gif')"><B>FIG. 11.6</B></A><B> </B><I>Help
+text, such as this boilerplate provided by AppWizard, can be edited in Word.</I></P>
+<P>There are eight kinds of footnotes, each with a different meaning. Only the first
+three footnote types in the following list are in general use:</P>
+
+<UL>
+	<LI><I>#, the Help topic ID</I>. The SDK WinHelp function looks for this topic ID
+	when displaying Help.
+	<P>
+	<LI><I>$, the topic title</I>. This title displays in search results.
+	<P>
+	<LI><I>K, keywords</I>. These appear in the Index tab of the Help Topics dialog box.
+	<P>
+	<LI><I>A, A-keyword</I>. These keywords can be jumped to but don't appear in the
+	Index tab of the Help Topics dialog box.
+	<P>
+	<LI><I>+, browse code</I>. This marks the topic's place in a sequence of topics.
+	<P>
+	<LI><I>!, macro entry</I>. This<B> </B>makes the topic a macro to be run when the
+	user requests the topic.
+	<P>
+	<LI><I>*, build tag</I>. You use this to include certain tags only in certain builds
+	of the Help file.
+	<P>
+	<LI><I>&gt;, window type</I>. This overrides the type of window for this topic.
+</UL>
+
+<P>The double-underlined text, followed by hidden text, identifies a jump to another
+Help topic. If a user clicks to follow the link, this Help topic leaves the screen.
+If the text before the hidden text was single-underlined, following the link opens
+a pop-up over this Help topic, perfect for definitions and notes. (You can also see
+Help text files in which strikethrough text is used; this is exactly the same as
+double-underlined--a jump to another topic.) In all three cases, the hidden text
+is the topic ID of the material to be jumped to or popped up.</P>
+<P>Figure 11.7 shows how the File, New Help material appears from within ShowString.
+To display it yourself, run ShowString by choosing Build, Execute from within Developer
+Studio and then choose Help, Help Topics in ShowString. Open the menus book, double-click
+the File menu topic, and click New. Alternatively, choose the File menu, and while
+the highlight is on New, press F1.</P>
+<P><A HREF="javascript:popUp('11fig07.gif')"><B>FIG. 11.7</B></A><B> </B><I>ShowString
+displays the boilerplate Help generated by AppWizard.</I></P>
+<P>With the programming out of the way, it's time to tackle the list of Help tasks
+for ShowString from the &quot;Planning Your Help Approach&quot; section earlier in
+this chapter. These instructions assume you are using Word.</P>
+<P>
+<H3><A NAME="Heading12"></A>Changing Placeholder Strings</H3>
+<P>To change the placeholder strings left behind by AppWizard in the boilerplate
+Help files, open afxcore.rtf in Word if it isn't already open. (It's in the hlp folder
+of the ShowString project folder.) Then follow these steps:</P>
+
+<DL>
+	<DD><B>1. </B>Position the cursor at the very beginning of the document and choose
+	Edit, Replace.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Enter <B>&lt;&lt;YourApp&gt;&gt;</B> in the Find What box and <B>ShowString</B>
+	in the Replace With box.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Click Replace All.
+</DL>
+
+<P>Open afxprint.rtf and repeat these steps.</P>
+
+<P>Switch back to afxcore.rtf and look through the text for &lt;&lt; characters (use
+Edit, Find and remember that Shift+F4 is the shortcut to repeat your previous Find).
+These identify places where you must make a change or a decision. For ShowString,
+the changes in afxcore.rtf are these:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>The first section in the file is the ShowString Help Index. Remove
+	the How To section and the reminder to add some How To topics. In a real application,
+	you add topics here.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>The next section, after the page break, is a table describing the items
+	on the File menu. Because there's no Send item on ShowString's File menu, remove
+	the Send row of the File menu table.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>The third section is a table listing the items on the Edit menu. Remove
+	the Paste Link, Insert New Object, and Links rows.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>The fourth section is for the View menu and doesn't need any changes.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>The fifth section is for the Window menu. Remove the Split row from
+	the Window menu table.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>The sixth section is for the Help menu and doesn't need any changes.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>The seventh section is for the New command (File menu). Remove the
+	sentence about choosing a file type and the reminder to remove it.
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>Entirely delete the eighth section, the File New dialog box topic,
+	including the page break before or after it, but not both. Whenever you remove a
+	section, remove one of the breaks so that the file doesn't contain two consecutive
+	page breaks.
+	<P>
+	<DT></DT>
+	<DD><B>9. </B>The next topic is for the File, Open command and doesn't need any changes.
+	<P>
+	<DT></DT>
+	<DD><B>10. </B>Moving on to the File Open dialog box topic, edit the text to mention
+	that the List Files of Type list box contains only All Files.
+	<P>
+	<DT></DT>
+	<DD><B>11. </B>Continue down the file until you find the File, Send topic and remove
+	it entirely, including one page break either before or after it.
+	<P>
+	<DT></DT>
+	<DD><B>12. </B>In the File Save As topic, remove the suggestion to describe other
+	options because there are none.
+	<P>
+	<DT></DT>
+	<DD><B>13. </B>When you reach the Edit Undo topic, you start to see why programs
+	written after their manuals are better programs. The way ShowString was written in
+	Chapter 8, the Undo item will never be enabled, nor will Cut, Copy, or Paste. You
+	could remove the Help topics about these unsupported menu items, but it's probably
+	better to plan on adding support for the menu items to a later version of ShowString.
+	Add some text to all these topics, explaining that they aren't implemented in this
+	version of the product. Leave the shortcuts sections there so that users can find
+	out why Ctrl+Z does nothing.
+	<P>
+	<DT></DT>
+	<DD><B>14. </B>Continue down through the file to the Toolbar topic, where you find
+	this reminder: &lt;&lt; Add or remove toolbar buttons from the list below according
+	to which ones your application offers. &gt;&gt; Remove the reminder and delete the
+	references to the Cut, Copy, Paste, Undo, First Record, Previous Record, Next Record,
+	and Last Record buttons.
+	<P>
+	<DT></DT>
+	<DD><B>15. </B>About halfway down the file is a topic for the Split command (Window
+	menu). Remove the entire topic.
+	<P>
+	<DT></DT>
+	<DD><B>16. </B>Move down to the Index command (Help menu) topic and remove it. Also
+	remove the Using Help command (Help menu) and About command (Help menu) topics.
+	<P>
+	<DT></DT>
+	<DD><B>17. </B>In the Title Bar topic, remove the directive to insert a graphic.
+	If you would rather follow the directive, create a bitmap in a .bmp file of the title
+	bar with screen shot software, cropping the shot down to just the title bar, and
+	insert the graphic with the bmc directive, just as the bullet.bmp graphic is inserted
+	a few lines lower in the file.
+	<P>
+	<DT></DT>
+	<DD><B>18. </B>Because the ShowString view doesn't inherit from CScrollView, it doesn't
+	scroll. Remove the Scrollbars Help topic and its page break.
+	<P>
+	<DT></DT>
+	<DD><B>19. </B>In the Close command topic (not the File Close topic, which was much
+	earlier in the file) the shortcut for Alt+F4 should be described like this: closes
+	ShowString.
+	<P>
+	<DT></DT>
+	<DD><B>20. </B>Remove the Ruler, Choose Font, Choose Color, Edit Find, Find Dialog,
+	Edit Replace, Replace Dialog Box, Edit Repeat, Edit Clear, Edit Clear All, Next Pane,
+	and Previous Pane topics.
+	<P>
+	<DT></DT>
+	<DD><B>21. </B>Skip the How To Modify Text topic for now and leave it unchanged.
+	<P>
+	<DT></DT>
+	<DD><B>22. </B>Remove the final directive about tailoring the No Help Available messages
+	to each message box (don't remove the two No Help Available topics).
+	<P>
+</DL>
+
+<P>That completes the extensive changes required to the boilerplate afxcore.rtf file
+generated by AppWizard. In the other boilerplate file, afxprint.rtf, scroll to the
+bottom and remove the Page Setup topic.</P>
+<P>Would you like to test all this work? Save afxcore.rtf and afxprint.rtf within
+Word. Switch to Developer Studio and choose Build, Build to bring the project up
+to date. Then open ShowString.hpj and choose Build, Compile. This pulls all the .rtf
+files together into ShowString.hlp. Choose Build, Execute to run ShowString, and
+choose Help, Help Topics from the ShowString menus. As you can see in Figure 11.8,
+the Window menu topic is now substantially shorter. You can check that your other
+changes have been made, as well.</P>
+<P><A HREF="javascript:popUp('11fig08.gif')"><B>FIG. 11.8</B></A><B> </B><I>After
+saving the .rtf files and compiling the Help project, you can test to see that your
+changes have been made successfully.</I></P>
+<P>
+<H3><A NAME="Heading13"></A>Adding Topics</H3>
+<P>When you are adding new topics, you don't add new topics to the boilerplate files
+that were provided. Those files should stay untouched unless you want to change the
+description of File, Open or other boilerplate topics. Instead, create a new file
+by choosing File, New in Word and saving it in the hlp folder of the ShowString project
+folder as ShowString.rtf. (Make sure to change the Save File As Type list box selection
+to Rich Text Format.) If this were a large project, you could divide it up into several
+.rtf files, but one will suffice for ShowString. In Developer Studio, open ShowString.hpj
+by double-clicking it in the FileView tab and find the section headed [FILES]. Add
+this line at the end of that section:</P>
+<P>
+<PRE>showstring.rtf
+</PRE>
+<P><B>The Tools Menu&#160;&#160;</B>Back in Word, switch to afxcore.rtf and copy
+the topic for the File menu into the Clipboard; then switch back to ShowString.rtf
+and paste it in. (Don't forget to include the page break after the topic in the selection
+when you copy.) Choose View, Footnotes to display the footnotes, and Tools, Options,
+View tab, Hidden Text to display the hidden text. Now you are going to edit the copied
+File topic to make it the Tools topic. Change the footnotes first. They are as follows:</P>
+
+<UL>
+	<LI>The # footnote is the topic ID. The Help system uses this to find this topic
+	from the Contents page. Change it to <B>menu_tools</B>.
+	<P>
+	<LI>The K footnote is the keyword entry. Although the Options dialog box probably
+	deserves several keywords, this menu doesn't, so remove that footnote by selecting
+	the letter <I>K</I> in the Help topic and pressing Delete. You must select the letter;
+	it isn't enough to click just before it. The footnote is deleted at the same time.
+	<P>
+	<LI>The $ footnote is the topic title. Change it to <B>Tools menu</B> <B>commands</B>.
+</UL>
+
+<P>In the topic, change File to <B>Tools</B> on the first two lines, and delete all
+the rows of the table but one. Change the underlined text of that row to <B>Options</B>,
+the hidden text immediately following to <B>HID_TOOLS_OPTIONS</B>, and the right
+column of that row to <B>Changes string, color, and centering</B>. Figure 11.9 shows
+the way ShowString.rtf looks in Word after these changes.</P>
+<P><A HREF="javascript:popUp('11fig09.gif')"><B>FIG. 11.9</B></A><B> </B><I>Change
+the ShowString.rtf file to explain the new menu item.</I></P>
+<P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you can't remember the Help topic IDs your project is using, check
+	your .hm files. The ones added by Developer Studio, such as HID_TOOLS_OPTIONS for
+	the menu item with resource ID ID_TOOLS_OPTIONS, are in ShowString.hm, whereas ShowStringx.hm
+	contains the Help topic IDs added by hand for context Help. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><B>The Tools, Options Menu Item&#160;&#160;</B>Switch back to afxcore, copy the
+File New topic, and paste it into ShowString.rtf, as before. The topic and its footnotes
+are copied together. Watch carefully to be sure you are working with the footnotes
+for the Tools Options topic and not the ones for the Tools menu. Follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Change the # footnote to <B>HID_TOOLS_OPTIONS</B>.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Change the K keyword. Several keywords should lead here, and each needs
+	to be separated from the next by a semicolon (;). Some need to be two-level keywords
+	with the levels separated by commas. A good first start is <B>string, changing;color,
+	changing;centering, changing;appearance, controlling</B>.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Change the $ keyword to <B>Tools Options command</B>.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Change the first line of the topic to <B>Options command (Tools menu)</B>.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Delete the rest of the topic and replace it with a short description
+	of this menu item. The following text is okay:
+	<P>
+</DL>
+
+<PRE>Use this command to change the appearance of the ShowString 
+display with the Options dialog box. The string being displayed, 
+color of the text, and vertical and horizontal centering are 
+all controlled from this dialog.
+</PRE>
+<P>If you want to test this, too, save the files in Word, compile the Help project,
+run ShowString, and choose Tools. Highlight the Options item by moving the highlight
+with the cursor keys, but don't click Options to select it; press F1 instead. Figure
+11.10 shows the Help window that displays.</P>
+<P><A HREF="javascript:popUp('11fig10.gif')"><B>FIG. 11.10</B></A><B> </B><I>The
+new Tools Options Help is reached by pressing F1 while the item is highlighted on
+the menu.</I></P>
+<P><B>Each Control on the Options Dialog&#160;&#160;</B>Copy the File New topic into
+ShowString.rtf again and cut it down drastically. To do this, follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Remove the K and $ footnotes.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Change the # footnote to <B>HIDD_OPTIONS</B>.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Change the first line to <B>(Options dialog)</B>.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Delete the other text in the topic.
+	<P>
+</DL>
+
+<P>Copy this block into the Clipboard and paste it in seven more times so that you
+have a skeleton for each control on the dialog box. Remember to copy the page break
+before or after the topic, too. Then, edit each skeleton to document the following
+topic IDs:</P>
+
+<UL>
+	<LI>HIDD_OPTIONS_STRING
+	<P>
+	<LI>HIDD_OPTIONS_BLACK
+	<P>
+	<LI>HIDD_OPTIONS_RED
+	<P>
+	<LI>HIDD_OPTIONS_GREEN
+	<P>
+	<LI>HIDD_OPTIONS_HORIZCENTER
+	<P>
+	<LI>HIDD_OPTIONS_VERTCENTER
+	<P>
+	<LI>HIDD_OPTIONS_OK
+	<P>
+	<LI>HIDD_OPTIONS_CANCEL
+</UL>
+
+<P>Change the topic ID and add a sentence or two of text. Be consistent. The examples
+included with this chapter are each a single sentence that starts with an imperative
+verb like <I>Click</I> or <I>Select</I> and ends with a period (.). If you would
+rather choose a different style for your pop-up boxes, use the same style for all
+of them. It confuses the user when pop-up boxes are inconsistent and tends to make
+them believe your coding is sloppy, too.</P>
+<P>To test your work, compile ShowString.hpj again, run ShowString, and choose Tools,
+Options. Click the Question button and then click somewhere on the dialog box. Explore
+each of the controls to be sure you have entered the correct text. Figure 11.11 shows
+the context Help for the String edit box.</P>
+<P><A HREF="javascript:popUp('11fig11.gif')"><B>FIG. 11.11</B></A><B> </B><I>Display
+Help for a dialog box control by clicking the Question button in the upper-right
+corner and then clicking a control.</I></P>
+<P><B>Understanding Centering&#160;&#160;</B>In ShowString.rtf, paste in another
+copy of the File New topic. Make the following changes:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Change the # footnote to <B>HID_CENTERING</B> (the topic ID you added
+	to ShowStringx.hm and called in CShowStringApp::OnHelpUnderstandingcentering()).
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Change the K footnote to <B>centering</B>.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Change the $ footnote to <B>Understanding Centering</B>.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Change the title on the first line to <B>Understanding Centering</B>.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Replace the text with a short explanation of centering, like this:
+	<P>
+</DL>
+
+<PRE>ShowString can center the displayed string within the view. The two
+options, &quot;center horizontally&quot; and &quot;center vertically&quot;, can be set 
+independently on the Options dialog box, reached by choosing the Options 
+item on the Tools menu. Text that is not centered horizontally is 
+displayed at the left edge of the window. Text that is not centered 
+vertically is displayed at the top of the window.
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>6. </B>Add links from the word <I>Tools</I> to the menu_tools topic and from
+	the word <I>Options</I> to HID_TOOLS_OPTIONS, as before. Remember to watch for extra
+	spaces.
+	<P>
+</DL>
+
+<P>Test this change in the usual way, and when you choose Help, Understanding Centering
+from the ShowString menus, you should see something like Figure 11.12. Try following
+the links; you can use the Back button to return to the centering topic.</P>
+<P><A HREF="javascript:popUp('11fig12.gif')"><B>FIG. 11.12</B></A><B> </B><I>Display
+a teaching Help topic by choosing it from the Help menu.</I></P>
+<P>
+<H3><A NAME="Heading14"></A>Changing the How to Modify Text Topic</H3>
+<P>AppWizard already provided a How to Modify Text topic at the bottom of afxcore.rtf
+that needs to be edited to explain how ShowString works. It displays when the user
+selects the view area for context Help. Replace the text with a much shorter explanation
+that tells the user to choose Tools, Options. To add a link to that topic (short
+though it is), type <B>HID_TOOLS_OPTIONS</B> immediately after the word <I>Options</I>
+in the Help topic. While you're at it, type <B>menu_tools</B> immediately after the
+word <I>Tools</I>. Select the word <I>Options</I> and press Ctrl+Shift+D to double-underline
+it; then do the same for <I>Tools</I>. Select HID_TOOLS_OPTIONS and press Ctrl+Shift+H
+to hide it; then do the same for menu_tools.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you've reassigned these keys, you can do the formatting the long
+	way. To double-underline text, select it and choose Format, Font. Drop down the Underline
+	box and choose Double; then click OK. To hide text, select it and choose Format,
+	Font; then select the Hidden box and click OK. 
+<HR>
+</P>
+	<P>
+<HR>
+<strong>TIP:</strong> There can't be any spaces between the double-underlined text and the
+	hidden text or at the end of the hidden text. Word can give you some trouble about
+	this because the Smart Cut and Paste feature that works so nicely with words can
+	insert extra spaces where you don't want them or can make it impossible to select
+	only half a word. You can turn off the feature in Word by choosing Tools, Options,
+	the Edit tab and by deselecting the When Selecting, Automatically Select Entire Word
+	and Use Smart Cut and Paste check boxes. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Ready to test again? Save the files in Word, compile the Help project file, and
+execute ShowString; then click the What's This? button on the toolbar and click in
+the main view. Your new How to Modify Text entry should display.</P>
+<P>
+<H2><A NAME="Heading15"></A>Adjustments to the Contents</H2>
+<P>This tiny little application is almost entirely documented now. You need to add
+the Tools menu and Understanding Centering to the Contents and to check the index.
+The easiest way to tackle the Contents is with Help Workshop. Close all the Help-related
+files that are open in Developer Studio and Word and open Help Workshop by choosing
+Start, Programs, Microsoft Visual Studio 6.0, Microsoft Visual Studio 6.0 Tools,
+Help Workshop. Open ShowString.cnt by choosing File, Open and working your way through
+the Open dialog box. (If you can't find the contents file, be sure to change the
+File Type drop-down. It's probably in your Debug directory.) This is the Contents
+file for ShowString.</P>
+<P>In the first open book, click the View Menu item and then click the Add Below
+button. (Alternatively, click the Window Menu item and then the Add Above button.)
+The Edit Contents Tab Entry dialog box, shown in Figure 11.13, appears. Fill it in
+as shown; by leaving the last two entries blank, the default Help File and Window
+Type are used. Click OK.</P>
+<P><A HREF="javascript:popUp('11fig13.gif')"><B>FIG. 11.13</B></A><B> </B><I>Add
+entries to the Contents tab with Help Workshop's Edit Contents Tab Entry dialog box.</I></P>
+<P>Click the placeholder book named &lt;&lt;add your application-specific topics
+here&gt;&gt; and click Add Above again. When the Edit Contents Tab Entry dialog box
+appears, select the Heading radio button from the list across the top. As shown in
+Figure 11.14, you can change only the title here. Don't use Understanding Centering
+because that's the title of the only topic under this heading. Enter <B>Displaying
+a string</B> and click OK.</P>
+<P>Add a topic below the new heading for Understanding Centering, whose ID is HID_CENTERING,
+and remove the placeholder heading and topic. Save your changes, close Help Workshop,
+compile ShowString.hpj in Developer Studio again, and test your Help. Choose Help,
+Help Topics and expand each heading. You will see something like Figure 11.15.</P>
+<P><A HREF="javascript:popUp('11fig14.gif')"><B>FIG. 11.14</B></A><B> </B><I>Add
+headings to the Contents tab with Help Workshop's Edit Contents Tab Entry dialog
+box.</I></P>
+<P><A HREF="javascript:popUp('11fig15.gif')"><B>FIG. 11.15</B></A><B> </B><I>After
+saving the .cnt file and compiling the .hpj file, display the new table of contents
+by choosing Help, Help Topics.</I></P>
+<P>While you have the Help Topics dialog box open, click the Index tab. Figure 11.16
+shows how the K footnotes you entered throughout this section have all been added
+to the index. If it looks a little sparse, you can always go to the .rtf files and
+add more keywords, remembering to separate them with semicolons.</P>
+<P><A HREF="javascript:popUp('11fig16.gif')"><B>FIG. 11.16</B></A><B> </B><I>The
+index has been built from the K footnotes in the .rtf files.</I></P>
+<P>Now the Help file for this application is complete, and you've arranged for the
+relevant sections of the file to be displayed when the user requests online Help.
+You can apply these concepts to your own application, and never again deliver an
+undocumented product.</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch10/ch10.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch12/ch12.htm"><IMG
+SRC="../b

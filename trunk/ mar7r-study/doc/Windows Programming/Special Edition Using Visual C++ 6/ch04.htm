@@ -1,0 +1,769 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 4 -- Documents and Views</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch03/ch03.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch05/ch05.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 4 -</H1>
+
+<H1>Documents and Views</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Understanding the Document Class</A>
+	<LI><A HREF="#Heading2">Understanding the View Class</A>
+	<LI><A HREF="#Heading3">Creating the Rectangles Application</A>
+	<LI><A HREF="#Heading4">Other View Classes</A>
+	<LI><A HREF="#Heading5">Document Templates, Views, and Frame Windows</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Understanding the Document Class</H2>
+<P>When you generate your source code with AppWizard, you get an application featuring
+all the bells and whistles of a commercial 32-bit Windows application, including
+a toolbar, a status bar, ToolTips, menus, and even an About dialog box. However,
+in spite of all those features, the application really doesn't do anything useful.
+In order to create an application that does more than look pretty on your desktop,
+you need to modify the code that AppWizard generates. This task can be easy or complex,
+depending on how you want your application to look and act.</P>
+<P>Probably the most important set of modifications are those related to the <I>document</I>--the
+information the user can save from your application and restore later--and to the
+<I>view</I>--the way that information is presented to the user. MFC's document/view
+architecture separates an application's data from the way the user actually views
+and manipulates that data. Simply, the document object is responsible for storing,
+loading, and saving the data, whereas the view object (which is just another type
+of window) enables the user to see the data onscreen and to edit that data in a way
+that is appropriate to the application. In this chapter, you learn the basics of
+how MFC's document/view architecture works.</P>
+<P>SDI and MDI applications created with AppWizard are document/view applications.
+That means that AppWizard generates a class for you derived from CDocument, and delegates
+certain tasks to this new document class. It also creates a view class derived from
+CView and delegates other tasks to your new view class. Let's look through an AppWizard
+starter application and see what you get.</P>
+<P>Choose File, New, and select the Projects tab. Fill in the project name as <B>App1</B>
+and fill in an appropriate directory for the project files. Make sure that MFC AppWizard
+(exe) is selected. Click OK.</P>
+<P>Move through the AppWizard dialog boxes, changing the settings to match those
+in the following table, and then click Next to continue:</P>
+<P>Step 1: Multiple documents</P>
+<P>Step 2: Don't change the defaults presented by AppWizard</P>
+<P>Step 3: Don't change the defaults presented by AppWizard</P>
+<P>Step 4: Deselect all check boxes except Printing and Print Preview</P>
+<P>Step 5: Don't change the defaults presented by AppWizard</P>
+<P>Step 6: Don't change the defaults presented by AppWizard</P>
+<P>After you click Finish on the last step, the New project information box summarizes
+your work. Click OK to create the project. Expand the App1 classes in ClassView,
+and you see that six classes have been created: CAboutDlg, CApp1App, CApp1Doc, CApp1View,
+CChildFrame, and CMainframe.</P>
+<P>CApp1Doc represents a document; it holds the application's document data. You
+add storage for the document by adding data members to the CApp1Doc class. To see
+how this works, look at Listing 4.1, which shows the header file AppWizard creates
+for the CApp1Doc class.</P>
+<P>
+<H4>Listing 4.1&#160;&#160;APP1DOC.H--The Header File for the CApp1Doc Class</H4>
+<PRE>// App1Doc.h : interface of the CApp1Doc class
+//
+///////////////////////////////////////////////////////////////////////////
+#if !defined(AFX_APP1DOC_H__43BB481D_64AE_11D0_9AF3_0080C81A397C__INCLUDED_)
+#define AFX_APP1DOC_H__43BB481D_64AE_11D0_9AF3_0080C81A397C__INCLUDED_
+#if _MSC_VER &gt; 1000
+#pragma once
+#endif // _MSC_VER &gt; 1000
+class CApp1Doc : public CDocument
+{
+protected: // create from serialization only
+     CApp1Doc();
+     DECLARE_DYNCREATE(CApp1Doc)
+// Attributes
+public:
+// Operations
+public:
+// Overrides
+     // ClassWizard generated virtual function overrides
+     //{{AFX_VIRTUAL(CApp1Doc)
+     public:
+     virtual BOOL OnNewDocument();
+     virtual void Serialize(CArchive&amp; ar);
+     //}}AFX_VIRTUAL
+// Implementation
+public:
+     virtual ~CApp1Doc();
+#ifdef _DEBUG
+     virtual void AssertValid() const;
+     virtual void Dump(CDumpContext&amp; dc) const;
+#endif
+protected:
+// Generated message map functions
+protected:
+     //{{AFX_MSG(CApp1Doc)
+        // NOTE - the ClassWizard will add and remove member functions here.
+        //    DO NOT EDIT what you see in these blocks of generated code !
+     //}}AFX_MSG
+     DECLARE_MESSAGE_MAP()
+};
+///////////////////////////////////////////////////////////////////////////
+</PRE>
+
+<PRE>//{{AFX_INSERT_LOCATION}}
+// Microsoft Visual C++ will insert additional declarations
+// immediately before the previous line.
+#endif // !defined(AFX_APP1DOC_H__43BB481D_64AE_11D0_9AF3
+</PRE>
+
+<PRE>[ccc]    _0080C81A397C__INCLUDED_)
+</PRE>
+<P>Near the top of the listing, you can see the class declaration's Attributes section,
+which is followed by the public keyword. This is where you declare the data members
+that will hold your application's data. In the program that you create a little later
+in this chapter, the application must store an array of CPoint objects as the application's
+data. That array is declared as a member of the document class like this:</P>
+<P>
+<PRE>// Attributes
+public:
+    CPoint points[100];
+</PRE>
+<P>CPoint is an MFC class that encapsulates the information relevant to a point on
+the screen, most importantly the x and y coordinates of the point.</P>
+<P>Notice also in the class's header file that the CApp1Doc class includes two virtual
+member functions called OnNewDocument() and Serialize(). MFC calls the OnNewDocument()
+function whenever the user selects the File, New command (or its toolbar equivalent,
+if a New button has been implemented in the application). You can use this function
+to perform whatever initialization must be performed on your document's data. In
+an SDI application, which has only a single document open at any time, the open document
+is closed and a new blank document is loaded into the same object; in an MDI application,
+which can have multiple documents open, a blank document is opened in addition to
+the documents that are already open. The Serialize() member function is where the
+document class loads and saves its data. This is discussed in Chapter 7, &quot;Persistence
+and File I/O.&quot;</P>
+<P>
+<H2><A NAME="Heading2"></A>Understanding the View Class</H2>
+<P>As mentioned previously, the view class displays the data stored in the document
+object and enables the user to modify this data. The view object keeps a pointer
+to the document object, which it uses to access the document's member variables in
+order to display or modify them. Listing 4.2 is the header file for Capp1View, as
+generated by AppWizard.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Most MFC programmers add public member variables to their documents
+	to make it easy for the view class to access them. A more object-oriented approach
+	is to add private or protected member variables, and then add public functions to
+	get or change the values of these variables. The reasoning behind these design principles
+	is explored in Appendix A, &quot; C++ Review and Object-Oriented Concepts.&quot;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H4>Listing 4.2&#160;&#160;APP1VIEW.H--The Header File for the CApp1View Class</H4>
+<PRE>// App1View.h : interface of the CApp1View class
+//
+///////////////////////////////////////////////////////////////////////////
+#if !defined(AFX_APP1VIEW_H__43BB481F_64AE_11D0_9AF3
+[ccc]_0080C81A397C__INCLUDED_)
+#define AFX_APP1VIEW_H__43BB481F_64AE_11D0_9AF3_0080C81A397C__INCLUDED_
+#if _MSC_VER &gt; 1000
+#pragma once
+#endif // _MSC_VER &gt; 1000
+class CApp1View : public CView
+{
+protected: // create from serialization only
+     CApp1View();
+     DECLARE_DYNCREATE(CApp1View)
+// Attributes
+public:
+     CApp1Doc* GetDocument();
+// Operations
+public:
+// Overrides
+     // ClassWizard generated virtual function overrides
+     //{{AFX_VIRTUAL(CApp1View)
+     public:
+     virtual void OnDraw(CDC* pDC);  // overridden to draw this view
+virtual BOOL PreCreateWindow(CREATESTRUCT&amp; cs);
+     protected:
+     virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
+     virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
+     virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
+     //}}AFX_VIRTUAL
+// Implementation
+public:
+     virtual ~CApp1View();
+#ifdef _DEBUG
+     virtual void AssertValid() const;
+     virtual void Dump(CDumpContext&amp; dc) const;
+#endif
+protected:
+// Generated message map functions
+protected:
+     //{{AFX_MSG(CApp1View)
+        // NOTE - the ClassWizard will add and remove member functions here.
+        //    DO NOT EDIT what you see in these blocks of generated code !
+     //}}AFX_MSG
+     DECLARE_MESSAGE_MAP()
+};
+#ifndef _DEBUG  // debug version in App1View.cpp
+inline CApp1Doc* CApp1View::GetDocument()
+   { return (CApp1Doc*)m_pDocument; }
+#endif
+///////////////////////////////////////////////////////////////////////////
+//{{AFX_INSERT_LOCATION}}
+// Microsoft Visual C++ will insert additional declarations 
+// immediately before the previous line.
+#endif // !defined(AFX_APP1VIEW_H__43BB481F_64AE_11D0_9AF3
+</PRE>
+<PRE>[ccc] _0080C81A397C__INCLUDED_)
+</PRE>
+<P>Near the top of the listing, you can see the class's public attributes, where
+it declares the GetDocument() function as returning a pointer to a CApp1Doc object.
+Anywhere in the view class that you need to access the document's data, you can call
+GetDocument() to obtain a pointer to the document. For example, to add a CPoint object
+to the aforementioned array of CPoint objects stored as the document's data, you
+might use the following line:</P>
+<P>
+<PRE>GetDocument()-&gt;m_points[x] = point;
+</PRE>
+<P>You also can do this a little differently, of course, by storing the pointer returned
+by GetDocument() in a local pointer variable and then using that pointer variable
+to access the document's data, like this:</P>
+<P>
+<PRE>pDoc = GetDocument();
+pDoc-&gt;m_points[x] = point;
+</PRE>
+<P>The second version is more convenient when you need to use the document pointer
+in several places in the function, or if using the less clear GetDocument()-&gt;variable
+version makes the code hard to understand.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> In release versions of your program, the GetDocument() function is
+	inline, which means there is no performance advantage to saving the pointer like
+	this, but it does improve readability. Inline functions are expanded into your code
+	like macros, but offer type checking and other advantages, as discussed in Appendix
+	A.&#160;n
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Notice that the view class, like the document class, overrides a number of virtual
+functions from its base class. As you'll soon see, the OnDraw() function, which is
+the most important of these virtual functions, is where you paint your window's display.
+As for the other functions, MFC calls PreCreateWindow() before the window element
+(that is, the actual Windows window) is created and attached to the MFC window class,
+giving you a chance to modify the window's attributes (such as size and position).
+These two functions are discussed in more detail in Chapter 5, &quot;Drawing on the
+Screen.&quot; OnPreparePrinting() is used to modify the Print dialog box before it
+displays for the user; the OnBeginPrinting() function gives you a chance to create
+GDI objects like pens and brushes that you need to handle the print job; and OnEndPrinting()
+is where you can destroy any objects you might have created in OnBeginPrinting().
+These three functions are discussed in Chapter 6, &quot;Printing and Print Preview.&quot;</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> When you first start using an application framework like MFC, it's
+	easy to get confused about the difference between an object instantiated from an
+	MFC class and the Windows element it represents. For example, when you create an
+	MFC frame-window object, you're actually creating two things: the MFC object that
+	has member functions and member variables, and a Windows window that you can manipulate
+	using the functions of the MFC object. The window element is associated with the
+	MFC class, but is also an entity unto itself.&#160;n
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H2><A NAME="Heading3"></A>Creating the Rectangles Application</H2>
+<P>Now that you've had an introduction to documents and views, a little hands-on
+experience should help you better understand how these classes work. In the steps
+that follow, you build the Rectangles application, which demonstrates the manipulation
+of documents and views. When you first run this application, it will draw an empty
+window. Wherever you click in the window, a small rectangle will be drawn. You can
+resize the window, or minimize and restore it, and the rectangles will be redrawn
+at all the coordinates where you clicked, because Rectangles keeps an array of coordinate
+points in the document and uses that array in the view.</P>
+<P>First, use AppWizard to create the basic files for the Rectangles program, selecting
+the options listed in the following table. (AppWizard is first discussed in Chapter
+1, &quot;Building Your First Windows Application.&quot; When you're done, the New
+Project Information dialog box appears; it should look like Figure 4.1. Click the
+OK button to create the project files.</P>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Dialog Box Name</B></TD>
+		<TD ALIGN="LEFT"><B>Options to Select</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">New Project		</TD>
+		<TD ALIGN="LEFT">Name the project <B>recs</B> and set the project path to the directory into which
+			you want to store the project's files. Leave the other options set to their defaults.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Step 1		</TD>
+		<TD ALIGN="LEFT">Select Single Document.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Step 2 of 6		</TD>
+		<TD ALIGN="LEFT">Leave default settings.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Step 3 of 6		</TD>
+		<TD ALIGN="LEFT">Leave default settings.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Step 4 of 6		</TD>
+		<TD ALIGN="LEFT">Turn off all application features except Printing and Print		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Preview.		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Step 5 of 6		</TD>
+		<TD ALIGN="LEFT">Leave default settings.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Step 6 of 6		</TD>
+		<TD ALIGN="LEFT">Leave default settings.		</TD>
+	</TR>
+</TABLE>
+</P>
+<P><A HREF="javascript:popUp('04uvc01.gif')"><B>FIG. 4.1</B></A><B> </B><I>When you
+create an SDI application with AppWizard, the project information summary confirms
+your settings.</I></P>
+
+<P>Now that you have a starter application, it's time to add code to the document
+and view classes in order to create an application that actually does something.
+This application will draw many rectangles in the view and save the coordinates of
+the rectangles in the document.</P>
+<P>Follow these steps to add the code that modifies the document class to handle
+the application's data, which is an array of CPoint objects that determine where
+rectangles should be drawn in the view window:</P>
+<P>
+
+<DL>
+	<DD><B>1. </B>Click the ClassView tab to display the ClassView in the project workspace
+	window at the left of the screen.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Expand the recs classes by clicking the + sign before them.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Right-click the CRecsDoc class and choose Add Member Variable from
+	the shortcut menu that appears.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Fill in the Add Member Variable dialog box. For Variable Type, enter
+	<B>CPoint</B>. For Variable Name, enter <B>m_points[100]</B>. Make sure the Public
+	radio button is selected. Click OK.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Again, right-click the CRecsDoc class and choose Add Member Variable.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>For Variable Type, enter <B>UINT</B>. For Variable Name, enter <B>m_pointIndex</B>.
+	Make sure the Public radio button is selected. Click OK.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Click the + next to CRecsDoc in ClassView to see the member variables
+	and functions. The two member variables you added are now listed.
+	<P>
+</DL>
+
+<P>The m_points[] array holds the locations of rectangles displayed in the view window.
+The m_pointIndex data member holds the index of the next empty element of the array.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you've programmed in C++ before and are not used to the ClassView,
+	you can open RecsDoc.h from the FileView and add (after a public: specifier) the
+	two lines of code that declare these variables:
+<HR>
+
+
+</BLOCKQUOTE>
+
+<PRE>UINT m_pointIndex;
+CPoint m_points[100];
+</PRE>
+<P>Now you need to get these variables initialized to appropriate values and then
+use them to draw the view. MFC applications that use the document/view paradigm initialize
+document data in a function called OnNewDocument(), which is called automatically
+when the application first runs and whenever the user chooses File, New.</P>
+<P>The list of member variables and functions of CRecsDoc should still be displayed
+in ClassView. Double-click OnNewDocument() in that list to edit the code. Using Listing
+4.3 as a guide, remove the comments left by AppWizard and initialize m_pointIndex
+to zero.</P>
+<P>
+<H4>Listing 4.3&#160;&#160;RECSDOC.CPP--CRecsDoc::OnNewDocument()</H4>
+<PRE>BOOL CRecsDoc::OnNewDocument()
+{
+     if (!CDocument::OnNewDocument())
+          return FALSE;
+    m_pointIndex = 0;
+     return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>There is no need to initialize the array of points because the index into the
+array will be used to ensure no code tries to use an uninitialized element of the
+array. At this point your modifications to the document class are complete. As you'll
+see in Chapter 7, there are a few simple changes to make if you want this information
+actually saved in the document. In order to focus on the way documents and views
+work together, you will not be making those changes to the recs application.</P>
+<P>Now turn your attention to the view class. It will use the document data to draw
+rectangles onscreen. A full discussion of the way that drawing works must wait for
+Chapter 5. For now it is enough to know that the OnDraw() function of your view class
+does the drawing. Expand the CRecsView class in ClassView and double-click OnDraw().
+Using Listing 4.4 as a guide, remove the comments left by AppWizard and add code
+to draw a rectangle at each point in the array.</P>
+<P>
+<H4>Listing 4.4&#160;&#160;RECSVIEW.CPP--CRecsView::OnDraw()</H4>
+<PRE>void CRecsView::OnDraw(CDC* pDC)
+{
+    CRecsDoc* pDoc = GetDocument();
+    ASSERT_VALID(pDoc);
+    UINT pointIndex = pDoc-&gt;m_pointIndex;
+    for (UINT i=0; i&lt;pointIndex; ++i)
+    {
+        UINT x = pDoc-&gt;m_points[i].x;
+        UINT y = pDoc-&gt;m_points[i].y;
+        pDC-&gt;Rectangle(x, y, x+20, y+20);
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>Your modifications to the starter application generated by AppWizard are almost
+complete. You have added member variables to the document, initialized those variables
+in the document's OnNewDocument() function, and used those variables in the view's
+OnDraw() function. All that remains is to enable the user to add points to the array.
+As discussed in Chapter 3, &quot;Messages and Commands,&quot; you catch the mouse
+message with ClassWizard and then add code to the message handler. Follow these steps:</P>
+<P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Choose View, ClassWizard. The ClassWizard dialog box appears.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Make sure that CRecsView is selected in the Class Name and Object IDs
+	boxes. Then, double-click WM_LBUTTONDOWN in the Messages box to add the OnLButtonDown()
+	message-response function to the class. Whenever the application receives a WM_LBUTTONDOWN
+	message, it will call OnLButtonDown().
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Click the Edit Code button to jump to the OnLButtonDown() function
+	in your code. Then, add the code shown in Listing 4.5 to the function.
+	<P>
+</DL>
+
+<H4>Listing 4.5&#160;&#160;RECSVIEW.CPP--CRecsView::OnLButtonDown()</H4>
+<PRE>void CRecsView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+    CRecsDoc *pDoc = GetDocument();
+    // don't go past the end of the 100 points allocated
+    if (pDoc-&gt;m_pointIndex == 100)
+       return;
+    //store the click location
+    pDoc-&gt;m_points[pDoc-&gt;m_pointIndex] = point;
+    pDoc-&gt;m_pointIndex++;
+    pDoc-&gt;SetModifiedFlag();
+    Invalidate();
+    CView::OnLButtonDown(nFlags, point);
+</PRE>
+<PRE>}
+</PRE>
+<P>The new OnLButtonDown() adds a point to the document's point array each time the
+user clicks the left mouse button over the view window. It increments m_pointIndex
+so that the next click goes into the point on the array after this one.</P>
+<P>The call to SetModifiedFlag() marks this document as modified, or &quot;dirty.&quot;
+MFC automatically prompts the user to save any dirty files on exit. (The details
+are found in Chapter 7.) Any code you write that changes any document variables should
+call SetModifiedFlag().</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Earlier in this chapter you were reminded that public access functions
+	in the document have some advantages. One such advantage: Any document member function
+	that changed a variable also could call SetModifiedFlag(), thus guaranteeing no programmer
+	could forget it.&#160;n
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Finally, the call to Invalidate() causes MFC to call the OnDraw() function, where
+the window's display is redrawn with the new data. Invalidate() takes a single parameter
+(with the default value TRUE) that determines if the background is erased before
+calling OnDraw(). On rare occasions you may choose to call Invalidate(FALSE) so that
+OnDraw() draws over whatever was already onscreen.</P>
+<P>Finally, a call to the base class OnLButtonDown() takes care of the rest of the
+work involved in handling a mouse click.</P>
+<P>You've now finished the complete application. Click the toolbar's Build button,
+or choose Build, Build from the menu bar, to compile and link the application. After
+you have the Rectangles application compiled and linked, run it by choosing Build,
+Execute. When you do, you see the application's main window. Place your mouse pointer
+over the window's client area and click. A rectangle appears. Go ahead and keep clicking.
+You can place up to 100 rectangles in the window (see Figure 4.2).</P>
+<P><A HREF="javascript:popUp('04uvc02.gif')"><B>FIG. 4.2</B></A><B> </B><I>The Rectangles
+application draws rectangles wherever you click.</I></P>
+
+<P><I></I>
+<H2><A NAME="Heading4"></A>Other View Classes</H2>
+<P>The view classes generated by AppWizard in this chapter's sample applications
+have been derived from MFC's CView class. There are cases, however, when it is to
+your advantage to derive your view class from one of the other MFC view classes derived
+from CView. These additional classes provide your view window with special capabilities
+such as scrolling and text editing. Table 4.1 lists the various view classes along
+with their descriptions.</P>
+<P>
+<H4>Table 4.1&#160;&#160;View Classes</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Class</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CView		</TD>
+		<TD ALIGN="LEFT">The base view class from which the specialized view classes are derived		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CCtrlView		</TD>
+		<TD ALIGN="LEFT">A base class from which view classes that implement 32-bit Windows common controls
+			(such as the ListView, TreeView, and RichEdit controls) are derived		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CDaoRecordView		</TD>
+		<TD ALIGN="LEFT">Same as CRecordView, except used with the OLE DB database classes		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CEditView		</TD>
+		<TD ALIGN="LEFT">A view class that provides basic text-editing features		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFormView		</TD>
+		<TD ALIGN="LEFT">A view class that implements a form-like window using a dialog box resource		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CHtmlView		</TD>
+		<TD ALIGN="LEFT">A view class that can display HTML, with all the capabilities of Microsoft Internet
+			Explorer		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CListView		</TD>
+		<TD ALIGN="LEFT">A view class that displays a ListView control in its window		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">COleDBRecordView		</TD>
+		<TD ALIGN="LEFT">Same as CRecordView, except used with the DAO database classes		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CRecordView		</TD>
+		<TD ALIGN="LEFT">A view class that can display database records along with controls for navigating
+			the database		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CRichEditView		</TD>
+		<TD ALIGN="LEFT">A view class that provides more sophisticated text-editing capabilities by using
+			the RichEdit control		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CScrollView		</TD>
+		<TD ALIGN="LEFT">A view class that provides scrolling capabilities		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CTreeView		</TD>
+		<TD ALIGN="LEFT">A view class that displays a TreeView control in its window		</TD>
+	</TR>
+</TABLE>
+</P>
+<P>To use one of these classes, substitute the desired class for the CView class
+in the application's project. When using AppWizard to generate your project, you
+can specify the view class you want in the wizard's Step 6 of 6 dialog box, as shown
+in Figure 4.3. When you have the desired class installed as the project's view class,
+you can use the specific class's member functions to control the view window. Chapter
+5 demonstrates using the CScrollView class to implement a scrolling view.</P>
+<P>A CEditView object, on the other hand, gives you all the features of a Windows
+edit control in your view window. Using this class, you can handle various editing
+and printing tasks, including find-and-replace. You can retrieve or set the current
+printer font by calling the GetPrinterFont() or SetPrinterFont() member function
+or get the currently selected text by calling GetSelectedText(). Moreover, the FindText()
+member function locates a given text string, and OnReplaceAll() replaces all occurrences
+of a given text string with another string.</P>
+<P><A HREF="javascript:popUp('04uvc03.gif')"><B>FIG. 4.3</B></A><B> </B><I>You can
+use AppWizard to select your application's base view class.</I></P>
+
+<P>The CRichEditView class adds many features to an edit view, including paragraph
+formatting (such as centered, right-aligned, and bulleted text), character attributes
+(including underlined, bold, and italic), and the capability to set margins, fonts,
+and paper size. As you might have guessed, the CRichEditView class features a rich
+set of methods you can use to control your application's view object.</P>
+<P>Figure 4.4 shows how the view classes fit into MFC's class hierarchy. Describing
+these various view classes fully is beyond the scope of this chapter. However, you
+can find plenty of information about them in your Visual C++ online documentation.</P>
+<P><A HREF="javascript:popUp('04uvco04.gif')"><B>FIG. 4.4</B></A><B> </B><I>The view
+classes all trace their ancestry back to CView.</I></P>
+
+<P><I></I>
+<H2><A NAME="Heading5"></A>Document Templates, Views, and Frame Windows</H2>
+<P>Because you've been working with AppWizard-generated applications in this chapter,
+you've taken for granted a lot of what goes on in the background of an MFC document/view
+program. That is, much of the code that enables the frame window (your application's
+main window), the document, and the view window to work together is automatically
+generated by AppWizard and manipulated by MFC.</P>
+<P>For example, if you look at the InitInstance() method of the Rectangles application's
+CRecsApp class, you see (among other things) the lines shown in Listing 4.6.</P>
+<P>
+<H4>Listing 4.6&#160;&#160;RECS.CPP--Initializing an Application's Document</H4>
+<PRE>CSingleDocTemplate* pDocTemplate;
+pDocTemplate = new CSingleDocTemplate(
+     IDR_MAINFRAME,
+     RUNTIME_CLASS(CRecsDoc),
+     RUNTIME_CLASS(CMainFrame),
+     RUNTIME_CLASS(CRecsView));
+</PRE>
+<PRE>AddDocTemplate(pDocTemplate);
+</PRE>
+<P>In Listing 4.6, you discover one secret that makes the document/view system work.
+In that code, the program creates a document-template object. These document templates
+have nothing to do with C++ templates, discussed in Chapter 26, &quot;Exceptions
+and Templates.&quot; A document template is an older concept, named before C++ templates
+were implemented by Microsoft, that pulls together the following objects:</P>
+<P>
+
+<UL>
+	<LI>A resource ID identifying a menu resource--IDR_MAINFRAME in this case
+	<P>
+	<LI>A document class--CRecsDoc in this case
+	<P>
+	<LI>A frame window class--always CMainFrame
+	<P>
+	<LI>A view class--CRecsView in this case
+</UL>
+
+<P>Notice that you are not passing an object or a pointer to an object. You are passing
+the <I>name</I> of the class to a macro called RUNTIME_CLASS. It enables the framework
+to create instances of a class at runtime, which the application object must be able
+to do in a program that uses the document/view architecture. In order for this macro
+to work, the classes that will be created dynamically must be declared and implemented
+as such. To do this, the class must have the DECLARE_DYNCREATE macro in its declaration
+(in the header file) and the IMPLEMENT_DYNCREATE macro in its implementation. AppWizard
+takes care of this for you.</P>
+<P>For example, if you look at the header file for the Rectangles application's CMainFrame
+class, you see the following line near the top of the class's declaration:</P>
+<P>
+<PRE>DECLARE_DYNCREATE(CMainFrame)
+</PRE>
+<P>As you can see, the DECLARE_DYNCREATE macro requires the class's name as its single
+argument.</P>
+<P>Now, if you look near the top of CMainFrame's implementation file (MAINFRM.CPP),
+you see this line:</P>
+<P>
+<PRE>IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
+</PRE>
+<P>The IMPLEMENT_DYNCREATE macro requires as arguments the name of the class and
+the name of the base class.</P>
+<P>If you explore the application's source code further, you find that the document
+and view classes also contain the DECLARE_DYNCREATE and IMPLEMENT_DYNCREATE macros.</P>
+<P>If you haven't heard of frame windows before, you should know that they contain
+all the windows involved in the applications--this means control bars as well as
+views. They also route messages and commands to views and documents, as discussed
+in Chapter 3.</P>
+<P>The last line of Listing 4.6 calls AddDocTemplate() to pass the object on to the
+application object, CRecsApp, which keeps a list of documents. AddDocTemplate() adds
+this document to this list and uses the document template to create the document
+object, the frame, and the view window.</P>
+
+<P>Because this is a Single Document Interface, a single document template (CSingleDocTemplate)
+is created. Multiple Document Interface applications use one CMultiDocTemplate object
+for each kind of document they support. For example, a spreadsheet program might
+have two kinds of documents: tables and graphs. Each would have its own view and
+its own set of menus. Two instances of CMultiDocTemplate would be created in InitInstance(),
+each pulling together the menu, document, and view that belong together. If you've
+ever seen the menus in a program change as you switched from one view or document
+to another, you know how you can achieve the same effect: Simply associate them with
+different menu resource IDs as you build the document templates.</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch03/ch03.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch05/ch05.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+<BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

@@ -1,0 +1,2041 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Appendix C -- The Visual Studio User Interface, Menus, and Toolbars</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../apb/apb.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../apd/apd.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- C -</H1>
+</CENTER>
+<CENTER>
+<H1>The Visual Studio User Interface, Menus, and Toolbars</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Reviewing Developer Studio: An Integrated Development Environment</A>
+	<LI><A HREF="#Heading2">Choosing a View</A>
+	<LI><A HREF="#Heading3">Looking at Interface Elements</A>
+	<UL>
+		<LI><A HREF="#Heading4">Accelerators</A>
+		<LI><A HREF="#Heading5">Dialog Boxes</A>
+		<LI><A HREF="#Heading6">Icons</A>
+		<LI><A HREF="#Heading7">Menus</A>
+		<LI><A HREF="#Heading8">The String Table</A>
+		<LI><A HREF="#Heading9">Toolbars</A>
+		<LI><A HREF="#Heading10">Version Information</A>
+	</UL>
+	<LI><A HREF="#Heading11">Looking at Your Code, Arranged by Class</A>
+	<LI><A HREF="#Heading12">Looking at Your Code, Arranged by File</A>
+	<LI><A HREF="#Heading13">Output and Error Messages</A>
+	<LI><A HREF="#Heading14">Editing Your Code</A>
+	<UL>
+		<LI><A HREF="#Heading15">Basic Typing and Editing</A>
+		<LI><A HREF="#Heading16">Working with Blocks of Text</A>
+		<LI><A HREF="#Heading17">Syntax Coloring</A>
+		<LI><A HREF="#Heading18">Shortcut Menu</A>
+	</UL>
+	<LI><A HREF="#Heading19">Learning the Menu System</A>
+	<UL>
+		<LI><A HREF="#Heading20">Using the File Menu</A>
+		<LI><A HREF="#Heading21">Edit</A>
+		<LI><A HREF="#Heading22">Using the View Menu</A>
+		<LI><A HREF="#Heading23">Insert</A>
+		<LI><A HREF="#Heading24">Project</A>
+		<LI><A HREF="#Heading25">Build</A>
+		<LI><A HREF="#Heading26">Tools</A>
+		<LI><A HREF="#Heading27">Window</A>
+		<LI><A HREF="#Heading28">Help</A>
+	</UL>
+	<LI><A HREF="#Heading29">Reviewing Toolbars</A>
+	<UL>
+		<LI><A HREF="#Heading30">Standard Toolbar</A>
+		<LI><A HREF="#Heading31">Build Mini-bar</A>
+		<LI><A HREF="#Heading32">Using Other Toolbars</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Reviewing Developer Studio: An Integrated Development
+Environment</H2>
+<P>When you buy Microsoft Visual C++, you actually get Microsoft Developer Studio
+with the Visual C++ component activated. Developer Studio is far more than just a
+compiler, and you have far more to learn than you may think. The interface is very
+visual, which means that there are many possibilities greeting you when you first
+run Visual C++.</P>
+<P>Microsoft Visual C++ is one component of the Microsoft Developer Studio. The capabilities
+of this one piece of software are astonishing. It is called an <I>integrated development
+environment</I> <I>(IDE)</I> because within a single tool, you can perform the following:</P>
+
+<UL>
+	<LI>Generate starter applications without writing code.
+	<P>
+	<LI>View a project several different ways.
+	<P>
+	<LI>Edit source and include files.
+	<P>
+	<LI>Build the visual interface (menus and dialog boxes) of your application.
+	<P>
+	<LI>Compile and link.
+	<P>
+	<LI>Debug an application while it runs.
+</UL>
+
+<P>Visual C++ is, technically speaking, just one component of Developer Studio. You
+can buy, for example, Microsoft's Visual J++ compiler and use it in Developer Studio
+as well. Looking at it another way, Visual C++ is more than just Developer Studio
+because the <I>Microsoft Foundation Classes (MFC)</I> that are becoming the standard
+for C++ Windows programming are a class library and not related to the development
+environment. In fact, the major C++ compilers all use MFC now. However, for most
+people, Visual C++ and Developer Studio mean the same thing, and in this book the
+names are used interchangeably.</P>
+<P>
+<H2><A NAME="Heading2"></A>Choosing a View</H2>
+<P>The user interface of Developer Studio encourages you to move from view to view
+in your project, looking at your resources, classes, and files. The main screen is
+divided into panes that you can resize to suit your own needs. There are many shortcut
+menus, reached by right-clicking different places on the screen, that simplify common
+tasks.</P>
+<P>With Visual C++, you work on a single application as a <I>workspace</I>, which
+contains one or more projects. A <I>project</I> is a collection of files: source,
+headers, resources, settings, and configuration information. Developer Studio is
+designed to enable work on all aspects of a single workspace at once. You create
+a new application by creating a new project. When you want to work on your application,
+open the workspace (a file with the extension .DSW) rather than each code file independently.
+The interface of \revdttm1176855283 Developer Studio, shown in Figures C.1 and C.2,
+is designed to work with a workspace and is divided into several zones.</P>
+<P><A HREF="javascript:popUp('xcuvc01.gif')"><B>FIG. C.1</B></A><B> </B><I>The Developer
+Studio interface presents a lot of information. The Workspace window is on the left.</I></P>
+<P><A HREF="javascript:popUp('xcuvc02.gif')"><B>FIG. C.2</B></A><B> </B><I>When the
+Workspace window is narrowed, the words on the tabs are replaced with icons.</I></P>
+<P>The zones that make up the Developer Studio interface are as follows:</P>
+
+<UL>
+	<LI>Across the top: menus and toolbars. These are discussed in the second half of
+	this chapter.
+	<P>
+	<LI>On the left: the Workspace window.
+	<P>
+	<LI>On the right: your main working area where you edit files.
+	<P>
+	<LI>Across the bottom: the output window and status bar.
+</UL>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Open Developer Studio and try to resize the panes and follow along
+	as functions are described in this chapter. If you want an application to follow
+	along with, you can build a very simple one as described in Chapter 1, &quot;Building
+	Your First Windows Application.&quot; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The Workspace window determines which way you look at your project and what is
+in the main working area: code or resources (menus, icons, and dialog boxes). Each
+of these views is discussed in detail in a separate section in this chapter, including
+the following:</P>
+
+<UL>
+	<LI>The ResourceView is discussed in the &quot;Looking at Interface Elements&quot;
+	section.
+	<P>
+	<LI>The ClassView is discussed in the &quot;Looking at Your Code, Arranged by Class&quot;
+	section.
+	<P>
+	<LI>The FileView is discussed in the &quot;Looking at Your Code, Arranged by File&quot;
+	section.
+</UL>
+
+<P>Developer Studio uses two different files to keep track of all the information
+about your project. The <I>project workspace file</I>, with a .DSW extension, contains
+the names of all the files in the project, what directories they are in, compiler
+and linker options, and other information required by everyone who may work on the
+project. There is also a <I>project file</I>, with a .DSP extension, for each project
+within the workspace. <I>The workspace options file</I>, with an .OPT extension,
+contains all your personal settings for Developer Studio--colors, fonts, toolbars,
+which files are open and how their MDI windows are sized and located, breakpoints
+from your most recent debugging session, and so on. If someone else is going to work
+on your project, you give that person a copy of the project workspace file and project
+file but not the project options file.</P>
+<P>To open the project, open the project workspace file. The other files are opened
+automatically.</P>
+<P>
+<H2><A NAME="Heading3"></A>Looking at Interface Elements</H2>
+<P>After you've opened or created a workspace, clicking the ResourceView tab in the
+Workspace window opens an expandable and collapsible outline of the visual elements
+of your program: accelerators, dialog boxes, icons, menus, the string table, toolbars,
+and version information. These resources define the way users interact with your
+program. Chapter 2, &quot;Dialogs and Controls;&quot; Chapter 8, &quot;Building a
+Complete Application: ShowString;&quot; and Chapter 9, &quot;Status Bars and Toolbars&quot;
+cover the work involved in creating and editing these resources. The next few sections
+cover the way in which you can look at completed resources.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Open one of the projects that was built in this book, or a sample
+	project from Visual C++, and follow along as functions are described in this section.
+	ShowString, the sample application from Chapter 8, is a good choice because it uses
+	most of the features described in this section. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading4"></A>Accelerators</H3>
+<P><I>Accelerators</I> associate key combinations with menu items. Figure C.3 shows
+an accelerator resource created by AppWizard. All these accelerator combinations
+are made for you when you create a new application. You can add accelerators for
+specific menu items, if necessary.</P>
+<P><A HREF="javascript:popUp('xcuvc03.gif')"><B>FIG. C.3</B></A><B> </B><I>Accelerators
+associate key combinations with menu items.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading5"></A>Dialog Boxes</H3>
+<P>Your application receives information from users through <I>dialog boxes</I>.
+When a dialog resource is being displayed in the main working area, as in Figure
+C.4, a control palette floats over the working area. (If it's not displayed, right-click
+the menu bar and check Controls to display it.) Each small icon on the palette represents
+a control (edit box, list box, button, and so on) that can be inserted onto your
+dialog box. By choosing View, Properties, the Dialog Properties box shown in Figure
+C.4 is displayed. Here the behavior of a control or of the whole dialog box can be
+controlled.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Click the pushpin at the top left of the Properties box to keep it
+	displayed, even when a different item is highlighted. The box displays the properties
+	of each item you click. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>This method of editing dialog boxes is one of the reasons for the name <I>Visual
+C++</I>. In this product, if you want a button to be a little lower on a dialog box,
+you click it with the mouse, drag it to the new position, and release the mouse button.
+Similarly, if you want the dialog box larger or smaller, grab a corner or edge and
+drag it to the new size, like any other sizable window. Before Visual C++ was released,
+the process involved coding and pixel counting and took many minutes rather than
+just a few seconds. This visual approach to dialog box building made Windows programming
+accessible to many more programmers.</P>
+<P><A HREF="javascript:popUp('xcuvc04.gif')"><B>FIG. C.4</B></A><B> </B><I>Dialog
+boxes receive information from the user.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading6"></A>Icons</H3>
+<P><I>Icons</I> are small bitmaps that represent your program or its documents. For
+example, when a program is minimized, an icon is used to represent it. A larger version
+of that icon is used to represent both the program and its documents within an Explorer
+window. When an MDI window is minimized within your application, the minimized window
+is represented by an icon. Figure C.5 shows the default icon provided by AppWizard
+for minimized MDI windows. One of your first tasks after building any application
+is to replace this with an icon that more clearly represents the work your program
+performs.</P>
+<P>An icon is a 32*32 pixel bitmap that can be edited with any number of drawing
+tools, including the simple bitmap editor included in Developer Studio. The interface
+is very similar to Microsoft Paint or Microsoft Paintbrush in Zoom mode. You can
+draw one pixel at a time by clicking, or freehand lines by clicking and dragging.
+You can work on the small or zoomed versions of the icon and see the effects at once
+in both places.</P>
+<P>
+<H3><A NAME="Heading7"></A>Menus</H3>
+<P>With <I>menus, </I>users can tell your program what to do. <I>Keyboard shortcuts</I>
+(accelerators) are linked to menu items, as are toolbar buttons. AppWizard creates
+the standard menus for a new application, and you edit those and create new ones
+in this view. Later, you'll use ClassWizard to connect menu items to functions within
+your code. Figure C.6 shows a menu displayed in the ResourceView. Choose View, Properties
+to display the Menu \revised Properties box for the menu item. Every menu item has
+the following three components:</P>
+<P><A HREF="javascript:popUp('xcuvc05.gif')"><B>FIG. C.5</B></A><B> </B><I>Icons
+represent your application and its documents.</I></P>
+<P>
+
+<UL>
+	<LI><I>Resource ID</I>. This uniquely identifies this menu item. Accelerators and
+	toolbar buttons are linked to resource IDs. The convention is to build the ID from
+	the menu choices that lead to the item. In Figure C.6, the resource ID is ID_FILE_OPEN.
+	<P>
+	<LI><I>Caption</I>. This is the text that appears for a menu choice. In Figure C.6,
+	the caption is &amp;Open...\tCtrl+O. The &amp; means that the O will appear underlined,
+	and the menu item can be selected by typing <B>O </B>when the menu is displayed.
+	The \t is a tab, and the Ctrl+O is the accelerator for this menu item, as defined
+	in Figure C.3.
+	<P>
+	<LI><I>Prompt</I>. A prompt appears in the status bar when the highlight is on the
+	menu item or the cursor is over the associated toolbar button. In Figure C.6, the
+	prompt is Open an existing document\nOpen. Only the portion before the newline (\n)
+	is displayed in the status bar. The second part of the prompt, Open, is the text
+	for the ToolTip that appears if the user pauses the mouse over a toolbar button with
+	this resource ID. All this functionality is provided for you automatically by the
+	framework of Visual C++ and MFC.
+</UL>
+
+<H3><A NAME="Heading8"></A>The String Table</H3>
+<P>The <I>string table</I> is a list of strings within your application. Many strings,
+such as the static text on dialog boxes or the prompts for menu items, can be accessed
+in far simpler ways than through the string table, but some are reached only through
+it. For example, a default name or value can be kept in the string table and changed
+without recompiling any code, though the resources will have to be compiled and the
+project linked. Each of these could be hard-coded into the program, but then changes
+would require a full recompile.</P>
+<P>Figure C.7 shows the string table for a sample application. To change a string,
+open the String Table Properties dialog box and change the caption. Strings cannot
+be changed within the main working area.</P>
+<P><A HREF="javascript:popUp('xcuvc06.gif')"><B>FIG. C.6</B></A><B> </B><I>Your application
+receives commands through menus.</I></P>
+<P><A HREF="javascript:popUp('xcuvc07.gif')"><B>FIG. C.7</B></A><B> </B><I>The string
+table stores all the prompts and text in your application.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading9"></A>Toolbars</H3>
+<P><I>Toolbars</I> are the lines of small buttons typically located directly underneath
+the menus of an application. Each button is linked to a menu item, and its appearance
+depends on the state of the menu item. If a menu item is grayed, the corresponding
+toolbar button is grayed as well. If a menu item is checked, the corresponding toolbar
+button is typically drawn as a pushed-in button. In this way, toolbar buttons serve
+as indicators as well as mechanisms for giving commands to the application.</P>
+<P>A toolbar button has two parts: a bitmap of the button and a resource ID. When
+a user clicks the button, it is just as though the menu item with the same resource
+ID was chosen. Figure C.8 shows a typical toolbar and the properties of the File,
+Open button on that toolbar. In this view, you can change the resource ID of any
+button and edit the bitmap with the same tools used to edit icons.</P>
+<P><A HREF="javascript:popUp('xcuvc08.gif')"><B>FIG. C.8</B></A><B> </B><I>Toolbar
+buttons are associated with menu items through a resource ID.</I></P>
+<P>
+<H3><A NAME="Heading10"></A>Version Information</H3>
+<P>Good installation programs use the version information resource when installing
+your application on a user's machine. For example, if a user is installing an application
+that has already been installed, the installation program may not have to copy as
+many files. It may alert the user if an old version is being installed over a new
+version, and so on.</P>
+<P>When you create an application with AppWizard, version information like that in
+Figure C.9 is generated for you automatically. Before attempting to change any of
+it, make sure you understand how installation programs use it.</P>
+<P><A HREF="javascript:popUp('xcuvc09.gif')"><B>FIG. C.9</B></A><B> </B><I>Version
+information is used by install programs.</I></P>
+<H2><I></I></H2>
+<H2><A NAME="Heading11"></A>Looking at Your Code, Arranged by Class</H2>
+<P>The ClassView shows the classes in your application. Under each class, the member
+variables and functions are shown, as demonstrated in Figure C.10. Member functions
+are shown first with a purple icon next to them, followed by member variables with
+a turquoise icon. Protected members have a key next to the icon, whereas private
+members have a padlock.</P>
+<P><A HREF="javascript:popUp('xcuvc10.gif')"><B>FIG. C.10</B></A><B> </B><I>The ClassView
+shows the functions and variables in each class in your application.</I></P>
+<P>Double-clicking a function name opens the source for that function in the main
+working area, as shown in Figure C.10. Double-clicking a variable name opens the
+file in which the variable is declared.</P>
+<P>Right-clicking a classname opens a shortcut menu, shown in Figure C.11, with these
+items:</P>
+
+<UL>
+	<LI><I>Go to Definition</I>. Opens the header (.h) file at the definition of this
+	class.
+	<P>
+	<LI><I>Go to Dialog Editor.</I> For classes associated with a dialog box, opens the
+	dialog box in the resource editor.
+	<P>
+	<LI><I>Add Member Function</I>. Opens the Add Member Function dialog box shown in
+	Figure C.12. This adds a declaration of the function to the header file, and the
+	stub of a definition to the source file.
+</UL>
+
+<P><A HREF="javascript:popUp('xcuvc11.gif')"><B>FIG. C.11</B></A><B> </B><I>Common
+commands related to classes are on the ClassView shortcut menu for a class.</I></P>
+<P><I><BR>
+</I><A HREF="javascript:popUp('xcuvc12.gif')"><B>FIG. C.12</B></A><B> </B><I>Never
+again forget to add part of a function declaration or definition when you use the
+Add Member Function shortcut.</I></P>
+
+<UL>
+	<LI><I>Add Member Variable</I>. Opens the Add Member Variable dialog box shown in
+	Figure C.13. This adds a declaration of the variable to the header file.
+</UL>
+
+<P><A HREF="javascript:popUp('xcuvc13.gif')"><B>FIG. C.13</B></A><B> </B><I>Simplify
+adding member variables with this shortcut.</I></P>
+<P>
+
+<UL>
+	<LI><I>Add Virtual Function</I>. Opens the New Virtual Override dialog box, discussed
+	in Chapter 3, &quot;Messages and Commands.&quot;
+	<P>
+	<LI><I>Add Windows Message Handler</I>. Opens the New Windows Message and Event Handlers
+	dialog box, discussed in Chapter 3.
+	<P>
+	<LI><I>References</I>. Opens a list of the places where the classname is mentioned
+	within your application. Typically the classname occurs in declarations of instances
+	of the class, but this will also find places where the classname is passed as a parameter
+	to a function or macro.
+	<P>
+	<LI><I>Derived Classes</I>. Opens a list of all the member functions and member variables
+	of this class, a list of other classes that use this class as a base class, and the
+	references information.
+	<P>
+	<LI><I>Base Classes</I>. Opens a list of all the member functions and member variables
+	of this class, a list of the base classes of this class, and the references information.
+	<P>
+	<LI><I>Add to Gallery</I>. Adds this class to the Component Gallery, discussed in
+	Chapter 25, &quot;Achieving Reuse with the Gallery and Your Own AppWizards.&quot;
+	<P>
+	<LI><I>New Folder</I>. Creates a folder you can drag classes into. This helps to
+	organize projects with large numbers of classes.
+	<P>
+	<LI><I>Group by Access</I>. Rearranges the order of the list. By default, functions
+	are listed in alphabetical order, followed by data members in alphabetical order.
+	With this option toggled on, functions come first (public, then protected, then private
+	functions, alphabetically in each section) followed by data members (again public,
+	then protected, then private data members, alphabetically in each section).
+	<P>
+	<LI><I>Docking View</I>. Keeps the project workspace window docked at the side of
+	the main working area or undocks it if it was docked.
+	<P>
+	<LI><I>Hide</I>. Hides the project workspace window. To redisplay it, choose View,
+	Workspace.
+	<P>
+	<LI><I>Properties</I>. Displays the properties of the class (name, base class).
+</UL>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Menu items that appear on a toolbar have their toolbar icon next to
+	them on the menu. Make note of the icon; the next time you want to choose that item,
+	perhaps you can use a toolbar instead. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Right-clicking the name of a member function opens a substantial shortcut menu,
+with the following menu items:</P>
+
+<UL>
+	<LI><I>Go To Definition</I>. Opens the source (.cpp) file at the code for this function.
+	<P>
+	<LI><I>Go To Declaration</I>. Opens the header (.h) file at the declaration of this
+	function.
+	<P>
+	<LI><I>Delete</I>. Removes the function from the class.
+	<P>
+	<LI><I>Set Breakpoint</I>. Sets a breakpoint. Breakpoints are discussed in Appendix
+	D, &quot;Debugging.&quot;
+	<P>
+	<LI><I>References</I>. Opens a list of the places where the function is called within
+	your application.
+	<P>
+	<LI><I>Calls</I>. Displays a collapsible and expandable outline of all the functions
+	that this function calls. Figure C.14 shows a sample Call Graph window.
+</UL>
+
+<P><A HREF="javascript:popUp('xcuvc14.gif')"><B>FIG. C.14</B></A><B> </B><I>The Call
+Graph window lists all the functions that your function calls, and all the functions
+they call, and so on.</I></P>
+
+<UL>
+	<LI><I>Called By</I>. Displays a Callers Graph listing the functions this function
+	is called by.
+	<P>
+	<LI><I>New Folder</I>. Creates a folder you can drag classes into. This helps organize
+	projects with large numbers of classes.
+	<P>
+	<LI><I>Group by Access</I>. Rearranges the order of the list. By default, functions
+	are listed in alphabetical order, followed by data members in alphabetical order.
+	With this option toggled on, functions come first (public, then protected, then private
+	functions, alphabetically in each section) followed by data members (again public,
+	then protected, then private data members, alphabetically in each section).
+	<P>
+	<LI><I>Docking View</I>. Keeps the workspace window docked at the side of the main
+	working area.
+	<P>
+	<LI><I>Hide</I>. Hides the workspace window. To redisplay it, choose View, Workspace.
+	<P>
+	<LI><I>Properties</I>. Displays the properties of the function (name, return type,
+	parameters).
+</UL>
+
+<P>Right-clicking the name of a member variable opens a shortcut menu with less menu
+items. The items are as follows:</P>
+
+<UL>
+	<LI><I>Go To Definition</I>. Opens the header (.h) file at the declaration of this
+	variable.
+	<P>
+	<LI><I>References</I>. Opens a list of the places where the variable is used within
+	your application.
+	<P>
+	<LI><I>New Folder</I>. Creates a folder you can drag classes into. This helps organize
+	projects with large numbers of classes.
+	<P>
+	<LI><I>Group by Access</I>. Rearranges the order of the list. By default, functions
+	are listed in alphabetical order, followed by data members in alphabetical order.
+	With this option toggled on, functions come first (public, then protected, then private
+	functions, alphabetically in each section) followed by data members (again public,
+	then protected, then private data members, alphabetically in each section).
+	<P>
+	<LI><I>Docking View</I>. Keeps the workspace window docked at the side of the main
+	working area.
+	<P>
+	<LI><I>Hide</I>. Hides the workspace window. To redisplay it, choose View, Workspace.
+	<P>
+	<LI><I>Properties</I>. Displays the properties of the variable (name and type).
+</UL>
+
+<P>When the main working area is displaying a source or header file, you can edit
+your code as described in the later section &quot;Editing Your Code.&quot;</P>
+<P>
+<H2><A NAME="Heading12"></A>Looking at Your Code, Arranged by File</H2>
+<P>The FileView is much like the ClassView in that you can display and edit source
+and header files (see Figure C.15). However, it gives you access to parts of your
+file that are outside class definitions and makes it easy to open non-code files
+like resources and plain text.</P>
+<P>The project workspace window contains a tree view of the source files in your
+project. The default categories used are Source Files, Header Files, Resource Files,
+Help Files (if you project has Help) and External Dependencies. You can add your
+own categories by right- clicking anywhere in the FileView and choosing New Folder,
+and then specifying which file extensions belong in the new category.</P>
+<P><A HREF="javascript:popUp('xcuvc15.gif')"><B>FIG. C.15</B></A><B> </B><I>The FileView
+displays source and header files.</I></P>
+<P>Double-clicking a file name displays that file in the main working area. You can
+then edit the file (even if it isn't a source or header file) as described in the
+later section &quot;Editing Your Code.&quot;</P>
+<P>
+<H2><A NAME="Heading13"></A>Output and Error Messages</H2>
+<P>Across the bottom of the Developer Studio screen is the Output view. This is a
+tabbed view that shows output and error messages from a variety of Developer Studio
+functions.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If there is no Output view on your screen, choose View, Output from
+	the menu to restore the view. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The five tabs in the Output view are the following:</P>
+
+<UL>
+	<LI><I>Build</I>. Displays the results of compiling and linking.
+	<P>
+	<LI><I>Debug</I>. Used when debugging, as discussed in Appendix D.
+	<P>
+	<LI><I>Find in Files 1</I>. Displays the results of the Find in Files search, discussed
+	later in this chapter.
+	<P>
+	<LI><I>Find in Files 2</I>. An alternative display window for Find in Files results
+	so that you can preserve earlier results.
+	<P>
+	<LI><I>Results</I>. Displays results of tools like the profiler, discussed in Chapter
+	24, &quot;Improving Your Application's Performance.&quot;
+</UL>
+
+<P>If you have installed the Enterprise Edition of Visual C++, there is a sixth tab,
+SQL Debugging. For more information, see Chapter 23, &quot;SQL and the Enterprise
+Edition.&quot;</P>
+<P>
+<H2><A NAME="Heading14"></A>Editing Your Code</H2>
+<P>For most people, editing code is the most important task you do in a development
+environment. If you've used any other editor or word processor before, you can handle
+the basics of the Developer Studio editor right away. You should be able to type
+in code, fix your mistakes, and move around in source or header files by using the
+basic Windows techniques you would expect to be able to use. Because this is a programmer's
+editor, there are some nice features you should know about.</P>
+<P>
+<H3><A NAME="Heading15"></A>Basic Typing and Editing</H3>
+<P>To add text to a file, click where you want the text to go and start typing. By
+default, the editor is in Insert mode, which means your new text pushes the old text
+over. To switch to Overstrike mode, press the Insert key. Now your text types over
+the text that is already there. The OVR indicator on the status bar reminds you that
+you are in Overstrike mode. Pressing Insert again puts you back in Insert mode. Move
+around in the file by clicking with the mouse or use the cursor keys. To move a page
+or more at a time, use the Page Up and Page Down keys or the scrollbar at the right
+side of the main working area.</P>
+<P>By default, the window for the file you are editing is maximized within the main
+working area. You can click the Restore button at the top right, just under the Restore
+button for all of Developer Studio, to show the file in a smaller window. If you
+have several files open at once, you can arrange them so that you can see them side
+by side, as shown in Figure C.16.</P>
+<P><A HREF="javascript:popUp('xcuvc16.gif')"><B>FIG. C.16</B></A><B> </B><I>Your
+files are in MDI windows, so you can edit several at once, side by side.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading16"></A>Working with Blocks of Text</H3>
+<P>Much of the time, you will want to perform an action on a block of text within
+the editor. First, select the block by clicking at one end of it and, holding the
+mouse button down, moving the mouse to the other end of the block, then releasing
+the mouse button. This should be familiar from so many other Windows applications.
+Not surprisingly, at this point you can copy or cut the block to the Clipboard, replace
+it with text you type, replace it with the current contents of the Clipboard, or
+delete it.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> To select columns of text, as shown in Figure C.17, hold down the
+	Alt key as you select the block. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading17"></A>Syntax Coloring</H3>
+<P>You may have noticed the color scheme used to present your code. Developer Studio
+highlights the elements of your code with <I>syntax coloring</I>. By default, your
+code is black, with comments in green and keywords (reserved words in C++ such as
+public, private, new, or int) in blue. You can also arrange for special colors for
+strings, numbers, or operators (such as + and -) if you want, using the Format tab
+of the Options dialog box, reached by choosing Tools, Options.</P>
+<P>Syntax coloring can help you spot silly mistakes. If you forget to close a C-style
+comment, the huge swath of green in your file points out the problem right away.
+If you type <B>inr</B> where you meant to type <B>int</B>, the inr isn't blue, and
+that alerts you to a mistyped keyword. This means you can prevent most compiler errors
+before you even compile.</P>
+<P><A HREF="javascript:popUp('xcuvc17.gif')"><B>FIG. C.17</B></A><B> </B><I>Selecting
+columns makes fixing indents much simpler. Hold down the Alt key as you select the
+block.</I></P>
+<P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you build Web pages and still use Notepad from time to time so
+	that you can see the tags, you're in for a pleasant surprise. Open an HTML file in
+	Developer Studio and see HTML syntax coloring in action. You'll never go back to
+	Notepad. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading18"></A>Shortcut Menu</H3>
+<P>Many of the actions you are likely to perform are available on the shortcut menu
+that appears when you right-click within a file you are editing. The items on that
+menu are as follows:</P>
+
+<UL>
+	<LI><I>Cut</I>. Cuts the selected text to the Clipboard.
+	<P>
+	<LI><I>Copy</I>. Copies the selected text to the Clipboard.
+	<P>
+	<LI><I>Paste</I>. Replaces the selected text with the Clipboard contents, or if no
+	text is selected, inserts the Clipboard contents at the cursor.
+	<P>
+	<LI><I>Insert File Into Project</I>. Adds the file you are editing to the project
+	you have open.
+	<P>
+	<LI><I>Check Out.</I> If you're using Visual Source Safe, marks the file as being
+	changed by you.
+	<P>
+	<LI><I>Open</I>. Opens the file whose name is under the cursor. Especially useful
+	for header files because you don't need to know what folder they are in.
+	<P>
+	<LI><I>List members.</I> Lists the member variables and functions of the object under
+	the cursor.
+	<P>
+	<LI><I>Type Info.</I> Pops up a tip to remind you of the type of a variable or function.
+	<P>
+	<LI><I>Parameter Info. </I>Pops up a tip to remind you the parameters a function
+	takes.
+	<P>
+	<LI><I>Complete Word</I>. &quot;Wakes up&quot; AutoComplete to help with a variable
+	or function name that is partially typed.
+	<P>
+	<LI><I>Go To Definition</I>. Opens the file where the item under the cursor is defined
+	(header for a variable, source for a function) and positions the cursor at the definition
+	of the item.
+	<P>
+	<LI><I>Go To Reference</I>. Positions the cursor at the next reference to the variable
+	or function whose name is under the cursor.
+	<P>
+	<LI><I>Insert/Remove Breakpoint</I>. Inserts a breakpoint at the cursor or removes
+	one that is already there.
+	<P>
+	<LI><I>Enable Breakpoint</I>. Enables a disabled breakpoint (breakpoints are discussed
+	in Appendix D).
+	<P>
+	<LI><I>ClassWizard</I>. Opens ClassWizard.
+	<P>
+	<LI><I>Properties</I>. Opens the property sheet.
+</UL>
+
+<P>Not all the items are enabled at once--for example, Cut and Copy are only enabled
+when there is a selection. Insert File into Project is enabled only when the file
+you're editing is not in the project you have open. All these actions have menu and
+toolbar equivalents and are discussed more fully later in this chapter.</P>
+<P>
+<H2><A NAME="Heading19"></A>Learning the Menu System</H2>
+<P>Developer Studio has many menus. Some commands are three or four levels deep under
+the menu structure. In most cases, there are far quicker ways to accomplish the same
+task, but for a new user, the menus are an easier way to learn because you can rely
+on reading the menu items as opposed to memorizing shortcuts. There are nine menus
+on the Developer Studio menu bar, as follows:</P>
+
+<UL>
+	<LI><I>File</I>. For actions related to entire files, such as opening, closing, and
+	printing.
+	<P>
+	<LI><I>Edit</I>. For copying, cutting, pasting, searching, and moving about.
+	<P>
+	<LI><I>View</I>. For changing the appearance of Developer Studio, including toolbars
+	and subwindows such as the Workspace window.
+	<P>
+	<LI><I>Insert</I>. For adding files or components to your project.
+	<P>
+	<LI><I>Project</I>. For dealing with your entire project.
+	<P>
+	<LI><I>Build</I>. For compiling, linking, and debugging.
+	<P>
+	<LI><I>Tools</I>. For customizing the Developer Studio and accessing standalone utilities.
+	<P>
+	<LI><I>Window</I>. To change which window is maximized or has focus.
+	<P>
+	<LI><I>Help</I>. To use the InfoViewer system (not the usual online help).
+</UL>
+
+<P>The following section presents each Developer Studio menu in turn and mentions
+keyboard shortcuts and toolbar buttons where they exist.</P>
+<P>
+<H3><A NAME="Heading20"></A>Using the File Menu</H3>
+<P>The File menu, shown in Figure C.18, collects most of the commands that affect
+entire files or the entire project.</P>
+<P><A HREF="javascript:popUp('xcuvc18.gif')"><B>FIG. C.18</B></A><B> </B><I>The File
+menu has actions for files like Open, Close, and Print.</I></P>
+<P><B>File New (Ctrl+N)&#160;&#160;</B>Choosing this menu item opens the New dialog
+box, shown in Figure C.19. This tabbed dialog box is used to create new files, projects,
+workspaces, or other documents. The Project tab is used to start AppWizard, discussed
+for the first time in Chapter 1, &quot;Building Your First Windows Application.&quot;</P>
+<P><A HREF="javascript:popUp('xcuvc19.gif')"><B>FIG. C.19</B></A><B> </B><I>The New
+dialog box is used to create new files or workspaces.</I></P>
+<P>This dialog box is an easy way to create a blank file, give it a name, and insert
+it into your project all in one step.</P>
+<P><B>File Open (Ctrl+O)&#160;&#160;</B>Choosing this item opens the Open dialog
+box, as shown in Figure C.20. (It's the standard Windows File Open dialog box, so
+it should be familiar.) The file type defaults to Common Files with .C, .CPP, .CXX,
+.TLI, .H, .TLH, .INL, or .RC extensions. By clicking the drop-down box, you can open
+almost any kind of file, including executables and workspaces.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Don't forget the list of recently opened files further down the File
+	menu. That can save a lot of typing or clicking. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><A HREF="javascript:popUp('xcuvc20.gif')"><B>FIG. C.20</B></A><B> </B><I>The familiar
+File Open dialog box is used to open a variety of file types.</I></P>
+<P><B>File Close&#160;&#160;</B>Choosing the File, Close item closes the file that
+has focus; if no file has focus, the item is grayed. You can also close a file by
+clicking the cancel button, depicted by an X, in the top-right corner. You may also
+close the window by double-clicking the icon in the upper-left corner. (The icon
+used to be the system menu, shown with a minus on a button.)</P>
+<P><B>File Open Workspace&#160;&#160;</B>Use this item to open a workspace. (You
+can use File, Open and change the file type to Project Workspaces, but using File,
+Open Workspace is quicker.)</P>
+<P><B>File Save Workspace&#160;&#160;</B>Use this item to save a workspace and all
+the files within it.</P>
+<P><B>File Close Workspace&#160;&#160;</B>Use this item to close a workspace. The
+current workspace is closed automatically when you create a new project or open another
+workspace, so you won't use this menu item very often.</P>
+<P><B>File Save (Ctrl+S)&#160;&#160;</B>Use this item to save the file that has focus
+at the moment; if no file has focus, the item is grayed. There is a Save button on
+the Standard toolbar as well.</P>
+<P><B>File Save As&#160;&#160;</B>Use this item to save a file and change its name
+at the same time. It saves the file that has focus at the moment; if no file has
+focus, the item is grayed.</P>
+<P><B>File Save All&#160;&#160;</B>This item saves all the files that are currently
+open. All files are saved just before a compile and when the application is closed,
+but if you aren't compiling very often and are making a lot of changes, it's a good
+idea to save all your files every 15 minutes or so. (You can do it less often if
+the idea of losing that amount of work doesn't bother you.)</P>
+<P><B>File Page Setup&#160;&#160;</B>This item opens the Page Setup dialog box, shown
+in Figure C.21. Here you specify the header, footer, and margins--left, right, top,
+and bottom. The header and footer can contain any text including one or more special
+fields, which you add by clicking the arrow next to the edit box or entering the
+codes yourself. The codes are</P>
+
+<UL>
+	<LI><I>Filename</I>. The name of the file being printed (&amp;f).
+	<P>
+	<LI><I>Page Number</I>. The current page number (&amp;p).
+	<P>
+	<LI><I>Current Time</I>. The time the page was printed (&amp;t).
+	<P>
+	<LI><I>Current Date</I>. The date the page was printed (&amp;d).
+	<P>
+	<LI><I>Left Align</I>. Align this portion to the left (&amp;l).
+	<P>
+	<LI><I>Right Align</I>. Align this portion to the right (&amp;c).
+	<P>
+	<LI><I>Center</I>. Center this portion (this is the default alignment) (&amp;c).
+</UL>
+
+<P><A HREF="javascript:popUp('xcuvc21.gif')"><B>FIG. C.21</B></A><B> </B><I>The Page
+Setup dialog box lays out your printed pages the way you want.</I></P>
+<P><I><BR>
+</I><B>File Print (Ctrl+P)&#160;&#160;</B>Choosing this item prints the file with
+focus according to your Page Setup settings. (The item is grayed if no file has focus.)
+The Print dialog box, shown in Figure C.22, has you confirm the printer you want
+to print on. If you have some text highlighted, the Selection radio button is enabled.
+Choosing it lets you print just the selected text; otherwise, only the All radio
+button is enabled, which prints the entire file. If you forget to set the headers,
+footers, and margins before choosing File, Print, the Setup button opens the Page
+Setup dialog box discussed in the previous section. There is no way to print only
+certain pages or to cancel printing after it has started.</P>
+<P><A HREF="javascript:popUp('xcuvc22.gif')"><B>FIG. C.22</B></A><B> </B><I>The Print
+dialog box confirms your choice to print a file.</I></P>
+<P><B>Recent Files and Recent Workspaces&#160;&#160;</B>The recent files and workspaces
+items, between Print and Exit, each lead to a cascading menu. The items on the secondary
+menus are the names of files and workspaces that have been opened most recently,
+up to the last four of each. These are real time-savers if you work on several projects
+at once. Whenever you want to open a file, before you click that toolbar button and
+prepare to point and click your way to the file, think first whether it might be
+on the File menu. Menus aren't always the slower way to go.</P>
+<P><B>File Exit&#160;&#160;</B>Probably the most familiar Windows menu item of all,
+this closes Developer Studio. You can also click the X in the top-right corner or
+double-click what used to be the system menu in the top left. If you have made changes
+without saving, you get a chance to save each file on your way out.
+<H3><A NAME="Heading21"></A>Edit</H3>
+<P>The Edit menu, shown in Figure C.23, collects actions related to changing text
+in a source file.</P>
+<P><B>Edit Undo (Ctrl+Z)&#160;&#160;</B>The Undo item reverses whatever you just
+did. Most operations, like text edits and deleting text, can be undone. When Undo
+is disabled, it is an indication that nothing needs to be undone or you cannot undo
+the last operation.</P>
+<P><A HREF="javascript:popUp('xcuvc23.gif')"><B>FIG. C.23</B></A><B> </B><I>The Edit
+menu holds items that change the text in a file.</I></P>
+<P>There is an Undo button on the Standard toolbar. Clicking the arrow next to the
+button displays a stack (reverse order list from most recent to least recent) of
+operations that can be undone. You must select a contiguous range of undo items including
+the first, second, and so on. You cannot pick and choose.</P>
+<P><B>Edit Redo (Ctrl+Y)&#160;&#160;</B>As you undo actions, the name given to the
+operations move from the Undo to the Redo list (Redo is next to Undo on the toolbar).
+If you undo a little too much, choose Edit, Redo to un-undo them (if that makes sense).</P>
+<P><B>Edit Cut (Ctrl+X)&#160;&#160;</B>This item cuts the currently highlighted text
+to the Clipboard. That means a copy of it goes to the Clipboard, and the text itself
+is deleted from your file. The Cut button (represented as scissors) is on the Standard
+toolbar.</P>
+<P><B>Edit Copy (Ctrl+C)&#160;&#160;</B>Editing buttons on the toolbar are grouped
+next to the scissors (Cut). Edit, Copy copies the currently selected text or item
+to the Windows Clipboard.</P>
+<P><B>Edit Paste (Ctrl+V)&#160;&#160;</B>Choosing this item copies the Clipboard
+contents at the cursor or replaces the highlighted text with the Clipboard contents
+if any text is highlighted. The Paste item and button are disabled if there is nothing
+in the Clipboard in a format appropriate for pasting to the focus window. In addition
+to text, you can copy and paste menu items, dialog box items, and other resources.
+The Paste button is on the Standard toolbar.</P>
+<P><B>Edit Delete (Delete)&#160;&#160;</B>Edit, Delete clears the selected text or
+item. If what you deleted is undeletable, the Undo button is enabled, and the last
+operation is added to the Undo button combo box. Deleted material does not go to
+the Clipboard and cannot be retrieved except by undoing the delete.</P>
+<P><B>Edit Select All (Ctrl+A)&#160;&#160;</B>This item selects everything in the
+file with focus that can be selected. For example, if a text file has focus, the
+entire file is selected. If a dialog box has focus, every control on it is selected.</P>
+<P>To select many items on a dialog box, you can click the first item and then Ctrl+click
+each remaining item. It is often faster to use Edit, Select All to select everything
+and then Ctrl+click to deselect the few items you do not want highlighted.</P>
+<P><B>Edit Find (Ctrl+F)&#160;&#160;</B>The Find dialog box shown in Figure C.24
+enables you to search for text within the file that currently has the focus. Enter
+a word or phrase into the Find What edit box. The following check boxes set the options
+for the search:</P>
+
+<UL>
+	<LI><I>Match Whole Word Only</I>. If this is checked, table in the Find What box
+	matches only table, not suitable or tables.
+	<P>
+	<LI><I>Match Case</I>. If this is checked, Chapter in the Find What box matches only
+	Chapter, not chapter or CHAPTER. Uppercase and lowercase must match.
+	<P>
+	<LI><I>Regular Expression</I>. The Find What box is treated as a regular expression
+	if this box is checked.
+	<P>
+	<LI><I>Search All Open Documents</I>. Expands your search to all the documents you
+	have open at the moment.
+	<P>
+	<LI><I>Direction</I>. Choose the Up radio button to search backwards and the Down
+	radio button to search forwards through the file.
+</UL>
+
+<P><A HREF="javascript:popUp('xcuvc24.gif')"><B>FIG. C.24</B></A><B> </B><I>The Find
+dialog box is used to find a string within the file that has focus.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you highlight a block of text before selecting Edit, Find, that
+	text is put into the Find What box for you. If no text is highlighted, the word or
+	identifier under the cursor is put into the Find What box. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>A typical use for the Find dialog box is to enter some text and click the Find
+Next button until you find the precise occurrence of the text for which you are searching.
+You may want to combine the Find feature with bookmarks (discussed a little later
+in this section) and put a bookmark on each line that has an occurrence of the string.
+Click the Mark All button in the Find dialog box to add temporary, unnamed bookmarks
+on match lines; they are indicated with a blue oval in the margin.</P>
+<P>There is a Find edit box on the Standard toolbar. Enter the text you want to search
+for in the box and press Enter to search forward. Regular expressions are used if
+you have turned them on using the Find dialog box. To repeat a search, click in the
+search box and press Enter. You may wish to add the Find Next or Find Previous buttons
+to the Standard toolbar using the Tools, Customize menu item described later in this
+chapter.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B>Regular Expressions</B></P>
+	<P>Many of the find and replace operations within Developer Studio can be made more
+	powerful with regular expressions. For example, if you want to search for a string
+	only at the end of a line, or one of several similar strings, you can do so by constructing
+	an appropriate regular expression, entering it in the Find dialog box, and instructing
+	Developer Studio to use regular expressions for the search. A regular expression
+	is some text combined with special characters that represent things that can't be
+	typed, such as &quot;the end of a line&quot; or &quot;any number&quot; or &quot;three
+	capital letters.&quot;</P>
+	<P>When regular expressions are being used, some characters give up their usual meaning
+	and instead stand in for one or more other characters. Regular expressions in Developer
+	Studio are built from ordinary characters mixed in with these special entries, shown
+	in Table C.1.</P>
+	<P>You don't have to type these in if you have trouble remembering them. Next to
+	the Find What box is an arrowhead pointing to the right. Click there to open a shortcut
+	menu of all these fields, and click any one of them to insert it into the Find What
+	box. (You need to be able to read these symbols to understand what expression you
+	are building, and there's no arrowhead on the toolbar's Find box.) Remember to select
+	the Regular Expressions box so that these regular expressions are evaluated properly.</P>
+	<P>Here are some examples of regular expressions:</P>
+
+	<UL>
+	<LI>^test$ matches only test alone on a line.<BR>
+	<BR>
+	
+	<LI>doc[1234] matches doc1, doc2, doc3, or doc4 but not doc5.<BR>
+	<BR>
+	
+	<LI>doc[1-4] matches the same strings as above but requires less typing.<BR>
+	<BR>
+	
+	<LI>doc[^56] matches doca, doc1, and anything else that starts with doc and is not
+	doc5 or doc6.<BR>
+	<BR>
+	
+	<LI>H\~e matches Hillo and Hxllo (and lots more) but not Hello. H[^e]llo has the
+	same effect.<BR>
+	<BR>
+	
+	<LI>[xy]z matches xz and yz.<BR>
+	<BR>
+	
+	<LI>New *York matches New York but also NewYork and New York.<BR>
+	<BR>
+	
+	<LI>New +York matches New York and New York but not NewYork.<BR>
+	<BR>
+	
+	<LI>New.*k matches Newk, Newark, and New York, plus lots more.<BR>
+	<BR>
+	
+	<LI>\:n matches 0.123, 234, and 23.45 (among others) but not -1C.
+	<LI>World$ matches World at the end of a line, but World\$ matches only World$ anywhere
+	on a line.
+	</UL>
+
+	<P>
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H4>Table C.1&#160;&#160;Regular Expression Entries</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Entry</B></TD>
+		<TD ALIGN="LEFT"><B>Matches</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">^</TD>
+		<TD ALIGN="LEFT">Start of the line.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">$</TD>
+		<TD ALIGN="LEFT">End of the line.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">.</TD>
+		<TD ALIGN="LEFT">Any single character.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">[]</TD>
+		<TD ALIGN="LEFT">Any one of the characters within the brackets (usee for a range, ^ for &quot;except&quot;).</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">\~</TD>
+		<TD ALIGN="LEFT">Anything except the character that follows next.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">*</TD>
+		<TD ALIGN="LEFT">Zero or more of the next character.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">+</TD>
+		<TD ALIGN="LEFT">One or more of the next character.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">{ }</TD>
+		<TD ALIGN="LEFT">Doesn't match specially, but saves part of the match string to be used in the replacement
+			string. Up to nine portions can be tagged like this.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">[]</TD>
+		<TD ALIGN="LEFT">Either of the characters within the [].</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">\:a</TD>
+		<TD ALIGN="LEFT">A single letter or number.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">\:b</TD>
+		<TD ALIGN="LEFT">Whitespace (tabs or spaces).</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">\:c</TD>
+		<TD ALIGN="LEFT">A single letter.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">\:d</TD>
+		<TD ALIGN="LEFT">A single numerical digit.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">\:n</TD>
+		<TD ALIGN="LEFT">An unsigned number.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">\:z</TD>
+		<TD ALIGN="LEFT">An unsigned integer.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">\:h</TD>
+		<TD ALIGN="LEFT">A hexadecimal number.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">\:i</TD>
+		<TD ALIGN="LEFT">A string of characters that meets the rules for C++ identifiers (starts with a letter,
+			number, or underscore).</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">\:w</TD>
+		<TD ALIGN="LEFT">A string of letters only.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">\:q</TD>
+		<TD ALIGN="LEFT">A quoted string surrounded by double or single quotes.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">\</TD>
+		<TD ALIGN="LEFT">Removes the special meaning from the character that follows.</TD>
+	</TR>
+</TABLE>
+</P>
+<P><B>Edit Find in Files&#160;&#160;</B>This useful command searches for a word or
+phrase within a large number of files at once. In its simplest form, shown in Figure
+C.25, you enter a word or phrase into the Find What edit box, restrict the search
+to certain types of files in the In Files /File Types box, and choose the folder
+to conduct the search within the In Folder edit box. The following check boxes in
+the bottom half of the dialog box set the options for the search:</P>
+<P><A HREF="javascript:popUp('xcuvc25.gif')"><B>FIG. C.25</B></A><B> </B><I>The simplest
+Find In Files approach searches for a string within a folder and its subfolders.</I></P>
+
+<UL>
+	<LI><I>Match Whole Word Only</I>. If this is checked, table in the Find What box
+	matches only table, not suitable or tables.
+	<P>
+	<LI><I>Match Case</I>. If this is checked, Chapter in the Find What box matches only
+	Chapter, not chapter or CHAPTER. Uppercase and lowercase must match.
+	<P>
+	<LI><I>Regular Expression</I>. The Find What box is treated as a regular expression
+	(see the sidebar &quot;Regular Expressions&quot;) if this box is checked.
+	<P>
+	<LI><I>Look in Subfolders</I>. Work through all the subfolders of the chosen folder
+	if this is checked.
+	<P>
+	<LI><I>Output to Pane 2</I>. Sends the results to the Find in Files 2 pane of the
+	output window, so as not to wipe out the results of an earlier search.
+</UL>
+
+<P><B>Using Advanced Text Finding Features&#160;&#160;</B>At the bottom right of
+the Find in Files dialog box is the Advanced button. Clicking it expands the dialog
+box shown in Figure C.26 and allows you to search several different folders at once.</P>
+<P><A HREF="javascript:popUp('xcuvc26.gif')"><B>FIG. C.26</B></A><B> </B><I>Advanced
+Find in Files searches for a string within several folders and their subfolders.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you highlight a block of text before selecting Find in Files, that
+	text is put into the Find What box for you. If no text is highlighted, the word or
+	identifier under the cursor is put into the Find What box. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The results of the Find in Files command appear in the Find in Files 1 tab (unless
+you ask for pane 2) of the output window; the output window will be visible after
+this operation if it was not already. You can resize this window like any other window,
+by holding the mouse over the border until it becomes a sizing cursor, and you can
+scroll around within the window in the usual way. Double-clicking a filename in the
+output list opens that file with the cursor on the line where the match was found.</P>
+<P><B>Edit Replace (Ctrl+H)&#160;&#160;</B>This item opens the Replace dialog box,
+shown in Figure C.27. It is very similar to the Find dialog box but is used to replace
+the found text with new text. Enter one string into the Find What edit box and the
+replacement string into the Replace With edit box. The three check boxes--Regular
+Expression, Match Case, and Match Whole Word Only--have the same meaning as on the
+Find dialog box (discussed in the previous section). The Replace In radio buttons
+enable you to restrict the search-and-replace operation to a block of highlighted
+text, if you prefer.</P>
+<P><A HREF="javascript:popUp('xcuvc27.gif')"><B>FIG. C.27</B></A><B> </B><I>The Replace
+dialog box is used to replace one string with another.</I></P>
+
+<P>To see the next match before you agree to replace it, click Find Next. To replace
+the next match or the match you have just found, click Replace. If you are confident
+that there won't be any false matches, you can click Replace All to do the rest of
+the file all at once. (If you realize after you click Replace All that you were wrong,
+there is always Edit, Undo.)</P>
+<P><B>Edit Go To (Ctrl+G)&#160;&#160;</B>The Go To dialog box (see Figure C.28) is
+a central navigation point. It enables you to go to a particular line number (the
+default), address, reference, or bookmark, among other things. To use the Go To dialog
+box, select something from the Go To What list on the left; if Line is selected,
+enter a line number; if Bookmark is selected, pick the particular bookmark from the
+combo box; and so on.</P>
+<P><A HREF="javascript:popUp('xcuvc28.gif')"><B>FIG. C.28</B></A><B> </B><I>The Go
+To dialog box moves you around within your project.</I></P>
+
+<P>The Go To What box contains the following choices:</P>
+
+<UL>
+	<LI><I>Address</I>. In the Memory or Disassembly windows, as explained in Appendix
+	D, you can go to an address given by a debugger expression.
+	<P>
+	<LI><I>Bookmark</I>. In a text file, you can go to a bookmark, though you are more
+	likely to choose Edit, Bookmarks or the bookmark-related buttons on the Edit toolbar.
+	<P>
+	<LI><I>Definition</I>. If the cursor is over the name of a function, this opens the
+	source (.cpp) file at its definition. If the cursor is over a variable, it opens
+	the include (.h) file.
+	<P>
+	<LI><I>Error/Tag</I>. After a compile, you can move from error to error by double-clicking
+	them within the output window by using this dialog box or (most likely) by pressing
+	F4.
+	<P>
+	<LI><I>Line</I>. This is the default selection. The line number that is filled in
+	for you is your current line.
+	<P>
+	<LI><I>Offset</I>. Enter an offset address (in hexadecimal).
+	<P>
+	<LI><I>Reference</I>. Enter a name, such as a function or object name, and the cursor
+	will be placed on the line of code where the name is defined, in your code or in
+	the MFC libraries.
+</UL>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> The pushpin in the upper-left corner of this dialog box is used to
+	&quot;pin&quot; it to the screen so that it stays in place after you have gone to
+	the requested location. Click the pin to unpin the dialog box from the screen so
+	that it goes away after the jump. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><B>Edit Bookmarks (Alt+F2)&#160;&#160;</B>This item is used to manage the bookmarks
+within your text files. The bookmark list is shown in Figure C.29. Note that temporary
+bookmarks set by the Find command are not included in this list.</P>
+<P><A HREF="javascript:popUp('xcuvc29.gif')"><B>FIG. C.29</B></A><B> </B><I>The Bookmark
+dialog box manages the bookmarks you have set in text files.</I></P>
+
+<P>To add a named bookmark for the line you are on and have it saved with the file,
+type a name in the Name box and click Add. To go to a named bookmark, choose it from
+the list box and click Go To. There are buttons on the Edit toolbar to add or delete
+a bookmark at the cursor, move to the next or preceding bookmark, and clear all bookmarks
+in the file.</P>
+<P><B>Edit ActiveX Control in HTML&#160;&#160;</B>If you have Visual InterDev installed
+and are working with an ActiveX control, this menu item will let you edit its settings.
+Building ActiveX controls is discussed in Chapter 17, &quot;Building an ActiveX Control.&quot;</P>
+<P><B>Edit HTML Layout&#160;&#160;</B>This item is used to edit an HTML layout with
+Visual InterDev.</P>
+<P><B>Edit Advanced&#160;&#160;</B>Choosing this item opens a cascading menu with
+the following items:</P>
+
+<UL>
+	<LI><I>Incremental Search</I>. This is a faster search than opening the Find dialog
+	box discussed earlier. You enter your search string directly on the status bar. As
+	you type each letter, Developer Studio finds the string you have built so far. For
+	example, in a header file, if you choose Edit, Advanced, Incremental Search and then
+	type <B>p</B>, the cursor will jump to the first instance of the letter p, probably
+	in the keyword public. If you then type <B>r</B>, the cursor will jump to the first
+	pr, probably in the keyword protected. This can save you typing the entire word you
+	are looking for.
+	<P>
+	<LI><I>Format Selection</I>. This item adjust the indenting of a selection using
+	the same rules that apply when you are entering code.
+	<P>
+	<LI><I>Tabify Selection</I>. Converts spaces to tabs.
+	<P>
+	<LI><I>Untabify Selection</I>. Converts tabs to spaces.
+	<P>
+	<LI><I>Make Selection Uppercase</I>. Converts the selected text to capital letters.
+	<P>
+	<LI><I>Make Selection Lowercase</I>. Converts the selected text to lowercase letters.
+	<P>
+	<LI><I>View Whitespace</I>. Inserts small placeholder characters (. for space and
+	&gt;&gt; for tab) to show all the whitespace in your document.
+</UL>
+
+<P><B>Edit Breakpoints (Alt+F9)&#160;&#160;</B>A <I>breakpoint</I> pauses program
+execution. The Edit, Breakpoints item displays the Breakpoints dialog box, shown
+in Figure C.30 and discussed in Appendix D.</P>
+<P><A HREF="javascript:popUp('xcuvc30.gif')"><B>FIG. C.30</B></A><B> </B><I>The Breakpoints
+dialog box is used in debugging your application.</I></P>
+
+<P><B>Edit List Members (Ctrl+Alt+T)&#160;&#160;</B>This item is used to &quot;reawaken&quot;
+Autocomplete for code you have already typed. It opens a list of member variables
+and functions for the class whose implementation you are editing, as well as global
+variables and functions. This list is generally too long to be useful.</P>
+<P><B>Edit Type Info (Ctrl+T)&#160;&#160;</B>This pops up a little window telling
+you the type of variable the cursor is on. You can get this window much more easily
+by pausing the mouse over the variable and waiting a second or two.</P>
+<P><B>Edit Parameter Info (Ctrl+Shift+Space)&#160;&#160;</B>This pops up a window
+reminding you of the parameters taken by the function the cursor is on. Again, this
+information will pop up if you just pause the mouse over the function name.</P>
+<P><B>Edit Complete Word (Ctrl+Space)&#160;&#160;</B>This asks Autocomplete to fill
+in the word you are typing. If you haven't typed much of it, you may get a dialog
+box from which to choose the word you want. The Autocomplete dialog box generally
+only appears after you have typed -&gt; or . to indicate you are looking for a member
+function or variable. When the function you want to call is a member of the class
+you are editing, it's annoying to type this--&gt; just to open Autocomplete. Use
+Ctrl+Space instead.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> If these options are disabled, check your AutoComplete settings by
+	choosing Tools, Options and clicking the Editor tab, shown in Figure C.55.&#160;n
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading22"></A>Using the View Menu</H3>
+<P>The View menu, shown in Figure C.31, collects actions that are related to the
+appearance of Developer Studio--which windows are open, what toolbars are visible,
+and so on.</P>
+<P><B>View ScriptWizard&#160;&#160;</B>This InterDev-related command is used to edit
+Web page scripts.</P>
+<P><B>View ClassWizard (Ctrl+W)&#160;&#160;</B>ClassWizard is probably the most used
+tool in Developer Studio.</P>
+<P><A HREF="javascript:popUp('xcuvc31.gif')"><B>FIG. C.31</B></A><B> </B><I>The View
+menu controls the appearance of Developer Studio.</I></P>
+
+<P>Whenever you add a resource (menu, dialog box, control, and so on), you connect
+it to your code with ClassWizard. When you are working with ActiveX, you use ClassWizard
+to set up properties, methods, and events. If you use custom messages, you use ClassWizard
+to arrange for them to be caught. You learn how to use ClassWizard starting in Chapter
+2.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B><strong>CAUTION:</strong> </B>All changed files are saved when you open ClassWizard,
+	just as they are saved before a compile. If you have been making changes that you
+	may not want saved, don't open ClassWizard. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><B>View Resource Symbols&#160;&#160;</B>This item opens the Resource Symbols dialog
+box, shown in Figure C.32. It displays the resource IDs, such as ID_EDIT_COPY, used
+in your application. The large list box at the top of the dialog box lists resource
+IDs, and the smaller box below it reminds you where this resource is used--on a menu,
+in an accelerator, in the string table, and so on. The buttons along the right side
+are used to make changes. Click New to create a new resource ID, Delete to delete
+this resource ID (if it's not in use), Change to change the ID (if it's in use by
+only one resource), and View Use to open the resource (menu, string table, and so
+on) that is highlighted in the lower list.</P>
+<P><A HREF="javascript:popUp('xcuvc32.gif')"><B>FIG. C.32</B></A><B> </B><I>The Resource
+Symbols dialog box displays resource IDs.</I></P>
+
+<P><B>View Resource Includes&#160;&#160;</B>Choosing this item opens the Resource
+Includes dialog box, as shown in Figure C.33. It is unusual for you to need to change
+this generated material. In the rare cases where the resource.h file generated for
+you is not quite what you need, you can add extra lines with this dialog box.</P>
+<P><A HREF="javascript:popUp('xcuvc33.gif')"><B>FIG. C.33</B></A><B> </B><I>The Resource
+Includes dialog box lets you insert extra instructions into the file that describes
+the resources of your project.</I></P>
+
+<P><B>View Full Screen&#160;&#160;</B>This item hides all the toolbars, menus, Output
+window, and Project Workspace window, giving you the entire screen as the main working
+area. One small toolbar appears whose only button is Toggle Full Screen. Click that
+button or press the Esc key to restore the menus, toolbars, and windows.</P>
+<P><B>View Workspace (Alt+0)&#160;&#160;</B>Choosing this item opens the Workspace
+window, if it is hidden. It does not take away the Workspace window. To hide it,
+right-click the window and choose Hide, or press Shift+Esc while the window has focus.
+There is a Workspace button on the Standard toolbar, which hides or displays the
+window.</P>
+<P><B>View Output (Alt+2)&#160;&#160;</B>This item opens the Output window, if it
+is hidden. To hide the Output window, right-click it and choose Hide, or press Shift+Esc
+while the window has focus. The Output window opens automatically when you build
+your project or use Find in Files.</P>
+<P><B>View Debug Windows&#160;&#160;</B>This cascading menu deals with windows used
+while debugging, which are discussed in Appendix D. It contains the following items:</P>
+
+<UL>
+	<LI>Watch
+	<P>
+	<LI>Call Stack
+	<P>
+	<LI>Memory
+	<P>
+	<LI>Variables
+	<P>
+	<LI>Registers
+	<P>
+	<LI>Disassembly
+</UL>
+
+<P><B>View Properties (Alt+Enter)&#160;&#160;</B>Choosing this item opens a property
+sheet. The property sheets for different items vary widely, as shown in Figures C.34,
+C.35, and C.36, which illustrate the property sheet for an entire source file, an
+accelerator table selected in the Project Workspace window, and one key in that accelerator
+table, respectively.</P>
+<P>Property sheets are a powerful way of editing non-source file entities, such as
+resources. For functions and variables, however, it's usually easier to make the
+changes in the source file. Some rather obscure effects can only be achieved through
+property sheets. For example, to turn off syntax coloring for a file, use the property
+sheet to set the language to None. (The effect will be observed after the window
+is repainted by Windows.)</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TTIP:</strong> The property normally disappears as soon as you click something else.
+	If you click the pushpin button in the top-left corner, it stays &quot;pinned&quot;
+	to the screen as you work, displaying the properties of all the entities you are
+	working with. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><A HREF="javascript:popUp('xcuvc34.gif')"><B>FIG. C.34</B></A><B> </B><I>The property
+sheet for a source file reminds you of the name and size and lets you set the language
+(used for syntax coloring) and tab size.</I></P>
+
+<P><A HREF="javascript:popUp('xcuvc35.gif')"><B>FIG. C.35</B></A><B> </B><I>The property
+sheet for an accelerator table is where you set the language, enabling you to include
+multiple tables in one application.</I></P>
+
+<P><A HREF="javascript:popUp('xcuvc36.gif')"><B>FIG. C.36</B></A><B> </B><I>The property
+sheet for an entry in an accelerator table gives you full control over the keystrokes
+associated with the resource ID.</I></P>
+
+<P><A HREF="javascript:popUp('xcuvc37.gif')"><B>FIG. C.37</B></A><B> </B><I>The Insert
+menu is one way to add items to a project or a file.</I></P>
+<H3><B></B></H3>
+
+<H3><A NAME="Heading23"></A>Insert</H3>
+<P>The Insert menu, shown in Figure C.37, collects actions related to inserting something
+into your project or one of its files.</P>
+<P><B>Insert New Class&#160;&#160;</B>Use this item to create a header and source
+file for a new class and add it to this project. The New Class dialog box is shown
+in Figure C.38. Note the drop-down box that makes specifying the base class simpler.</P>
+<P><B>Insert New Form&#160;&#160;</B>This item generates a CFormView and attaches
+it to your application. A CFormView can contain controls, such as a combination of
+a dialog and a view.</P>
+<P><B>Insert Resource (Ctrl+R)&#160;&#160;</B>Use this item to add a new resource
+to your project. The Insert Resource dialog box, shown in Figure C.39, appears. Choose
+the type of resource to be added and click New.</P>
+<P>There are buttons on the Resource toolbar to add a new dialog box, menu, cursor,
+icon, bitmap, toolbar, accelerator, string table, or version.</P>
+<P><A HREF="javascript:popUp('xcuvc38.gif')"><B>FIG. C.38</B></A><B> </B><I>The New
+Class dialog box simplifies creating a new class.</I></P>
+
+<P><A HREF="javascript:popUp('xcuvc39.gif')"><B>FIG. C.39</B></A><B> </B><I>The Insert
+Resource dialog box is one way to add resources to your project.</I></P>
+
+<P><B>Insert Resource Copy&#160;&#160;</B>Use this item to copy an existing resource,
+changing only the language (for example, from US English to Canadian French) or the
+condition (for example, building a debug version of a dialog box). Your project will
+have different language versions of the resource, allowing you to use compiler directives
+to determine which resource is compiled into the executable.</P>
+<P><B>Insert File As Text&#160;&#160;</B>This item reads an entire file from the
+hard drive into the file you are editing. The text is inserted at the current cursor
+position.</P>
+<P><B>Insert New ATL Object&#160;&#160;</B>When you are creating an ActiveX control
+with the Active Template Library (ATL), use this item to insert ATL objects into
+your project. See Chapter 21, &quot;The Active Template Library.&quot;</P>
+<P>
+<H3><A NAME="Heading24"></A>Project</H3>
+<P>The Project menu, shown in Figure C.40, holds items associated with project maintenance.
+The items in this menu are listed in the following sections.</P>
+<P><B>Project Set Active Project&#160;&#160;</B>If you have several projects in your
+workspace, this item sets which project is active.</P>
+<P><A HREF="javascript:popUp('xcuvc40.gif')"><B>FIG. C.40</B></A><B> </B><I>The Project
+menu simplifies project maintenance.</I></P>
+
+<P><B>Project Add to Project&#160;&#160;</B>This item opens a cascading menu with
+the following choices:</P>
+
+<UL>
+	<LI><I>New</I>. Opens the same dialog box as File, New with the Add to Project box
+	selected.
+	<P>
+	<LI><I>New Folder</I>. Creates a new folder to organize the classes in the project.
+	<P>
+	<LI><I>Files</I>. Opens the Insert Files into Project dialog box shown in Figure
+	C.41.
+	<P>
+	<LI><I>Data Connection</I>. Available in the Enterprise Edition discussed in Chapter
+	23, this item connects your project to a data source.
+	<P>
+	<LI><I>Components and Controls</I>. Opens the Components and Control Gallery, discussed
+	in Chapter 25.
+</UL>
+
+<P><A HREF="javascript:popUp('xcuvc41.gif')"><B>FIG. C.41</B></A><B> </B><I>The Insert
+Files into Project dialog box looks very much like a File Open dialog box.</I></P>
+
+<P><B>Project Source Control&#160;&#160;</B>This item gathers together a number of
+tasks related to tracking and controlling revisions to your project source.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B>See</B> &quot;Using Visual Source Safe,&quot; <A HREF="../ch23/ch23.htm"><B>ch
+	23</B> </A>
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><B>Project Dependencies&#160;&#160;</B>This item allows you to make one project
+dependent on another so that when one project is changed, its dependents are rebuilt.</P>
+<P><B>Project Settings (Alt+F7)&#160;&#160;</B>This item opens the Project Settings
+dialog box, which has the following 10 tabs:</P>
+
+<UL>
+	<LI><I>General</I>. Change the static versus shared DLL choice you made when AppWizard
+	built this project, and change the directory where intermediate (source and object)
+	or output (EXE, DLL, OCX) files are kept (see Figure C.42).
+	<P>
+	<LI><I>Debug</I>. These settings are discussed in Appendix D.
+</UL>
+
+<P><A HREF="javascript:popUp('xcuvc42.gif')"><B>FIG. C.42</B></A><B> </B><I>The General
+tab of the Project Settings dialog box governs where files are kept.</I></P>
+
+<UL>
+	<LI><I>C/C++</I>. These are your compiler settings. The Category combo box has General
+	selected by default. To change the settings category, select a category from the
+	combo box. Figure C.43 shows the General category. You can change the optimization
+	criteria (your choices are Default, Maximize Speed, Minimize Size, Customize, or
+	Disable if your debugging is being thrown off by the optimizer) or the warning level.
+	This tab is discussed in more detail in Chapter 24.
+</UL>
+
+<P><A HREF="javascript:popUp('xcuvc43.gif')"><B>FIG. C.43</B></A><B> </B><I>The C/C++
+tab of the Project Settings dialog box governs compiler settings in eight categories,
+starting with General.</I></P>
+
+<UL>
+	<LI><I>Link</I>. This tab controls linker options, which you are unlikely to need
+	to change. The settings are divided into five categories; the General category is
+	shown in Figure C.44.
+	<P>
+	<LI><I>Resources</I>. This tab, shown in Figure C.45, is used to change the language
+	you are working in. This tab enables you to change which resources are compiled into
+	your application, and other resource settings.
+	<P>
+	<LI><I>MIDL</I>. This tab is used by programmers who are building a type library
+	(TLB) from an object description (ODL) file. ODL files are discussed in Chapter 16,
+	&quot;Building an Automation Server.&quot;
+</UL>
+
+<P><A HREF="javascript:popUp('xcuvc44.gif')"><B>FIG. C.44</B></A><B> </B><I>The Link
+tab of the Project Settings dialog box governs linker settings in five categories,
+starting with General.</I></P>
+
+<P><A HREF="javascript:popUp('xcuvc45.gif')"><B>FIG. C.45</B></A><B> </B><I>The Resources
+tab of the Project Settings dialog box governs resources settings, including language.</I></P>
+
+<UL>
+	<LI><I>Browse Info</I>. This tab, shown in Figure C.46, controls the Browse Info
+	(.BSC) file used for Go To Definition, Go To Declaration, and similar menu items.
+	If you never use these, your links will be quicker if you don't generate browse information.
+	If you want browse information, in addition to checking Build Browse Info File Name
+	on this tab, check Generate Browse Info in the General category of the C/C++ tab.
+</UL>
+
+<P><A HREF="javascript:popUp('xcuvc46.gif')"><B>FIG. C.46</B></A><B> </B><I>The Browse
+Info tab of the Project Settings dialog box turns on or off the powerful browse feature.</I></P>
+
+<UL>
+	<LI><I>Custom Build</I>. These settings allow you to add your own steps to be performed
+	as part of every build process.
+	<P>
+	<LI><I>Pre-Link Step</I>. You can add your own steps just before the link step.
+	<P>
+	<LI><I>Post-Build Step</I>. You can add your own steps to be performed after everything
+	else has successfully completed.
+</UL>
+
+<P>To see the last few tabs, click the right-pointing arrow at the end of the list
+of tabs. You can adjust the settings for each configuration (Debug, Release, and
+so on) separately or all at once. Many of the panes have a Reset button that restores
+the settings to those you chose when you first created the project.</P>
+<P>
+<H3><A NAME="Heading25"></A>Build</H3>
+<P>The Build menu, shown in Figure C.47, holds all the actions associated with compiling,
+running, and debugging your application.</P>
+<P><A HREF="javascript:popUp('xcuvc47.gif')"><B>FIG. C.47</B></A><B> </B><I>The Build
+menu is used to compile, link, and debug your application.</I></P>
+
+<P>The Build menu will be a hub of activity when your are ready to compile and debug.
+The Build menu item names are listed in the following sections.</P>
+<P><B>Build Compile (Ctrl+F7)&#160;&#160;</B>Choosing this item compiles the file
+with focus. This is a very useful thing to do when you are expecting to find errors
+or warnings, such as the first time you compile after a lot of changes. For example,
+if there is an error in a header file that is included in many source files, a typical
+build produces error messages related to that header file over and over again as
+each source file is compiled. If there are warnings in one of your source files,
+a typical build links the project, but you might prefer to stop and correct the warnings.
+There is a Compile button on the Build toolbar, represented by a stack of papers
+with an arrow pointing downward.</P>
+<P><B>Build Build (F7)&#160;&#160;</B>This item compiles all the changed files in
+the project and then links them. There is a Build button on the Build toolbar.</P>
+<P><B>Build Rebuild All&#160;&#160;</B>This item compiles all files in the project,
+even those that have not been changed since the last build, and then links them.
+There are times when a typical build misses a file that should be recompiled; using
+this item corrects the problem.</P>
+<P><B>Build Batch Build&#160;&#160;</B>Typically a project contains at least two
+<I>configurations</I>: Debug and Release. Usually you work with the Debug configuration,
+changing, building, testing, and changing the project again until it is ready to
+be released, and then you build a Release version. If you ever need to build several
+configurations at once, use this menu item to open the Batch Build dialog box shown
+in Figure C.48. Choose Build to compile only changed files and Rebuild All to compile
+all files. If the compiles are successful, links follow. Choose Clean to delete intermediate
+and output files, leaving only source files.</P>
+<P><A HREF="javascript:popUp('xcuvc48.gif')"><B>FIG. C.48</B></A><B> </B><I>The Batch
+Build dialog box builds several configurations of your project at once.</I></P>
+
+<P><B>Build Clean&#160;&#160;</B>This item deletes all the intermediate and output
+files so that your project directory contains only source files.</P>
+<P><B>Build Start Debug&#160;&#160;</B>Debugging is a lengthy topic, discussed in
+Appendix D.</P>
+<P><B>Build Debugger Remote Connection&#160;&#160;</B>It is possible to run a program
+on one computer and debug it on another. As part of that process, you use this menu
+item to connect the two computers. This is discussed in Appendix D.</P>
+<P><B>Build Execute (Ctrl+F5)&#160;&#160;</B>Choosing the Build, Execute item runs
+your application without opening the debugger.</P>
+<P><B>Build Set Active Configuration&#160;&#160;</B>The Set Active Project Configuration
+dialog box, shown in Figure C.49, sets which of your configurations is active (typically
+Debug and Release). The active configuration is built by the Build commands.</P>
+<P><A HREF="javascript:popUp('xcuvc49.gif')"><B>FIG. C.49</B></A><B> </B><I>The Set
+Active Project Configuration dialog box sets the default configuration.</I></P>
+
+<P><B>Build Configurations&#160;&#160;</B>Choosing this item opens the Configurations
+dialog box, shown in Figure C.50. Here you can add or remove configurations. Use
+Project Settings to change the settings for the new configuration.</P>
+<P><A HREF="javascript:popUp('xcuvc50.gif')"><B>FIG. C.50</B></A><B> </B><I>The Configurations
+dialog box lets you add to the standard Debug and Release configurations.</I></P>
+
+<P><B>Build Profiler&#160;&#160;</B>The profiler is a powerful tool to identify bottlenecks
+in your applications. It is discussed in Chapter 24.</P>
+<P>
+<H3><A NAME="Heading26"></A>Tools</H3>
+<P>The Tools menu, shown in Figure C.51, simplifies access to add-in tools and holds
+some odds-and-ends leftover commands that don't fit on any other menu.</P>
+<P><A HREF="javascript:popUp('xcuvc51.gif')"><B>FIG. C.51</B></A><B> </B><I>The Tools
+menu organizes add-in tools.</I></P>
+
+<P><B>Tools Source Browser (Alt+F12)&#160;&#160;</B>The browser is a very powerful
+addition to Developer Studio; you use it whenever you go to a definition or reference,
+check a call graph, or otherwise explore the relationships among the classes, functions,
+and variables in your project. However, it's unusual to access the browser through
+this menu item, which opens the Browse dialog box shown in Figure C.52. You are more
+likely to use Edit, Go To, a Go To item from the right-click menu, or one of the
+11 buttons on the Browse toolbar.</P>
+<P><A HREF="javascript:popUp('xcuvc52.gif')"><B>FIG. C.52</B></A><B> </B><I>The Browse
+dialog box is a less common way to browse your objects, functions, and variables.</I></P>
+
+<P><B>Tools Close Source Browser File&#160;&#160;</B>Whenever you rebuild your project,
+your browse file is rebuilt, too. If you rebuild your project outside Developer Studio
+with a tool such as NMAKE, you should close the browse file first (with this menu
+choice) so that it can be updated by that tool.</P>
+<P><B>Accessory Tools&#160;&#160;</B>A number of tools are added to the Tools menu
+when you install Visual C++, and you can add more tools with the Customize menu item,
+discussed next.</P>
+<P><B>Tools Customize&#160;&#160;</B>Choosing this option opens the Customize dialog
+box. The Commands pane of that dialog box is shown in Figure C.53 with the File buttons
+showing. The 11 buttons correspond to items on the File menu, and if you would like
+one of those items on any toolbar, simply drag it from the dialog box to the appropriate
+place on the toolbar and release it. The list box on the left side of the Toolbar
+tab lets you choose other menus, each with a collection of toolbar buttons you can
+drag to any toolbar. Remember that the menu bar is also a toolbar to which you can
+drag buttons, if you want.</P>
+<P><A HREF="javascript:popUp('xcuvc53.gif')"><B>FIG. C.53</B></A><B> </B><I>The Commands
+pane of the Customize dialog box lets you build your own toolbars.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If your toolbars are messed up, with extra buttons or missing buttons
+	or both, the Reset All Menus button on this dialog box returns objects to their normal
+	state. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The Toolbars pane, shown in Figure C.54, is one way to control which toolbars
+are displayed. As you can see, you can also suppress ToolTips if they annoy you or
+turn on larger toolbar buttons if you have the space for them. (The standard toolbar
+in Figure C.54 has large buttons.)</P>
+<P><A HREF="javascript:popUp('xcuvc54.gif')"><B>FIG. C.54</B></A><B> </B><I>The Toolbars
+tab of the Customize dialog box is one way to turn a toolbar on or off, and the only
+way to govern ToolTips and button size.</I></P>
+
+<P>The Tools tab lets you add programs to the Tools menu, and the Keyboard tab lets
+you change the keyboard shortcuts for commands or add shortcuts for commands without
+them. The Add-Ins and Macro Files tab lets you add <I>macros</I>, which are written
+in VBScript and can automate many Developer Studio tasks, or <I>add-ins</I>, which
+can be written in any language and also automate Developer Studio tasks, to your
+workspace.</P>
+<P><B>Tools Options&#160;&#160;</B>This item gathers up a great number of settings
+and options that relate to Developer Studio itself. For example, Figure C.55 shows
+the Editor tab of the Options dialog box. If there is a feature of Developer Studio
+you don't like, you can almost certainly change it within this large dialog box.</P>
+<P><A HREF="javascript:popUp('xcuvc55.gif')"><B>FIG. C.55</B></A><B> </B><I>The Editor
+tab of the Options dialog box is where you change editor settings.</I></P>
+
+<P>The tabs are as follows:</P>
+
+<UL>
+	<LI><I>Editor</I>. Chooses scrollbars, enables drag and drop, sets automatic saving
+	and loading, and controls the AutoComplete suite of features
+	<P>
+	<LI><I>Tabs</I>. Sets options related to tabs (inserted when you press the Tab key)
+	and indents (inserted by the editor on new lines after language elements such as
+	braces)
+	<P>
+	<LI><I>Debug</I>. Determines what information is displayed during debugging
+	<P>
+	<LI><I>Compatibility</I>. Lets you choose to emulate another editor (Brief or Epsilon)
+	or just one portion of that editor's interface
+	<P>
+	<LI><I>Build</I>. Generates an external makefile or a build log
+	<P>
+	<LI><I>Directories</I>. Sets directories in which to look for include, executable,
+	library, and source files
+	<P>
+	<LI><I>Source Control</I>. Sets options related to Visual SourceSafe, discussed in
+	Chapter 23
+	<P>
+	<LI><I>Workspace</I>. Shown in Figure C.56, sets docking windows, status bar, and
+	project reloading
+	<P>
+	<LI><I>Data View</I>. (Enterprise Edition only) Governs the appearance of the DataView
+	<P>
+	<LI><I>Macros</I>. Sets the rules for reloading a changed macro
+	<P>
+	<LI><I>Help System</I>. Determines the information displayed by the help system,
+	typically MSDN
+	<P>
+	<LI><I>Format</I>. Sets the color scheme, including syntax coloring, for source windows
+</UL>
+
+<P><A HREF="javascript:popUp('xcuvc56.gif')"><B>FIG. C.56</B></A><B> </B><I>The Workspace
+tab of the Options dialog box sets which views dock and which float, as well as reload
+options.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you work on the same project all the time, check the Reload Last
+	Workspace at Startup box on the Workspace tab of the Option dialog box. Loading the
+	Developer Studio and the last project then becomes a one-step process; simply loading
+	the Developer Studio will load the last project, too. If you work on a variety of
+	different projects, uncheck this box so that Developer Studio comes up more quickly.
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><B>Tools Macro&#160;&#160;</B>This item opens the Macro dialog box, shown in Figure
+C.57. Here you can record or play back simple macros, or edit a set of recorded keystrokes
+by adding VBScript statements.</P>
+<P><B>Tools Record Quick Macro&#160;&#160;</B>If you don't want to name your macro
+and use it in many different projects but want to speed up a task right now, record
+a quick macro and you won't have to name it, describe it, or save it in a file. You
+can have only one &quot;quick macro&quot; at a time: Recording a new one will wipe
+out the old one.</P>
+<P><B>Tools Play Quick Macro&#160;&#160;</B>This item plays your most recently recorded
+quick macro.</P>
+<P>
+<H3><A NAME="Heading27"></A>Window</H3>
+<P>The Window menu, shown in Figure C.58, controls the windows in the main working
+area of Developer Studio.</P>
+<P><B>Window New Window&#160;&#160;</B>Choosing this item opens another window containing
+the same source file as the window with focus. The first window's title bar is changed,
+with :1 added after the filename; in the new window, :2 is added after the filename.
+Changes made in one window are immediately reflected in the other. The windows can
+be scrolled, sized, and closed independently.</P>
+<P><A HREF="javascript:popUp('xcuvc57.gif')"><B>FIG. C.57</B></A><B> </B><I>The Macro
+dialog box is the nerve center for creating, editing, and using macros.</I></P>
+
+<P><A HREF="javascript:popUp('xcuvc58.gif')"><B>FIG. C.58</B></A><B> </B><I>The Window
+menu controls the windows in the main working area.</I></P>
+
+<P><B>Window Split&#160;&#160;</B>Choosing this window puts cross hairs over the
+file with focus; when you click the mouse, the window is split into four panes along
+the lines of these cross hairs. You can drag these boundaries about in the usual
+way if they are not in the right place. Scrolling one pane scrolls its companion
+pane as well so that the views stay in sync. To unsplit a window, drag a boundary
+right to the edge of the window and it disappears. Drag away both the horizontal
+and vertical boundaries, and the window is no longer split.</P>
+<P><B>Window Docking View (Alt+F6)&#160;&#160;</B>This menu item governs whether
+the window with focus is a docking view. It is disabled when the main working area
+has focus.</P>
+<P><B>Window Close&#160;&#160;</B>Choosing this item closes the window with focus
+and its associated file. If you have any unsaved changes, you are asked whether to
+save them.</P>
+<P><B>Window Close All&#160;&#160;</B>Choosing this item closes all the windows in
+the main working area. If you have any unsaved changes, you are asked whether to
+save them.</P>
+<P><B>Window Next (Ctrl+Tab)&#160;&#160;</B>This item switches focus to the next
+window. The order of the windows can be determined by looking at the list of open
+windows at the bottom of the menu. If you have a number of windows open at once,
+you can cycle among them using Ctrl+Tab. This is a great way to get back to where
+you were after going to another file to look at something or copy some code.</P>
+<P><B>Window Previous (Ctrl+Shift+Tab)&#160;&#160;</B>This item switches focus to
+the previous window.</P>
+<P><B>Window Cascade&#160;&#160;</B>This item arranges all the windows in the main
+working area in the familiar cascade pattern, like the one shown in Figure C.59.
+Minimized windows are not restored and cascaded.</P>
+<P><A HREF="javascript:popUp('xcuvc59.gif')"><B>FIG. C.59</B></A><B> </B><I>Arranging
+windows in a cascade makes it easy to switch between them.</I></P>
+
+<P><B>Window Tile Horizontally&#160;&#160;</B>This item arranges all the windows
+in the main working area so that each is the full width of the working area, as shown
+in Figure C.60. The file that had focus when you chose this item is at the top.</P>
+<P><B>Window Tile Vertically&#160;&#160;</B>This item arranges all the windows in
+the main working area so that each is the full height of the working area, as shown
+in Figure C.61. The file that had focus when you chose this item is at the left.</P>
+<P><B>Open Windows&#160;&#160;</B>The bottom section of this menu lists the windows
+in the main working area so that you can move among them even when they are maximized.
+If there are more than nine open windows, only the first nine are listed. The rest
+can be reached by choosing Window, Windows.</P>
+<P><A HREF="javascript:popUp('xcuvc60.gif')"><B>FIG. C.60</B></A><B> </B><I>When
+windows are tiled horizontally, each is the full width of the main working area.</I></P>
+
+<P><A HREF="javascript:popUp('xcuvc61.gif')"><B>FIG. C.61</B></A><B> </B><I>When
+windows are tiled vertically, each is the full height of the main working area.</I></P>
+
+<P><B>Window Windows&#160;&#160;</B>This item opens the Windows dialog box, shown
+in Figure C.62. From here you can close, save, or activate any window.</P>
+<P><A HREF="javascript:popUp('xcuvc62.gif')"><B>FIG. C.62</B></A><B> </B><I>The Windows
+dialog box allows access to any window in the main working area.</I></P>
+<H3><B></B></H3>
+
+<H3><A NAME="Heading28"></A>Help</H3>
+<P>The Help system for Developer Studio is a separate product. Choosing items on
+this menu, shown in Figure C.63, or pressing F1 activates the Help system, typically
+the Microsoft Developer Network, MSDN.</P>
+<P><A HREF="javascript:popUp('xcuvc63.gif')"><B>FIG. C.63</B></A><B> </B><I>The Help
+menu is your doorway to the help system.</I></P>
+
+<P><B>Help Contents&#160;&#160;</B>This item starts MSDN if it is not running, or
+switches focus to MSDN and displays the Table of Contents tab.</P>
+<P><B>Help Search&#160;&#160;</B>This item starts MSDN if it is not running, or switches
+focus to MSDN and displays the Search tab.</P>
+<P><B>Help Index&#160;&#160;</B>This item starts MSDN if it is not running, or switches
+focus to MSDN and displays the Index tab.</P>
+<P><B>Help Use Extension Help&#160;&#160;</B>This item, when set, triggers a different
+Help system instead of MSDN. It's a good way for your group to include your own documentation,
+but you'll want to toggle extension help off again so that F1 will search MSDN for
+your error messages or classnames.</P>
+<P><B>Help Readme&#160;&#160;</B>This item displays the &quot;read me&quot; file
+for Visual C++.</P>
+<P><B>Help Keyboard Map&#160;&#160;</B>This item does not involve MSDN. Choosing
+it opens the Help Keyboard dialog box, shown in Figure C.64. Use the drop-down box
+at the top to choose the commands for which you want to see keystrokes: Bound commands
+(those with keystrokes assigned), All commands, or commands from the File, Edit,
+View, Insert, Build, Debug, Tools, Window, or Help menus. Commands related to Images
+and Layout are also available.</P>
+<P><A HREF="javascript:popUp('xcuvc64.gif')"><B>FIG. C.64</B></A><B> </B><I>The Help
+Keyboard dialog box displays the keystrokes associated with commands.</I></P>
+
+<P>Click the title bars across the top of the table to sort the display by that column.
+Keystrokes cannot be changed here; choose Tools, Customize and use the Keyboard tab
+to change keystrokes.</P>
+<P><B>Help Tip of the Day&#160;&#160;</B>Choosing this item opens the Tip of the
+Day, like that in Figure C.65. Some are Windows tips; others are specific to Developer
+Studio. If you can't wait to see a new tip each time you open Developer Studio, click
+Next Tip to scroll through the list. If you are annoyed by these tips on startup,
+deselect the Show Tips at Startup box.</P>
+<P><A HREF="javascript:popUp('xcuvc65.gif')"><B>FIG. C.65</B></A><B> </B><I>The Tip
+of the Day is a great way to learn more about Developer Studio.</I></P>
+
+<P><B>Help Technical Support&#160;&#160;</B>If you think you need technical support,
+start here. Not only do you learn how to get that support, but you may also find
+the answer to your question.</P>
+<P><B>Help Microsoft on the Web&#160;&#160;</B>One of the ways Microsoft supplies
+information about Developer Studio and other products is through the World Wide Web.
+Choosing this item opens a cascading menu with a list of Web sites. Choosing any
+of these displays the pages in your default Web browser.</P>
+<P><B>Help About Visual C++&#160;&#160;</B>Choosing this item opens the About box
+for Visual C++, which includes, among other information, your Product ID.</P>
+<P>
+<H2><A NAME="Heading29"></A>Reviewing Toolbars</H2>
+<P>After you are familiar with the sorts of actions you are likely to request of
+Developer Studio, the toolbars save you a lot of time. Instead of choosing File,
+Open, which takes two clicks and a mouse move, it is simpler to just click the Open
+button on the toolbar. There are, however, 11 toolbars plus a menu bar in this product,
+and that means a lot of little icons to learn. In this section, you will see each
+toolbar and which menu items the buttons correspond to.</P>
+<P>Figure C.66 shows all the toolbars that are available in Developer Studio. The
+quickest way to turn several toolbars on and off is with the Toolbars dialog box,
+which you can also use to turn ToolTips on or off and set whether the tips include
+the shortcut keys for the command. Any of these toolbars can dock against any of
+the four edges of the working area, as shown in Figure C.67. To move a docked toolbar,
+drag it by the <I>wrinkles</I>--the two vertical bars at the far right. You move
+an undocked toolbar like any other window. When it nears the edge of the main working
+area, the shape change shows you it will dock. Take some time to experiment moving
+toolbars around until you find a configuration that suits you.</P>
+<P><A HREF="javascript:popUp('xcuvc66.gif')"><B>FIG. C.66</B></A><B> </B><I>Developer
+Studio has 11 toolbars and a menu bar, shown here floating.</I></P>
+
+<P>Two of the most important toolbars are the Standard and the Build Mini-bar. These
+are discussed in the sections that follow. For a full description of what each button
+does, refer to the section earlier in this chapter for the corresponding menu item.</P>
+<P>
+<H3><A NAME="Heading30"></A>Standard Toolbar</H3>
+<P>The Standard Toolbar helps you maintain and edit text and files in your workspace.
+Table C.2 names each Standard tool button and its equivalent menu operation.</P>
+<P><A HREF="javascript:popUp('xcuvc67.gif')"><B>FIG. C.67</B></A><B> </B><I>Developer
+Studio toolbars can dock against any edge.</I></P>
+
+<P><I></I>
+<H4>Table C.2&#160;&#160;Standard Toolbar Buttons and Equivalent Menu Operations</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Button Name</B></TD>
+		<TD ALIGN="LEFT"><B>Menu Equivalent</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">New Text File</TD>
+		<TD ALIGN="LEFT">File, New</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Open</TD>
+		<TD ALIGN="LEFT">File, Open</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Save</TD>
+		<TD ALIGN="LEFT">File, Save</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Save All</TD>
+		<TD ALIGN="LEFT">File, Save All</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Cut</TD>
+		<TD ALIGN="LEFT">Edit, Cut</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Copy</TD>
+		<TD ALIGN="LEFT">Edit, Copy</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Paste</TD>
+		<TD ALIGN="LEFT">Edit, Paste</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Undo</TD>
+		<TD ALIGN="LEFT">Edit, Undo</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Redo</TD>
+		<TD ALIGN="LEFT">Edit, Redo</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Workspace</TD>
+		<TD ALIGN="LEFT">View, Workspace</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Output</TD>
+		<TD ALIGN="LEFT">View, Output</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Window List</TD>
+		<TD ALIGN="LEFT">Window, Windows</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Find in Files</TD>
+		<TD ALIGN="LEFT">Edit, Find in Files</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Find</TD>
+		<TD ALIGN="LEFT">Edit, Find</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Search</TD>
+		<TD ALIGN="LEFT">Help, Search</TD>
+	</TR>
+</TABLE>
+
+<H3><A NAME="Heading31"></A>Build Mini-bar</H3>
+<P>The names for the Build Mini-bar buttons, which are related to compiling and debugging,
+are defined in Table C.3.</P>
+<P>
+<H4>Table C.3&#160;&#160;Build Mini-Bar Buttons and Equivalent Menu Commands</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Button Name</B></TD>
+		<TD ALIGN="LEFT"><B>Menu Equivalent</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Compile</TD>
+		<TD ALIGN="LEFT">Build, Compile</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Build</TD>
+		<TD ALIGN="LEFT">Build, Build</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Stop Build</TD>
+		<TD ALIGN="LEFT">Build, Stop Build</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Execute</TD>
+		<TD ALIGN="LEFT">Build, Execute</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Go</TD>
+		<TD ALIGN="LEFT">Build, Start Debug, Go</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Insert/Remove Breakpoint</TD>
+		<TD ALIGN="LEFT">N/A</TD>
+	</TR>
+</TABLE>
+
+<H3><A NAME="Heading32"></A>Using Other Toolbars</H3>
+<P>You can display any or all of the toolbars, add and remove buttons to them, and
+generally make Developer Studio into a product that works the way you work. Experiment
+and see what simplifies your software development effort.</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../apb/apb.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../apd/apd.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

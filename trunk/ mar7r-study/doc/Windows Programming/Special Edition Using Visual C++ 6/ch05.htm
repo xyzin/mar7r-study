@@ -1,0 +1,1116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 5 -- Drawing on the Screen</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch04/ch04.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch06/ch06.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 5 -</H1>
+</CENTER>
+<CENTER>
+<H1>Drawing on the Screen</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Understanding Device Contexts</A>
+	<LI><A HREF="#Heading2">Introducing the Paint1 Application</A>
+	<LI><A HREF="#Heading3">Building the Paint1 Application</A>
+	<UL>
+		<LI><A HREF="#Heading4">Painting in an MFC Program</A>
+		<LI><A HREF="#Heading5">Switching the Display</A>
+		<LI><A HREF="#Heading6">Using Fonts</A>
+		<LI><A HREF="#Heading7">Sizing and Positioning the Window</A>
+		<LI><A HREF="#Heading8">Using Pens</A>
+		<LI><A HREF="#Heading9">Using Brushes</A>
+	</UL>
+	<LI><A HREF="#Heading10">Scrolling Windows</A>
+	<LI><A HREF="#Heading11">Building the Scroll Application</A>
+	<UL>
+		<LI><A HREF="#Heading12">Adding Code to Increase Lines</A>
+		<LI><A HREF="#Heading13">Adding Code to Decrease Lines</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Understanding Device Contexts</H2>
+<P>Most applications need to display some type of data in their windows. You'd think
+that, because Windows is a device-independent operating system, creating window displays
+would be easier than luring a kitten with a saucer of milk. However, it's exactly
+Windows' device independence that places a little extra burden on a programmer's
+shoulders. Because you can never know in advance exactly what type of devices may
+be connected to a user's system, you can't make many assumptions about display capabilities.
+Functions that draw to the screen must do so indirectly through something called
+a <I>device context</I> (DC).</P>
+<P>Although device independence forces you, the programmer, to deal with data displays
+indirectly, it helps you by ensuring that your programs run on all popular devices.
+In most cases, Windows handles devices for you through the device drivers that users
+have installed on the system. These device drivers intercept the data that the application
+needs to display and then translates the data appropriately for the device on which
+it will appear, whether that's a screen, a printer, or some other output device.</P>
+<P>To understand how all this device independence works, imagine an art teacher trying
+to design a course of study appropriate for all types of artists. The teacher creates
+a course outline that stipulates the subject of a project, the suggested colors to
+be used, the dimensions of the finished project, and so on. What the teacher doesn't
+stipulate is the surface on which the project will be painted or the materials needed
+to paint on that surface. In other words, the teacher stipulates only general characteristics.
+The details of how these characteristics are applied to the finished project are
+left to each specific artist.</P>
+<P>For example, an artist using oil paints will choose canvas as his drawing surface
+and oil paints, in the colors suggested by the instructor, as the paint. On the other
+hand, an artist using watercolors will select watercolor paper and will, of course,
+use watercolors instead of oils for paint. Finally, the charcoal artist will select
+the appropriate drawing surface for charcoal and will use a single color.</P>
+<P>The instructor in this scenario is much like a Windows programmer. The programmer
+has no idea who may eventually use the program and what kind of system that user
+may have. The programmer can recommend the colors in which data should be displayed
+and the coordinates at which the data should appear, for example, but it's the device
+driver--the Windows artist--who ultimately decides how the data appears.</P>
+<P>A system with a VGA monitor may display data with fewer colors than a system with
+a Super VGA monitor. Likewise, a system with a monochrome monitor displays the data
+in only a single color. High-resolution monitors can display more data than lower-resolution
+monitors. The device drivers, much like the artists in the imaginary art school,
+must take the display requirements and fine-tune them to the device on which the
+data will actually appear. And it's a data structure known as a <I>device context</I>
+that links the application to the device's driver.</P>
+<P>A device context (DC) is little more than a data structure that keeps track of
+the attributes of a window's drawing surface. These attributes include the currently
+selected pen, brush, and font that will be used to draw onscreen. Unlike an artist,
+who can have many brushes and pens with which to work, a DC can use only a single
+pen, brush, or font at a time. If you want to use a pen that draws wider lines, for
+example, you need to create the new pen and then replace the DC's old pen with the
+new one. Similarly, if you want to fill shapes with a red brush, you must create
+the brush and <I>select it into the DC</I>, which is how Windows programmers describe
+replacing a tool in a DC.</P>
+<P>A window's client area is a versatile surface that can display anything a Windows
+program can draw. The client area can display any type of data because everything
+displayed in a window--whether it be text, spreadsheet data, a bitmap, or any other
+type of data--is displayed graphically. MFC helps you display data by encapsulating
+Windows' GDI functions and objects into its DC classes.</P>
+<P>
+<H2><A NAME="Heading2"></A>Introducing the Paint1 Application</H2>
+<P>In this chapter, you will build the Paint1 application, which demonstrates fonts,
+pens, and brushes. Paint1 will use the document/view paradigm discussed in Chapter
+4, &quot;Documents and Views,&quot; and the view will handle displaying the data.
+When run, the application will display text in several different fonts. When users
+click the application, it displays lines drawn with several different pens. After
+another click, it displays boxes filled with a variety of brushes.</P>
+<P>The first step in creating Paint1 is to build an empty shell with AppWizard, as
+first discussed in Chapter 1, &quot;Building Your First Windows Application.&quot;
+Choose File, New, and select the Projects tab. As shown in Figure 5.1, fill in the
+project name as <B>Paint1</B> and fill in an appropriate directory for the project
+files. Make sure that MFC AppWizard (exe) is selected. Click OK.</P>
+<P><A HREF="javascript:popUp('05uvc01.gif')"><B>FIG. 5.1</B></A><B> </B><I>Start
+an AppWizard project workspace called Paint1.</I></P>
+<P>Move through the AppWizard dialog boxes, change the settings to match those in
+the list that follows, and then click Next to move to the next step.</P>
+<P>Step 1: Select Single Document.</P>
+<P>Step 2: Use default settings.</P>
+<P>Step 3: Use default settings.</P>
+<P>Step 4: Deselect all check boxes.</P>
+<P>Step 5: Use default settings.</P>
+<P>Step 6: Use default settings.</P>
+<P>After you click Finish on the last step, the New Project Information box should
+resemble Figure 5.2. Click OK to create the project.</P>
+<P><A HREF="javascript:popUp('05uvc02.gif')"><B>FIG. 5.2</B></A><B> </B><I>The starter
+application for Paint1 is very simple.</I></P>
+<P>Now that you have a starter application, it's time to add code to make it demonstrate
+some ways an MFC program can display data onscreen. By the time you get to the end
+of this chapter, the words <I>display context</I> won't make you scratch your head
+in perplexity.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Your starter application has menus, but you will ignore them completely.
+	It would be quite a bit of work to remove them; just pretend they aren't there.&#160;n
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H2><A NAME="Heading3"></A>Building the Paint1 Application</H2>
+<P>To build the Paint1 application, you first need to understand how painting and
+drawing work in an MFC program. Then you can set up the skeleton code to handle user
+clicks and the three different kinds of display. Finally, you'll fill in the code
+for each kind of display in turn.</P>
+<P>
+<H3><A NAME="Heading4"></A>Painting in an MFC Program</H3>
+<P>In Chapter 3, &quot;Messages and Commands,&quot; you learned about message maps
+and how you can tell MFC which functions to call when it receives messages from Windows.
+One important message that every Windows program with a window must handle is WM_PAINT.
+Windows sends the WM_PAINT message to an application's window when the window needs
+to be redrawn. Several events cause Windows to send a WM_PAINT message:</P>
+
+<UL>
+	<LI>When users simply run the program: In a properly written Windows application,
+	the application's window receives a WM_PAINT message almost immediately after being
+	run, to ensure that the appropriate data is displayed from the very start.
+	<P>
+	<LI>When the window has been resized or has recently been uncovered (fully or partially)
+	by another window: Part of the window that wasn't visible before is now onscreen
+	and must be updated.
+	<P>
+	<LI>When a program indirectly sends itself a WM_PAINT message by invalidating its
+	client area: This capability ensures that an application can change its window's
+	contents almost any time it wants. For example, a word processor might invalidate
+	its window after users paste some text from the Clipboard.
+</UL>
+
+<P>When you studied message maps, you learned to convert a message name to a message-map
+macro and function name. You now know, for example, that the message-map macro for
+a WM_PAINT message is ON_WM_PAINT(). You also know that the matching message-map
+function should be called OnPaint(). This is another case where MFC has already done
+most of the work of matching a Windows message with its message-response function.
+(If all this message-map stuff sounds unfamiliar, you might want to review Chapter
+3.)</P>
+<P>You might guess that your next step is to catch the WM_PAINT message or to override
+the OnPaint() function that your view class inherited from CView, but you won't do
+that. Listing 5.1 shows the code for CView::OnPaint(). As you can see, WM_PAINT is
+already caught and handled for you.</P>
+<P>
+<H4>Listing 5.1&#160;&#160;CView::OnPaint()</H4>
+<PRE>void CView::OnPaint()
+{
+     // standard paint routine
+     CPaintDC dc(this);
+     OnPrepareDC(&amp;dc);
+     OnDraw(&amp;dc);
+</PRE>
+<PRE>}
+</PRE>
+<P>CPaintDC is a special class for managing <I>paint DCs</I>--device contexts used
+only when responding to WM_PAINT messages. An object of the CPaintDC class does more
+than just create a DC; it also calls the BeginPaint() Windows API function in the
+class's constructor and calls EndPaint() in its destructor. When a program responds
+to WM_PAINT messages, calls to BeginPaint() and EndPaint() are required. The CPaintDC
+class handles this requirement without your having to get involved in all the messy
+details. As you can see, the CPaintDC constructor takes a single argument, which
+is a pointer to the window for which you're creating the DC. The this pointer points
+to the current view, so it's passed to the constructor to make a DC for the current
+view.</P>
+<P>OnPrepareDC() is a CView function that prepares a DC for use. You'll learn more
+about it in Chapter 6, &quot;Printing and Print Preview.&quot;</P>
+<P>OnDraw() does the actual work of visually representing the document. In most cases
+you will write the OnDraw() code for your application and never touch OnPaint().</P>
+<P>
+<H3><A NAME="Heading5"></A>Switching the Display</H3>
+<P>The design for Paint1 states that when you click the application's window, the
+window's display changes. This seemingly magical feat is actually easy to accomplish.
+You add a member variable to the view to store what kind of display is being done
+and then change it when users click the window. In other words, the program routes
+WM_LBUTTONDOWN messages to the OnLButtonDown() message-response function, which sets
+the m_display flag as appropriate.</P>
+<P>First, add the member variable. You must add it by hand rather than through the
+shortcut menu because the type includes an enum declaration. Open Paint1View.h from
+the FileView and add these lines after the //Attributes comment:</P>
+<P>
+<PRE>protected:
+     enum {Fonts, Pens, Brushes} m_Display;
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> This is an <I>anonymous</I> or unnamed enum. You can learn more about
+	enum types in Appendix A, &quot; C++ Review and Object-Oriented Concepts.&quot; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Choose ClassView in the Project Workspace pane, expand the classes, expand CPaint1View,
+and then double-click the constructor CPaint1View(). Add this line of code in place
+of the TODO comment:</P>
+<P>
+<PRE>m_Display = Fonts;
+</PRE>
+<P>This initializes the display selector to the font demonstration. You use the display
+selector in the OnDraw() function called by CView::OnPaint(). AppWizard has created
+CPaint1View::OnDraw(), but it doesn't do anything at the moment. Double-click the
+function name in ClassView and add the code in Listing 5.2 to the function, removing
+the TODO comment left by AppWizard.</P>
+<P>
+<H4>Listing 5.2&#160;&#160;CPaint1View::OnDraw()</H4>
+<PRE>void CPaint1View::OnDraw(CDC* pDC)
+{
+     CPaint1Doc* pDoc = GetDocument();
+     ASSERT_VALID(pDoc);
+     switch (m_Display)
+     {
+          case Fonts:
+               ShowFonts(pDC);
+               break;
+          case Pens:
+               ShowPens(pDC);
+               break;
+          case Brushes:
+               ShowBrushes(pDC);
+               break;
+     }
+</PRE>
+<PRE>}
+</PRE>
+<P>You will write the three functions ShowFonts(), ShowPens(), and ShowBrushes()
+in upcoming sections of this chapter. Each function uses the same DC pointer that
+was passed to OnDraw() by OnPaint(). Add them to the class now by following these
+steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Right-click the CPaint1View class in ClassView and select Add Member
+	Function.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Enter <B>void</B> for the Function Type.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Enter <B>ShowFonts(CDC* pDC)</B> for the Function Declaration.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Change the access to protected. Click OK.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Repeat steps 1 through 4 for ShowPens(CDC* pDC) and ShowBrushes(CDC*
+	pDC).
+	<P>
+</DL>
+
+<P>The last step in arranging for the display to switch is to catch left mouse clicks
+and write code in the message handler to change m_display.</P>
+<P>Right-click CPaint1View in the ClassView and select Add Windows Message Handler
+from the shortcut menu that appears. Double-click WM_LBUTTONDOWN in the New Windows
+Messages/Events list box. ClassWizard adds a function called OnLButtonDown() to the
+view and adds entries to the message map so that this function will be called whenever
+users click the left mouse button over this view.</P>
+<P>Click Edit Existing to edit the OnLButtonDown() you just created, and add the
+code shown in Listing 5.3.</P>
+<P>
+<H4>Listing 5.3&#160;&#160;CPaint1View::OnLButtonDown()</H4>
+<PRE>void CPaint1View::OnLButtonDown(UINT nFlags, CPoint point)
+{
+     if (m_Display == Fonts)
+          m_Display = Pens;
+     else if (m_Display == Pens)
+          m_Display = Brushes;
+     else
+          m_Display = Fonts
+     Invalidate();
+     CView::OnLButtonDown(nFlags, point);
+</PRE>
+<PRE>}
+</PRE>
+<P>As you can see, depending on its current value, m_display is set to the next display
+type in the series. Of course, just changing the value of m_display doesn't accomplish
+much; the program still needs to redraw the contents of its window. The call to Invalidate()
+tells Windows that all of the window needs to be repainted. This causes Windows to
+generate a WM_PAINT message for the window, which means that eventually OnDraw()
+will be called and the view will be redrawn as a font, pen, or brush demonstration.</P>
+<P>
+<H3><A NAME="Heading6"></A>Using Fonts</H3>
+<P>Changing the font used in a view is a technique you'll want to use in various
+situations. It's not as simple as you might think because you can never be sure that
+any given font is actually installed on the user's machine. You set up a structure
+that holds information about the font you want, attempt to create it, and then work
+with the font you actually have, which might not be the font you asked for.</P>
+<P>A Windows font is described in the LOGFONT structure outlined in Table 5.1. The
+LOGFONT structure uses 14 fields to hold a complete description of the font. Many
+fields can be set to 0 or the default values, depending on the program's needs.</P>
+<P>
+<H4>Table 5.1&#160;&#160;LOGFONT Fields and Their Descriptions</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Field</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfHeight</TD>
+		<TD ALIGN="LEFT">Font height in logical units</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfWidth</TD>
+		<TD ALIGN="LEFT">Font width in logical units</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfEscapement</TD>
+		<TD ALIGN="LEFT">Angle at which to draw the text</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfOrientation</TD>
+		<TD ALIGN="LEFT">Character tilt in tenths of a degree</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfWeight</TD>
+		<TD ALIGN="LEFT">Font weight</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfItalic</TD>
+		<TD ALIGN="LEFT">A nonzero value indicates italics</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfUnderline</TD>
+		<TD ALIGN="LEFT">A nonzero value indicates an underlined font</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfStrikeOut</TD>
+		<TD ALIGN="LEFT">A nonzero value indicates a strikethrough font</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfCharSet</TD>
+		<TD ALIGN="LEFT">Font character set</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfOutPrecision</TD>
+		<TD ALIGN="LEFT">How to match requested font to actual font</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfClipPrecision</TD>
+		<TD ALIGN="LEFT">How to clip characters that run over clip area</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfQuality</TD>
+		<TD ALIGN="LEFT">Print quality of the font</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfPitchAndFamily</TD>
+		<TD ALIGN="LEFT">Pitch and font family</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">lfFaceName</TD>
+		<TD ALIGN="LEFT">Typeface name</TD>
+	</TR>
+</TABLE>
+</P>
+<P>Some terms in Table 5.1 need a little explanation. The first is <I>logical units</I>.
+How high is a font with a height of 8 logical units, for example? The meaning of
+a logical unit depends on the <I>mapping mode</I> you're using, as shown in Table
+5.2. The default mapping mode is MM_TEXT, which means that one logical unit is equal
+to 1 pixel. Mapping modes are discussed in more detail in Chapter 6.</P>
+<P>
+<H4>Table 5.2&#160;&#160;Mapping Modes</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Mode</B></TD>
+		<TD ALIGN="LEFT"><B>Unit</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_HIENGLISH</TD>
+		<TD ALIGN="LEFT">0.001 inch</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_HIMETRIC</TD>
+		<TD ALIGN="LEFT">0.01 millimeter</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_ISOTROPIC</TD>
+		<TD ALIGN="LEFT">Arbitrary</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_LOENGLISH</TD>
+		<TD ALIGN="LEFT">0.01 inch</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_LOMETRIC</TD>
+		<TD ALIGN="LEFT">0.1 millimeter</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_TEXT</TD>
+		<TD ALIGN="LEFT">Device pixel</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_TWIPS</TD>
+		<TD ALIGN="LEFT">1/1440 inch</TD>
+	</TR>
+</TABLE>
+</P>
+<P><I>Escapement</I> refers to writing text along an angled line. <I>Orientation</I>
+refers to writing angled text along a flat line. The font weight refers to the thickness
+of the letters. A number of constants have been defined for use in this field: FW_DONTCARE,
+FW_THIN, FW_EXTRALIGHT, FW_ULTRALIGHT, FW_LIGHT, FW_NORMAL, FW_REGULAR, FW_MEDIUM,
+FW_SEMIBOLD, FW_DEMIBOLD, FW_BOLD, FW_EXTRABOLD, FW_ULTRABOLD, FW_BLACK, and FW_HEAVY.
+Not all fonts are available in all weights. Four character sets are available (ANSI_CHARSET,
+OEM_CHARSET, SYMBOL_CHARSET, and UNICODE_CHARSET), but for writing English text you'll
+almost always use ANSI_CHARSET. (Unicode is discussed in Chapter 28, &quot;Future
+Explorations.&quot;) The last field in the LOGFONT structure is the face name, such
+as Courier or Helvetica.</P>
+<P>Listing 5.4 shows the code you need to add to the empty ShowFonts() function you
+created earlier.</P>
+<P>
+<H4>Listing 5.4&#160;&#160;CPaint1View::ShowFonts()</H4>
+<PRE>void CPaint1View::ShowFonts(CDC * pDC)
+{
+    // Initialize a LOGFONT structure for the fonts.
+    LOGFONT logFont;
+    logFont.lfHeight = 8;
+    logFont.lfWidth = 0;
+    logFont.lfEscapement = 0;
+    logFont.lfOrientation = 0;
+    logFont.lfWeight = FW_NORMAL;
+    logFont.lfItalic = 0;
+    logFont.lfUnderline = 0;
+    logFont.lfStrikeOut = 0;
+    logFont.lfCharSet = ANSI_CHARSET;
+    logFont.lfOutPrecision = OUT_DEFAULT_PRECIS;
+    logFont.lfClipPrecision = CLIP_DEFAULT_PRECIS;
+    logFont.lfQuality = PROOF_QUALITY;
+    logFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
+    strcpy(logFont.lfFaceName, &quot;Times New Roman&quot;);
+    // Initialize the position of text in the window.
+    UINT position = 0;
+    // Create and display eight example fonts.
+    for (UINT x=0; x&lt;8; ++x)
+    {
+         // Set the new font's height.
+         logFont.lfHeight = 16 + (x * 8);
+         // Create a new font and select it into the DC.
+         CFont font;
+         font.CreateFontIndirect(&amp;logFont);
+         CFont* oldFont = pDC-&gt;SelectObject(&amp;font);
+         // Print text with the new font.
+         position += logFont.lfHeight;
+         pDC-&gt;TextOut(20, position, &quot;A sample font.&quot;);
+         // Restore the old font to the DC.
+         pDC-&gt;SelectObject(oldFont);
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>ShowFonts()starts by setting up a Times Roman font 8 pixels high, with a width
+that best matches the height and all other attributes set to normal defaults.</P>
+<P>To show the many fonts displayed in its window, the Paint1 application creates
+its fonts in a for loop, modifying the value of the LOGFONT structure's lfHeight
+member each time through the loop, using the loop variable x to calculate the new
+font height:</P>
+<P>
+<PRE>logFont.lfHeight = 16 + (x * 8);
+</PRE>
+<P>Because x starts at 0, the first font created in the loop will be 16 pixels high.
+Each time through the loop, the new font will be 8 pixels higher than the previous
+one.</P>
+<P>After setting the font's height, the program creates a CFont object and calls
+its CreateFontIndirect() function, which attempts to create a CFont object corresponding
+to the LOGFONT you created. It will change the LOGFONT to describe the CFont that
+was actually created, given the fonts installed on the user's machine.</P>
+<P>After ShowFonts() calls CreateFontIndirect(), the CFont object is associated with
+a Windows font. Now you can select it into the DC. Selecting objects into device
+contexts is a crucial concept in Windows output programming. You can't use any graphical
+object, such as a font, directly; instead, you select it into the DC and then use
+the DC. You always save a pointer to the old object that was in the DC (the pointer
+is returned from the SelectObject() call) and use it to restore the device context
+by selecting the old object again when you're finished. The same function, SelectObject(),
+is used to select various objects into a device context: the font you're using in
+this section, a pen, a brush, or a number of other drawing objects.</P>
+<P>After selecting the new font into the DC, you can use the font to draw text onscreen.
+The local variable position holds the vertical position in the window at which the
+next line of text should be printed. This position depends on the height of the current
+font. After all, if there's not enough space between the lines, the larger fonts
+will overlap the smaller ones. When Windows created the new font, it stored the font's
+height (most likely the height that you requested, but maybe not) in the LOGFONT
+structure's lfHeight member. By adding the value stored in lfHeight, the program
+can determine the next position at which to display the line of text. To make the
+text appear onscreen, ShowFonts() calls TextOut().</P>
+<P>TextOut()'s first two arguments are the X and Y coordinates at which to print
+the text. The third argument is the text to print. Having printed the text, you restore
+the old font to the DC in case this is the last time through the loop.</P>
+<P>Build the application and run it. It should resemble Figure 5.3. If you click
+the window, it will go blank because the ShowPens() routine doesn't draw anything.
+Click again and it's still blank, this time because the ShowBrushes() routine doesn't
+draw anything. Click a third time and you are back to the fonts screen.</P>
+<P><A HREF="javascript:popUp('05uvc03.gif')"><B>FIG. 5.3</B></A><B> </B><I>The font
+display shows different types of text output.</I></P>
+<P>
+<H3><A NAME="Heading7"></A>Sizing and Positioning the Window</H3>
+<P>As you can see in Figure 5.3, Paint1 doesn't display eight different fonts at
+800*600 screen settings--only seven can fit in the window. To correct this, you need
+to set the size of the window a little larger than the Windows default. In an MFC
+program, you do this in the mainframe class PreCreateWindow() function. This is called
+for you just before the mainframe window is created. The mainframe window surrounds
+the entire application and governs the size of the view.</P>
+<P>PreCreateWindow() takes one parameter, a reference to a CREATESTRUCT structure.
+The CREATESTRUCT structure contains essential information about the window that's
+about to be created, as shown in Listing 5.5.</P>
+<P>
+<H4>Listing 5.5&#160;&#160;The CREATESTRUCT Structure</H4>
+<PRE>typedef struct tagCREATESTRUCT {
+   LPVOID    lpCreateParams;
+   HANDLE    hInstance;
+   HMENU     hMenu;
+   HWND      hwndParent;
+   int       cy;
+   int       cx;
+   int       y;
+   int       x;
+   LONG      style;
+   LPCSTR    lpszName;
+   LPCSTR    lpszClass;
+   DWORD     dwExStyle;
+</PRE>
+<PRE>} CREATESTRUCT;
+</PRE>
+<P>If you've programmed Windows without application frameworks such as MFC, you'll
+recognize the information stored in the CREATESTRUCT structure. You used to supply
+much of this information when calling the Windows API function CreateWindow() to
+create your application's window. Of special interest to MFC programmers are the
+cx, cy, x, and y members of this structure. By changing cx and cy, you can set the
+window width and height, respectively. Similarly, modifying x and y changes the window's
+position. By overriding PreCreateWindow(), you have a chance to fiddle with the CREATESTRUCT
+structure before Windows uses it to create the window.</P>
+<P>AppWizard created a CMainFrame::PreCreateWindow() function. Expand CMainFrame
+in ClassView, double-click PreCreateWindow() to edit it, and add lines to obtain
+the code shown in Listing 5.6. This sets the application's height and width. It also
+prevents users from resizing the application by using the bitwise and operator (&amp;)
+to turn off the WS_SIZEBOX style bit.</P>
+<P>
+<H4>Listing 5.6&#160;&#160;CMainFrame::PreCreateWindow()</H4>
+<PRE>BOOL CMainFrame::PreCreateWindow(CREATESTRUCT&amp; cs)
+{
+     cs.cx = 440;
+     cs.cy = 480;
+     cs.style &amp;= ~WS_SIZEBOX;
+      if( !CFrameWnd::PreCreateWindow(cs) )
+            return FALSE;
+      return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>It's important that after your own code in PreCreateWindow(), you call the base
+class's PreCreateWindow(). Failure to do this will leave you without a valid window
+because MFC never gets a chance to pass the CREATESTRUCT structure on to Windows,
+so Windows never creates your window. When overriding class member functions, you
+usually need to call the base class's version.</P>
+<P>Build and run Paint1 to confirm that all eight fonts fit in the application's
+window. Now you're ready to demonstrate pens.</P>
+<P>
+<H3><A NAME="Heading8"></A>Using Pens</H3>
+<P>You'll be pleased to know that pens are much easier to deal with than fonts, mostly
+because you don't have to fool around with complicated data structures like LOGFONT.
+In fact, to create a pen, you need to supply only the pen's line style, thickness,
+and color. The Paint1 application's ShowPens() function displays in its window the
+lines drawn by using different pens created within a for loop. Listing 5.7 shows
+the code.</P>
+<P>
+<H4>Listing 5.7&#160;&#160;CPaint1View::ShowPens()</H4>
+<PRE>void CPaint1View::ShowPens(CDC * pDC)
+{
+     // Initialize the line position.
+     UINT position = 10;
+     // Draw sixteen lines in the window.
+     for (UINT x=0; x&lt;16; ++x)
+     {
+          // Create a new pen and select it into the DC.
+CPen pen(PS_SOLID, x*2+1, RGB(0, 0, 255));
+          CPen* oldPen = pDC-&gt;SelectObject(&amp;pen);
+          // Draw a line with the new pen.
+          position +=  x * 2 + 10;
+          pDC-&gt;MoveTo(20, position);
+          pDC-&gt;LineTo(400, position);
+          // Restore the old pen to the DC.
+          pDC-&gt;SelectObject(oldPen);
+     }
+</PRE>
+<PRE>}
+</PRE>
+<P>Within the loop, ShowPens() first creates a custom pen. The constructor takes
+three parameters. The first is the line's style, one of the styles listed in Table
+5.3. (You can draw only solid lines with different thicknesses. If you specify a
+pattern and a thickness greater than 1 pixel, the pattern is ignored and a solid
+line is drawn.) The second argument is the line thickness, which increases each time
+through the loop. The third argument is the line's color. The RGB macro takes three
+values for the red, green, and blue color components and converts them to a valid
+Windows color reference. The values for the red, green, and blue color components
+can be anything from 0 to 255--the higher the value, the brighter that color component.
+This code creates a bright blue pen. If all the color values were 0, the pen would
+be black; if the color values were all 255, the pen would be white.</P>
+<P>
+<H4>Table 5.3&#160;&#160;Pen Styles</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Style</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">PS_DASH</TD>
+		<TD ALIGN="LEFT">A pen that draws dashed lines</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">PS_DASHDOT</TD>
+		<TD ALIGN="LEFT">A pen that draws dash-dot patterned lines</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">PS_DASHDOTDOT</TD>
+		<TD ALIGN="LEFT">A pen that draws dash-dot-dot patterned lines</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">PS_DOT</TD>
+		<TD ALIGN="LEFT">A pen that draws dotted lines</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">PS_INSIDEFRAME</TD>
+		<TD ALIGN="LEFT">A pen that's used with shapes, in which the line's thickness must not extend outside
+			the shape's frame</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">PS_NULL</TD>
+		<TD ALIGN="LEFT">A pen that draws invisible lines</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">PS_SOLID</TD>
+		<TD ALIGN="LEFT">A pen that draws solid lines</TD>
+	</TR>
+</TABLE>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> If you want to control the style of a line's end points or create
+	your own custom patterns for pens, you can use the alternative CPen constructor,
+	which requires a few more arguments than the CPen constructor described in this section.
+	To learn how to use this alternative constructor, look up CPen in your Visual C++
+	online documentation. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>After creating the new pen, ShowPens() selects it into the DC, saving the pointer
+to the old pen. The MoveTo() function moves the pen to an X,Y coordinate without
+drawing as it moves; the LineTo() function moves the pen while drawing. The style,
+thickness, and color of the pen are used. Finally, you select the old pen into the
+DC.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:[</strong> There are a number of line drawing functions other than LineTo(),
+	including Arc(), ArcTo(), AngleArc(), and PolyDraw(). 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Build and run Paint1 again. When the font display appears, click the window. You
+will see a pen display similar to the one in Figure 5.4.</P>
+<P>
+<H3><A NAME="Heading9"></A>Using Brushes</H3>
+<P>A pen draws a line of a specified thickness onscreen. A brush fills a shape onscreen.
+You can create solid and patterned brushes and even brushes from bitmaps that contain
+your own custom fill patterns. Paint1 will display both patterned and solid rectangles
+in the ShowBrushes() function, shown in Listing 5.8.</P>
+<P><A HREF="javascript:popUp('05uvc04.gif')"><B>FIG. 5.4</B></A><B> </B><I>The pen
+display shows the effect of setting line thickness.</I></P>
+<P>
+<H4>Listing 5.8&#160;&#160;CPaint1View::ShowBrushes()</H4>
+<PRE>void CPaint1View::ShowBrushes(CDC * pDC)
+     // Initialize the rectangle position.
+     UINT position = 0;
+     // Select pen to use for rectangle borders
+     CPen pen(PS_SOLID, 5, RGB(255, 0, 0));
+     CPen* oldPen = pDC-&gt;SelectObject(&amp;pen);
+     // Draw seven rectangles.
+     for (UINT x=0; x&lt;7; ++x)
+     {
+          CBrush* brush;
+          // Create a solid or hatched brush.
+          if (x == 6)
+               brush = new CBrush(RGB(0,255,0));
+          else
+              brush = new CBrush(x, RGB(0,160,0));
+          // Select the new brush into the DC.
+          CBrush* oldBrush = pDC-&gt;SelectObject(brush);
+          // Draw the rectangle.
+          position += 50;
+          pDC-&gt;Rectangle(20, position, 400, position + 40);
+          // Restore the DC and delete the brush.
+          pDC-&gt;SelectObject(oldBrush);
+          delete brush;
+     }
+     // Restore the old pen to the DC.
+     pDC-&gt;SelectObject(oldPen);
+</PRE>
+<PRE>}
+</PRE>
+<P>The rectangles painted with the various brushes in this routine will all be drawn
+with a border. To arrange this, create a pen (this one is solid, 5 pixels thick,
+and bright red) and select it into the DC. It will be used to border the rectangles
+without any further work on your part. Like ShowFonts() and ShowPens(), this routine
+creates its graphical objects within a for loop. Unlike those two functions, ShowBrushes()
+creates a graphical object (in this routine, a brush) with a call to new. This enables
+you to call the one-argument constructor, which creates a solid brush, or the two-argument
+constructor, which creates a hatched brush.</P>
+<P>In Listing 5.8, the first argument to the two-argument constructor is just the
+loop variable, x. Usually, you don't want to show all the hatch patterns but want
+to select a specific one. Use one of these constants for the hatch style:</P>
+
+<UL>
+	<LI>HS_HORIZONTAL--Horizontal
+	<P>
+	<LI>HS_VERTICAL--Vertical
+	<P>
+	<LI>HS_CROSS--Horizontal and vertical
+	<P>
+	<LI>HS_FDIAGONAL--Forward diagonal
+	<P>
+	<LI>HS_BDIAGONAL--Backward diagonal
+	<P>
+	<LI>HS_DIAGCROSS--Diagonal in both directions
+</UL>
+
+<P>In a pattern that should be familiar by now, ShowBrushes() selects the brush into
+the DC, determines the position at which to work, uses the brush by calling Rectangle(),
+and then restores the old brush. When the loop is complete, the old pen is restored
+as well.</P>
+<P>Rectangle()is just one of the shape-drawing functions that you can call. Rectangle()
+takes as arguments the coordinates of the rectangle's upper-left and lower-right
+corners. Some others of interest are Chord(), DrawFocusRect(), Ellipse(), Pie(),
+Polygon(), PolyPolygon(), Polyline(), and RoundRect(), which draws a rectangle with
+rounded corners.</P>
+<P>Again, build and run Paint1. Click twice, and you will see the demonstration of
+brushes, as shown in Figure 5.5.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Remember the call to Invalidate() in CPaint1View::OnLButtonDown()?
+	Invalidate() actually takes a Boolean argument with a default value of TRUE. This
+	argument tells Windows whether to erase the window's background. If you use FALSE
+	for this argument, the background isn't erased. In Figure 5.6, you can see what happens
+	to the Paint1 application if Invalidate() is called with an argument of FALSE.&#160;
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><A HREF="javascript:popUp('05uvc05.gif')"><B>FIG. 5.5</B></A><B> </B><I>The brushes
+display shows several patterns inside thick-bordered rectangles.</I></P>
+<P><A HREF="javascript:popUp('05uvc06.gif')"><B>FIG. 5.6</B></A><B> </B><I>Without
+erasing the background, the Paint1 application's windows appear messy.</I></P>
+<H2><I></I></H2>
+<H2><A NAME="Heading10"></A>Scrolling Windows</H2>
+<P>Those famous screen rectangles known as <I>windows</I> enable you to partition
+screen space between various applications and documents. Also, if a document is too
+large to completely fit within a window, you can view portions of it and scroll through
+it a bit at a time. The Windows operating system and MFC pretty much take care of
+the partitioning of screen space. However, if you want to enable users to view portions
+of a large document, you must create scrolling windows.</P>
+<P>Adding scrollbars to an application from scratch is a complicated task. Luckily
+for Visual C++ programmers, MFC handles many of the details involved in scrolling
+windows over documents. If you use the document/view architecture and derive your
+view window from MFC's CScrollView class, you have scrolling capabilities almost
+for free. I say &quot;almost&quot; because you still must handle a few details, which
+you learn about in the following sections.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> If you create your application with AppWizard, you can specify that
+	you want to use CScrollView as the base class for your view class. To do this, in
+	the Step 6 of 6 dialog box displayed by AppWizard, select your view window in the
+	class list and then select CScrollView in the Base Class dialog box, as shown in
+	Figure 5.7.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><A HREF="javascript:popUp('05uvc07.gif')"><B>FIG. 5.7</B></A><B> </B><I>You can
+create a scrolling window from within AppWizard.</I></P>
+<H2><I></I></H2>
+<H2><A NAME="Heading11"></A>Building the Scroll Application</H2>
+<P>In this section, you'll build a sample program called Scroll to experiment with
+a scrolling window. When Scroll first runs, it displays five lines of text. Each
+time you click the window, five lines of text are added to the display. When you
+have more lines of text than fit in the window, a vertical scrollbar appears, enabling
+you to scroll to the parts of the documents that you can't see.</P>
+<P>As usual, building the application starts with AppWizard. Choose File, New, and
+select the Projects tab. Fill in the project name as <B>Scroll</B> and fill in an
+appropriate directory for the project files. Make sure that MFC AppWizard (exe) is
+selected. Click OK.</P>
+<P>Complete the AppWizard steps, selecting the following options:</P>
+<P>Step 1: Select Single Document.</P>
+<P>Step 2: Use default settings</P>
+<P>Step 3: Use default settings.</P>
+<P>Step 4: Deselect all check boxes.</P>
+<P>Step 5: Use default settings.</P>
+<P>Step 6: Select CScrollView from the Base Class drop-down box, as in Figure 5.7.</P>
+<P>The New Project Information dialog box should resemble Figure 5.8. Click OK to
+create the project.</P>
+<P><A HREF="javascript:popUp('05uvc08.gif')"><B>FIG. 5.8</B></A><B> </B><I>Create
+a scroll application with AppWizard.</I></P>
+<P>This application generates very simple lines of text. You need to keep track only
+of the number of lines in the scrolling view at the moment. To do this, add a variable
+to the document class by following these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>In ClassView, expand the classes and right-click CScrollDoc.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Choose Add Member Variable from the shortcut menu.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Fill in <B>int</B> as the variable type.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Fill in <B>m_NumLines</B> as the variable declaration.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Select Public for the Access.
+	<P>
+</DL>
+
+<P>Variables associated with a document are initialized in OnNewDocument(), as discussed
+in Chapter 4. In ClassView, expand CScrollDoc and double-click OnNewDocument() to
+expand it. Replace the TODO comments with this line of code:</P>
+<P>
+<PRE>m_NumLines = 5;
+</PRE>
+<P>To arrange for this variable to be saved with the document and restored when the
+document is loaded, you must serialize it as discussed in Chapter 7, &quot;Persistence
+and File I/O.&quot; Edit CScrollDoc::Serialize() as shown in Listing 5.9.</P>
+<P>
+<H4>Listing 5.9&#160;&#160;CScrollDoc::Serialize()</H4>
+<PRE>void CScrollDoc::Serialize(CArchive&amp; ar)
+{
+     if (ar.IsStoring())
+     {
+          ar &lt;&lt; m_NumLines;
+     }
+     else
+     {
+          ar &gt;&gt; m_NumLines;
+     }
+</PRE>
+<PRE>}
+</PRE>
+<P>Now all you need to do is use m_NumLines to draw the appropriate number of lines.
+Expand the view class, CMyScrollView, in ClassView and double-click OnDraw(). Edit
+it until it's the same as Listing 5.10. This is very similar to the ShowFonts() code
+from the Paint1 application earlier in this chapter.</P>
+<P>
+<H4>Listing 5.10&#160;&#160;CMyScrollView::OnDraw()</H4>
+<PRE>void CMyScrollView::OnDraw(CDC* pDC)
+{
+     CScrollDoc* pDoc = GetDocument();
+     ASSERT_VALID(pDoc);
+     // get the number of lines from the document
+     int numLines = pDoc-&gt;m_NumLines;
+     // Initialize a LOGFONT structure for the fonts.
+     LOGFONT logFont;
+    logFont.lfHeight = 24;
+    logFont.lfWidth = 0;
+    logFont.lfEscapement = 0;
+    logFont.lfOrientation = 0;
+    logFont.lfWeight = FW_NORMAL;
+    logFont.lfItalic = 0;
+    logFont.lfUnderline = 0;
+    logFont.lfStrikeOut = 0;
+    logFont.lfCharSet = ANSI_CHARSET;
+    logFont.lfOutPrecision = OUT_DEFAULT_PRECIS;
+    logFont.lfClipPrecision = CLIP_DEFAULT_PRECIS;
+    logFont.lfQuality = PROOF_QUALITY;
+    logFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
+     strcpy(logFont.lfFaceName, &quot;Times New Roman&quot;);
+     // Create a new font and select it into the DC.
+    CFont* font = new CFont();
+     font-&gt;CreateFontIndirect(&amp;logFont);
+     CFont* oldFont = pDC-&gt;SelectObject(font);
+     // Initialize the position of text in the window.
+     UINT position = 0;
+     // Create and display eight example lines.
+     for (int x=0; x&lt;numLines; ++x)
+     {
+          // Create the string to display.
+          char s[25];
+          wsprintf(s, &quot;This is line #%d&quot;, x+1);
+          // Print text with the new font.
+          pDC-&gt;TextOut(20, position, s);
+          position += logFont.lfHeight;
+     }
+     // Restore the old font to the DC, and
+     // delete the font the program created.
+     pDC-&gt;SelectObject(oldFont);
+     delete font;
+</PRE>
+<PRE>}
+</PRE>
+<P>Build and run the Scroll application. You will see a display similar to that in
+Figure 5.9. No scrollbars appear because all the lines fit in the window.</P>
+<P><A HREF="javascript:popUp('05uvc09.gif')"><B>FIG. 5.9</B></A><B> </B><I>At first,
+the scroll application displays five lines of text and no scrollbars.</I></P>
+<P>
+<H3><A NAME="Heading12"></A>Adding Code to Increase Lines</H3>
+<P>To increase the number of lines whenever users click the window, you need to add
+a message handler to handle left mouse clicks and then write the code for the handler.
+Right-click CMyScrollView in ClassView and choose Add Windows Message Handler. Double-click
+WM_LBUTTONDOWN to add a handler and click the Edit Existing button to change the
+code. Listing 5.11 shows the completed handler. It simply increases the number of
+lines and calls Invalidate() to force a redraw. Like so many message handlers, it
+finishes by passing the work on to the base class version of this function.</P>
+<P>
+<H4>Listing 5.11&#160;&#160;CMyScrollView::OnLButtonDown()</H4>
+<PRE>void CMyScrollView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+     CScrollDoc* pDoc = GetDocument();
+     ASSERT_VALID(pDoc);
+     // Increase number of lines to display.
+     pDoc-&gt;m_NumLines += 5;
+     // Redraw the window.
+     Invalidate();
+     CScrollView::OnLButtonDown(nFlags, point);
+}
+</PRE>
+<PRE></PRE>
+<H3><A NAME="Heading13"></A>Adding Code to Decrease Lines</H3>
+<P>So that you can watch scrollbars disappear as well as appear, why not implement
+a way for users to decrease the number of lines in the window? If left-clicking increases
+the number of lines, it makes sense that right-clicking would decrease it. Add a
+handler for WM_RBUTTONDOWN just as you did for WM_LBUTTONDOWN, and edit it until
+it's just like Listing 5.12. This function is a little more complicated because it
+ensures that the number of lines is never negative.</P>
+<P>
+<H4>Listing 5.12&#160;&#160;CMyScrollView::OnRButtonDown()</H4>
+<PRE>void CMyScrollView::OnRButtonDown(UINT nFlags, CPoint point)
+{
+     CScrollDoc* pDoc = GetDocument();
+     ASSERT_VALID(pDoc);
+     // Decrease number of lines to display.
+     pDoc-&gt;m_NumLines -= 5;
+     if (pDoc-&gt;m_NumLines &lt; 0)
+     {
+          pDoc-&gt;m_NumLines = 0;
+     }
+     // Redraw the window.
+     Invalidate();
+     CScrollView::OnRButtonDown(nFlags, point);
+</PRE>
+<PRE>}
+</PRE>
+<P>If you build and run Scroll now and click the window, you can increase the number
+of lines, but scrollbars don't appear. You need to add some lines to OnDraw() to
+make that happen. Before you do, review the way that scrollbars work. You can click
+three places on a vertical scrollbar: the thumb (some people call it the elevator),
+above the thumb, or below it. Clicking the thumb does nothing, but you can click
+and hold to drag it up or down. Clicking above it moves you one page (screenful)
+up within the data. Clicking below it moves you one page down. What's more, the size
+of the thumb is a visual representation of the size of a page in proportion to the
+entire document. Clicking the up arrow at the top of the scrollbar moves you up one
+line in the document; clicking the down arrow at the bottom moves you down one line.</P>
+<P>What all this means is that the code that draws the scrollbar and handles the
+clicks needs to know the size of the entire document, the page size, and the line
+size. You don't have to write code to draw scrollbars or to handle clicks on the
+scrollbar, but you do have to pass along some information about the size of the document
+and the current view. The lines of code you need to add to OnDraw() are in Listing
+5.13; add them after the for loop and before the old font is selected back into the
+DC.</P>
+<P>
+<H4>Listing 5.13&#160;&#160;Lines to Add to OnDraw()</H4>
+<PRE>// Calculate the document size.
+CSize docSize(100, numLines*logFont.lfHeight);
+// Calculate the page size.
+   CRect rect;
+GetClientRect(&amp;rect);
+CSize pageSize(rect.right, rect.bottom);
+// Calculate the line size.
+CSize lineSize(0, logFont.lfHeight);
+// Adjust the scrollers.
+</PRE>
+<PRE>SetScrollSizes(MM_TEXT, docSize, pageSize, lineSize);
+</PRE>
+<P>This new code must determine the document, page, and line sizes. The document
+size is the width and height of the screen area that could hold the entire document.
+This is calculated by using the number of lines in the entire document and the height
+of a line. (CSize is an MFC class created especially for storing the widths and heights
+of objects.) The page size is simply the size of the client rectangle of this view,
+and the line size is the height of the font. By setting the horizontal component
+of the line size to 0, you prevent horizontal scrolling.</P>
+<P>These three sizes must be passed along to implement scrolling. Simply call SetScrollSizes(),
+which takes the mapping mode, document size, page size, and line size. MFC will set
+the scrollbars properly for any document and handle user interaction with the scrollbars.</P>
+<P>Build and run Scroll again and generate some more lines. You should see a scrollbar
+like the one in Figure 5.10. Add even more lines and you will see the thumb shrink
+as the document size grows. Finally, resize the application horizontally so that
+the text won't all fit. Notice how no horizontal scrollbars appear, because you set
+the horizontal line size to 0.</P>
+<P><A HREF="javascript:popUp('05uvc10.gif')"><B>FIG. 5.10</B></A><B> </B><I>After
+displaying more lines than fit in the window, the vertical scrollbar appears.</I></P>
+<H1><I></I></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch04/ch04.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch06/ch06.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

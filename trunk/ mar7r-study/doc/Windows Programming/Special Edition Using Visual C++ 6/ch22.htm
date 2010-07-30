@@ -1,0 +1,1198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 22 -- Database Access</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch21/ch21.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch23/ch23.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 22 -</H1>
+</CENTER>
+<CENTER>
+<H1>Database Access</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Understanding Database Concepts</A>
+	<UL>
+		<LI><A HREF="#Heading2">Using the Flat Database Model</A>
+		<LI><A HREF="#Heading3">Using the Relational Database Model</A>
+		<LI><A HREF="#Heading4">Accessing a Database</A>
+		<LI><A HREF="#Heading5">The Visual C++ ODBC Classes</A>
+	</UL>
+	<LI><A HREF="#Heading6">Creating an ODBC Database Program</A>
+	<UL>
+		<LI><A HREF="#Heading7">Registering the Database</A>
+		<LI><A HREF="#Heading8">Creating the Basic Employee Application</A>
+		<LI><A HREF="#Heading9">Creating the Database Display</A>
+		<LI><A HREF="#Heading10">Adding and Deleting Records</A>
+		<LI><A HREF="#Heading11">Examining the OnRecordAdd() Function</A>
+		<LI><A HREF="#Heading12">Examining the OnMove() Function</A>
+		<LI><A HREF="#Heading13">Examining the OnRecordDelete() Function</A>
+		<LI><A HREF="#Heading14">Sorting and Filtering</A>
+		<LI><A HREF="#Heading15">Examining the OnSortDept() Function</A>
+		<LI><A HREF="#Heading16">Examining the DoFilter() Function</A>
+	</UL>
+	<LI><A HREF="#Heading17">Choosing Between ODBC and DAO</A>
+	<LI><A HREF="#Heading18">OLE DB</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>Without a doubt, databases are one of the most popular computer applications.
+Virtually every business uses databases to keep track of everything from its customer
+list to the company payroll. Unfortunately, there are many different types of database
+applications, each of which defines its own file layouts and rules. In the past,
+programming database applications was a nightmare because it was up to the programmer
+to figure out all the intricacies of accessing the different types of database files.
+As a Visual C++ developer, you have a somewhat simpler task because MFC includes
+classes built on the ODBC (Open Database Connectivity) and DAO (Data Access Objects)
+systems. Other Microsoft database technologies are gaining MFC support as well.</P>
+<P>Believe it or not, by using AppWizard, you can create a simple database program
+without writing even a single line of C++ code. More complex tasks do require some
+programming, but not as much as you might think.</P>
+<P>This chapter gives you an introduction to programming with Visual C++'s ODBC classes.
+You will also learn about the similarities and differences between ODBC and DAO.
+Along the way, you will create a database application that can not only display records
+in a database but also update, add, delete, sort, and filter records.</P>
+<P>
+<H2><A NAME="Heading1"></A>Understanding Database Concepts</H2>
+<P>Before you can write database applications, you have to know a little about how
+databases work. Databases have come a long way since their invention, so there's
+much you can learn about them. This section provides a quick introduction to basic
+database concepts, including the two main types of databases: flat and relational.</P>
+<P>
+<H3><A NAME="Heading2"></A>Using the Flat Database Model</H3>
+<P>Simply put, a <I>database</I> is a collection of records. Each record in the database
+is composed of fields, and each field contains information related to that specific
+record. For example, suppose you have an address database. In this database, you
+have one record for each person. Each record contains six fields: the person's name,
+street address, city, state, zip code, and phone number. A single record in your
+database might look like this:</P>
+<P>
+<PRE>NAME: Ronald Wilson
+STREET: 16 Tolland Dr.
+CITY: Hartford
+STATE: CT
+ZIP: 06084
+PHONE: 860-555-3542
+</PRE>
+<P>Your entire database will contain many records like this one, with each record
+containing information about a different person. To find a person's address or phone
+number, you search for the name. When you find the name, you also find all the information
+that's included in the record with the name.</P>
+<P>This type of database system uses the <I>flat database model</I>. For home use
+or for small businesses, the simple flat database model can be a powerful tool. However,
+for large databases that must track dozens, or even hundreds, of fields of data,
+a flat database can lead to repetition and wasted space. Suppose you run a large
+department store and want to track some information about your employees, including
+their name, department, manager's name, and so on. If you have 10 people in Sporting
+Goods, the name of the Sporting Goods manager is repeated in each of those 10 records.
+When Sporting Goods hires a new manager, all 10 records have to be updated. It would
+be much simpler if each employee record could be <I>related</I> to another database
+of departments and manager names.</P>
+<P>
+<H3><A NAME="Heading3"></A>Using the Relational Database Model</H3>
+<P>A <I>relational database</I> is like several flat databases linked together. Using
+a relational database, you can not only search for individual records, as you can
+with a flat database but also relate one set of records to another. This enables
+you to store data much more efficiently. Each set of records in a relational database
+is called a <I>table</I>. The links are accomplished through <I>keys</I>, values
+that define a record. (For example, the employee ID might be the key to an employee
+table.)</P>
+<P>The sample relational database that you use in this chapter was created using
+Microsoft Access. The database is a simple system for tracking employees, managers,
+and the departments for which they work. Figures 22.1, 22.2, and 22.3 show the tables:
+The Employees table contains information about each store employee, the Managers
+table contains information about each store department's manager, and the Departments
+table contains information about the departments themselves. (This database is very
+simple and probably not usable in the real world.)</P>
+<P><A HREF="javascript:popUp('22uvc01.gif')"><B>FIG. 22.1</B></A><B> </B><I>The Employees
+table contains data fields for each store employee.</I></P>
+<P><A HREF="javascript:popUp('22uvc02.gif')"><B>FIG. 22.2</B></A><B> </B><I>The Managers
+table contains information about each store department's manager.</I></P>
+<P><A HREF="javascript:popUp('22uvc03.gif')"><B>FIG. 22.3</B></A><B> </B><I>The Departments
+table contains data about each store department.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading4"></A>Accessing a Database</H3>
+<P>Relational databases are accessed by using some sort of database scripting language.
+The most commonly used database language is the Structured Query Language (SQL),
+which is used to manage not only databases on desktop computers but also huge databases
+used by banks, schools, corporations, and other institutions with sophisticated database
+needs. By using a language such as SQL, you can compare information in the various
+tables of a relational database and extract results made up of data fields from one
+or more tables combined.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Most developers pronounce SQL as <I>Sequel</I>. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Learning SQL, though, is a large task, one that is beyond the scope of this book
+(let alone this chapter). In fact, entire college-level courses are taught on the
+design, implementation, and manipulation of databases. Because there isn't space
+in this chapter to cover relational databases in any useful way, you will use the
+Employee table (refer to Figure 22.1) of the Department Store database in the sample
+database program you will soon develop. When you finish creating the application,
+you will have learned one way to update the tables of a relational database without
+knowing even a word of SQL. (Those of you who live and breathe SQL will enjoy Chapter
+23, &quot;SQL and the Enterprise Edition.&quot;)</P>
+<P>
+<H3><A NAME="Heading5"></A>The Visual C++ ODBC Classes</H3>
+<P>When you create a database program with Visual C++'s AppWizard, you end up with
+an application that draws extensively on the various ODBC classes that have been
+incorporated into MFC. The most important of these classes are CDatabase, CRecordset,
+and CRecordView.</P>
+<P>AppWizard automatically generates the code needed to create an object of the CDatabase
+class. This object represents the connection between your application and the data
+source that you will be accessing. In most cases, using the CDatabase class in an
+AppWizard-generated program is transparent to you, the programmer. All the details
+are handled by the framework.</P>
+<P>AppWizard also generates the code needed to create a CRecordset object for the
+application. The CRecordset object represents the actual data currently selected
+from the data source, and its member functions manipulate the data from the database.</P>
+<P>Finally, the CRecordView object in your database program takes the place of the
+normal view window you're accustomed to using in AppWizard-generated applications.
+A CRecordView window is like a dialog box that's being used as the application's
+display. This dialog box-type of window retains a connection to the application's
+CRecordset object, hustling data back and forth between the program, the window's
+controls, and the recordset. When you first create a new database application with
+AppWizard, it's up to you to add edit controls to the CRecordView window. These edit
+controls must be bound to the database fields they represent so that the application
+framework knows where to display the data you want to view.</P>
+<P>In the next section, you will see how these various database classes fit together
+as you build the Employee application step by step.</P>
+<P>
+<H2><A NAME="Heading6"></A>Creating an ODBC Database Program</H2>
+<P>Although creating a simple ODBC database program is easy with Visual C++, there
+are a number of steps you must complete:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Register the database with the system.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Use AppWizard to create the basic database application.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Add code to the basic application to implement features not automatically
+	supported by AppWizard.
+	<P>
+</DL>
+
+<P>In the following sections, you will see how to perform these steps as you create
+the Employee application, which enables you to add, delete, update, sort, and view
+records in the Employees table of the sample Department Store database.</P>
+<P>
+<H3><A NAME="Heading7"></A>Registering the Database</H3>
+<P>Before you can create a database application, you must register the database that
+you want to access as a data source that you can access through the ODBC driver.
+Follow these steps to accomplish this important task:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Create a folder called <B>Database</B> on your hard disk and copy the
+	file named DeptStore.mdb from this book's Web site to the new Database folder. If
+	you don't have Web access, you can type the three tables into Microsoft Access. If
+	you don't have Access, you can use a different database program, but you will have
+	to connect to the data source for that program.
+	<P>
+	<DT></DT>
+	<DD>The DeptStore.mdb file is a database created with Microsoft Access. You will
+	use this database as the data source for the Employee application.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>From the Windows Start menu, click Settings and then Control Panel.
+	When the Control Panel dialog appears, double-click the 32-Bit ODBC icon. The ODBC
+	Data Source Administrator dialog box appears, as shown in Figure 22.4.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc04.gif')"><B>FIG. 22.4</B></A><B> </B><I>Connecting
+a data source to your application starts with the ODBC Data Source Administrator.</I></P>
+<P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>3. </B>Click the Add button. The Create New Data Source dialog box appears.
+	Select the Microsoft Access Driver from the list of drivers, as shown in Figure 22.5,
+	and click Finish.
+	<P>
+	<DT></DT>
+	<DD>The Microsoft Access Driver is now the ODBC driver that will be associated with
+	the data source you create for the Employee application.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc05.gif')"><B>FIG. 22.5</B></A><B> </B><I>Creating
+a new data source is as simple as choosing Access from a list of drivers.</I></P>
+<P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>4. </B>When the ODBC Microsoft Access 97 Setup dialog box appears, enter <B>Department
+	Store</B> in the Data Source Name text box and <B>Department Store Sample</B> in
+	the Description text box, as shown in Figure 22.6.
+	<P>
+	<DT></DT>
+	<DD>The Data Source Name is a way of identifying the specific data source you're
+	creating. The Description field enables you to include more specific information
+	about the data source.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc06.gif')"><B>FIG. 22.6</B></A><B> </B><I>Name
+your data source whatever you like.</I></P>
+<P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>5. </B>Click the Select button. The Select Database file selector appears.
+	Use the selector to locate and select the DeptStore.mdb file (see Figure 22.7).
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc07.gif')"><B>FIG. 22.7</B></A><B> </B><I>Browse
+your way to the .mdb file that holds your data.</I></P>
+<P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>6. </B>Click OK to finalize the database selection and then, in the ODBC Microsoft
+	Access 97 Setup dialog box, click OK to finalize the data-source creation process.
+	Finally, click OK in the ODBC Data Source Administrator dialog box and close the
+	Control Panel.
+	<P>
+</DL>
+
+<P>Your system is now set up to access the DeptStore.mdb database file with the Microsoft
+Access ODBC driver.</P>
+<P>
+<H3><A NAME="Heading8"></A>Creating the Basic Employee Application</H3>
+<P>Now that you have created and registered your data source, it's time to create
+the basic Employee application. The steps that follow lead you through this process.
+After you complete these steps, you will have an application that can access and
+view the Employees table of the Department Store database:</P>
+
+<DL>
+	<DD><B>1. </B>Select File, New from Developer Studio's menu bar. Click the Projects
+	tab.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Select MFC AppWizard (exe) and type <B>Employee</B> in the Project
+	Name box, as shown in Figure 22.8. Click OK. The Step 1 dialog box appears.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc08.gif')"><B>FIG. 22.8</B></A><B> </B><I>Create
+an ordinary MFC application with AppWizard.</I></P>
+<P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>3. </B>Select Single Document, as shown in Figure 22.9, to ensure that the
+	Employee application doesn't allow more than one window to be open at a time. Click
+	Next.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc09.gif')"><B>FIG. 22.9</B></A><B> </B><I>Create
+a single- document application.</I></P>
+<P>
+
+<DL>
+	<DD><B>4. </B>Select the Database View Without File Support option, as shown in Figure
+	22.10, so that AppWizard will generate the classes you need in order to view the
+	contents of a database. This application will not use any supplemental files besides
+	the database, so it doesn't need file (serializing) support. Click the Data Source
+	button to connect the application to the data source you set up earlier.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc10.gif')"><B>FIG. 22.10</B></A><B> </B><I>Arrange
+for a database view but no other file support.</I></P>
+<P>
+
+<DL>
+	<DD><B>5. </B>In the Database Options dialog box, drop down the ODBC list and select
+	the Department Store data source, as shown in Figure 22.11. Click OK.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc11.gif')"><B>FIG. 22.11</B></A><B> </B><I>Choose
+the Department Store data source.</I></P>
+<P>
+
+<DL>
+	<DD><B>6. </B>In the Select Database Tables dialog box, select the Employees table,
+	as shown in Figure 22.12, and click OK. The Step 2 dialog box reappears, filled in
+	as shown in Figure 22.13.
+	<P>
+	<DT></DT>
+	<DD>You've now associated the Employees table of the Department Store data source
+	with the Employee application. Click Next to move to Step 3.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc12.gif')"><B>FIG. 22.12</B></A><B> </B><I>Select
+which tables from the data source you want to use in this application.</I></P>
+<P>
+
+<DL>
+	<DT><I></I></DT>
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc13.gif')"><B>FIG. 22.13</B></A><B> </B><I>After
+selecting the data source, the Step 2 dialog box looks like this.</I></P>
+<P>
+
+<DL>
+	<DD><B>7. </B>Accept the default (None) no compound document support and click Next.
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>In the Step 4 dialog box, turn off the Printing and Print Preview option
+	so that the dialog box resembles Figure 22.14. Click Next.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc14.gif')"><B>FIG. 22.14</B></A><B> </B><I>Turn
+off print support.</I></P>
+<P>
+
+<DL>
+	<DD><B>9. </B>Accept the defaults for Step 5 by clicking Next. In Step 6, click Finish
+	to finalize your selections for the Employee application. Figure 22.15 shows the
+	New Project Information dialog box that appears.
+	<P>
+	<DT></DT>
+	<DD><B>10. </B>Click OK, and AppWizard creates the basic Employee application.
+	<P>
+</DL>
+
+<P>At this point, you can compile the application by clicking the Build button on
+Developer Studio's toolbar, by selecting the Build, Build command from the menu bar,
+or by pressing F7 on your keyboard. After the program has compiled, select the Build,
+Execute command from the menu bar or press Ctrl+F5 to run the program. When you do,
+you see the window shown in Figure 22.16. You can use the database controls in the
+application's toolbar to navigate from one record in the Employee table to another.
+However, nothing appears in the window because you've yet to associate controls with
+the fields in the table that you want to view. You will do that in the following
+section.</P>
+<P><A HREF="javascript:popUp('22uvc15.gif')"><B>FIG. 22.15</B></A><B> </B><I>The
+application summary mentions the data source as well as the usual information.</I></P>
+<P><A HREF="javascript:popUp('22uvc16.gif')"><B>FIG. 22.16</B></A><B> </B><I>The
+basic Employee application looks nice but doesn't do much.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading9"></A>Creating the Database Display</H3>
+<P>The next step in creating the Employee database application is to modify the form
+that displays data in the application's window. Because this form is just a special
+type of dialog box, it's easy to modify with Developer Studio's resource editor,
+as you will discover while completing the following steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>In the workspace window, select the Resource View tab to display the
+	application's resources.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Open the resource tree by clicking + next to the Employee resources
+	folder. Then, open the Dialog resource folder the same way. Double-click the IDD_EMPLOYEE_FORM
+	dialog box ID to open the dialog box into the resource editor, as shown in Figure
+	22.17.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc17.gif')"><B>FIG. 22.17</B></A><B> </B><I>Open
+the dialog box in the resource editor.</I></P>
+<P>
+
+<DL>
+	<DD><B>3. </B>Click the static string in the center of the dialog box to select it,
+	and then press the Delete key to remove the string from the dialog box.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Use the dialog box editor's tools to create the dialog box, shown in
+	Figure 22.18, by adding edit boxes and static labels. (Editing dialog boxes is introduced
+	in Chapter 2, &quot;Dialogs and Controls.&quot;) Give the edit boxes the following
+	IDs: <B>IDC_EMPLOYEE_ID</B>, <B>IDC_EMPLOYEE_NAME</B>, <B>IDC_EMPLOYEE_RATE</B>,
+	and <B>IDC_EMPLOYEE_DEPT</B>. Set the Read-Only style (found on the Styles page of
+	the Edit Properties property sheet) of the IDC_EMPLOYEE_ID edit box.
+	<P>
+	<DT></DT>
+	<DD>Each of these edit boxes will represent a field of data in the database. The
+	first edit box is read-only because it will hold the database's primary key, which
+	should never be modified.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc18.gif')"><B>FIG. 22.18</B></A><B> </B><I>Create
+a dialog box to be used in your database form.</I></P>
+<P>
+
+<DL>
+	<DD><B>5. </B>Choose View, ClassWizard to open ClassWizard, and click the Member
+	Variables tab.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>With the IDC_EMPLOYEE_DEPT resource ID selected, click the Add Variable
+	button. The Add Member Variable dialog box appears.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Click the arrow next to the Member Variable Name drop-down list and
+	select m_pSet-&gt;m_DeptID, as shown in Figure 22.19. Leave the type as CString and
+	click OK to add the variable.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc19.gif')"><B>FIG. 22.19</B></A><B> </B><I>Connect
+the IDC_EMPLOYEE_DEPT control with the m_DeptID member variable of the recordset.</I></P>
+<P>
+
+<DL>
+	<DD><B>8. </B>Associate other member variables (m_pSet-&gt;EmployeeID, m_pSet-&gt;EmployeeName,
+	and m_pSet-&gt;EmployeeRate) with the edit controls in the same way. When you're
+	finished, the Member Variables page of the MFC ClassWizard property sheet will look
+	like Figure 22.20.
+	<P>
+	<DT></DT>
+	<DD>By selecting member variables of the application's CEmployeeSet class (derived
+	from MFC's CRecordset class) as member variables for the controls in Database view,
+	you're establishing a connection through which data can flow between the controls
+	and the data source.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc20.gif')"><B>FIG. 22.20</B></A><B> </B><I>All
+four controls are connected to member variables.</I></P>
+
+<DL>
+	<DD><B>9. </B>Click the OK button in the MFC ClassWizard property sheet to finalize
+	your changes.
+	<P>
+</DL>
+
+<P>You've now created a data display form for the Employee application. Build and
+execute the program again, and you will see the window shown in Figure 22.21. Now
+the application displays the contents of records in the Employee database table.
+Use the database controls in the application's toolbar to navigate from one record
+in the Employee table to another.</P>
+<P><A HREF="javascript:popUp('22uvc21.gif')"><B>FIG. 22.21</B></A><B> </B><I>The
+Employee application now displays data in its window.</I></P>
+<P>After you've examined the database, try updating a record. To do this, simply
+change one of the record's fields (except the employee ID, which is the table's primary
+key and can't be edited). When you move to another record, the application automatically
+updates the modified record. The commands in the application's Record menu also enable
+you to navigate through the records in the same manner as the toolbar buttons.</P>
+<P>Notice that you've created a sophisticated database-access program without writing
+a single line of C++ code--an amazing feat. Still, the Employee application is limited.
+For example, it can't add or delete records. As you may have guessed, that's the
+next piece of the database puzzle, which you will add.</P>
+<P>
+<H3><A NAME="Heading10"></A>Adding and Deleting Records</H3>
+<P>When you can add and delete records from a database table, you will have a full-featured
+program for manipulating a flat (that is, not a relational) database. In this case,
+the flat database is the Employees table of the Department Store relational database.
+Adding and deleting records in a database table is an easier process than you might
+believe, thanks to Visual C++'s CRecordView and CRecordSet classes, which provide
+all the member functions you need in order to accomplish these common database tasks.
+You will need to add some menu items to the application, as first discussed in Chapter
+8, &quot;Building a Complete Application: ShowString.&quot; Follow these steps to
+include add and delete commands in the Employee application:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Select the ResourceView tab, open the Menu folder, and double-click
+	the IDR_MAINFRAME menu ID. The menu editor appears, as shown in Figure 22.22.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc22.gif')"><B>FIG. 22.22</B></A><B> </B><I>Developer
+Studio's menu editor is in the pane on the right.</I></P>
+<P>
+
+<DL>
+	<DD><B>2. </B>Click the Record menu item to open it, and click the blank menu item
+	at the bottom of the menu. Choose View, Properties and pin the Menu Item Properties
+	dialog box in place.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>In the ID edit box, enter <B>ID_RECORD_ADD</B> and in the Caption box,
+	enter <B>&amp;Add Record</B>, as shown in Figure 22.23. This adds a new command to
+	the Record menu.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>In the next blank menu item, add a delete command with the ID <B>ID_RECORD_DELETE</B>
+	and the caption <B>&amp;Delete Record</B>.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc23.gif')"><B>FIG. 22.23</B></A><B> </B><I>Add
+a menu item that adds a record to the Employee table.</I></P>
+<P>Next, you will connect these commands to toolbar buttons, as first discussed in
+Chapter 9, &quot;Status Bars and Toolbars.&quot; Follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>In the ResourceView pane, open the Toolbar folder and then double-click
+	the IDR_MAINFRAME ID. The application's toolbar appears in the resource editor.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Click the blank toolbar button to select it, and then use the editor's
+	tools to draw a red plus on the button.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Double-click the new button in the toolbar. The Toolbar Button Properties
+	property sheet appears. Select ID_RECORD_ADD in the ID box to connect this button
+	to the menu, as shown in Figure 22.24.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Select the blank button again and draw a red minus sign, giving the
+	button the <B>ID_RECORD_DELETE</B> ID, as you can see in Figure 22.25. Drag and drop
+	the Add and Delete buttons to the left of the Help (question mark) button.
+	<P>
+</DL>
+
+<P>Now that you have added the menu items and the toolbar buttons, you need to arrange
+for code to catch the command message sent when the user clicks the button or chooses
+the menu item. Background information on this process is in Chapter 3, &quot;Messages
+and Commands,&quot; and in Chapter 8 and Chapter 9. Because it is the view that is
+connected to the database, the view will catch these messages. Follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Open ClassWizard and select the Message Maps tab.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc24.gif')"><B>FIG. 22.24</B></A><B> </B><I>Add
+a button and connect it to the menu item.</I></P>
+<P>
+
+<DL>
+	<DT><I></I></DT>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc25.gif')"><B>FIG. 22.25</B></A><B> </B><I>The
+minus-sign button will control the Delete() function.</I></P>
+<P>
+
+<DL>
+	<DD><B>2. </B>Set the Class Name box to CEmployeeView, click the ID_RECORD_ADD ID
+	in the Object IDs box, and then double-click COMMAND in the Messages box. The Add
+	Member Function dialog box appears, as shown in Figure 22.26.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc26.gif')"><B>FIG. 22.26</B></A><B> </B><I>Add
+a function to catch the message.</I></P>
+<P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>3. </B>Click the OK button to accept the default name for the new function.
+	The function appears in the Member Functions box at the bottom of the ClassWizard
+	dialog box.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Add a member function for the ID_RECORD_DELETE command in the same
+	way. The list of functions should resemble Figure 22.27. Click OK to close ClassWizard.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc27.gif')"><B>FIG. 22.27</B></A><B> </B><I>The
+new functions appear in the Member Functions box.</I></P>
+<P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>5. </B>Open the EmployeeView.h file by double-clicking CEmployeeView in the
+	ClassView pane. In the Attributes section of the class's declaration, add the following
+	lines:
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>protected:
+ BOOL m_bAdding;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DD><B>6. </B>Double-click the CEmployeeView constructor in ClassView to edit it,
+	and add this line at the bottom of the function:
+	<P>
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE> m_bAdding = FALSE;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>7. </B>Double-click the OnRecordAdd() function and edit it so that it looks
+	like Listing 22.1. This code is explained in the next section.
+	<P>
+</DL>
+
+<H4>Listing 22.1&#160;&#160;CEmployeeView::OnRecordAdd()</H4>
+<PRE>void CEmployeeView::OnRecordAdd()
+{
+    m_pSet-&gt;AddNew();
+    m_bAdding = TRUE;
+    CEdit* pCtrl = (CEdit*)GetDlgItem(IDC_EMPLOYEE_ID);
+    int result = pCtrl-&gt;SetReadOnly(FALSE);
+    UpdateData(FALSE);
+</PRE>
+<PRE>}
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>8. </B>Right-click CEmployeeView in ClassView and choose Add Virtual Function.
+	Select OnMove from the list on the left, as shown in Figure 22.28, and then click
+	the Add and Edit button to add the function and to edit the skeleton code immediately.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc28.gif')"><B>FIG. 22.28</B></A><B> </B><I>Override
+the OnMove() function.</I></P>
+<P>
+
+<DL>
+	<DD><B>9. </B>Edit the OnMove() function so that it has the code in Listing 22.2.
+	This code is explained in the next section.
+	<P>
+</DL>
+
+<H4>Listing 22.2&#160;&#160;CEmployeeView::OnMove()</H4>
+<PRE>BOOL CEmployeeView::OnMove(UINT nIDMoveCommand)
+{
+     if (m_bAdding)
+     {
+         m_bAdding = FALSE;
+         UpdateData(TRUE);
+         if (m_pSet-&gt;CanUpdate())
+             m_pSet-&gt;Update();
+         m_pSet-&gt;Requery();
+         UpdateData(FALSE);
+         CEdit* pCtrl = (CEdit*)GetDlgItem(IDC_EMPLOYEE_ID);
+         pCtrl-&gt;SetReadOnly(TRUE);
+         return TRUE;
+     }
+     else
+         return CRecordView::OnMove(nIDMoveCommand);
+</PRE>
+<PRE>}
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>10. </B>Double-click the OnRecordDelete() function and edit it so that it
+	looks like Listing 22.3. This code is explained in the next section.
+	<P>
+</DL>
+
+<H4>Listing 22.3&#160;&#160;CEmployeeView::OnRecordDelete()</H4>
+<PRE>void CEmployeeView::OnRecordDelete()
+{
+        m_pSet-&gt;Delete();
+        m_pSet-&gt;MoveNext();
+        if (m_pSet-&gt;IsEOF())
+              m_pSet-&gt;MoveLast();
+        if (m_pSet-&gt;IsBOF())
+              m_pSet-&gt;SetFieldNull(NULL);
+        UpdateData(FALSE);
+</PRE>
+<PRE>}
+</PRE>
+<P>You've now modified the Employee application so that it can add and delete, as
+well as update, records. After compiling the application, run it by selecting the
+Build, Execute command from Developer Studio's menu bar or by pressing Ctrl+F5. When
+you do, you see the Employee application's main window, which doesn't look any different
+than it did in the preceding section. Now, however, you can add new records by clicking
+the Add button on the toolbar (or by selecting the Record, Add Record command on
+the menu bar) and delete records by clicking the Delete button (or by clicking the
+Record, Delete Record command).</P>
+<P>When you click the Add button, the application displays a blank record. Fill in
+the fields for the record; then when you move to another record, the application
+automatically updates the database with the new record. To delete a record, just
+click the Delete button. The current record (the one on the screen) vanishes and
+is replaced by the next record in the database.</P>
+<P>
+<H3><A NAME="Heading11"></A>Examining the OnRecordAdd() Function</H3>
+<P>You might be wondering how the C++ code you added to the application works. OnRecordAdd()
+starts with a call to the AddNew() member function of CEmployeeSet, the class derived
+from CRecordSet. This sets up a blank record for the user to fill in, but the new
+blank record doesn't appear on the screen until the view window's UpdateData() function
+is called. Before that happens, you have a few other things to tackle.</P>
+<P>After the user has created a new record, the database will need to be updated.
+By setting a flag in this routine, the move routine will be able to determine whether
+the user is moving away from an ordinary database record or a newly added one. That's
+why m_bAdding is set to TRUE here.</P>
+<P>Now, because the user is entering a new record, it should be possible to change
+the contents of the Employee ID field, which is currently set to read-only. To change
+the read-only status of the control, the program first obtains a pointer to the control
+with GetDlgItem() and then calls the control's SetReadOnly() member function to set
+the read-only attribute to FALSE.</P>
+<P>Finally, the call to UpdateData() will display the new blank record.</P>
+<P>
+<H3><A NAME="Heading12"></A>Examining the OnMove() Function</H3>
+<P>Now that the user has a blank record on the screen, it's a simple matter to fill
+in the edit controls with the necessary data. To add the new record to the database,
+the user must move to a new record, an action that forces a call to the view window's
+OnMove() member function. Normally, OnMove() does nothing more than display the next
+record. Your override will save new records as well.</P>
+<P>When OnMove() is called, the first thing the program does is check the Boolean
+variable m_bAdding to see whether the user is in the process of adding a new record.
+If m_bAdding is FALSE, the body of the if statement is skipped and the else clause
+is executed. In the else clause, the program calls the base class (CRecordView) version
+of OnMove(), which simply moves to the next record.</P>
+<P>If m_bAdding is TRUE, the body of the if statement is executed. There, the program
+first resets the m_bAdding flag and then calls UpdateData() to transfer data out
+of the view window's controls and into the recordset class. A call to the recordset's
+CanUpdate() method determines whether it's okay to update the data source, after
+which a call to the recordset's Update() member function adds the new record to the
+data source.</P>
+<P>To rebuild the recordset, the program must call the recordset's Requery() member
+function, and then a call to the view window's UpdateData() member function transfers
+new data to the window's controls. Finally, the program sets the Employee ID field
+back to read-only, with another call to GetDlgItem() and SetReadOnly().</P>
+<P>
+<H3><A NAME="Heading13"></A>Examining the OnRecordDelete() Function</H3>
+<P>Deleting a record is simple. OnRecordDelete() just calls the recordset's Delete()
+function. When the record is deleted, a call to the recordset's MoveNext() arranges
+for the record that follows to be displayed.</P>
+<P>A problem might arise, though, when the deleted record was in the last position
+or when the deleted record was the only record in the recordset. A call to the recordset's
+IsEOF() function will determine whether the recordset was at the end. If the call
+to IsEOF() returns TRUE, the recordset needs to be repositioned on the last record.
+The recordset's MoveLast() function takes care of this task.</P>
+<P>When all records have been deleted from the recordset, the record pointer will
+be at the beginning of the set. The program can test for this situation by calling
+the recordset's IsBOF() function. If this function returns TRUE, the program sets
+the current record's fields to NULL.</P>
+<P>Finally, the last task is to update the view window's display with another call
+to UpdateData().</P>
+<P>
+<H3><A NAME="Heading14"></A>Sorting and Filtering</H3>
+<P>In many cases when you're accessing a database, you want to change the order in
+which the records are presented, or you may even want to search for records that
+fit certain criteria. MFC's ODBC database classes feature member functions that enable
+you to sort a set of records on any field. You can also call member functions to
+limit the records displayed to those whose fields contain given information, such
+as a specific name or ID. This latter operation is called <I>filtering</I>. In this
+section, you will add sorting and filtering to the Employee application. Just follow
+these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Add a Sort menu to the application's menu bar, as shown in Figure 22.29.
+	Let Developer Studio set the command IDs.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Use ClassWizard to arrange for CEmployeeView to catch the four new
+	sorting commands, using the function names suggested by ClassWizard. Figure 22.30
+	shows the resultant ClassWizard property sheet.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc29.gif')"><B>FIG. 22.29</B></A><B> </B><I>The
+Sort menu has four commands for sorting the database.</I></P>
+<P><A HREF="javascript:popUp('22uvc30.gif')"><B>FIG. 22.30</B></A><B> </B><I>After
+you add the four new functions, ClassWizard looks like this.</I></P>
+<P>
+
+<DL>
+	<DD><B>3. </B>Add a Filter menu to the application's menu bar, as shown in Figure
+	22.31. Let Developer Studio set the command IDs.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Use ClassWizard to arrange for CEmployeeView to catch the four new
+	filtering commands, using the function names suggested by ClassWizard.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Create a new dialog box by choosing Insert, Resource and double-clicking
+	Dialog; then edit the dialog so that it resembles the dialog box shown in Figure
+	22.32. Give the edit control the ID <B>IDC_FILTERVALUE</B>. Give the entire dialog
+	the ID <B>IDD_FILTER</B>.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc31.gif')"><B>FIG. 22.31</B></A><B> </B><I>The
+Filter menu has four commands.</I></P>
+<P><A HREF="javascript:popUp('22uvc32.gif')"><B>FIG. 22.32</B></A><B> </B><I>Create
+a filter dialog box.</I></P>
+<P>
+
+<DL>
+	<DD><B>6. </B>Start ClassWizard while the new dialog box is on the screen. The Adding
+	a Class dialog box appears. Select the Create a New Class option and click OK.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>The New Class dialog box appears. In the Name box, type <B>CFilterDlg</B>,
+	as shown in Figure 22.33. Click OK to add the class.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('22uvc33.gif')"><B>FIG. 22.33</B></A><B> </B><I>Create
+a dialog class for the Filter dialog box.</I></P>
+<P>
+
+<DL>
+	<DD><B>8.</B> Click ClassWizard's Member Variables tab. Connect the IDC_FILTERVALUE
+	control to a member variable called m_filterValue. Click the OK button to dismiss
+	ClassWizard.
+	<P>
+</DL>
+
+<P>Now that the menus and dialogs have been created and connected to skeleton functions,
+it's time to add some code to those functions. Double-click OnSortDepartment() in
+ClassView and edit it to look like Listing 22.4.</P>
+<P>
+<H4>Listing 22.4&#160;&#160;CEmployeeView::OnSortDepartment()</H4>
+<PRE>void CEmployeeView::OnSortDepartment()
+{
+        m_pSet-&gt;Close();
+        m_pSet-&gt;m_strSort = &quot;DeptID&quot;;
+        m_pSet-&gt;Open();
+        UpdateData(FALSE);
+</PRE>
+<PRE>}
+</PRE>
+<P>Double-click OnSortID() in ClassView and edit it to look like Listing 22.5. Double-click
+OnSortName() in ClassView and edit it to look like Listing 22.6. Double-click OnSortRate()
+in ClassView and edit it to look like Listing 22.7.</P>
+<P>
+<H4>Listing 22.5&#160;&#160;CEmployeeView::OnSortId()</H4>
+<PRE>void CEmployeeView::OnSortId()
+{
+        m_pSet-&gt;Close();
+        m_pSet-&gt;m_strSort = &quot;EmployeeID&quot;;
+        m_pSet-&gt;Open();
+        UpdateData(FALSE);
+</PRE>
+<PRE>}
+</PRE>
+<H4>Listing 22.6&#160;&#160;CEmployeeView::OnSortName()</H4>
+<PRE>void CEmployeeView::OnSortName()
+{
+        m_pSet-&gt;Close();
+        m_pSet-&gt;m_strSort = &quot;EmployeeName&quot;;
+        m_pSet-&gt;Open();
+        UpdateData(FALSE);
+</PRE>
+<PRE>}
+</PRE>
+<H4>Listing 22.7&#160;&#160;LST14_07.TXT: Code for the OnSortRate() Function</H4>
+<PRE>void CEmployeeView::OnSortRate()
+{
+        m_pSet-&gt;Close();
+        m_pSet-&gt;m_strSort = &quot;EmployeeRate&quot;;
+        m_pSet-&gt;Open();
+        UpdateData(FALSE);
+</PRE>
+<PRE>}
+</PRE>
+<P>At the top of EmployeeView.cpp, add the following line after the other #include
+directives:</P>
+<P>
+<PRE>#include &quot;FilterDlg.h&quot;
+</PRE>
+<P>Edit OnFilterDepartment(), OnFilterID(), OnFilterName(), and OnFilterRate(), using
+Listing 22.8.</P>
+<P>
+<H4>Listing 22.8&#160;&#160;The Four Filtering Functions</H4>
+<PRE>void CEmployeeView::OnFilterDepartment()
+{
+        DoFilter(&quot;DeptID&quot;);
+}
+void CEmployeeView::OnFilterId()
+{
+        DoFilter(&quot;EmployeeID&quot;);
+}
+void CEmployeeView::OnFilterName()
+{
+        DoFilter(&quot;EmployeeName&quot;);
+}
+void CEmployeeView::OnFilterRate()
+{
+        DoFilter(&quot;EmployeeRate&quot;);
+</PRE>
+<PRE>}
+</PRE>
+<P>All four functions call DoFilter(). You will write this function to filter the
+database records represented by the recordset class. Right-click CEmployeeView in
+ClassView and choose Add Member Function. The Function Type is void, and the declaration
+is DoFilter(CString col). It's a protected member function because it's called only
+from other member functions of CEmployeeView. Click OK to close the Add Member Function
+dialog box. Add the code from Listing 22.9.</P>
+<P>
+<H4>Listing 22.9&#160;&#160;CEmployeeView::DoFilter()</H4>
+<PRE>void CEmployeeView::DoFilter(CString col)
+{
+    CFilterDlg dlg;
+    int result = dlg.DoModal();
+    
+    if (result == IDOK)
+    {
+        CString str = col + &quot; = `&quot; + dlg.m_filterValue + &quot;`&quot;;
+        m_pSet-&gt;Close();
+        m_pSet-&gt;m_strFilter = str;
+        m_pSet-&gt;Open();
+        int recCount = m_pSet-&gt;GetRecordCount();
+        
+        if (recCount == 0)
+        {
+            MessageBox(&quot;No matching records.&quot;);
+            m_pSet-&gt;Close();
+            m_pSet-&gt;m_strFilter = &quot;&quot;;
+            m_pSet-&gt;Open();
+        }
+        UpdateData(FALSE);
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>You've now added the capability to sort and filter records in the employee database.
+Build the application and run it. When you do, the application's main window appears,
+looking the same as before. Now, however, you can sort the records on any field,
+by selecting a field from the Sort menu. You can also filter the records by selecting
+a field from the Filter menu and then typing the filter string into the Filter dialog
+box that appears. You can tell how the records are sorted or filtered by moving through
+them one at a time. Try sorting by department or rate, for example. Then try filtering
+on one of the departments you saw scroll by.</P>
+<P>
+<H3><A NAME="Heading15"></A>Examining the OnSortDept() Function</H3>
+<P>All the sorting functions have the same structure. They close the recordset, set
+its m_strSort member variable, open it again, and then call UpdateData() to refresh
+the view with the values from the newly sorted recordset. You don't see any calls
+to a member function with Sort in its name. Then when does the sort happen? When
+the recordset is reopened.</P>
+<P>A CRecordset object (or any object of a class derived from CRecordset, such as
+this program's CEmployeeSet object) uses a special string, called m_strSort, to determine
+how the records should be sorted. When the recordset is being created, the object
+checks this string and sorts the records accordingly.</P>
+<P>
+<H3><A NAME="Heading16"></A>Examining the DoFilter() Function</H3>
+<P>Whenever the user selects a command from the Filter menu, the framework calls
+the appropriate member function, either OnFilterDept(), OnFilterID(), OnFilterName(),
+or OnFilterRate(). Each of these functions does nothing more than call the local
+member function DoFilter() with a string representing the field on which to filter.</P>
+<P>DoFilter() displays the same dialog box, no matter which filter menu item was
+chosen, by creating an instance of the dialog box class and calling its DoModal()
+function.</P>
+<P>If result doesn't equal IDOK, the user must have clicked Cancel: The entire if
+statement is skipped, and the DoFilter() function does nothing but return.</P>
+<P>Inside the if statement, the function first creates the string that will be used
+to filter the database. Just as you set a string to sort the database, so, too, do
+you set a string to filter the database. In this case, the string is called m_strFilter.
+The string you use to filter the database must be in a form like this:</P>
+<P>
+<PRE><I>ColumnID</I> = <I>`ColumnValue'</I>
+</PRE>
+<P>The column ID was provided to DoFilter() as a CString parameter, and the value
+was provided by the user. If, for example, the user chooses to filter by department
+and types <B>hardware</B> in the filter value box, DoFilter() would set str to DeptID
+= `hardware'.</P>
+<P>With the string constructed, the program is ready to filter the database. As with
+sorting, the recordset must first be closed; then DoFilter() sets the recordset's
+filter string and reopens the recordset.</P>
+<P>What happens when the given filter results in no records being selected? Good
+question. The DoFilter() function handles this by obtaining the number of records
+in the new recordset and comparing them to zero. If the recordset is empty, the program
+displays a message box telling the user of the problem. Then the program closes the
+recordset, resets the filter string to an empty string, and reopens the recordset.
+This restores the recordset to include all the records in the Employees table.</P>
+<P>Finally, whether the filter resulted in a subset of records or the recordset had
+to be restored, the program must redisplay the data--by calling UpdateData(), as
+always.</P>
+<P>
+<H2><A NAME="Heading17"></A>Choosing Between ODBC and DAO</H2>
+<P>In the preceding section, you read an introduction to Visual C++'s ODBC classes
+and how they're used in an AppWizard-generated application. Visual C++ also features
+a complete set of DAO classes that you can use to create database applications. DAO
+is, in many ways, almost a superset of the ODBC classes, containing most of the functionality
+of the ODBC classes and adding a great deal of its own. Unfortunately, although DAO
+can read ODBC data sources for which ODBC drivers are available, it's not particularly
+efficient at the task. For this reason, the DAO classes are best suited for programming
+applications that manipulate Microsoft's .mdb database files, which are created by
+Microsoft Access. Other file formats that DAO can read directly are those created
+by Fox Pro and Excel. If you are writing an application that uses an Access database
+and always will, you might want to use DAO for its extra functionality. If, as is
+more likely, your application uses another database format now or will move to another
+format in the future, use ODBC instead.</P>
+<P>The DAO classes, which use the Microsoft Jet Database Engine, are so much like
+the ODBC classes that you can often convert an ODBC program to DAO simply by changing
+the classnames in the program: CDatabase becomes CDaoDatabase, CRecordset becomes
+CDaoRecordset, and CRecordView becomes CDaoRecordView. One big difference between
+ODBC and DAO, however, is the way in which the system implements the libraries. ODBC
+is implemented as a set of DLLs, whereas DAO is implemented as COM objects. Using
+COM objects makes DAO a bit more up to date, at least as far as architecture goes,
+than ODBC.</P>
+<P>Although DAO is implemented as COM objects, you don't have to worry about directly
+dealing with those objects. The MFC DAO classes handle all the details for you, providing
+data and function members that interact with the COM objects. The CDaoWorkspace class
+provides more direct access to the DAO database-engine object through static member
+functions. Although MFC handles the workspace for you, you can access its member
+functions and data members to explicitly initialize the database connection.</P>
+<P>Another difference is that the DAO classes feature a more powerful set of methods
+that you can use to manipulate a database. These more powerful member functions enable
+you to perform sophisticated database manipulations without having to write a lot
+of complicated C++ code or SQL statements.</P>
+<P>In summary, ODBC and DAO similarities are the following:</P>
+
+<UL>
+	<LI>ODBC and DAO both can manipulate ODBC data sources. However, DAO is less efficient
+	at this task because it's best used with .mdb database files.
+	<P>
+	<LI>AppWizard can create a basic database application based on either the ODBC or
+	DAO classes. Which type of application you want to create depends, at least in some
+	part, on the type of databases with which you will be working.
+	<P>
+	<LI>ODBC and DAO both use objects of an MFC database class to provide a connection
+	to the database being accessed. In ODBC, this database class is called CDatabase,
+	whereas in DAO, the class is called CDaoDatabase. Although these classes have different
+	names, the DAO database class contains some members similar to those found in the
+	ODBC class.
+	<P>
+	<LI>ODBC and DAO both use objects of a recordset class to hold the currently selected
+	records from the database. In ODBC, this recordset class is called CRecordset, whereas
+	in DAO, the class is called CDaoRecordset. Although these classes have different
+	names, the DAO recordset class contains not only almost the same members as the ODBC
+	class but also a large set of additional member functions.
+	<P>
+	<LI>ODBC and DAO use similar procedures for viewing the contents of a data source.
+	That is, in both cases, the application must create a database object, create a recordset
+	object, and then call member functions of the appropriate classes to manipulate the
+	database.
+</UL>
+
+<P>Some differences between ODBC and DAO include the following:</P>
+
+<UL>
+	<LI>Although both ODBC and DAO MFC classes are much alike (very much, in some cases),
+	some similar methods have different names. In addition, the DAO classes feature many
+	member functions not included in the ODBC classes.
+	<P>
+	<LI>ODBC uses macros and enumerations to define options that can be used when opening
+	recordsets. DAO, on the other hand, defines constants for this purpose.
+	<P>
+	<LI>Under ODBC, snapshot recordsets are the default, whereas under DAO, dynamic recordsets
+	are the default.
+	<P>
+	<LI>The many available ODBC drivers make ODBC useful for many different database
+	file formats, whereas DAO is best suited to applications that need to access only
+	.mdb files.
+	<P>
+	<LI>ODBC is implemented as a set of DLLs, whereas DAO is implemented as COM objects.
+	<P>
+	<LI>Under ODBC, an object of the CDatabase class transacts directly with the data
+	source. Under DAO, a CDaoWorkspace object sits between the CDaoRecordset and CDaoDatabase
+	objects, thus enabling the workspace to transact with multiple database objects.
+</UL>
+
+<H2><A NAME="Heading18"></A>OLE DB</H2>
+<P><I>OLE DB</I> is a collection of OLE (COM) interfaces that simplify access to
+data stored in nondatabase applications such as email mailboxes or flat files. An
+application using OLE DB can integrate information from DBMS systems such as Oracle,
+SQL Server, or Access with information from nondatabase systems, using the power
+of OLE (COM).</P>
+<P>OLE DB applications are either <I>consumers</I> or <I>providers</I>. A provider
+knows the format for a specific kind of file (such as an ODBC data source or a proprietary
+format) and provides access to those files or data sources to other applications.
+A consumer wants to access a database. For example, you might choose to rewrite the
+Employees example of this chapter as an OLE DB consumer application.</P>
+<P>You will receive some help from AppWizard if you choose to go this route. On Step
+2, when you select your data source, one of the choices is an OLE DB data source.
+Your application will be a little more complex to write than the ODBC example presented
+here, but you will be able to manipulate the data in a way very similar to the methods
+just covered. For example, the MFC class COleDBRecordView is the OLE DB equivalent
+of CRecordView.</P>
+<P>A full treatment of OLE DB is outside the scope of this chapter. You need to be
+comfortable with OLE interfaces and with templates in order to use this powerful
+tool. An OLE DB Programmer's Reference is in the Visual C++ online documentation.
+When you are familiar with OLE and ActiveX concepts and have used templates, that's
+a great place to start.&#160;&#160;l</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch21/ch21.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch23/ch23.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

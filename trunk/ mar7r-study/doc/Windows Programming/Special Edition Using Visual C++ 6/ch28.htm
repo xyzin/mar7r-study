@@ -1,0 +1,838 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 28 -- Future Explorations</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch27/ch27.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../apa/apa.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 28 -</H1>
+</CENTER>
+<CENTER>
+<H1>Future Explorations</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Creating Console Applications</A>
+	<UL>
+		<LI><A HREF="#Heading2">Creating a Console Executable</A>
+		<LI><A HREF="#Heading3">Writing an Object-Oriented Console Application</A>
+		<LI><A HREF="#Heading4">Scaffolding Discrete Algorithms</A>
+	</UL>
+	<LI><A HREF="#Heading5">Creating and Using a 32-Bit Dynamic Link Library</A>
+	<UL>
+		<LI><A HREF="#Heading6">Making a 32-Bit DLL</A>
+		<LI><A HREF="#Heading7">Using 32-Bit DLLs</A>
+	</UL>
+	<LI><A HREF="#Heading8">Sending Messages and Commands</A>
+	<LI><A HREF="#Heading9">Considering International Software Development Issues</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>There are a number of topics that have not been covered elsewhere in this book,
+but that are well known to experienced Visual C++ programmers. They are best explored
+after you have experience with Developer Studio, MFC, and C++ programming. This chapter
+has just enough to show you how interesting these topics are, and to encourage you
+to explore them yourself in the months and years to come.</P>
+<P>
+<H2><A NAME="Heading1"></A>Creating Console Applications</H2>
+<P>A console application looks very much like a DOS application, though it runs in
+a resizable window. It has a strictly character-based interface with cursor keys
+rather than mouse movement. You use the Console API and character-based I/O functions
+such as printf() and scanf() to interact with the user.</P>
+<P>
+<H3><A NAME="Heading2"></A>Creating a Console Executable</H3>
+<P>A console application is executed from the DOS command line or by choosing Start,
+Run and typing the full name (including the path) of the application. Console applications
+are probably still among the easiest programs to create, and this version of the
+compiler supports them directly.</P>
+<P>Let's walk together through the few steps necessary to create a basic console
+application, and then we'll explore some beneficial uses of creating these applications.
+The first console application we'll create is a spin on the classic &quot;Hello,
+World!&quot; that Kernighan and Ritchie (the creators of C++'s ancestor C) created
+in the 1970s.</P>
+<P>Open the Microsoft Developer Studio and follow these steps to create a console
+application:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>In the Microsoft Developer Studio, select File, New.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>In the New dialog box, click the Projects tab to bring up the now familiar
+	New project dialog box. (If it isn't familiar, go back to Chapter 1, &quot;Building
+	Your First Windows Application.&quot;)
+	<P>
+	<DT></DT>
+	<DD><B>3.</B> Name the project HelloWorld, set an appropriate folder for the project,
+	and choose Win32 Console Application from the list on the left.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Click OK.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>AppWizard asks whether you want to create An Empty Project, A Simple
+	Application, A &quot;Hello World&quot; Application, or An Application that uses MFC.
+	Select An Empty Project so that you can create our slightly simpler HelloWorld by
+	yourself.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Click Finish.
+	<P>
+</DL>
+
+<P>The project is created immediately but has no file added to it. You create source
+and header files and add them to the project. This sample will all fit in one file.
+Follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Select File, New from the File menu and click the File tab.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Leave the Add to Project box selected; the new file will be added to
+	the project.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Choose C++ Source File from the box on the left.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Enter <B>HelloWorld</B> as the filename--the extension .cpp will be
+	added automatically.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>The New dialog box should resemble Figure 28.1. Click OK.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('28fig01.gif')"><B>FIG. 28.1</B></A><B> </B><I>Create
+a C++ source file for your console application.</I></P>
+<P>A blank text file is created and named for you and added to the project, all in
+one step. Add the code in Listing 28.1 to the new file.</P>
+<P>
+<H4>Listing 28.1&#160;&#160;HelloWorld.cpp</H4>
+<PRE>#include &lt;iostream.h&gt;
+int main()
+{
+     cout &lt;&lt; &quot;Hello from the console!&quot;&lt;&lt; endl;
+     return 0;
+</PRE>
+<PRE>}
+</PRE>
+<P>Choose Build, Execute to compile, link, and execute the program. (A dialog will
+ask you to confirm that you want to build the project before executing.) You should
+see a DOS box appear that resembles Figure 28.2. The line Press any key to continue
+is generated by the system and gives you a chance to read your output before the
+DOS box disappears.</P>
+<P>
+<H3><A NAME="Heading3"></A>Writing an Object-Oriented Console Application</H3>
+<P>The HelloWorld application is clearly C++ and would not compile in a C compiler,
+which doesn't support stream-based I/O with cout, but it's not object oriented--there's
+not an object in it. Replace the code in HelloWorld.cpp with the lines in Listing
+28.2.</P>
+<P><A HREF="javascript:popUp('28fig02.gif')"><B>FIG. 28.2</B></A><B> </B><I>Your
+application appears to be a DOS program.</I></P>
+<P>
+<H4>Listing 28.2&#160;&#160;HelloWorld.cpp--With Objects</H4>
+<PRE>// HelloWorld.cpp
+//
+#include &lt;iostream.h&gt;
+#include &lt;afx.h&gt;
+class Hello
+{
+private:
+     CString message;
+public:
+     Hello();
+     void display();
+};
+Hello::Hello()
+{
+     message = &quot;Hello from the console!&quot;;
+}
+void Hello::display()
+{
+     cout &lt;&lt; message &lt;&lt; endl;
+}
+int main()
+{
+     Hello hello;
+     hello.display();
+     return 0;
+</PRE>
+<PRE>}
+</PRE>
+<P>Now this is an object-oriented program, and what's more, it uses CString, an MFC
+class. To do so, it must include &lt;afx.h&gt;. If you build the project now, you
+will get linker error messages that refer to _beginthreadex and _endthreadex. By
+default, console applications are single-threaded, but MFC is multithreaded. By including
+afx.h and bringing in MFC, this application is making itself incompatible with the
+single-threaded default. To fix this, choose Project Settings and click the C/C++
+tab. From the drop-down box at the top of the dialog box, choose Code Generation.
+In the drop-down list box labeled Use Run-Time Library, choose Debug Multithreaded.
+(The completed dialog box is shown in Figure 28.3.) Click OK and rebuild the project.</P>
+<P><A HREF="javascript:popUp('28fig03.gif')"><B>FIG. 28.3</B></A><B> </B><I>Make
+your console application multithreaded so that it can use MFC.</I></P>
+<P>The output of this object-oriented program is just like that of the preceding
+program--this is just a sample. But you see that console applications can use MFC,
+be built around objects, and be quite small. They must have a main() function, and
+it is this function that is called by the operating system when you run the application.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>NOTE:</STRONG> Although this application is small, Visual C++ creates a lot
+	of overhead files. The Debug directory occupies about 7.8MB, of which about 1.3MB
+	is HelloWorld.exe. The rest is the MFC libraries--they aren't small.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading4"></A>Scaffolding Discrete Algorithms</H3>
+<P>One important reason to build a console application these days is to <I>scaffold</I>
+small code fragments or single objects. This refers to building a temporary framework
+around the code you want to test. (Some developers call this a <I>test harness</I>.)
+The simplest possible framework is a console application like the one you just built:
+In fact, you'll build a scaffold later in this chapter.</P>
+<P>To scaffold an object or function, you should do the following:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Create a new console application just for the scaffolding process.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Add a main() function to the .CPP file you plan to scaffold.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Include the header file for the object or function to be tested.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Add code to main() that exercises the function or object in a variety
+	of test cases.
+	<P>
+</DL>
+
+<P>Having followed those steps, you can now test the code thoroughly, focusing only
+on the performance characteristics and correctness of this small piece of your large
+project. Scaffolding holds true to the canon of software development that states,
+&quot;Design in the large and program in the small.&quot;</P>
+<P>By applying a scaffold to any algorithm, you are helping to ensure the accuracy
+in the small. Remember there are additional benefits involved, too: By placing the
+scaffold code directly into the module, you are clearly documenting that the code
+has been tested and how to use it. You make it available for further testing, debugging,
+or extending at a later date.</P>
+<P>
+<H2><A NAME="Heading5"></A>Creating and Using a 32-Bit Dynamic Link Library</H2>
+<P>Dynamic link libraries (DLLs) are the backbone of the Windows 95 and Windows NT
+operating systems. Windows 95 uses Kernel32.dll, User32.dll, and Gdi32.dll to perform
+the vast majority of its work, and you can use them as well. The Visual C++ online
+help is a good source of information for these three DLLs.</P>
+<P>A good tool for poking around in Windows applications is the DumpBin utility,
+usually found in \Program Files\Microsoft Visual Studio\VC98\Bin. DumpBin is a command
+line program that shows you the imports and exports of executable files and dynamic
+link libraries. The following listing is an excerpted example of the output produced
+when using DumpBin to examine the executable file for Spy++, one of the utilities
+provided with Visual C++.</P>
+<P>
+<H4>Listing 28.3&#160;&#160;Output from DumpBin</H4>
+<PRE>dumpbin -imports spyxx.exe
+Microsoft (R) COFF Binary File Dumper Version 6.00.8047
+Copyright  Microsoft Corp 1992-1998. All rights reserved.
+Dump of file spyxx.exe
+File Type: EXECUTABLE IMAGE
+  Section contains the following imports:
+    MFC42.DLL
+                44B138 Import Address Table
+                452B8C Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+                      Ordinal   818
+                      Ordinal  4424
+              ... 392 similar lines omitted ...
+    MSVCRT.dll
+                44B7A4 Import Address Table
+                4531F8 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+                  81  __set_app_type
+                  6F  __p__fmode
+                  6A  __p__commode
+                  9D  _adjust_fdiv
+                  83  __setusermatherr
+                 10F  _initterm
+                  58  __getmainargs
+                  8F  _acmdln
+                 249  exit
+                 2B5  sscanf
+                  49  __CxxFrameHandler
+                 298  memmove
+                 1B9  _splitpath
+                 134  _itoa
+                 159  _mbscmp
+                 2C9  strtoul
+                 100  _getmbcp
+                 168  _mbsnbcpy
+                  8E  _access
+                 161  _mbsinc
+                 192  _purecall
+                 2B2  sprintf
+                  A5  _beginthread
+                  C4  _endthread
+                 25E  free
+                 15F  _mbsicmp
+                  B7  _controlfp
+                 291  malloc
+                 158  _mbschr
+                  F1  _ftol
+                 1F3  _wcsupr
+                 2EB  wcsrchr
+                  63  __p___argv
+                  62  __p___argc
+                 2D4  toupper
+                 272  iscntrl
+                 2D0  time
+                  55  __dllonexit
+                 186  _onexit
+                  CA  _except_handler3
+                  2E  ?terminate@@YAXXZ
+                  D3  _exit
+                  48  _XcptFilter
+                 1AA  _setmbcp
+    MSVCIRT.dll
+                44B75C Import Address Table
+                4531B0 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+                 194  ?str@strstreambuf@@QAEPADXZ
+                 11F  ?freeze@strstreambuf@@QAEXH@Z
+                 10F  ?ends@@YAAAVostream@@AAV1@@Z
+                 171  ?seekp@ostream@@QAEAAV1@J@Z
+                  8B  ??6ostream@@QAEAAV0@K@Z
+                  87  ??6ostream@@QAEAAV0@G@Z
+                  50  ??1ostrstream@@UAE@XZ
+                  14  ??0ios@@IAE@XZ
+                  31  ??0ostrstream@@QAE@XZ
+                 1BB  _mtlock
+                 1BC  _mtunlock
+                  47  ??1ios@@UAE@XZ
+                  8A  ??6ostream@@QAEAAV0@J@Z
+                  89  ??6ostream@@QAEAAV0@I@Z
+                  88  ??6ostream@@QAEAAV0@H@Z
+                  85  ??6ostream@@QAEAAV0@E@Z
+                  93  ??6ostream@@QAEAAV0@PBD@Z
+    KERNEL32.dll
+                44B084 Import Address Table
+                452AD8 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+                 246  SetEvent
+                 136  GetProfileStringA
+                 10F  GetModuleFileNameA
+                  32  CreateFileA
+                  19  CloseHandle
+                 2AC  WideCharToMultiByte
+                 1CB  MultiByteToWideChar
+                  93  FindResourceA
+                 272  SizeofResource
+                 168  GlobalAlloc
+                 173  GlobalLock
+                 1AE  LoadResource
+                 1BC  LockResource
+                 17A  GlobalUnlock
+                 16F  GlobalFree
+              ... 29 similar lines omitted ...
+    USER32.dll
+                44B8AC Import Address Table
+                453300 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+                 2A5  wsprintfA
+                 160  GetWindowWord
+                 253  SetWindowLongA
+                 158  GetWindowPlacement
+                 1CF  OffsetRect
+                 189  IsIconic
+                 16E  InflateRect
+                 240  SetRectEmpty
+                  CF  EnumWindows
+                  BC  EnumChildWindows
+                 218  SetActiveWindow
+                  EE  GetClientRect
+              ... 77 similar lines omitted ...
+    GDI32.dll
+                44B024 Import Address Table
+                452A78 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+                 167  Rectangle
+                 121  GetStockObject
+                 17A  SelectObject
+                  3D  CreatePen
+                 19D  SetROP2
+                  30  CreateFontIndirectA
+                  36  CreateHatchBrush
+                  41  CreateRectRgn
+                  72  FrameRgn
+                  1D  CreateBitmap
+                  E8  GetDeviceCaps
+                 137  GetTextMetricsA
+                 130  GetTextExtentPoint32A
+                  3C  CreatePatternBrush
+                 14E  PatBlt
+                 161  PtInRegion
+                  46  CreateSolidBrush
+                  4C  DeleteObject
+                 111  GetObjectA
+                  23  CreateCompatibleDC
+                   D  BitBlt
+                 118  GetPixel
+                  6B  ExtTextOutA
+    ADVAPI32.dll
+                44B000 Import Address Table
+                452A54 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+                 148  RegCreateKeyA
+                 15B  RegOpenKeyA
+                 160  RegQueryInfoKeyA
+                 149  RegCreateKeyExA
+                 170  RegSetValueExA
+                 15C  RegOpenKeyExA
+                 165  RegQueryValueExA
+                 145  RegCloseKey
+  Summary
+       17000 .data
+        A000 .rdata
+       10000 .rsrc
+</PRE>
+<PRE>       4A000 .text
+</PRE>
+<P>As you can see, the utility program Spy++ uses the C Runtime and Windows DLLs
+extensively.</P>
+<P>You can call functions from the Windows DLLs in any of your programs, and more
+importantly, you can write DLLs of your own.</P>
+<P>
+<H3><A NAME="Heading6"></A>Making a 32-Bit DLL</H3>
+<P>There are two kinds of DLLs in Visual C++: Those that use MFC and those that don't.
+Each kind of DLL has its own AppWizard, as you will see shortly.</P>
+<P>If you gather three or four functions into a DLL, your DLL <I>exports</I> those
+functions for other programs to use. Quite often a DLL will also <I>import</I> functions
+from other DLLs to get its work done.</P>
+<P><B>Importing and Exporting Functions&#160;&#160;</B>To designate a symbol as exportable,
+use the following syntax:</P>
+<P>
+<PRE>__declspec(dllexport) data_type int var_name; // for variables
+</PRE>
+<P>or</P>
+<P>
+<PRE>__declspec(ddlexport) return_type func_name( [argument_list ] ); 
+// for functions
+</PRE>
+<P>Importing functions is almost identical: Simply replace the keyword tokens, __declspec(dllexport)
+with __declspec(dllimport). Use an actual function and variable to demonstrate the
+syntax this time:</P>
+<P>
+<PRE>__declspec(dllimport) int referenceCount;
+__declspec(dllimport) void DiskFree( lpStr Drivepath );
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>TIP:</STRONG> Two underscores precede the keyword __declspec. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>By convention, Microsoft uses a header file and a preprocessor macro to make the
+inclusion of DLL declarations much simpler. The technique requires that you make
+a preprocessor token using a unique token--the header filename works easily and requires
+very little in the way of memorization--and define a macro that will replace the
+token with the correct import or export statement. Thus, assuming a header file named
+Diskfree.h, the preprocessor macro in the header file would be as follows.</P>
+<P>
+<H4>Listing 28.4&#160;&#160;Diskfree.h</H4>
+<PRE>// DISKFREE.H - Contains a simpler function for returning the amount of 
+// free disk space.
+#ifndef __DISKFREE_H
+#define __DISKFREE_H
+#ifndef __DISKFREE__
+#define DISKFREELIB __declspec(dllimport)
+#else
+#define DISKFREELIB __declspec(dllexport)
+#endif
+// Use the macro to control an import or export declaration.
+DISKFREELIB unsigned long DiskFree( unsigned int drive ); 
+// (e.g. 0 = A:, 1 = B:, 2 = C:
+</PRE>
+<PRE>#endif
+</PRE>
+<P>By including the header file, you can let the preprocessor decide whether DiskFree
+is being imported or exported. Now you can share the header file for the DLL developer
+and the DLL user, and that means fewer maintenance headaches.</P>
+<P><B>Creating the DiskFree DLL&#160;&#160;</B>The DiskFree utility provides a simple
+way to determine the amount of free disk space for any given drive. The underlying
+functionality is the GetDiskFreeSpace() function found in Kernel32.dll.</P>
+<P>To create a non-MFC DLL, choose File, New, click the Projects tab, select Win32
+Dynamic Link Library from the list on the left, and enter DiskFree for the project
+name. Click OK and the AppWizard dialog box, shown in Figure 28.4, appears. Choose
+An Empty DLL project, and your project is created with no files in it.</P>
+<P>Add a C++ header file called DiskFree.h to the project and type in the code from
+Listing 28.5. Add a C++ source file called DiskFree.cpp and type in the code from
+Listing 28.6.</P>
+<P>
+<H4>Listing 28.5&#160;&#160;DiskFree.h</H4>
+<PRE>#ifndef __DISKFREE_H
+#define __DISKFREE_H
+#ifndef __DISKFREE__
+#define __DISKFREELIB__ __declspec(dllimport)
+#else
+#define __DISKFREELIB__ __declspec(dllexport)
+#endif
+// Returns the amount of free space on drive number (e.g. 0 = A:, 1= B:, 
+// 2 = c:)
+__DISKFREELIB__ unsigned long DiskFree( unsigned int drive );
+</PRE>
+<PRE>#endif
+</PRE>
+<H4>Listing 28.6&#160;&#160; DiskFree.cpp</H4>
+<PRE>#include &lt;afx.h&gt;
+#include &lt;winbase.h&gt;     // Declares kernel32 GetDiskFreeSpace 
+#define __DISKFREE__     // Define the token before including the library
+#include &quot;diskfree.h&quot;
+// Returns the amount of free space on drive number
+// (e.g. 0 = A:, 1= B:, 2 = c:)
+__DISKFREELIB__ unsigned long DiskFree( unsigned int drive )
+{
+     unsigned long bytesPerSector, sectorsPerCluster,
+          freeClusters, totalClusters;
+     char DrivePath[4] = { char( drive + 65 ), `:', `\\', `\0' };
+     if( GetDiskFreeSpace( DrivePath, &amp;sectorsPerCluster,
+          &amp;bytesPerSector, &amp;freeClusters, &amp;totalClusters ))
+     {
+          return sectorsPerCluster * bytesPerSector * freeClusters;
+     }
+     else
+     {
+          return 0;
+     }
+</PRE>
+<PRE>}
+</PRE>
+<P>Now you can build the DLL. In the next section, you will see how to use 32-bit
+DLLs in general and how Windows finds DLLs on your system.</P>
+<P><A HREF="javascript:popUp('28fig04.gif')"><B>FIG. 28.4</B></A><B> </B><I>Creating
+a non-MFC DLL project is a one-step process.</I></P>
+<P>The most common use of a DLL is to provide extended, reusable functionality and
+let Windows implicitly load the DLL. Topics that aren't discussed in this book, which
+you might want to explore for yourself, include the following:</P>
+
+<UL>
+	<LI>Dynamic versus static linking of MFC
+	<P>
+	<LI>Implicit versus explicit DLL loading, which requires the use of LoadLibrary and
+	FreeLibrary
+	<P>
+	<LI>Multithreading DLLs
+	<P>
+	<LI>Sharing data across DLL boundaries
+	<P>
+	<LI>Calling conventions for DLLs that will be used by other languages (__stdcall,
+	WINAPI, ...)
+</UL>
+
+<P>In this chapter you are going to use a default compile of DiskFree, using an implicit
+DllMain (the compiler added one) and an implicit loading of the DLL, allowing Windows
+to manage loading and unloading the library.</P>
+<P>
+<H3><A NAME="Heading7"></A>Using 32-Bit DLLs</H3>
+<P>Many DLLs are loaded implicitly, and their loading and unloading are managed by
+Windows. Libraries loaded in this fashion are searched for like executables: First
+the directory of the application loading the DLL is searched, followed by the current
+directory, the Windows\System directory for Windows 95 or 98, Winnt\System or Winnt\System32
+for NT, the Windows directory, and finally each directory specified in the path.</P>
+<P>It is a common practice to place a DLL in the Windows or Windows\System directory
+after the application is shipped, but in the meantime, you can use the development
+directory of the executable for temporary storage. One thing to safeguard against
+is that you don't end up with multiple versions of the DLL in each of the Windows,
+Windows\System, or project directories.</P>
+<P><B>Using a DLL&#160;&#160;</B>Implicitly loading and using a DLL is about as simple
+as using any other function. This is especially true if you created the header file
+as described in the &quot;Creating the DiskFree DLL&quot; section. When you compile
+your DLL, Microsoft Visual C++ creates a .LIB file. (So, DISKFREE.DLL has a DISKFREE.LIB
+created by the compiler.) The library (.LIB) file is used to resolve the load address
+of the DLL and specify the full pathname of the dynamic link library, and the header
+file provides the declaration.</P>
+<P>All you have to do is include the header in the file using the DLL functionality
+and add the .LIB name to the Project Settings dialog box, on the Link tab (see Figure
+28.5), in the Object/Library Modules edit field.</P>
+<P>To test the DiskFree DLL, create a console application called TestDiskFree as
+An Empty Project and add a C++ source file called TestDiskFree.cpp. Add the code
+from Listing 28.7 to this file. Copy DiskFree.h to this folder and add it to the
+project by choosing Project, Add To Project, Files, and selecting DiskFree.h. Copy
+DiskFree.dll and DiskFree.Lib to the TestDiskFree folder also. (You'll find them
+in DiskFree\Debug.) Change the project settings as just described to include the
+DiskFree.Lib file, and build the project.</P>
+<P><A HREF="javascript:popUp('28fig05.gif')"><B>FIG. 28.5</B></A><B> </B><I>Add your
+LIB file to the project settings.</I></P>
+<P>
+<H4>Listing 28.7&#160;&#160;TestDiskFree.cpp</H4>
+<PRE>#include &lt;iostream.h&gt;
+#include &quot;diskfree.h&quot;
+#define CodeTrace(arg) \
+     cout &lt;&lt; #arg &lt;&lt; endl;\
+     arg
+int main()
+{
+     CodeTrace( cout &lt;&lt; DiskFree(2) &lt;&lt; endl );
+     return 0;
+</PRE>
+<PRE>}
+</PRE>
+<P>This code brings in the DLL by including DiskFree.h and then uses it. The CodeTrace
+macro simply prints out a line of code before executing it. All this application
+does is call the DiskFree() function to ask how much space is free on drive 2. Drive
+0 is A:, drive 1 is B:, and drive 2 is C:. If you build and execute the program,
+you should see output like Figure 28.6.</P>
+<P><A HREF="javascript:popUp('28fig06.gif')"><B>FIG. 28.6</B></A><B> </B><I>Your
+little application calls the DLL.</I></P>
+<P>According to TestDiskFree, the C: drive on the machine used for these samples
+has more than 200MB of free disk space. This number is correct.</P>
+<P>Now you know how to write real functions in a DLL and use them yourself or make
+them available for others.</P>
+<P>
+<H2><A NAME="Heading8"></A>Sending Messages and Commands</H2>
+<P>As discussed in Chapter 3, &quot;Messages and Commands,&quot; messages are the
+heart of Windows. Everything that happens in a Windows application happens because
+a message showed up to make it happen. When you move your mouse and click a button,
+a huge number of messages are generated, including WM_MOUSEMOVE for each movement
+of the mouse, WM_LBUTTONDOWN when the button goes down, WM_LBUTTONCLICK when the
+button is released, and higher-level, more abstract messages such as the WM_COMMAND
+message with the button's resource ID as one of its parameters. You can ignore the
+lower-level messages if you want; many programmers do.</P>
+<P>What you may not know is that <I>you</I> can generate messages, too. There are
+two functions that generate messages: CWnd::SendMessage() and CWnd::PostMessage().
+Each of these gets a message to an object that inherits from CWnd. An object that
+wants to send a message to a window using one of these functions must have a pointer
+to the window, and the window must be prepared to catch the message. A very common
+approach to this situation is to have a member variable in the sending object that
+stores a pointer to the window that will receive the message and another that stores
+the message to be sent:</P>
+<P>
+<PRE>CWnd* m_messagewindow;
+UINT m_message;
+</PRE>
+<P>Messages are represented by unsigned integers. They appear to have names only
+because names like WM_MOUSEMOVE are connected to integers with #define statements.</P>
+<P>The sending class has a member function to set these member variables, typically
+very short:</P>
+<P>
+<PRE>void Sender::SetReceiveTarget(CWnd *window, UINT message)
+{
+    m_messagewindow = window;
+    m_message = message;
+}
+</PRE>
+<P>When the sending class needs to get a message to the window, it calls SendMessage():</P>
+<P>
+<PRE>    m_messagewindow-&gt;SendMessage(m_message, wparam, lparam);
+</PRE>
+<P>or PostMessage():</P>
+<P>
+<PRE>    m_messagewindow-&gt;PostMessage(m_message, wparam, lparam);
+</PRE>
+<P>The difference between sending and posting a message is that SendMessage() does
+not return until the message has been handled by the window that received it, but
+PostMessage() just adds the message to the message queue and returns right away.
+If, for example, you build an object, pass that object's address as the lparam, and
+then delete the object, you should choose SendMessage() because you can't delete
+the object until you are sure that the message- handling code has finished with it.
+If you aren't passing pointers, you can probably use PostMessage() and move on as
+soon as the message has been added to the queue.</P>
+<P>The meaning of the wparam and lparam values depends on the message you are sending.
+If it is a defined system message like WM_MOUSEMOVE, you can read the online documentation
+to learn what the parameters are. If, as is more likely, you are sending a message
+that you have invented, the meaning of the parameters is entirely up to you. You
+are the one who is inventing this message and writing the code to handle it when
+it arrives at the other window.</P>
+<P>To invent a message, add a defining statement to the header file of the class
+that will catch it:</P>
+<P>
+<PRE>#define WM_HELLO WM_USER + 300
+</PRE>
+<P>WM_USER is an unsigned integer that marks the start of the range of message numbers
+available for user-defined messages. In this release of MFC, its value is 0x4000,
+though you should not depend on that. User-defined messages have message numbers
+between WM_USER and 0x7FFF.</P>
+<P>Then add a line to the message map, in both the header and source file, outside
+the ClassWizard comments. The source file message map might look like this:</P>
+<P>
+<PRE>BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWnd)
+     //{{AFX_MSG_MAP(CMainFrame)
+          // NOTE - the ClassWizard will add and remove mapping macros here.
+          //    DO NOT EDIT what you see in these blocks of generated code!
+     //}}AFX_MSG_MAP
+     ON_MESSAGE(WM_HELLO, OnHello)
+END_MESSAGE_MAP()
+</PRE>
+<P>The entry added outside the //AFX_MSG_MAP comments catches the WM_HELLO message
+and arranges for the OnHello() function to be called. The header file message map
+might look like this:</P>
+<P>
+<PRE>// Generated message map functions
+protected:
+     //{{AFX_MSG(CMainFrame)
+     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+          // NOTE - the ClassWizard will add and remove member functions here.
+          //    DO NOT EDIT what you see in these blocks of generated code!
+     //}}AFX_MSG
+     afx_msg LRESULT OnHello(WPARAM wParam, LPARAM lParam);
+     DECLARE_MESSAGE_MAP()
+</PRE>
+<P>Then you add an implementation of OnHello() to the source file to complete the
+process.</P>
+<P>
+<H2><A NAME="Heading9"></A>Considering International Software Development Issues</H2>
+<P>International boundaries are shrinking at incredible rates. As the Internet and
+other methods of cheap international software distribution continue to grow, so will
+the demand for components built by vendors worldwide. Even in-house software development
+will less frequently be able to ignore international markets. The rise in popularity
+of the Internet has expanded the reach of many developers into countries where languages
+other than English and character sets other than ASCII predominate. This means your
+applications should be able to communicate with users in languages other than English,
+and in characters sets other than the typical Western character set.</P>
+<P>Microcomputers were invented in the United States, which explains why we have
+8-bit character-based operating systems. There are only 26 letters in our alphabet
+and 10 digits, which leaves plenty of room (about 220 characters worth) for punctuation
+and other miscellaneous characters. But countries like Japan and China require a
+character set in the thousands.</P>
+<P>Unicode is one way to tackle the character set problem. The Unicode standard was
+developed and is supported by a consortium of some of the biggest players in the
+international computing markets. Among these are Adobe, Aldus, Apple, Borland, Digital,
+IBM, Lotus, Microsoft, Novell, and Xerox. (For more information, check <B>www.unicode.org</B>.)</P>
+<P>Unicode uses two bytes for each character, whereas ASCII uses only one. One byte
+(8 bits) can represent 2<SUP>8</SUP> or 256 characters. Two bytes (16 bits) can represent
+65,536 characters. This is enough not just for one language, but for all the character
+sets in general use. For example, the Japanese character set, one of the largest,
+needs about 5,000 characters. Most require far less. The Unicode specification sets
+aside different ranges for different character sets and can cover almost every language
+on Earth in one universal code--a Unicode.</P>
+<P>MFC has full Unicode support, with Unicode versions of almost every function.
+For example, consider the function CWnd::SetWindowText(). It takes a string and sets
+the title of the window, or the caption of a button, to that string. What kind of
+string it takes depends on whether you have Unicode support turned on in your application.
+In reality, two different functions set the window text one--a Unicode version and
+a non-Unicode version--and in WINUSER.H, the block of code shown in Listing 28.8
+changes the function name that you call to SetWindowTextA if you are not using Unicode
+or to SetWindowTextW if you are.</P>
+<P>
+<H4>Listing 28.8&#160;&#160;Microsoft's WINUSER.H Implementing Unicode<BR>
+Support</H4>
+<PRE>WINUSERAPI BOOL WINAPI SetWindowTextA(HWND hWnd, LPCSTR lpString);
+WINUSERAPI BOOL WINAPI SetWindowTextW(HWND hWnd, LPCWSTR lpString);
+#ifdef UNICODE
+#define SetWindowText  SetWindowTextW
+#else
+#define SetWindowText  SetWindowTextA
+</PRE>
+<PRE>#endif // !UNICODE
+</PRE>
+<P>The difference between these two functions is the type of the second parameter:
+LPCSTR for the A version and LPCWSTR for the W (Wide) version.</P>
+<P>If you are using Unicode, whenever you pass a literal string (such as &quot;Hello&quot;)
+to a function, wrap it in the _T macro, like this:</P>
+<P>
+<PRE>pWnd-&gt;SetWindowText(_T(&quot;Hello&quot;));
+</PRE>
+<P>If you can deal with the annoyance of wrapping all text strings in _T macros,
+just like that, your application is Unicode aware. When you prepare your Greek or
+Japanese version of the application, life will be much simpler.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>NOTE:</STRONG> Windows 95 was built on earlier versions of Windows, so it
+	was not built using Unicode. This means that if you use Unicode in your Windows 95
+	programs, you are going to suffer performance penalties because the Windows 95 kernel
+	will have to convert Unicode strings back to ordinary strings. Windows NT was designed
+	at Microsoft from scratch, so it is completely compatible with Unicode.</P>
+	<P>If you are developing for several platforms with C++ and using Unicode, your Win95
+	version may seem sluggish in comparison to the Windows NT version. 
+<HR>
+</P>
+
+</BLOCKQUOTE>
+
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch27/ch27.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../apa/apa.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A><BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

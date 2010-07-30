@@ -1,0 +1,891 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 3 -- Messages and Commands</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch02/ch02.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch04/ch04.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 3 -</H1>
+
+<H1>Messages and Commands</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Understanding Message Routing</A>
+	<LI><A HREF="#Heading2">Understanding Message Loops</A>
+	<LI><A HREF="#Heading3">Reading Message Maps</A>
+	<UL>
+		<LI><A HREF="#Heading4">Message Map Macros</A>
+		<LI><A HREF="#Heading5">How Message Maps Work</A>
+		<LI><A HREF="#Heading6">Messages Caught by MFC Code</A>
+	</UL>
+	<LI><A HREF="#Heading7">Learning How ClassWizard Helps You Catch Messages</A>
+	<UL>
+		<LI><A HREF="#Heading8">The ClassWizard Tabbed Dialog Box</A>
+		<LI><A HREF="#Heading9">The Add Windows Message Handler Dialog Box</A>
+		<LI><A HREF="#Heading10">Which Class Should Catch the Message?</A>
+	</UL>
+	<LI><A HREF="#Heading11">Recognizing Messages</A>
+	<LI><A HREF="#Heading12">Understanding Commands</A>
+	<LI><A HREF="#Heading13">Understanding Command Updates</A>
+	<LI><A HREF="#Heading14">Learning How ClassWizard Helps You Catch Commands and Command
+	Updates</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Understanding Message Routing</H2>
+<P>If there is one thing that sets Windows programming apart from other kinds of
+programming, it is messages. Most DOS programs, for example, relied on watching (sometimes
+called <I>polling</I>) possible sources of input like the keyboard or the mouse to
+await input from them. A program that wasn't polling the mouse would not react to
+mouse input. In contrast, everything that happens in a Windows program is mediated
+by messages. A message is a way for the operating system to tell an application that
+something has happened--for example, the user has typed, clicked, or moved the mouse,
+or the printer has become available. A window (and every screen element is a window)
+can also send a message to another window, and typically most windows react to messages
+by passing a slightly different message along to another window. MFC has made it
+much easier to deal with messages, but you must understand what is going on beneath
+the surface.</P>
+<P>Messages are all referred to by their names, though the operating system uses
+integers to refer to them. An enormous list of #define statements connects names
+to numbers and lets Windows programmers talk about WM_PAINT or WM_SIZE or whatever
+message they need to talk about. (The WM stands for Window Message.) An excerpt from
+that list is shown in Listing 3.1.</P>
+<P>
+<H4>Listing 3.1&#160;&#160;Excerpt from winuser.h Defining Message Names</H4>
+<PRE>#define WM_SETFOCUS                     0x0007
+#define WM_KILLFOCUS                    0x0008
+#define WM_ENABLE                       0x000A
+#define WM_SETREDRAW                    0x000B
+#define WM_SETTEXT                      0x000C
+#define WM_GETTEXT                      0x000D
+#define WM_GETTEXTLENGTH                0x000E
+#define WM_PAINT                        0x000F
+#define WM_CLOSE                        0x0010
+#define WM_QUERYENDSESSION              0x0011
+#define WM_QUIT                         0x0012
+#define WM_QUERYOPEN                    0x0013
+#define WM_ERASEBKGND                   0x0014
+#define WM_SYSCOLORCHANGE               0x0015
+</PRE>
+<PRE>#define WM_ENDSESSION                   0x0016
+</PRE>
+<P>As well as a name, a message knows what window it is for and can have up to two
+parameters. (Often, several different values are packed into these parameters, but
+that's another story.)</P>
+<P>Different messages are handled by different parts of the operating system or your
+application. For example, when the user moves the mouse over a window, the window
+receives a WM_MOUSEMOVE message, which it almost certainly passes to the operating
+system to deal with. The operating system redraws the mouse cursor at the new location.
+When the left button is clicked over a button, the button (which is a window) receives
+a WM_LBUTTONDOWN message and handles it, often generating another message to the
+window that contains the button, saying, in effect, &quot;I was clicked.&quot;</P>
+<P>MFC has enabled many programmers to completely ignore low-level messages such
+as WM_MOUSEMOVE and WM_LBUTTONDOWN. Instead, programmers deal only with higher level
+messages that mean things like &quot;The third item in this list box has been selected&quot;
+or &quot;The Submit button has been clicked.&quot; All these kinds of messages move
+around in your code and the operating system code in the same way as the lower level
+messages. The only difference is what piece of code chooses to handle them. MFC makes
+it much simpler to announce, at the individual class's level, which messages each
+class can handle. The old C way, which you will see in the next section, made those
+announcements at a higher level and interfered with the object-oriented approach
+to Windows programming, which involves hiding implementation details as much as possible
+inside objects.</P>
+<P>
+<H2><A NAME="Heading2"></A>Understanding Message Loops</H2>
+<P>The heart of any Windows program is the message loop, typically contained in a
+WinMain() routine. The WinMain() routine is, like the main() in DOS or UNIX, the
+function called by the operating system when you run the program. You won't write
+any WinMain() routines because it is now hidden away in the code that AppWizard generates
+for you. Still, there is a WinMain(), just as there is in Windows C programs. Listing
+3.2 shows a typical WinMain().</P>
+<P>
+<H4>Listing 3.2&#160;&#160;Typical WinMain() Routine</H4>
+<PRE>int APIENTRY WinMain(HINSTANCE hInstance,
+               HINSTANCE hPrevInstance,
+               LPSTR lpCmdLine,
+               int nCmdShow)
+{
+     MSG msg;
+     if (! InitApplication (hInstance))
+      return (FALSE);
+     if (! InitInstance (hInstance, nCmdShow))
+      return (FALSE);
+     while (GetMessage (&amp;msg, NULL, 0, 0)){
+      TranslateMessage (&amp;msg);
+      DispatchMessage (&amp;msg);
+     }
+     return (msg.wParam);
+</PRE>
+<PRE>}
+</PRE>
+<P>In a Windows C program like this, InitApplication() typically calls RegisterWindow(),
+and InitInstance() typically calls CreateWindow(). (More details on this are in Appendix
+B, &quot;Windows Programming Review and a Look Inside Cwnd.&quot;) Then comes the
+message loop, the while loop that calls GetMessage(). The API function GetMessage()
+fills msg with a message destined for this application and almost always returns
+TRUE, so this loop runs over and over until the program is finished. The only thing
+that makes GetMessage() return FALSE is if the message it receives is WM_QUIT.</P>
+<P>TranslateMessage() is an API function that streamlines dealing with keyboard messages.
+Most of the time, you don't need to know that &quot;the A key just went down&quot;
+or &quot;the A key just went up,&quot; and so on. It's enough to know that &quot;the
+user pressed A.&quot; TranslateMessage() deals with that. It catches the WM_KEYDOWN
+and WM_KEYUP messages and usually sends a WM_CHAR message in their place. Of course,
+with MFC, most of the time you don't care that the user pressed A. The user types
+into an edit box or similar control, and you can retrieve the entire string out of
+it later, when the user has clicked OK. Don't worry too much about TranslateMessage().</P>
+<P>The API function DispatchMessage() calls the WndProc for the window that the message
+is headed for. The WndProc() function for a Windows C program is a huge switch statement
+with one case for each message the programmer planned to catch, such as the one in
+Listing 3.3.</P>
+<P>
+<H4>Listing 3.3&#160;&#160;Typical WndProc() Routine</H4>
+<PRE>LONG APIENTRY MainWndProc (HWND hWnd, // window handle
+                     UINT message, // type of message
+                     UINT wParam, // additional information
+                     LONG lParam) // additional information
+{
+      switch (message) {
+      case WM_MOUSEMOVE:
+          //handle mouse movement
+      break;
+      case WM_LBUTTONDOWN:
+          //handle left click
+      break;
+      case WM_RBUTTONDOWN:
+          //handle right click
+      break;
+      case WM_PAINT:
+          //repaint the window
+      break;
+      case WM_DESTROY: // message: window being destroyed
+      PostQuitMessage (0);
+      break;
+      default:
+      return (DefWindowProc (hWnd, message, wParam, lParam));
+     }
+     return (0);
+</PRE>
+<PRE>}
+</PRE>
+<P>As you can imagine, these WndProcs become very long in a hurry. Program maintenance
+can be a nightmare. MFC solves this problem by keeping information about message
+processing close to the functions that handle the messages, freeing you from maintaining
+a giant switch statement that is all in one place. Read on to see how it's done.</P>
+<P>
+<H2><A NAME="Heading3"></A>Reading Message Maps</H2>
+<P>Message maps are part of the MFC approach to Windows programming. Instead of writing
+a WinMain() function that sends messages to your WindProc and then writing a WindProc
+that checks which kind of message this is and then calls another of your functions,
+you just write the function that will handle the message, and you add a message map
+to your class that says, in effect, &quot;I will handle this sort of message.&quot;
+The framework handles whatever routing is required to send that message to you.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you've worked in Microsoft Visual Basic, you should be familiar
+	with event procedures, which handle specific events such as a mouse click. The message-handling
+	functions you will write in C++ are equivalent to event procedures. The message map
+	is the way that events are connected to their handlers.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Message maps come in two parts: one in the .h file for a class and one in the
+corresponding .cpp. Typically, they are generated by wizards, although in some circumstances
+you will add entries yourself. Listing 3.4 shows the message map from the header
+file of one of the classes in a simple application called ShowString, presented in
+Chapter 8, &quot;Building a Complete Application: ShowString.&quot;</P>
+<P>
+<H4>Listing 3.4&#160;&#160;Message Map from showstring.h</H4>
+<PRE>//{{AFX_MSG(CShowStringApp)
+     afx_msg void OnAppAbout();
+          // NOTE - the ClassWizard will add and remove member functions here.
+          // DO NOT EDIT what you see in these blocks of generated code !
+     //}}AFX_MSG
+</PRE>
+<PRE>     DECLARE_MESSAGE_MAP()
+</PRE>
+<P>This declares a function called OnAppAbout(). The specially formatted comments
+around the declarations help ClassWizard keep track of which messages are caught
+by each class. DECLARE_MESSAGE_MAP() is a macro, expanded by the C++ compiler's preprocessor,
+that declares some variables and functions to set up some of this magic message catching.</P>
+<P>The message map in the source file, as shown in Listing 3.5, is quite similar.</P>
+<P>
+<H4>Listing 3.5&#160;&#160;Message Map from Chapter 8's showstring.cpp</H4>
+<PRE>BEGIN_MESSAGE_MAP(CShowStringApp, CWinApp)
+     //{{AFX_MSG_MAP(CShowStringApp)
+     ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+          // NOTE - the ClassWizard will add and remove mapping macros here.
+          //    DO NOT EDIT what you see in these blocks of generated code!
+     //}}AFX_MSG_MAP
+     // Standard file based document commands
+     ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
+     ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
+     // Standard print setup command
+     ON_COMMAND(ID_FILE_PRINT_SETUP, CWinApp::OnFilePrintSetup)
+</PRE>
+<PRE>END_MESSAGE_MAP()
+</PRE>
+<H3><A NAME="Heading4"></A>Message Map Macros</H3>
+<P>BEGIN_MESSAGE_MAP and END_MESSAGE_MAP are macros that, like DECLARE_MESSAGE_MAP
+in the include file, declare some member variables and functions that the framework
+can use to navigate the maps of all the objects in the system. A number of macros
+are used in message maps, including these:</P>
+<P>
+
+<UL>
+	<LI>DECLARE_MESSAGE_MAP--Used in the include file to declare that there will be a
+	message map in the source file.
+	<P>
+	<LI>BEGIN MESSAGE MAP--Marks the beginning of a message map in the source file.
+	<P>
+	<LI>END MESSAGE MAP--Marks the end of a message map in the source file.
+	<P>
+	<LI>ON_COMMAND--Used to delegate the handling of a specific command to a member function
+	of the class.
+	<P>
+	<LI>ON_COMMAND_RANGE--Used to delegate the handling of a group of commands, expressed
+	as a range of command IDs, to a single member function of the class.
+	<P>
+	<LI>ON_CONTROL--Used to delegate the handling of a specific custom control-notification
+	message to a member function of the class.
+	<P>
+	<LI>ON_CONTROL_RANGE--Used to delegate the handling of a group of custom control-notification
+	messages, expressed as a range of control IDs, to a single member function of the
+	class.
+	<P>
+	<LI>ON_MESSAGE--Used to delegate the handling of a user-defined message to a member
+	function of the class.
+	<P>
+	<LI>ON_REGISTERED_MESSAGE--Used to delegate the handling of a registered user-defined
+	message to a member function of the class.
+	<P>
+	<LI>ON_UPDATE_COMMAND_UI--Used to delegate the updating for a specific command to
+	a member function of the class.
+	<P>
+	<LI>ON_COMMAND_UPDATE_UI_RANGE--Used to delegate the updating for a group of commands,
+	expressed as a range of command IDs, to a single member function of the class.
+	<P>
+	<LI>ON_NOTIFY--Used to delegate the handling of a specific control-notification message
+	with extra data to a member function of the class.
+	<P>
+	<LI>ON_NOTIFY_RANGE--Used to delegate the handling of a group of control-notification
+	messages with extra data, expressed as a range of child identifiers, to a single
+	member function of the class. The controls that send these notifications are child
+	windows of the window that catches them.
+	<P>
+	<LI>ON_NOTIFY_EX--Used to delegate the handling of a specific control-notification
+	message with extra data to a member function of the class that returns TRUE or FALSE
+	to indicate whether the notification should be passed on to another object for further
+	reaction.
+	<P>
+	<LI>ON_NOTIFY_EX_RANGE--Used to delegate the handling of a group of control-notification
+	messages with extra data, expressed as a range of child identifiers, to a single
+	member function of the class that returns TRUE or FALSE to indicate whether the notification
+	should be passed on to another object for further reaction. The controls that send
+	these notifications are child windows of the window that catches them.
+</UL>
+
+<P>In addition to these, there are about 100 macros, one for each of the more common
+messages, that direct a single specific message to a member function. For example,
+ON_CREATE delegates the WM_CREATE message to a function called OnCreate(). You cannot
+change the function names in these macros. Typically, these macros are added to your
+message map by ClassWizard, as demonstrated in Chapter 8.</P>
+<P>
+<H3><A NAME="Heading5"></A>How Message Maps Work</H3>
+<P>The message maps presented in Listings 3.3 and 3.4 are for the CShowStringApp
+class of the ShowString application. This class handles application-level tasks such
+as opening a new file or displaying the About box. The entry added to the header
+file's message map can be read as &quot;there is a function called OnAppAbout() that
+takes no parameters.&quot; The entry in the source file's map means &quot;when an
+ID_APP_ABOUT command message arrives, call OnAppAbout().&quot; It shouldn't be a
+big surprise that the OnAppAbout() member function displays the About box for the
+application.</P>
+<P>If you don't mind thinking of all this as magic, it might be enough to know that
+adding the message map entry causes your code to run when the message is sent. Perhaps
+you're wondering just how message maps really work. Here's how. Every application
+has an object that inherits from CWinApp, and a member function called Run(). That
+function calls CWinThread::Run(), which is far longer than the simple WinMain() presented
+earlier but has the same message loop at its heart: call GetMessage(), call TranslateMessage(),
+call DispatchMessage(). Almost every window object uses the same old-style Windows
+class and the same WindProc, called AfxWndProc(). The WindProc, as you've already
+seen, knows the handle, hWnd, of the window the message is for. MFC keeps something
+called a <I>handle map</I>, a table of window handles and pointers to objects, and
+the framework uses this to send a pointer to the C++ object, a CWnd*. Next, it calls
+WindowProc(), a virtual function of that object. Buttons or views might have different
+WindowProc() implementations, but through the magic of polymorphism, the right function
+is called.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B>Polymorphism</B><BR>
+	</P>
+
+	<P>Virtual functions and polymorphism are important C++ concepts for anyone working
+	with MFC. They arise only when you are using pointers to objects and when the class
+	of objects to which the pointers are pointing is derived from another class. Consider
+	as an example a class called CDerived that is derived from a base class called CBase,
+	with a member function called Function() that is declared in the base class and overridden
+	in the derived class. There are now two functions: One has the full name CBase::Function(),
+	and the other is CDerived::Function().<BR>
+	</P>
+
+	<P>If your code has a pointer to a base object and sets that pointer equal to the
+	address of the derived object, it can then call the function, like this:
+	<PRE>    CDerived derivedobject;
+    CBase* basepointer;
+    basepointer = &amp;derivedobject;
+    basepointer-&gt;Function();</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+
+<BLOCKQUOTE>
+	<P>In this case, CBase::Function() will be called. However, there are times when
+	that is not what you want--when you have to use a CBase pointer, but you really want
+	CDerived::Function() to be called. To indicate this, in CBase, Function() is declared
+	to be virtual. Think of it as an instruction to the compiler to override this function,
+	if there is any way to do it.<BR>
+	</P>
+
+	<P>When Function() is declared to be virtual in the base class, CBase, the code fragment
+	above would actually call CDerived::Function(), as desired. That's polymorphism,
+	and that shows up again and again when using MFC classes. You use a pointer to a
+	window, a CWnd*, that really points to a CButton or a CView or some other class derived
+	from CWnd, and when a function such as WindowProc() is called, it will be the derived
+	function--CButton::WindowProc() for example--that is called.
+<HR>
+<BR>
+	
+<HR>
+<strong>NOTE:[</strong> You might wonder why the messages can't just be handled by virtual
+	functions. This would make the virtual tables enormous, and slow the application
+	too much. The message map system is a much faster approach.&#160;n
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>WindowProc()calls OnWndMsg(), the C++ function that really handles messages. First,
+it checks to see whether this is a message, a command, or a notification. Assuming
+it's a message, it looks in the message map for the class, using the member variables
+and functions set up by DECLARE_MESSAGE_MAP, BEGIN_MESSAGE_MAP, and END_MESSAGE_MAP.
+Part of what those macros arrange is to enable access to the message map entries
+of the base class by the functions that search the message map of the derived class.
+That means that if a class inherits from CView and doesn't catch a message normally
+caught by CView, that message will still be caught by the same CView function as
+inherited by the derived class. This message map inheritance parallels the C++ inheritance
+but is independent of it and saves a lot of trouble carrying virtual functions around.</P>
+<P>The bottom line: You add a message map entry, and when a message arrives, the
+functions called by the hidden message loop look in these tables to decide which
+of your objects, and which member function of the object, should handle the message.
+That's what's really going on behind the scenes.</P>
+<P>
+<H3><A NAME="Heading6"></A>Messages Caught by MFC Code</H3>
+<P>The other great advantage of MFC is that the classes already catch most of the
+common messages and do the right thing, without any coding on your part at all. For
+example, you don't need to catch the message that tells you that the user has chosen
+File, Save As--MFC classes catch it, put up the dialog box to obtain the new filename,
+handle all the behind-the-scenes work, and finally call one of your functions, which
+must be named Serialize(), to actually write out the document. (Chapter 7, &quot;Persistence
+and File I/O,&quot; explains the Serialize() function.) You need only to add message
+map entries for behavior that is not common to all applications.</P>
+<P>
+<H2><A NAME="Heading7"></A>Learning How ClassWizard Helps You Catch Messages</H2>
+<P>Message maps may not be simple to read, but they are simple to create if you use
+ClassWizard. There are two ways to add an entry to a message map in Visual C++ 6.0:
+with the main ClassWizard dialog box or with one of the new dialog boxes that add
+message handlers or virtual functions. This section shows you these dialog boxes
+for ShowString, rather than work you through creating a sample application.</P>
+<P>
+<H3><A NAME="Heading8"></A>The ClassWizard Tabbed Dialog Box</H3>
+<P>The main ClassWizard dialog box is displayed by choosing View, ClassWizard or
+by pressing Ctrl+W. ClassWizard is a tabbed dialog box, and Figure 3.1 shows the
+Message Maps tab. At the top of the dialog box are two drop-down list boxes, one
+that reminds you which project you are working on (ShowString in this case) and the
+other that reminds you which class owns the message map you are editing. In this
+case, it is the CShowStringApp class, whose message map you have already seen.</P>
+<P><A HREF="javascript:popUp('03uvc01.gif')"><B>FIG. 3.1</B></A><B> </B><I>ClassWizard
+makes catching messages simple.</I></P>
+
+<P>Below those single-line boxes is a pair of multiline boxes. The one on the left
+lists the class itself and all the commands that the user interface can generate.
+Commands are discussed in the &quot;Commands&quot; section later in this chapter.
+With the classname highlighted, the box on the right lists all the Windows messages
+this class might catch. It also lists a number of virtual functions that catch common
+messages.</P>
+<P>To the right of those boxes are buttons where you can add a new class to the project,
+add a function to the class to catch the highlighted message, remove a function that
+was catching a message, or open the source code for the function that catches the
+highlighted message. Typically, you select a class, select a message, and click Add
+Function to catch the message. Here's what the Add Function button sets in motion:</P>
+<P>
+
+<UL>
+	<LI>Adds a skeleton function to the bottom of the source file for the application
+	<P>
+	<LI>Adds an entry to the message map in the source file
+	<P>
+	<LI>Adds an entry to the message map in the include file
+	<P>
+	<LI>Updates the list of messages and member functions in the dialog box
+</UL>
+
+<P>After you add a function, clicking Edit Code makes it simple to start filling
+in the behavior of that function. If you prefer, double-click the function name in
+the Member Functions list box.</P>
+<P>Below the Object IDs and Messages boxes is a list of the member functions of this
+class that are related to messages. This class has two such functions:</P>
+<P>
+
+<UL>
+	<LI>InitInstance()--Overrides a virtual function in CWinApp, the base class for CShowStringApp,
+	and is labeled with a V (for <I>virtual</I> function) in the list.
+	<P>
+	<LI>OnAppAbout()--Catches the ID_APP_ABOUT command and is labeled with a W (for Windows
+	message) in the list.
+</UL>
+
+<P>The InitInstance function is called whenever an application first starts. You
+don't need to understand this function to see that ClassWizard reminds you the function
+has been over-ridden.</P>
+<P>Finally, under the Member Functions box is a reminder of the meaning of the highlighted
+message. called to implement wait cursors is a description of the DoWaitCursor virtual
+function.</P>
+<P>
+<H3><A NAME="Heading9"></A>The Add Windows Message Handler Dialog Box</H3>
+<P>In release 5.0 of Visual C++, a new way of catching messages was added. Rather
+than opening ClassWizard and then remembering to set the right classname in a drop-down
+list box, you right-click on the classname in ClassView and then choose Add Windows
+Message Handler from the shortcut menu that appears. Figure 3.2 shows the dialog
+box that appears when you make this choice.</P>
+<P><A HREF="javascript:popUp('03uvc02.gif')"><B>FIG. 3.2</B></A><B> </B><I>The New
+Windows Message and Event Handlers dialog box is another way to catch messages.</I></P>
+
+<P>This dialog box doesn't show any virtual functions that were listed in the main
+ClassView dialog box. It is easy to see that this class catches the command ID_APP_ABOUT
+but doesn't catch the command update. (Commands and command updating are discussed
+in more detail later in this chapter.) To add a new virtual function, you right-click
+on the class in ClassView and choose Add New Virtual Function from the shortcut menu.
+Figure 3.3 shows this dialog box.</P>
+<P><A HREF="javascript:popUp('03uvc03.gif')"><B>FIG. 3.3</B></A><B> </B><I>The New
+Virtual Override dialog box simplifies implementing virtual functions.</I></P>
+
+<P>You can see in Figure 3.3 that CShowStringApp already overrides the InitInstance()
+virtual function, and you can see what other functions are available to be overridden.
+As in the tabbed dialog box, a message area at the bottom of the dialog box reminds
+you of the purpose of each function: In fact, the text--Called to implement wait
+cursors--is identical to that in Figure 3.1.</P>
+<P>
+<H3><A NAME="Heading10"></A>Which Class Should Catch the Message?</H3>
+<P>The only tricky part of message maps and message handling is deciding which class
+should catch the message. That's a decision you can't make until you understand all
+the different message and command targets that make up a typical application. The
+choice is usually one of the following:</P>
+<P>
+
+<UL>
+	<LI>The active view
+	<P>
+	<LI>The document associated with the active view
+	<P>
+	<LI>The frame window that holds the active view
+	<P>
+	<LI>The application object
+</UL>
+
+<P>Views, documents, and frames are discussed in Chapter 4, &quot;Documents and Views.&quot;</P>
+<P>
+<H2><A NAME="Heading11"></A>Recognizing Messages</H2>
+<P>There are almost 900 Windows messages, so you won't find a list of them all in
+this chapter. Usually, you arrange to catch messages with ClassWizard and are presented
+with a much shorter list that is appropriate for the class you are catching messages
+with. Not every kind of window can receive every kind of message. For example, only
+classes that inherit from CListBox receive list box messages such as LB_SETSEL, which
+directs the list box to move the highlight to a specific list item. The first component
+of a message name indicates the kind of window this message is destined for, or coming
+from. These window types are listed in Table 3.1.</P>
+<P>
+<H4>Table 3.1&#160;&#160;Windows Message Prefixes and Window Types</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Prefix</B></TD>
+		<TD ALIGN="LEFT"><B>Window Type</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ABM, ABN		</TD>
+		<TD ALIGN="LEFT">Appbar		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ACM, ACN		</TD>
+		<TD ALIGN="LEFT">Animation control		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">BM, BN		</TD>
+		<TD ALIGN="LEFT">Button		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CB, CBN		</TD>
+		<TD ALIGN="LEFT">Combo box		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CDM, CDN		</TD>
+		<TD ALIGN="LEFT">Common dialog box		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CPL		</TD>
+		<TD ALIGN="LEFT">Control Panel application		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DBT		</TD>
+		<TD ALIGN="LEFT">Any application (device change message)		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DL		</TD>
+		<TD ALIGN="LEFT">Drag list box		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DM		</TD>
+		<TD ALIGN="LEFT">Dialog box		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">EM, EN		</TD>
+		<TD ALIGN="LEFT">Edit box		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">FM, FMEVENT		</TD>
+		<TD ALIGN="LEFT">File Manager		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">HDM, HDN		</TD>
+		<TD ALIGN="LEFT">Header control		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">HKM		</TD>
+		<TD ALIGN="LEFT">HotKey control		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">IMC, IMN		</TD>
+		<TD ALIGN="LEFT">IME window		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LB, LBN		</TD>
+		<TD ALIGN="LEFT">List box		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVM, LVN		</TD>
+		<TD ALIGN="LEFT">List view		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">NM		</TD>
+		<TD ALIGN="LEFT">Any parent window (notification message)		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">PBM		</TD>
+		<TD ALIGN="LEFT">Progress bar		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">PBT		</TD>
+		<TD ALIGN="LEFT">Any application (battery power broadcast)		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">PSM, PSN		</TD>
+		<TD ALIGN="LEFT">Property sheet		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SB		</TD>
+		<TD ALIGN="LEFT">Status bar		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SBM		</TD>
+		<TD ALIGN="LEFT">Scrollbar		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">STM, STN		</TD>
+		<TD ALIGN="LEFT">Static control		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TB, TBN		</TD>
+		<TD ALIGN="LEFT">Toolbar		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TBM		</TD>
+		<TD ALIGN="LEFT">Track bar		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TCM, TCN		</TD>
+		<TD ALIGN="LEFT">Tab control		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TTM, TTN		</TD>
+		<TD ALIGN="LEFT">ToolTip		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TVM, TVN		</TD>
+		<TD ALIGN="LEFT">Tree view		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">UDM		</TD>
+		<TD ALIGN="LEFT">Up Down control		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">WM		</TD>
+		<TD ALIGN="LEFT">Generic window		</TD>
+	</TR>
+</TABLE>
+</P>
+<P>What's the difference between, say, a BM message and a BN message? A BM message
+is a message to a button, such as &quot;act as though you were just clicked.&quot;
+A BN message is a notification from a button to the window that owns it, such as
+&quot;I was clicked.&quot; The same pattern holds for all the prefixes that end with
+M or N in the preceding table.</P>
+<P>Sometimes the message prefix does not end with M; for example CB is the prefix
+for a message to a combo box, whereas CBN is the prefix for a notification from a
+combo box to the window that owns it. Another example is CB_SETCURSEL, a message
+to a combo box directing it to select one of its strings, whereas CBN_SELCHANGE is
+a message sent from a combo box, notifying its parent that the user has changed which
+string is selected.</P>
+<P>
+<H2><A NAME="Heading12"></A>Understanding Commands</H2>
+<P>What is a command? It is a special type of message. Windows generates a command
+whenever a user chooses a menu item, clicks a button, or otherwise tells the system
+to do something. In older versions of Windows, both menu choices and button clicks
+generated a WM_COMMAND message; these days you receive a WM_COMMAND for a menu choice
+and a WM_NOTIFY for a control notification such as button clicking or list box selecting.
+Commands and notifications are passed around by the operating system just like any
+other message, until they get into the top of OnWndMsg(). At that point, Windows
+message passing stops and MFC command routing starts.</P>
+<P>Command messages all have, as their first parameter, the resource ID of the menu
+item that was chosen or the button that was clicked. These resource IDs are assigned
+according to a standard pattern--for example, the menu item File, Save has the resource
+ID ID_FILE_SAVE.</P>
+<P>Command routing is the mechanism OnWndMsg() uses to send the command (or notification)
+to objects that can't receive messages. Only objects that inherit from CWnd can receive
+messages, but all objects that inherit from CCmdTarget, including CWnd and CDocument,
+can receive commands and notifications. That means a class that inherits from CDocument
+can have a message map. There won't be any entries in it for messages, only for commands
+and notifications, but it's still a message map.</P>
+<P>How do the commands and notifications get to the class, though? By command routing.
+(This becomes messy, so if you don't want the inner details, skip this paragraph
+and the next.) OnWndMsg() calls CWnd::OnCommand() or CWnd::OnNotify(). OnCommand()
+checks all sorts of petty stuff (such as whether this menu item was grayed after
+the user selected it but before this piece of code started to execute) and then calls
+OnCmdMsg(). OnNotify() checks different conditions and then it, too, calls OnCmdMsg().
+OnCmdMsg() is virtual, which means that different command targets have different
+implementations. The implementation for a frame window sends the command to the views
+and documents it contains.</P>
+<P>This is how something that started out as a message can end up being handled by
+a member function of an object that isn't a window and therefore can't really catch
+messages.</P>
+<P>Should you care about this? Even if you don't care how it all happens, you should
+care that you can arrange for the right class to handle whatever happens within your
+application. If the user resizes the window, a WM_SIZE message is sent, and you may
+have to rescale an image or do some other work inside your view. If the user chooses
+a menu item, a command is generated, and that means your document can handle it if
+that's more appropriate. You see examples of these decisions at work in Chapter 4.</P>
+<P>
+<H2><A NAME="Heading13"></A>Understanding Command Updates</H2>
+<P>This under-the-hood tour of how MFC connects user actions such as window resizing
+or menu choices to your code is almost finished. All that's left is to handle the
+graying of menus and buttons, a process called <I>command updating</I>.</P>
+<P>Imagine you are designing an operating system, and you know it's a good idea to
+have some menu items grayed to show they can't be used right now. There are two ways
+you can go about implementing this.</P>
+<P>One is to have a huge table with one entry for every menu item and a flag to indicate
+whether it's available. Whenever you have to display the menu, you can quickly check
+the table. Whenever the program does anything that makes the item available or unavailable,
+it updates the table. This is called the <I>continuous-update approach</I>.</P>
+<P>The other way is not to have a table but to check all the conditions just before
+your program displays the menu. This is called the <I>update-on-demand approach</I>
+and is the approach taken in Windows. In the old C way of doing things--to check
+whether each menu option should be grayed--the system sent a WM_INITMENUPOPUP message,
+which means &quot;I'm about to display a menu.&quot; The giant switch in the WindProc
+caught that message and quickly enabled or disabled each menu item. This wasn't very
+object-oriented though. In an object-oriented program, different pieces of information
+are stored in different objects and aren't generally made available to the entire
+program.</P>
+<P>When it comes to updating menus, different objects know whether each item should
+be grayed. For example, the document knows whether it has been modified since it
+was last saved, so it can decide whether File, Save should be grayed. However, only
+the view knows whether some text is currently highlighted; therefore, it can decide
+if Edit, Cut and Edit, Copy should be grayed. This means that the job of updating
+these menus should be parcelled out to various objects within the application rather
+than handled within the WindProc.</P>
+<P>The MFC approach is to use a little object called a CCmdUI, a command user interface,
+and give this object to whoever catches a CN_UPDATE_COMMAND_UI message. You catch
+those messages by adding (or getting ClassWizard to add) an ON_UPDATE_COMMAND_UI
+macro in your message map. If you want to know what's going on behind the scenes,
+it's this: The operating system still sends WM_INITMENUPOPUP; then the MFC base classes
+such as CFrameWnd take over. They make a CCmdUI, set its member variables to correspond
+to the first menu item, and call one of that object's own member functions, DoUpdate().
+Then, DoUpdate() sends out the CN_COMMAND_UPDATE_UI message with a pointer to itself
+as the CCmdUI object the handlers use. The same CCmdUI object is then reset to correspond
+to the second menu item, and so on, until the entire menu is ready to be displayed.
+The CCmdUI object is also used to gray and ungray buttons and other controls in a
+slightly different context.</P>
+<P>CCmdUI has the following member functions:</P>
+<P>
+
+<UL>
+	<LI>Enable()--Takes a TRUE or FALSE (defaults to TRUE). This grays the user interface
+	item if FALSE and makes it available if TRUE.
+	<P>
+	<LI>SetCheck()--Checks or unchecks the item.
+	<P>
+	<LI>SetRadio()--Checks or unchecks the item as part of a group of radio buttons,
+	only one of which can be set at any time.
+	<P>
+	<LI>SetText()--Sets the menu text or button text, if this is a button.
+	<P>
+	<LI>DoUpdate()--Generates the message.
+</UL>
+
+<P>Determining which member function you want to use is usually clear-cut. Here is
+a shortened version of the message map from an object called CWhoisView, a class
+derived from CFormView that is showing information to a user. This form view contains
+several edit boxes, and the user may want to paste text into one of them. The message
+map contains an entry to catch the update for the ID_EDIT_PASTE command, like this:</P>
+<P>
+<PRE>BEGIN_MESSAGE_MAP(CWhoisView, CFormView)
+     ...
+     ON_UPDATE_COMMAND_UI(ID_EDIT_PASTE, OnUpdateEditPaste)
+     ...
+END_MESSAGE_MAP()
+</PRE>
+<P>The function that catches the update, OnUpdateEditPaste(), looks like this:</P>
+<P>
+<PRE>void CWhoisView::OnUpdateEditPaste(CCmdUI* pCmdUI)
+{
+ pCmdUI-&gt;Enable(::IsClipboardFormatAvailable(CF_TEXT));
+}
+</PRE>
+<P>This calls the API function ::IsClipboardFormatAvailable() to see whether there
+is text in the Clipboard. Other applications may be able to paste in images or other
+nontext Clipboard contents, but this application cannot and grays the menu item if
+there is no text available to paste. Most command update functions look just like
+this: They call Enable() with a parameter that is a call to a function that returns
+TRUE or FALSE, or perhaps a simple logical expression. Command update handlers must
+be fast because five to ten of them must run between the moment the user clicks to
+display the menu and the moment before the menu is actually displayed.</P>
+<P>
+<H2><A NAME="Heading14"></A>Learning How ClassWizard Helps You Catch Commands and
+Command Updates</H2>
+<P>The ClassWizard dialog box shown in Figure 4.1 has the classname highlighted in
+the box labeled Object IDs. Below that are resource IDs of every resource (menu,
+toolbar, dialog box controls, and so on) that can generate a command or message when
+this object (view, dialog, and so on) is on the screen. If you highlight one of those,
+the list of messages associated with it is much smaller, as you see in Figure 3.4.</P>
+<P>Only two messages are associated with each resource ID: COMMAND and UPDATE_COMMAND_UI.
+The first enables you to add a function to handle the user selecting the menu option
+or clicking the button--that is, to catch the command. The second enables you to
+add a function to set the state of the menu item, button, or other control just as
+the operating system is about to display it--that is, to update the command. (The
+COMMAND choice is boldface in Figure 3.4 because this class already catches that
+command.)</P>
+<P><A HREF="javascript:popUp('03uvc04.gif')"><B>FIG. 3.4</B></A><B> </B><I>ClassWizard
+enables you to catch or update commands.</I></P>
+
+<P>Clicking Add Function to add a function that catches or updates a command involves
+an extra step. ClassWizard gives you a chance to change the default function name,
+as shown in Figure 3.5. This is almost never appropriate. There is a regular pattern
+to the suggested names, and experienced MFC programmers come to count on function
+names that follow that pattern. Command handler functions, like message handlers,
+have names that start with On. Typically, the remainder of the function name is formed
+by removing the ID and the underscores from the resource ID and capitalizing each
+word. Command update handlers have names that start with OnUpdate and use the same
+conventions for the remainder of the function name. For example, the function that
+catches ID_APP_EXIT should be called OnAppExit(), and the function that updates ID_APP_EXIT
+should be called OnUpdateAppExit().</P>
+<P><A HREF="javascript:popUp('03uvc05.gif')"><B>FIG. 3.5</B></A><B> </B><I>It's possible,
+but not wise, to change the name for your command handler or command update handler
+from the name suggested by ClassWizard.</I></P>
+
+<P>Not every command needs an update handler. The framework does some very nice work
+graying and ungraying for you automatically. Say you have a menu item--Network, Send--whose
+command is caught by the document. When there is no open document, this menu item
+is grayed by the framework, without any coding on your part. For many commands, it's
+enough that an object that can handle them exists, and no special updating is necessary.
+For others, you may want to check that something is selected or highlighted or that
+no errors are present before making certain commands available. That's when you use
+command updating. If you'd like to see an example of command updating at work, there's
+one in Chapter 8 in the &quot;Command Updating&quot; section.</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch02/ch02.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch04/ch04.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+<BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>
