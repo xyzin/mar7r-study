@@ -1,0 +1,1866 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 14 -- Building an ActiveX Container Application</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch13/ch13.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch15/ch15.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 14 -</H1>
+</CENTER>
+<CENTER>
+<H1>Building an ActiveX Container Application</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Changing ShowString</A>
+	<UL>
+		<LI><A HREF="#Heading2">AppWizard-Generated ActiveX Container Code</A>
+		<LI><A HREF="#Heading3">Returning the ShowString Functionality</A>
+	</UL>
+	<LI><A HREF="#Heading4">Moving, Resizing, and Tracking</A>
+	<LI><A HREF="#Heading5">Handling Multiple Objects and Object Selection</A>
+	<UL>
+		<LI><A HREF="#Heading6">Hit Testing</A>
+		<LI><A HREF="#Heading7">Drawing Multiple Items</A>
+		<LI><A HREF="#Heading8">Handling Single Clicks</A>
+		<LI><A HREF="#Heading9">Handling Double-Clicks</A>
+	</UL>
+	<LI><A HREF="#Heading10">Implementing Drag and Drop</A>
+	<UL>
+		<LI><A HREF="#Heading11">Implementing a Drag Source</A>
+		<LI><A HREF="#Heading12">Implementing a Drop Target</A>
+		<LI><A HREF="#Heading13">Registering the View as a Drop Target</A>
+		<LI><A HREF="#Heading14">Setting Up Function Skeletons and Adding Member Variables</A>
+		<LI><A HREF="#Heading15">OnDragEnter()</A>
+		<LI><A HREF="#Heading16">OnDragOver()</A>
+		<LI><A HREF="#Heading17">OnDragLeave()</A>
+		<LI><A HREF="#Heading18">OnDragDrop()</A>
+		<LI><A HREF="#Heading19">Testing the Drag Target</A>
+	</UL>
+	<LI><A HREF="#Heading20">Deleting an Object</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>You can obtain a rudimentary ActiveX container by asking AppWizard to make you
+one, but it will have a lot of shortcomings. A far more difficult task is to understand
+how an ActiveX container works and what you have to do to really use it. In this
+chapter, by turning the ShowString application of earlier chapters into an ActiveX
+container and then making it a truly functional container, you get a backstage view
+of ActiveX in action. Adding drag-and-drop support brings your application into the
+modern age of intuitive, document-centered user interface design. If you have not
+yet read Chapter 13, &quot;ActiveX Concepts,&quot; it would be a good idea to read
+it before this one. As well, this chapter will not repeat all the instructions of
+Chapter 8, &quot;Building a Complete Application: ShowString,&quot; so you should
+have read that chapter or be prepared to refer to it as you progress through this
+one.</P>
+<P>
+<H2><A NAME="Heading1"></A>Changing ShowString</H2>
+<P>ShowString was built originally in Chapter 8, &quot;Building a Complete Application:
+ShowString,&quot; and has no ActiveX support. You could make the changes by hand
+to implement ActiveX container support, but there would be more than 30 changes.
+It's quicker to build a new ShowString application--this time asking for ActiveX
+container support--and then make changes to that code to get the ShowString functionality
+again.</P>
+<P>
+<H3><A NAME="Heading2"></A>AppWizard-Generated ActiveX Container Code</H3>
+<P>Build the new ShowString in a different directory, making almost exactly the same
+AppWizard choices you used when you built it in the &quot;Creating an Empty Shell
+with AppWizard&quot; section of Chapter 8. Name the project ShowString, choose an
+MDI Application, No Database Support, compound document support: Container, a Docking
+Toolbar, Initial Status Bar, Printing and Print Preview, Context Sensitive Help,
+and 3D Controls. Finally, select Source File Comments and a Shared DLL. Finish AppWizard
+and, if you want, build the project.tm1713714470</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Even though the technology is now called ActiveX, the AppWizard dialog
+	boxes refer to compound document support. Also, many of the classnames that are used
+	throughout this chapter have Ole in their names, and comments refer to OLE. Although
+	Microsoft has changed the name of the technology, it has not propagated that change
+	throughout Visual C++ yet. You have to live with these contradictions for a while.&#160;
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>There are many differences between the application you just built and a do-nothing
+application without ActiveX container support. The remainder of this section explains
+these differences and their effects.</P>
+<P><B>Menus&#160;&#160;</B>There's another menu, called IDR_SHOWSTTYPE_CNTR_IP, shown
+in Figure 14.1. The name refers to a container whose <I>contained</I> object is being
+edited <I>in</I> <I>place</I>. During in-place editing, the menu bar is built from
+the container's in-place menu and the server's in-place menu. The pair of vertical
+bars in the middle of IDR_SHOWSTTYPE_CNTR_IP are separators; the server menu items
+will be put between them. This is discussed in more detail in Chapter 15, &quot;Building
+an ActiveX Server Application.&quot;</P>
+<P><A HREF="javascript:popUp('14uvc01.gif')"><B>FIG. 14.1</B></A><B> </B><I>AppWizard
+adds another menu for editing in place.</I></P>
+<P>The IDR_SHOWSTTYPE Edit menu, shown in Figure 14.2, has four new items:</P>
+<P><A HREF="javascript:popUp('14uvc02.gif')"><B>FIG. 14.2</B></A><B> </B><I>AppWizard
+adds items to the Edit menu of the IDR_SHOWSTTYPE resource.</I></P>
+<P>
+
+<UL>
+	<LI><B>Paste Special.</B> The user chooses this item to insert an item into the container
+	from the Clipboard.
+	<P>
+	<LI><B>Insert New Object.</B> Choosing this item opens the Insert Object dialog box,
+	shown in Figures 14.3 and 14.4, so the user can insert an item into the container.
+</UL>
+
+<P><A HREF="javascript:popUp('14uvc03.gif')"><B>FIG. 14.3</B></A><B> </B><I>The Insert
+Object dialog box can be used to embed new objects.</I></P>
+<P><A HREF="javascript:popUp('14uvc04.gif')"><B>FIG. 14.4</B></A><B> </B><I>The Insert
+Object dialog box can be used to embed or link objects that are in a file.</I></P>
+
+<UL>
+	<LI><B>Links.</B> When an object has been linked into the container, choosing this
+	item opens the Links dialog box, shown in Figure 14.5, to allow control of how the
+	copy of the object is updated after a change is saved to the file.
+	<P>
+	<LI><B>&lt;&lt;OLE VERBS GO HERE&gt;&gt;.</B> Each kind of item has different verbs
+	associated with it, like Edit, Open, or Play. When a contained item has focus, this
+	spot on the menu is replaced by an object type like those in the Insert Object dialog
+	box, with a menu cascading from it that lists the verbs for this type, like the one
+	shown in Figure 14.6.
+</UL>
+
+<P><B><I>CShowStringApp</I>&#160;&#160;</B>CShowStringApp::InitInstance() has several
+changes from the InitInstance() method provided by AppWizard for applications that
+aren't ActiveX containers. The lines in Listing 14.1 initialize the ActiveX (OLE)
+libraries.</P>
+<P>
+<H4>Listing 14.1&#160;&#160; Excerpt from ShowString.cpp--Library Initialization</H4>
+<PRE>     // Initialize OLE libraries
+     if (!AfxOleInit())
+     {
+          AfxMessageBox(IDP_OLE_INIT_FAILED);
+          return FALSE;
+</PRE>
+<PRE>     }
+</PRE>
+<P><A HREF="javascript:popUp('14uvc05.gif')"><B>FIG. 14.5</B></A><B> </B><I>The Links
+dialog box controls the way linked objects are updated.</I></P>
+<P><A HREF="javascript:popUp('14uvc06.gif')"><B>FIG. 14.6</B></A><B> </B><I>Each
+object type adds a cascading menu item to the Edit menu when it has focus.</I></P>
+<P>Still in CShowStringApp::InitInstance(), after the MultiDocTemplate is initialized
+but before the call to AddDocTemplate(), this line is added to register the menu
+used for in-place editing:</P>
+<P>
+<PRE>pDocTemplate-&gt;SetContainerInfo(IDR_SHOWSTTYPE_CNTR_IP);
+</PRE>
+<P><B><I>CShowStringDoc</I>&#160;&#160;</B>The document class, CShowStringDoc, now
+inherits from COleDocument rather than CDocument. This line is also added at the
+top of ShowStringDoc.cpp:</P>
+<P>
+<PRE>#include &quot;CntrItem.h&quot;
+</PRE>
+<P>CntrItem.h describes the container item class, CShowStringCntrItem, discussed
+later in this chapter. Still in ShowStringDoc.cpp, the macros in Listing 14.2 have
+been added to the message map.</P>
+<P>
+<H4>Listing 14.2&#160;&#160; Excerpt from ShowString.cpp--Message Map Additions</H4>
+<PRE>     ON_UPDATE_COMMAND_UI(ID_EDIT_PASTE,
+&#172;COleDocument::OnUpdatePasteMenu)
+     ON_UPDATE_COMMAND_UI(ID_EDIT_PASTE_LINK,
+&#172;COleDocument::OnUpdatePasteLinkMenu)
+     ON_UPDATE_COMMAND_UI(ID_OLE_EDIT_CONVERT,
+&#172;COleDocument::OnUpdateObjectVerbMenu)
+     ON_COMMAND(ID_OLE_EDIT_CONVERT,
+&#172;COleDocument::OnEditConvert)
+     ON_UPDATE_COMMAND_UI(ID_OLE_EDIT_LINKS,
+&#172;COleDocument::OnUpdateEditLinksMenu)
+     ON_COMMAND(ID_OLE_EDIT_LINKS,
+&#172;COleDocument::OnEditLinks)
+     ON_UPDATE_COMMAND_UI(ID_OLE_VERB_FIRST, ID_OLE_VERB_LAST,
+</PRE>
+<PRE>&#172;COleDocument::OnUpdateObjectVerbMenu)
+</PRE>
+<P>These commands enable and disable the following menu items:</P>
+
+<UL>
+	<LI>Edit, Paste
+	<P>
+	<LI>Edit, Paste Link
+	<P>
+	<LI>Edit, Links
+	<P>
+	<LI>The OLE verbs section, including the Convert verb
+</UL>
+
+<P>The new macros also handle Convert and Edit, Links. Notice that the messages are
+handled by functions of COleDocument and don't have to be written by you.</P>
+<P>The constructor, CShowStringDoc::CShowStringDoc(), has a line added:</P>
+<P>
+<PRE>     EnableCompoundFile();
+</PRE>
+<P>This turns on the use of compound files. CShowStringDoc::Serialize() has a line
+added as well:</P>
+<P>
+<PRE>     COleDocument::Serialize(ar);
+</PRE>
+<P>This call to the base class Serialize() takes care of serializing all the contained
+objects, with no further work for you.</P>
+<P><B><I>CShowStringView</I>&#160;&#160;</B>The view class, CShowStringView, includes
+CntrItem.h just as the document does. The view class has these new entries in the
+message map:</P>
+<P>
+<PRE>     ON_WM_SETFOCUS()
+     ON_WM_SIZE()
+     ON_COMMAND(ID_OLE_INSERT_NEW, OnInsertObject)
+     ON_COMMAND(ID_CANCEL_EDIT_CNTR, OnCancelEditCntr)
+</PRE>
+<P>These are in addition to the messages caught by the view before it was a container.
+These catch WM_SETFOCUS, WM_SIZE, the menu item Edit, Insert New Object, and the
+cancellation of editing in place. An accelerator has already been added to connect
+this message to the Esc key.</P>
+<P>In ShowStringView.h, a new member variable has been added, as shown in Listing
+14.3.</P>
+<P>
+<H4>Listing 14.3&#160;&#160;Excerpt from ShowStringView.h--m_pSelection</H4>
+<PRE>     // m_pSelection holds the selection to the current
+     // CShowStringCntrItem. For many applications, such
+     // a member variable isn't adequate to represent a
+     // selection, such as a multiple selection or a selection
+     // of objects that are not CShowStringCntrItem objects.
+     // This selection mechanism is provided just to help you
+     // get started.
+     // TODO: replace this selection mechanism with one appropriate 
+     // to your app.
+</PRE>
+<PRE>     CShowStringCntrItem* m_pSelection;
+</PRE>
+<P>This new member variable shows up again in the view constructor, Listing 14.4,
+and the revised OnDraw(), Listing 14.5.</P>
+<P>
+<H4>Listing 14.4&#160;&#160;ShowStringView.cpp--Constructor</H4>
+<PRE>CShowStringView::CShowStringView()
+{
+     m_pSelection = NULL;
+     // TODO: add construction code here
+</PRE>
+<PRE>}
+</PRE>
+<H4>Listing 14.5&#160;&#160; ShowStringView.cpp--CShowStringView::OnDraw()</H4>
+<PRE>void CShowStringView::OnDraw(CDC* pDC)
+{
+     CShowStringDoc* pDoc = GetDocument();
+     ASSERT_VALID(pDoc);
+     // TODO: add draw code for native data here
+     // TODO: also draw all OLE items in the document
+     // Draw the selection at an arbitrary position.  This code should be
+     //  removed once your real drawing code is implemented.  This position
+     //  corresponds exactly to the rectangle returned by CShowStringCntrItem,
+     //  to give the effect of in-place editing.
+     // TODO: remove this code when final draw code is complete.
+     if (m_pSelection == NULL)
+     {
+          POSITION pos = pDoc-&gt;GetStartPosition();
+          m_pSelection = (CShowStringCntrItem*)pDoc-&gt;GetNextClientItem(pos);
+     }
+     if (m_pSelection != NULL)
+          m_pSelection-&gt;Draw(pDC, CRect(10, 10, 210, 210));
+</PRE>
+<PRE>}
+</PRE>
+<P>The code supplied for OnDraw() draws only a single contained item. It doesn't
+draw any native data--in other words, elements of ShowString that are not contained
+items. At the moment there is no native data, but after the string is added to the
+application, OnDraw() is going to have to draw it. What's more, this code only draws
+one contained item, and it does so in an arbitrary rectangle. OnDraw() is going to
+see a lot of changes as you work through this chapter.</P>
+<P>The view class has gained a lot of new functions. They are as follows:</P>
+
+<UL>
+	<LI>OnInitialUpdate()
+	<P>
+	<LI>IsSelected()
+	<P>
+	<LI>OnInsertObject()
+	<P>
+	<LI>OnSetFocus()
+	<P>
+	<LI>OnSize()
+	<P>
+	<LI>OnCancelEditCntr()
+</UL>
+
+<P>Each of these new functions is discussed in the subsections that follow.</P>
+<P><B><I>OnInitialUpdate()&#160;&#160;</I></B>OnInitialUpdate()is called just before
+the very first time the view is to be displayed. The boilerplate code (see Listing
+14.6) is pretty dull.</P>
+<P>
+<H4>Listing 14.6&#160;&#160;ShowStringView.cpp--CShowStringView::OnInitialUpdate()</H4>
+<PRE>void CShowStringView::OnInitialUpdate()
+{
+     CView::OnInitialUpdate();
+     // TODO: remove this code when final selection
+     // model code is written
+     m_pSelection = NULL;    // initialize selection
+</PRE>
+<PRE>}
+</PRE>
+<P>The base class OnInitialUpdate() calls the base class OnUpdate(), which calls
+Invalidate(), requiring a full repaint of the client area.</P>
+<P><B><I>IsSelected()&#160;&#160;</I></B>IsSelected() currently isn't working because
+the selection mechanism is so rudimentary. Listing 14.7 shows the code that was generated
+for you. Later, when you have implemented a proper selection method, you will improve
+how this code works.</P>
+<P>
+<H4>Listing 14.7&#160;&#160;ShowStringView.cpp--CShowStringView::IsSelected()</H4>
+<PRE>BOOL CShowStringView::IsSelected(const CObject* pDocItem) const
+{
+     // The implementation below is adequate if your selection consists of
+     //  only CShowStringCntrItem objects.  To handle different selection
+     //  mechanisms, the implementation here should be replaced.
+     // TODO: implement this function that tests for a selected OLE 
+     // client item
+     return pDocItem == m_pSelection;
+</PRE>
+<PRE>}
+</PRE>
+<P>This function is passed a pointer to a container item. If that pointer is the
+same as the current selection, it returns TRUE.</P>
+<P><B><I>OnInsertObject()&#160;&#160;</I></B>OnInsertObject()is called when the user
+chooses Edit, Insert New Object. It's quite a long function, so it is presented in
+parts. The overall structure is presented in Listing 14.8.</P>
+<P>
+<H4>Listing 14.8&#160;&#160;ShowStringView.cpp--CShowStringView::OnInsertObject()</H4>
+<PRE>void CShowStringView::OnInsertObject()
+{
+     // Display the Insert Object dialog box.
+     CShowStringCntrItem* pItem = NULL;
+     TRY
+     {
+          // Create a new item connected to this document.
+          // Initialize the item.
+          // Set selection and update all views.
+     }
+     CATCH(CException, e)
+     {
+          // Handle failed create.
+     }
+     END_CATCH
+     // Tidy up.
+</PRE>
+<PRE>}
+</PRE>
+<P>Each comment here is replaced with a small block of code, discussed in the remainder
+of this section. The TRY and CATCH statements, by the way, are on old-fashioned form
+of exception handling, discussed in Chapter 26, &quot;Exceptions and Templates.&quot;</P>
+<P>First, this function displays the Insert Object dialog box, as shown in Listing
+14.9.</P>
+<P>
+<H4>Listing 14.9&#160;&#160;ShowStringView.cpp--Display the Insert Object Dialog
+Box</H4>
+<PRE>     // Invoke the standard Insert Object dialog box to obtain information
+     //  for new CShowStringCntrItem object.
+     COleInsertDialog dlg;
+     if (dlg.DoModal() != IDOK)
+          return;
+</PRE>
+<PRE>     BeginWaitCursor();
+</PRE>
+<P>If the user clicks Cancel, this function returns and nothing is inserted. If the
+user clicks OK, the cursor is set to an hourglass while the rest of the processing
+occurs.</P>
+<P>To create a new item, the code in Listing 14.10 is inserted.</P>
+<P>
+<H4>Listing 14.10&#160;&#160;ShowStringView.cpp--Create a New Item</H4>
+<PRE>          // Create new item connected to this document.
+          CShowStringDoc* pDoc = GetDocument();
+          ASSERT_VALID(pDoc);
+          pItem = new CShowStringCntrItem(pDoc);
+</PRE>
+<PRE>          ASSERT_VALID(pItem);
+</PRE>
+<P>This code makes sure there is a document, even though the menu item is enabled
+only if there is one, and then creates a new container item, passing it the pointer
+to the document. As you see in the CShowStringCntrItem section, container items hold
+a pointer to the document that contains them.</P>
+<P>The code in Listing 14.11 initializes that item.</P>
+<P>
+<H4>Listing 14.11&#160;&#160;ShowStringView.cpp--Initializing the Inserted Item</H4>
+<PRE>          // Initialize the item from the dialog data.
+          if (!dlg.CreateItem(pItem))
+               AfxThrowMemoryException();  // any exception will do
+          ASSERT_VALID(pItem);
+          // If item created from class list (not from file) then launch
+          //  the server to edit the item.
+          if (dlg.GetSelectionType() == COleInsertDialog::createNewItem)
+               pItem-&gt;DoVerb(OLEIVERB_SHOW, this);
+</PRE>
+<PRE>          ASSERT_VALID(pItem);
+</PRE>
+<P>The code in Listing 14.11 calls the CreateItem() function of the dialog class,
+COleInsertDialog. That might seem like a strange place to keep such a function, but
+the function needs to know all the answers that were given on the dialog box. If
+it was a member of another class, it would have to interrogate the dialog for the
+type and filename, find out whether it was linked or embedded, and so on. It calls
+member functions of the container item like CreateLinkFromFile(), CreateFromFile(),
+CreateNewItem(), and so on. So it's not that the code has to actually fill the object
+from the file that is in the dialog box, but rather that the work is partitioned
+between the objects instead of passing information back and forth between them.</P>
+<P>Then, one question is asked of the dialog box: Was this a new item? If so, the
+server is called to edit it. Objects created from a file can just be displayed.</P>
+<P>Finally, the selection is updated and so are the views, as shown in Listing 14.12.</P>
+<P>
+<H4>Listing 14.12&#160;&#160;ShowStringView.cpp--Update Selection and Views</H4>
+<PRE>          // As an arbitrary user interface design, this sets the selection
+          //  to the last item inserted.
+          // TODO: reimplement selection as appropriate for your application
+          m_pSelection = pItem;   // set selection to last inserted item
+</PRE>
+<PRE>          pDoc-&gt;UpdateAllViews(NULL);
+</PRE>
+<P>If the creation of the object failed, execution ends up in the CATCH block, shown
+in Listing 14.13.</P>
+<P>
+<H4>Listing 14.13&#160;&#160;ShowStringView.cpp--CATCH Block</H4>
+<PRE>     CATCH(CException, e)
+     {
+          if (pItem != NULL)
+          {
+               ASSERT_VALID(pItem);
+               pItem-&gt;Delete();
+          }
+          AfxMessageBox(IDP_FAILED_TO_CREATE);
+     }
+</PRE>
+<PRE>     END_CATCH
+</PRE>
+<P>This deletes the item that was created and gives the user a message box.</P>
+<P>Finally, that hourglass cursor can go away:</P>
+<P>
+<PRE>     EndWaitCursor();
+</PRE>
+<P><B><I>OnSetFocus()&#160;&#160;</I></B>OnSetFocus(), shown in Listing 14.14, is
+called whenever this view gets focus.</P>
+<P>
+<H4>Listing 14.14&#160;&#160;ShowStringView.cpp--CShowStringView::OnSetFocus()</H4>
+<PRE>void CShowStringView::OnSetFocus(CWnd* pOldWnd)
+{
+     COleClientItem* pActiveItem = GetDocument()-&gt;GetInPlaceActiveItem(this);
+     if (pActiveItem != NULL &amp;&amp;
+          pActiveItem-&gt;GetItemState() == COleClientItem::activeUIState)
+     {
+          // need to set focus to this item if it is in the same view
+          CWnd* pWnd = pActiveItem-&gt;GetInPlaceWindow();
+          if (pWnd != NULL)
+          {
+               pWnd-&gt;SetFocus();   // don't call the base class
+               return;
+          }
+     }
+     CView::OnSetFocus(pOldWnd);
+</PRE>
+<PRE>}
+</PRE>
+<P>If there is an active item and its server is loaded, that active item gets focus.
+If not, focus remains with the old window, and it appears to the user that the click
+was ignored.</P>
+<P><B><I>OnSize()&#160;&#160;</I></B>OnSize(), shown in Listing 14.15, is called
+when the application is resized by the user.</P>
+<P>
+<H4>Listing 14.15&#160;&#160;ShowStringView.cpp--CShowStringView::OnSize()</H4>
+<PRE>void CShowStringView::OnSize(UINT nType, int cx, int cy)
+{
+     CView::OnSize(nType, cx, cy);
+     COleClientItem* pActiveItem = GetDocument()-&gt;GetInPlaceActiveItem(this);
+     if (pActiveItem != NULL)
+          pActiveItem-&gt;SetItemRects();
+</PRE>
+<PRE>}
+</PRE>
+<P>This resizes the view using the base class function, and then, if there is an
+active item, tells it to adjust to the resized view.</P>
+<P><B><I>OnCancelEditCntr()&#160;&#160;</I></B>OnCancelEditCntr() is called when
+a user who has been editing in place presses Esc. The server must be closed, and
+the object stops being active. The code is shown in Listing 14.16.</P>
+<P>
+<H4>Listing 14.16&#160;&#160;ShowStringView.cpp--CShowStringView::OnCancelEditCntr()</H4>
+<PRE>void CShowStringView::OnCancelEditCntr()
+{
+     // Close any in-place active item on this view.
+     COleClientItem* pActiveItem =
+          GetDocument()-&gt;GetInPlaceActiveItem(this); 
+     if (pActiveItem != NULL)
+     {
+          pActiveItem-&gt;Close();
+     }
+     ASSERT(GetDocument()-&gt;GetInPlaceActiveItem(this) == NULL);
+</PRE>
+<PRE>}
+</PRE>
+<P><B><I>CShowStringCntrItem</I>&#160;&#160;</B>The container item class is a completely
+new addition to ShowString. It describes an item that is contained in the document.
+As you've already seen, the document and the view use this object quite a lot, primarily
+through the m_pSelection member variable of CShowStringView. It has no member variables
+other than those inherited from the base class, COleClientItem. It has overrides
+for a lot of functions, though. They are as follows:</P>
+
+<UL>
+	<LI>A constructor
+	<P>
+	<LI>A destructor
+	<P>
+	<LI>GetDocument()
+	<P>
+	<LI>GetActiveView()
+	<P>
+	<LI>OnChange()
+	<P>
+	<LI>OnActivate()
+	<P>
+	<LI>OnGetItemPosition()
+	<P>
+	<LI>OnDeactivateUI()
+	<P>
+	<LI>OnChangeItemPosition()
+	<P>
+	<LI>AssertValid()
+	<P>
+	<LI>Dump()
+	<P>
+	<LI>Serialize()
+</UL>
+
+<P>The constructor simply passes the document pointer along to the base class. The
+destructor does nothing. GetDocument() and GetActiveView() are inline functions that
+return member variables inherited from the base class by calling the base class function
+with the same name and casting the result.</P>
+<P>OnChange() is the first of these functions that has more than one line of code
+(see Listing 14.17).</P>
+<P>
+<H4>Listing 14.17&#160;&#160;CntrItem.cpp--CShowStringCntrItem::OnChange()</H4>
+<PRE>void CShowStringCntrItem::OnChange(OLE_NOTIFICATION nCode,
+     DWORD dwParam)
+{
+     ASSERT_VALID(this);
+     COleClientItem::OnChange(nCode, dwParam);
+     // When an item is being edited (either in-place or fully open)
+     //  it sends OnChange notifications for changes in the state of the
+     //  item or visual appearance of its content.
+     // TODO: invalidate the item by calling UpdateAllViews
+     //  (with hints appropriate to your application)
+     GetDocument()-&gt;UpdateAllViews(NULL);
+          // for now just update ALL views/no hints
+</PRE>
+<PRE>}
+</PRE>
+<P>Actually, there are only three lines of code. The comments are actually more useful
+than the code. When the user changes the contained item, the server notifies the
+container. Calling UpdateAllViews() is a rather drastic way of refreshing the screen,
+but it gets the job done.</P>
+<P>OnActivate() (shown in Listing 14.18) is called when a user double-clicks an item
+to activate it and edit it in place. ActiveX objects are usually <I>outside-in</I>,
+which means that a single click of the item selects it but doesn't activate it. Activating
+an outside-in object requires a double-click, or a single click followed by choosing
+the appropriate OLE verb from the Edit menu.</P>
+<P>
+<H4>Listing 14.18&#160;&#160;CntrItem.cpp--CShowStringCntrItem::OnActivate()</H4>
+<PRE>void CShowStringCntrItem::OnActivate()
+{
+    // Allow only one in-place activate item per frame
+    CShowStringView* pView = GetActiveView();
+    ASSERT_VALID(pView);
+    COleClientItem* pItem = GetDocument()-&gt;GetInPlaceActiveItem(pView);
+    if (pItem != NULL &amp;&amp; pItem != this)
+        pItem-&gt;Close();
+    COleClientItem::OnActivate();
+</PRE>
+<PRE>}
+</PRE>
+<P>This code makes sure that the current view is valid, closes the active items,
+if any, and then activates this item.</P>
+<P>OnGetItemPosition() (shown in Listing 14.19) is called as part of the in-place
+activation process.</P>
+<P>
+<H4>Listing 14.19&#160;&#160;CntrItem.cpp--CShowStringCntrItem::OnGetItemPosition()</H4>
+<PRE>void CShowStringCntrItem::OnGetItemPosition(CRect&amp; rPosition)
+{
+     ASSERT_VALID(this);
+     // During in-place activation,
+     // CShowStringCntrItem::OnGetItemPosition
+     // will be called to determine the location of this item.
+     // The default implementation created from AppWizard simply
+     // returns a hard-coded rectangle.  Usually, this rectangle
+     // would reflect the current position of the item relative
+     // to the view used for activation. You can obtain the view
+     // by calling CShowStringCntrItem::GetActiveView.
+     // TODO: return correct rectangle (in pixels) in rPosition
+     rPosition.SetRect(10, 10, 210, 210);
+</PRE>
+<PRE>}
+</PRE>
+<P>Like OnChange(), the comments are more useful than the actual code. At the moment,
+the View's OnDraw() function draws the contained object in a hard-coded rectangle,
+so this function returns that same rectangle. You are instructed to write code that
+asks the active view where the object is.</P>
+<P>OnDeactivateUI() (see Listing 14.20) is called when the object goes from being
+active to inactive.</P>
+<P>
+<H4>Listing 14.20&#160;&#160;CntrItem.cpp--CShowStringCntrItem::OnDeactivateUI()</H4>
+<PRE>void CShowStringCntrItem::OnDeactivateUI(BOOL bUndoable)
+{
+     COleClientItem::OnDeactivateUI(bUndoable);
+    // Hide the object if it is not an outside-in object
+    DWORD dwMisc = 0;
+    m_lpObject-&gt;GetMiscStatus(GetDrawAspect(), &amp;dwMisc);
+    if (dwMisc &amp; OLEMISC_INSIDEOUT)
+        DoVerb(OLEIVERB_HIDE, NULL);
+</PRE>
+<PRE>}
+</PRE>
+<P>Although the default behavior for contained objects is outside-in, as discussed
+earlier, you can write <I>inside-out objects</I>. These are activated simply by moving
+the mouse pointer over them; clicking the object has the same effect that clicking
+that region has while editing the object. For example, if the contained item is a
+spreadsheet, clicking might select the cell that was clicked. This can be really
+nice for the user, who can completely ignore the borders between the container and
+the contained item, but it is harder to write.</P>
+<P>OnChangeItemPosition() is called when the item is moved during in-place editing.
+It, too, contains mostly comments, as shown in Listing 14.21.</P>
+<P>
+<H4>Listing 14.21&#160;&#160;CntrItem.cpp--CShowStringCntrItem::OnChangeItemPosition()</H4>
+<PRE>BOOL CShowStringCntrItem::OnChangeItemPosition(const CRect&amp; rectPos)
+{
+     ASSERT_VALID(this);
+     // During in-place activation
+     // CShowStringCntrItem::OnChangeItemPosition
+     // is called by the server to change the position
+     // of the in-place window.  Usually, this is a result
+     // of the data in the server document changing such that
+     // the extent has changed or as a result of in-place resizing.
+     //
+     // The default here is to call the base class, which will call
+     //  COleClientItem::SetItemRects to move the item
+     //  to the new position.
+     if (!COleClientItem::OnChangeItemPosition(rectPos))
+          return FALSE;
+     // TODO: update any cache you may have of the item's rectangle/extent
+     return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>This code is supposed to handle moving the object, but it doesn't really. That's
+because OnDraw() always draws the contained item in the same place.</P>
+<P>AssertValid() is a debug function that confirms this object is valid; if it's
+not, an ASSERT will fail. ASSERT statements are discussed in Chapter 24, &quot;Improving
+Your Application's Performance.&quot; The last function in CShowStringCntrItem is
+Serialize(), which is called by COleDocument::Serialize(), which in turn is called
+by the document's Serialize(), as you've already seen. It is shown in Listing 14.22.</P>
+<P>
+<H4>Listing 14.22&#160;&#160;CntrItem.cpp--CShowStringCntrItem::Serialize()</H4>
+<PRE>void CShowStringCntrItem::Serialize(CArchive&amp; ar)
+{
+     ASSERT_VALID(this);
+     // Call base class first to read in COleClientItem data.
+     // Because this sets up the m_pDocument pointer returned from
+//  CShowStringCntrItem::GetDocument, it is a good idea to call
+     //  the base class Serialize first.
+     COleClientItem::Serialize(ar);
+     // now store/retrieve data specific to CShowStringCntrItem
+     if (ar.IsStoring())
+     {
+          // TODO: add storing code here
+     }
+     else
+     {
+          // TODO: add loading code here
+     }
+</PRE>
+<PRE>}
+</PRE>
+<P>All this code does at the moment is call the base class function. COleDocument::Serialize()
+stores or loads a number of counters and numbers to keep track of several different
+contained items, and then calls helper functions such as WriteItem() or ReadItem()
+to actually deal with the item. These functions and the helper functions they call
+are a bit too &quot;behind-the-scenes&quot; for most people, but if you'd like to
+take a look at them, they are in the MFC source folder (C:\Program Files\Microsoft
+Visual Studio\VC98\MFC\SRC on many installations) in the file olecli1.cpp. They do
+their job, which is to serialize the contained item for you.</P>
+<P><B>Shortcomings of This Container&#160;&#160;</B>This container application isn't
+ShowString yet, of course, but it has more important things wrong with it. It isn't
+a very good container, and that's a direct result of all those TODO tasks that haven't
+been accomplished. Still, the fact that it is a functioning container is a good measure
+of the power of the MFC classes COleDocument and COleClientItem. So why not build
+the application now and run it? After it's running, choose Edit, Insert New Object
+and insert a bitmap image. Now that you've seen the code, it shouldn't be a surprise
+that Paint is immediately launched to edit the item in place, as you see in Figure
+14.7.</P>
+<P><A HREF="javascript:popUp('14uvc07.gif')"><B>FIG. 14.7</B></A><B> </B><I>The boilerplate
+container can contain items and activate them for in-place editing, like this bitmap
+image being edited in Paint.</I></P>
+<P>Click outside the bitmap to deselect the item and return control to the container;
+you see that nothing happens. Click outside the document, and again nothing happens.
+You're probably asking yourself, &quot;Am I still in ShowString?&quot; Choose File,
+New, and you see that you are. The Paint menus and toolbars go away, and a new ShowString
+document is created. Click the bitmap item again, and you are still editing it in
+Paint. How can you insert another object into the first document when the menus are
+those of Paint? Press Esc to cancel in-place editing so the menus become ShowString
+menus again. Insert an Excel chart into the container, and the bitmap disappears
+as the new Excel chart is inserted, as shown in Figure 14.8. Obviously, this container
+leaves a lot to be desired.</P>
+<P>Press Esc to cancel the in-place editing, and notice that the view changes a little,
+as shown in Figure 14.9. That's because CShowStringView::OnDraw() draws the contained
+item in a 200*200 pixel rectangle, so the chart has to be squeezed a little to fit
+into that space. It is the server--Excel, in this case--that decides how to fit the
+item into the space given to it by the container.</P>
+<P><A HREF="javascript:popUp('14uvc08.gif')"><B>FIG. 14.8</B></A><B> </B><I>Inserting
+an Excel chart gets you a default chart, but it completely covers the old bitmap.</I></P>
+<P><A HREF="javascript:popUp('14uvc09.gif')"><B>FIG. 14.9</B></A><B> </B><I>Items
+can look quite different when they are not active.</I></P>
+<P>As you can see, there's a lot to be done to make this feel like a real container.
+But first, you have to turn it back into ShowString.</P>
+<P>
+<H3><A NAME="Heading3"></A>Returning the ShowString Functionality</H3>
+<P>This section provides a quick summary of the steps presented in Chapter 8, &quot;Building
+a Complete Application: ShowString.&quot; Open the files from the old ShowString
+as you go so that you can copy code and resources wherever possible. Follow these
+steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>In ShowStringDoc.h, add the private member variables and public Get
+	functions to the class.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>In CShowStringDoc::Serialize(), paste the code that saves or restores
+	these member variables. Leave the call to COleDocument::Serialize() in place.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>In CShowStringDoc::OnNewDocument(), paste the code that initializes
+	the member variables.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>In CShowStringView::OnDraw(), add the code that draws the string before
+	the code that handles the contained items. Remove the TODO task about drawing native
+	data.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Copy the Tools menu from the old ShowString to the new container ShowString.
+	Choose File, Open to open the old ShowString.rc, open the IDR_SHOWSTTYPE menu, click
+	the Tools menu, and choose Edit, Copy. Open the new ShowString's IDR_SHOWSTTYPE menu,
+	click the Window menu, and choose Edit, Paste. Don't paste it into the IDR_SHOWSTTYPE_CNTR_IP
+	menu.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Add the accelerator Ctrl+T for ID_TOOLS_OPTIONS as described in Chapter
+	8, &quot;Building a Complete Application: ShowString.&quot; Add it to the IDR_MAINFRAME
+	accelerator only.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Delete the IDD_ABOUTBOX dialog box from the new ShowString. Copy IDD_ABOUTBOX
+	and IDD_OPTIONS from the old ShowString to the new.
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>While IDD_OPTIONS has focus, choose View, Class Wizard. Create the
+	COptionsDialog class as in the original ShowString.
+	<P>
+	<DT></DT>
+	<DD><B>9. </B>Use the Class Wizard to connect the dialog controls to COptionsDialog
+	member variables, as described in Chapter 10.
+	<P>
+	<DT></DT>
+	<DD><B>10. </B>Use the Class Wizard to arrange for CShowStringDoc to catch the ID_TOOLS_OPTIONS
+	command.
+	<P>
+	<DT></DT>
+	<DD><B>11. </B>In ShowStringDoc.cpp, replace the Class Wizard version of CShowStringDoc::OnToolsOptions()
+	with the OnToolsOptions() from the old ShowString, which puts up the dialog box.
+	<P>
+	<DT></DT>
+	<DD><B>12. </B>In ShowStringDoc.cpp, add <B>#include &quot;OptionsDialog.h&quot;</B>
+	after the #include statements already present.
+</DL>
+
+<P>Build the application, fix any typos or other simple errors, and then execute
+it. It should run as before, saying Hello, world! in the center of the view. Convince
+yourself that the Options dialog box still works and that you have restored all the
+old functionality. Then resize the application and the view as large as possible,
+so that when you insert an object it doesn't land on the string. Insert an Excel
+chart as before, and press Esc to stop editing in place. There you have it: A version
+of ShowString that is also an ActiveX container. Now it's time to get to work making
+it a <I>good</I> container.</P>
+<P>
+<H2><A NAME="Heading4"></A>Moving, Resizing, and Tracking</H2>
+<P>The first task you want to do, even when there is only one item contained in ShowString,
+is to allow the user to move and resize that item. It makes life simpler for the
+user if you also provide a <I>tracker rectangle</I>, a hashed line around the contained
+item. This is easy to do with the MFC class CRectTracker.</P>
+<P>The first step is to add a member variable to the container item (CShowStringCntrItem)
+definition in CntrItem.h, to hold the rectangle occupied by this container item.
+Right-click CShowStringCntrItem in ClassView and choose Add Member Variable. The
+variable type is CRect, the declaration is m_rect; leave the access public.</P>
+<P>m_rect needs to be initialized in a function that is called when the container
+item is first used and then never again. Whereas view classes have OnInitialUpdate()
+and document classes have OnNewDocument(), container item classes have no such called-only-once
+function except the constructor. Initialize the rectangle in the constructor, as
+shown in Listing 14.23.</P>
+<P>
+<H4>Listing 14.23&#160;&#160;CntrItem.cpp--Constructor</H4>
+<PRE>CShowStringCntrItem::CShowStringCntrItem(CShowStringDoc* pContainer)
+     : COleClientItem(pContainer)
+{
+     m_rect = CRect(10,10,210,210);
+</PRE>
+<PRE>}
+</PRE>
+<P>The numerical values used here are those in the boilerplate OnDraw() provided
+by AppWizard. Now you need to start using the m rect member variable and setting
+it. The functions affected are presented in the same order as in the earlier section,
+CShowStringView.</P>
+<P>First, change CShowStringView::OnDraw(). Find this line:</P>
+<P>
+<PRE>     m_pSelection-&gt;Draw(pDC, CRect(10, 10, 210, 210));
+</PRE>
+<P>Replace it with this:</P>
+<P>
+<PRE>     m_pSelection-&gt;Draw(pDC, m_pSelection-&gt;m_rect);
+</PRE>
+<P>Next, change CShowStringCntrItem::OnGetItemPosition(), which needs to return this
+rectangle. Take away all the comments and the old hardcoded rectangle (leave the
+ASSERT_VALID macro call), and add this line:</P>
+<P>
+<PRE>     rPosition = m_rect;
+</PRE>
+<P>The partner function</P>
+<P>
+<PRE>CShowStringCntrItem::OnChangeItemPosition()
+</PRE>
+<P>is called when the user moves the item. This is where m_rect is changed from the
+initial value. Remove the comments and add code immediately after the call to the
+base class function, COleClientItem::OnChangeItemPosition(). The code to add is:</P>
+<P>
+<PRE>      m_rect = rectPos;
+     GetDocument()-&gt;SetModifiedFlag();
+     GetDocument()-&gt;UpdateAllViews(NULL);
+</PRE>
+<P>Finally, the new member variable needs to be incorporated into CShowStringCntrItem::Serialize().
+Remove the comments and add lines in the storing and saving blocks so that the function
+looks like Listing 14.24.</P>
+<P>
+<H4>Listing 14.24&#160;&#160;CntrItem.cpp--CShowStringCntrItem::Serialize()</H4>
+<PRE>void CShowStringCntrItem::Serialize(CArchive&amp; ar)
+{
+     ASSERT_VALID(this);
+     // Call base class first to read in COleClientItem data.
+     // Because this sets up the m_pDocument pointer returned from
+     // CShowStringCntrItem::GetDocument, it is a good idea to call
+     // the base class Serialize first.
+     COleClientItem::Serialize(ar);
+     // now store/retrieve data specific to CShowStringCntrItem
+     if (ar.IsStoring())
+     {
+          ar &lt;&lt; m_rect;
+     }
+     else
+     {
+          ar &gt;&gt; m_rect;
+     }
+</PRE>
+<PRE>}
+</PRE>
+<P>Build and execute the application, insert a bitmap, and scribble something in
+it. Press Esc to cancel editing in place, and your scribble shows up in the top-right
+corner, next to Hello, world!. Choose Edit, Bitmap Image Object and then Edit. (Choosing
+Open allows you to edit it in a different window.) Use the resizing handles that
+appear to drag the image over to the left, and then press Esc to cancel in-place
+editing. The image is drawn at the new position, as expected.</P>
+<P>Now for the tracker rectangle. The Microsoft tutorials recommend writing a helper
+function, SetupTracker(), to handle this. Add these lines to CShowStringView::OnDraw(),
+just after the call to m_pSelection-&gt;Draw():</P>
+<P>
+<PRE>          CRectTracker trackrect;
+          SetupTracker(m_pSelection,&amp;trackrect);
+          trackrect.Draw(pDC);
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>CAUTION:</strong><B> </B>The one-line statement after the if was not in brace brackets
+	before; don't forget to add them. The entire if statement should look like this:
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<PRE>if (m_pSelection != NULL)
+{
+    m_pSelection-&gt;Draw(pDC, m_pSelection-&gt;m_rect);
+    CRectTracker trackrect;
+    SetupTracker(m_pSelection,&amp;trackrect);
+    trackrect.Draw(pDC);
+}
+</PRE>
+<P>Add the following public function to ShowStringView.h (inside the class definition):</P>
+<P>
+<PRE>     void SetupTracker(CShowStringCntrItem* item,
+     CRectTracker* track);
+</PRE>
+<P>Add the code in Listing 14.25 to ShowStringView.cpp immediately after the destructor.</P>
+<P>
+<H4>Listing 14.25&#160;&#160;ShowStringView.cpp--CShowStringView::SetupTracker()</H4>
+<PRE>void CShowStringView::SetupTracker(CShowStringCntrItem* item,
+     CRectTracker* track)
+{
+     track-&gt;m_rect = item-&gt;m_rect;
+     if (item == m_pSelection)
+     {
+          track-&gt;m_nStyle |= CRectTracker::resizeInside;
+     }
+     if (item-&gt;GetType() == OT_LINK)
+     {
+          track-&gt;m_nStyle |= CRectTracker::dottedLine;
+     }
+     else
+     {
+          track-&gt;m_nStyle |= CRectTracker::solidLine;
+     }
+     if (item-&gt;GetItemState() == COleClientItem::openState ||
+          item-&gt;GetItemState() == COleClientItem::activeUIState)
+     {
+          track-&gt;m_nStyle |= CRectTracker::hatchInside;
+     }
+</PRE>
+<PRE>}
+</PRE>
+<P>This code first sets the tracker rectangle to the container item rectangle. Then
+it adds styles to the tracker. The styles available are as follows:</P>
+
+<UL>
+	<LI>solidLine--Used for an embedded item.
+	<P>
+	<LI>dottedLine--Used for a linked item.
+	<P>
+	<LI>hatchedBorder--Used for an in-place active item.
+	<P>
+	<LI>resizeInside--Used for a selected item.
+	<P>
+	<LI>resizeOutside--Used for a selected item.
+	<P>
+	<LI>hatchInside--Used for an item whose server is open.
+</UL>
+
+<P>This code first compares the pointers to this item and the current selection.
+If they are the same, this item is selected and it gets resize handles. It's up to
+you whether these handles go on the inside or the outside. Then this code asks the
+item whether it is linked (dotted line) or not (solid line.) Finally, it adds hatching
+to active items.</P>
+<P>Build and execute the application, and try it out. You still cannot edit the contained
+item by double-clicking it; choose Edit from the cascading menu added at the bottom
+of the Edit menu. You can't move and resize an inactive object, but if you activate
+it, you can resize it while active. Also, when you press Esc, the inactive object
+is drawn at its new position.</P>
+<P>
+<H2><A NAME="Heading5"></A>Handling Multiple Objects and Object Selection</H2>
+<P>The next step is to catch mouse clicks and double-clicks so that the item can
+be resized, moved, and activated more easily. This involves testing to see whether
+a click is on a contained item.</P>
+<P>
+<H3><A NAME="Heading6"></A>Hit Testing</H3>
+<P>You need to write a helper function that returns a pointer to the contained item
+that the user clicked, or NULL if the user clicked an area of the view that has no
+contained item. This function runs through all the items contained in the document.
+Add the code in Listing 14.26 to ShowStringView.cpp immediately after the destructor.</P>
+<P>
+<H4>Listing 14.26&#160;&#160;ShowStringView.cpp--CShowStringView::SetupTracker()</H4>
+<PRE>CShowStringCntrItem* CShowStringView::HitTest(CPoint point)
+{
+     CShowStringDoc* pDoc = GetDocument();
+     CShowStringCntrItem* pHitItem = NULL;
+     POSITION pos = pDoc-&gt;GetStartPosition();
+     while (pos)
+     {
+          CShowStringCntrItem* pCurrentItem =
+               (CShowStringCntrItem*) pDoc-&gt;GetNextClientItem(pos);
+          if ( pCurrentItem-&gt;m_rect.PtInRect(point) )
+          {
+               pHitItem = pCurrentItem;
+          }
+     }
+     return pHitItem;
+</PRE>
+<PRE>}
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Don't forget to add the declaration of this public function to the
+	header file. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>This function is given a CPoint that describes the point on the screen where the
+user clicked. Each container item has a rectangle, m_rect, as you saw earlier, and
+the CRect class has a member function called PtInRect() that takes a CPoint and returns
+TRUE if the point is in the rectangle or FALSE if it is not. This code simply loops
+through the items in this document, using the OLE document member function GetNextClientItem(),
+and calls PtInRect() for each.</P>
+<P>What happens if there are several items in the container, and the user clicks
+at a point where two or more overlap? The one on top is selected. That's because
+GetStartPosition() returns a pointer to the bottom item, and GetNextClientItem()
+works its way up through the items. If two items cover the spot where the user clicked,
+pHitItem is set to the lower one first, and then on a later iteration of the while
+loop, it is set to the higher one. The pointer to the higher item is returned.</P>
+<P>
+<H3><A NAME="Heading7"></A>Drawing Multiple Items</H3>
+<P>While that code to loop through all the items is still fresh in your mind, why
+not fix CShowStringView::OnDraw() so it draws all the items? Leave all the code that
+draws the string, and replace the code in Listing 14.27 with that in Listing 14.28.</P>
+<P>
+<H4>Listing 14.27&#160;&#160;ShowStringView.cpp--Lines in OnDraw() to Replace</H4>
+<PRE>     // Draw the selection at an arbitrary position.  This code should
+     // be removed once your real drawing code is implemented.  This
+     // position corresponds exactly to the rectangle returned by
+     // CShowStringCntrItem, to give the effect of in-place editing.
+     // TODO: remove this code when final draw code is complete.
+     if (m_pSelection == NULL)
+     {
+          POSITION pos = pDoc-&gt;GetStartPosition();
+          m_pSelection = (CShowStringCntrItem*)pDoc-&gt;GetNextClientItem(pos);
+     }
+     if (m_pSelection != NULL)
+     {
+          m_pSelection-&gt;Draw(pDC, m_pSelection-&gt;m_rect);
+          CRectTracker trackrect;
+          SetupTracker(m_pSelection,&amp;trackrect);
+          trackrect.Draw(pDC);
+</PRE>
+<PRE>     }
+</PRE>
+<H4>Listing 14.28&#160;&#160;ShowStringView.cpp--New Lines in OnDraw()</H4>
+<PRE>     POSITION pos = pDoc-&gt;GetStartPosition();
+     while (pos)
+     {
+          CShowStringCntrItem* pCurrentItem =
+               (CShowStringCntrItem*) pDoc-&gt;GetNextClientItem(pos);
+          pCurrentItem-&gt;Draw(pDC, pCurrentItem-&gt;m_rect);
+          if (pCurrentItem == m_pSelection )
+          {
+               CRectTracker trackrect;
+               SetupTracker(pCurrentItem,&amp;trackrect);
+               trackrect.Draw(pDC);
+          }
+</PRE>
+<PRE>     }
+</PRE>
+<P>Now each item is drawn, starting from the bottom and working up, and if it is
+selected, it gets a tracker rectangle.</P>
+<P>
+<H3><A NAME="Heading8"></A>Handling Single Clicks</H3>
+<P>When the user clicks the client area of the application, a WM_LBUTTONDOWN message
+is sent. This message should be caught by the view. Right-click CShowStringView in
+ClassView, and choose Add Windows Message Handler from the shortcut menu. Click WM_LBUTTONDOWN
+in the New Windows Messages/Events box on the left (see Figure 14.10), and then click
+Add and Edit to add a handler function and edit the code immediately.</P>
+<P><A HREF="javascript:popUp('14uvc10.gif')"><B>FIG. 14.10</B></A><B> </B><I>Add
+a function to handle left mouse button clicks.</I></P>
+<P>Add the code in Listing 14.29 to the empty OnLButtonDown() that Add Windows Message
+Handler generated.</P>
+<P>
+<H4>Listing 14.29&#160;&#160;ShowStringView.cpp--CShowStringView::OnLButtonDown()</H4>
+<PRE>void CShowStringView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+     CShowStringCntrItem* pHitItem = HitTest(point);
+     SetSelection(pHitItem);
+    if (pHitItem == NULL)
+        return;
+    CRectTracker track;
+    SetupTracker(pHitItem, &amp;track);
+    UpdateWindow();
+    if (track.Track(this,point))
+       {
+            Invalidate();
+            pHitItem-&gt;m_rect = track.m_rect;
+            GetDocument()-&gt;SetModifiedFlag();
+       }
+</PRE>
+<PRE>}
+</PRE>
+<P>This code determines which item has been selected and sets it. (SetSelection()
+isn't written yet.) Then, if something has been selected, it draws a tracker rectangle
+around it and calls CRectTracker::Track(), which allows the user to resize the rectangle.
+After the resizing, the item is sized to match the tracker rectangle and is redrawn.</P>
+<P>SetSelection() is pretty straightforward. Add the definition of this public member
+function to the header file, ShowStringView.h, and the code in Listing 14.30 to ShowStringView.cpp.</P>
+<P>
+<H4>Listing 14.30&#160;&#160;ShowStringView.cpp--CShowStringView::SetSelection()</H4>
+<PRE>void CShowStringView::SetSelection(CShowStringCntrItem* item)
+{
+     // if an item is being edited in place, close it
+     if ( item == NULL || item != m_pSelection)
+     {
+          COleClientItem* pActive =
+               GetDocument()-&gt;GetInPlaceActiveItem(this);
+          if (pActive != NULL &amp;&amp; pActive != item)
+          {
+               pActive-&gt;Close();
+          }
+     }
+     Invalidate();
+     m_pSelection = item;
+</PRE>
+<PRE>}
+</PRE>
+<P>When the selection is changed, any item that is being edited in place should be
+closed. SetSelection() checks that the item passed in represents a change, and then
+gets the active object from the document and closes that object. Then it calls for
+a redraw and sets m_pSelection. Build and execute ShowString, insert an object, and
+press Esc to stop in-place editing. Click and drag to move the inactive object, and
+insert another. You should see something like Figure 14.11. Notice the resizing handles
+around the bitmap, indicating that it is selected.</P>
+<P><A HREF="javascript:popUp('14uvc11.gif')"><B>FIG. 14.11</B></A><B> </B><I>ShowString
+can now hold multiple items, and the user can move and resize them intuitively.</I></P>
+<P>You might have noticed that the cursor doesn't change as you move or resize. That's
+because you didn't tell it to. Luckily, it's easy to tell it this: CRectTracker has
+a SetCursor() member function, and all you need to do is call it when a WM_SETCURSOR
+message is sent. Again, it should be the view that catches this message; right-click
+CShowStringView in ClassView, and choose Add Windows Message Handler from the shortcut
+menu. Click WM_SETCURSOR in the New Windows Messages/Events box on the left; then
+click Add and Edit to add a handler function and edit the code immediately. Add the
+code in Listing 14.31 to the empty function that was generated for you.</P>
+<P>
+<H4>Listing 14.31&#160;&#160;ShowStringView.cpp--CShowStringView::OnSetCursor()</H4>
+<PRE>BOOL CShowStringView::OnSetCursor(CWnd* pWnd, UINT nHitTest,
+     UINT message)
+{
+     if (pWnd == this &amp;&amp; m_pSelection != NULL)
+     {
+          CRectTracker track;
+          SetupTracker(m_pSelection, &amp;track);
+          if (track.SetCursor(this, nHitTest))
+          {
+               return TRUE;
+          }
+     }
+     return CView::OnSetCursor(pWnd, nHitTest, message);
+</PRE>
+<PRE>}
+</PRE>
+<P>This code does nothing unless the cursor change involves this view and there is
+a selection. It gives the tracking rectangle's SetCursor() function a chance to change
+the cursor because the tracking object knows where the rectangle is and whether the
+cursor is over a boundary or sizing handle. If SetCursor() didn't change the cursor,
+this code lets the base class handle it. Build and execute ShowString, and you should
+see cursors that give you feedback as you move and resize.</P>
+<P>
+<H3><A NAME="Heading9"></A>Handling Double-Clicks</H3>
+<P>When a user double-clicks a contained item, the <I>primary</I> <I>verb</I> should
+be called. For most objects, the primary verb is to Edit in place, but for some,
+such as sound files, it is Play. Arrange as before for CShowStringView to catch the
+WM_LBUTTONDBLCLK message, and add the code in Listing 14.32 to the new function.</P>
+<P>
+<H4>Listing 14.32&#160;&#160;ShowStringView.cpp--CShowStringView::OnLButtonDblClk()</H4>
+<PRE>void CShowStringView::OnLButtonDblClk(UINT nFlags, CPoint point)
+{
+     OnLButtonDown(nFlags, point);
+     if( m_pSelection)
+     {
+          if (GetKeyState(VK_CONTROL) &lt; 0)
+          {
+               m_pSelection-&gt;DoVerb(OLEIVERB_OPEN, this);
+          }
+          else
+          {
+               m_pSelection-&gt;DoVerb(OLEIVERB_PRIMARY, this);
+          }
+     }
+     CView::OnLButtonDblClk(nFlags, point);
+</PRE>
+<PRE>}
+</PRE>
+<P>First, this function handles the fact that this item has been clicked; calling
+OnLButtonDown() draws the tracker rectangle, sets m_pSelection, and so on. Then,
+if the user holds down Ctrl while double-clicking, the item is opened; otherwise,
+the primary verb is called. Finally, the base class function is called. Build and
+execute ShowString and try double-clicking. Insert an object, press Esc to stop editing
+it, move it, resize it, and double-click it to edit in place.</P>
+<P>
+<H2><A NAME="Heading10"></A>Implementing Drag and Drop</H2>
+<P>The last step to make ShowString a completely up-to-date ActiveX container application
+is to implement drag and drop. The user should be able to grab a contained item and
+drag it out of the container, or hold down Ctrl while dragging to drag out a copy
+and leave the original behind. The user should also be able to drag items from elsewhere
+and drop them into this container just as though they had been inserted through the
+Clipboard. In other words, the container should operate as a <I>drag source</I> and
+a <I>drop target</I>.</P>
+<P>
+<H3><A NAME="Heading11"></A>Implementing a Drag Source</H3>
+<P>Because CShowStringCntrItem inherits from COleClientItem, implementing a drag
+source is really easy. By clicking a contained object, edit these lines at the end
+of CShowStringView::OnLButtonDown() so that it resembles Listing 14.33. The new lines
+are in bold type.</P>
+<P>
+<H4>Listing 14.33&#160;&#160;CShowStringView::OnLButtonDown()--Implementing a Drag
+Source</H4>
+<PRE>void CShowStringView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+    CShowStringCntrItem* pHitItem = HitTest(point);
+    SetSelection(pHitItem);
+    if (pHitItem == NULL)
+        return;
+    CRectTracker track;
+    SetupTracker(pHitItem, &amp;track);
+    UpdateWindow();
+<B>    if (track.HitTest(point) == CRectTracker::hitMiddle)</B>
+<B>    {</B>
+<B>        CRect rect =  pHitItem-&gt;m_rect;</B>
+<B>        CClientDC dc(this);</B>
+<B>        OnPrepareDC(&amp;dc);</B>
+<B>        dc.LPtoDP(&amp;rect); // convert logical rect to device rect</B>
+<B>        rect.NormalizeRect();</B>
+<B>        CPoint newpoint = point - rect.TopLeft();</B>
+<B>        DROPEFFECT dropEffect = pHitItem-&gt;DoDragDrop(rect, newpoint);</B>
+<B>        if (dropEffect == DROPEFFECT_MOVE)</B>
+<B>        {</B>
+<B>            Invalidate();</B>
+<B>            if (pHitItem == m_pSelection)</B>
+<B>            {</B>
+<B>                m_pSelection = NULL;</B>
+<B>            }</B>
+<B>            pHitItem-&gt;Delete();</B>
+<B>        }</B>
+<B>    }</B>
+<B>    else</B>
+<B>    {</B>
+        if (track.Track(this,point))
+        {
+            Invalidate();
+            pHitItem-&gt;m_rect = track.m_rect;
+            GetDocument()-&gt;SetModifiedFlag();
+        }
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>This code first confirms that the mouse click was inside the tracking rectangle,
+rather than on the sizing border. It sets up a temporary CRect object that will be
+passed to DoDragDrop() after some coordinate scheme conversions are complete. The
+first conversion is from logical to device units, and is accomplished with a call
+to CDC::LPtoDP(). In order to call this function, the new code must create a temporary
+device context based on the CShowStringView for which OnLButtonDown() is being called.
+Having converted rect to device units, the new code normalizes it and calculates
+the point within the rectangle where the user clicked.</P>
+<P>Then the new code calls the DoDragDrop() member function of CShowStringCntrItem,
+inherited from COleClientItem and not overridden. It passes in the converted rect
+and the offset of the click. If DoDragDrop() returns DROPEFFECT_MOVE, the item was
+moved and needs to be deleted. The code to handle a drop, which is not yet written,
+will create a new container item and set it as the current selection. This means
+that if the object was dropped elsewhere in the container, the current selection
+will no longer be equal to the hit item. If these two pointers are still equal, the
+object must have been dragged away. If it was dragged away, this code sets m_pSelection
+to NULL. In either case, pHitItem should be deleted.</P>
+<P>Build and execute ShowString, insert a new object, press Esc to stop editing in
+place, and then drag the inactive object to an ActiveX container application such
+as Microsoft Excel. You can also try dragging to the desktop. Be sure to try dragging
+an object down to the taskbar and pausing over the icon of a minimized container
+application, and then waiting while the application is restored so that you can drop
+the object.</P>
+<P>
+<H3><A NAME="Heading12"></A>Implementing a Drop Target</H3>
+<P>It is harder to make ShowString a drop target (it could hardly be easier). If
+you dragged a contained item out of ShowString and dropped it into another container,
+try dragging that item back into ShowString. The cursor changes to a circle with
+a slash through it, meaning &quot;you can't drop that here.&quot; In this section,
+you make the necessary code changes that allow you to drop it there after all.</P>
+<P>You need to register your view as a place where items can be dropped. Next, you
+need to handle the following four events that can occur:</P>
+
+<UL>
+	<LI>An item might be dragged across the boundaries of your view. This action will
+	require a cursor change or other indication you will take the item.
+	<P>
+	<LI>In the view, the item will be dragged around within your boundaries, and you
+	should give the user feedback about that process.
+	<P>
+	<LI>That item might be dragged out of the window again, having just passed over your
+	view on the way to its final destination.
+	<P>
+	<LI>The user may drop the item in your view.
+</UL>
+
+<H3><A NAME="Heading13"></A>Registering the View as a Drop Target</H3>
+<P>To register the view as a drop target, add a COleDropTarget member variable to
+the view. In ShowStringView.h, add this line to the class definition:</P>
+<P>
+<PRE>     COleDropTarget m_droptarget;
+</PRE>
+<P>To handle registration, override OnCreate() for the view, which is called when
+the view is created. Arrange for CShowStringView to catch the WM_CREATE message.
+Add the code in Listing 14.34 to the empty function generated for you.</P>
+<P>
+<H4>Listing 14.34&#160;&#160;ShowStringView.cpp--CShowStringView::OnCreate()</H4>
+<PRE>int CShowStringView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+     if (CView::OnCreate(lpCreateStruct) == -1)
+          return -1;
+     if (m_droptarget.Register(this))
+     {
+          return 0;
+     }
+     else
+     {
+          return -1;
+     }
+</PRE>
+<PRE>}
+</PRE>
+<P>OnCreate() returns 0 if everything is going well and -1 if the window should be
+destroyed. This code calls the base class function and then uses COleDropTarget::Register()
+to register this view as a place to drop items.</P>
+<P>
+<H3><A NAME="Heading14"></A>Setting Up Function Skeletons and Adding Member Variables</H3>
+<P>The four events that happen in your view correspond to four virtual functions
+you must override: OnDragEnter(), OnDragOver(), OnDragLeave(), and OnDrop(). Right-click
+CShowStringView in ClassView and choose Add Virtual Function to add overrides of
+these functions. Highlight OnDragEnter() in the New Virtual Functions list, click
+Add Handler, and repeat for the other three functions.</P>
+<P>OnDragEnter() sets up a <I>focus rectangle</I> that shows the user where the item
+would go if it were dropped here. This is maintained and drawn by OnDragOver(). But
+first, a number of member variables related to the focus rectangle must be added
+to CShowStringView. Add these lines to ShowStringView.h, in the public section:</P>
+<P>
+<PRE>     CPoint m_dragpoint;
+     CSize m_dragsize;
+     CSize m_dragoffset;
+</PRE>
+<P>A data object contains a great deal of information about itself, in various formats.
+There is, of course, the actual data as text, <I>device independent bitmap (DIB)</I>,
+or whatever other format is appropriate. But there is also information about the
+object itself. If you request data in the Object Descriptor format, you can find
+out the size of the item and where on the item the user originally clicked, and the
+offset from the mouse to the upper-left corner of the item. These formats are generally
+referred to as <I>Clipboard formats</I> because they were originally used for Cut
+and Paste via the Clipboard.</P>
+<P>To ask for this information, call the data object's GetGlobalData() member function,
+passing it a parameter that means &quot;Object Descriptor, please.&quot; Rather than
+build this parameter from a string every time, you build it once and store it in
+a static member of the class. When a class has a static member variable, every instance
+of the class looks at the same memory location to see that variable. It is initialized
+(and memory is allocated for it) once, outside the class.</P>
+<P>Add this line to ShowStringView.h:</P>
+<P>
+<PRE>     static CLIPFORMAT m_cfObjectDescriptorFormat;
+</PRE>
+<P>In ShowStringView.cpp, just before the first function, add these lines:</P>
+<P>
+<PRE>CLIPFORMAT CShowStringView::m_cfObjectDescriptorFormat =
+     (CLIPFORMAT) ::RegisterClipboardFormat(&quot;Object Descriptor&quot;);
+</PRE>
+<P>This makes a CLIPFORMAT from the string &quot;Object Descriptor&quot; and saves
+it in the static member variable for all instances of this class to use. Using a
+static member variable speeds up dragging over your view.</P>
+<P>Your view doesn't accept any and all items that are dropped on it. Add a BOOL
+member variable to the view that indicates whether it accepts the item that is now
+being dragged over it:</P>
+<P>
+<PRE>     BOOL m_OKtodrop;
+</PRE>
+<P>There is one last member variable to add to CShowStringView. As the item is dragged
+across the view, a focus rectangle is repeatedly drawn and erased. Add another BOOL
+member variable that tracks the status of the focus rectangle:</P>
+<P>
+<PRE>     BOOL m_FocusRectangleDrawn;
+</PRE>
+<P>Initialize m_FocusRectangleDrawn, in the view constructor, to FALSE:</P>
+<P>
+<PRE>CShowStringView::CShowStringView()
+{
+     m_pSelection = NULL;
+     m_FocusRectangleDrawn = FALSE;
+}
+</PRE>
+<H3><A NAME="Heading15"></A>OnDragEnter()</H3>
+<P>OnDragEnter() is called when the user first drags an item over the boundary of
+the view. It sets up the focus rectangle and then calls OnDragOver(). As the item
+continues to move, OnDragOver() is called repeatedly until the user drags the item
+out of the view or drops it in the view. The overall structure of OnDragEnter() is
+shown in Listing 14.35.</P>
+<P>
+<H4>Listing 14.35&#160;&#160;ShowStringView.cpp--CShowStringView::OnDragEnter()</H4>
+<PRE>DROPEFFECT CShowStringView::OnDragEnter(COleDataObject* pDataObject,
+    DWORD dwKeyState, CPoint point)
+{
+     ASSERT(!m_FocusRectangleDrawn);
+     // check that the data object can be dropped in this view
+     // set dragsize and dragoffset with call to GetGlobalData
+     // convert sizes with a scratch dc
+     // hand off to OnDragOver
+     return OnDragOver(pDataObject, dwKeyState, point);
+</PRE>
+<PRE>}
+</PRE>
+<P>First, check that whatever pDataObject carries is something from which you can
+make a COleClientItem (and therefore a CShowsStringCntrItem). If not, the object
+cannot be dropped here, and you return DROPEFFECT_NONE, as shown in Listing 14.36.</P>
+<P>
+<H4>Listing 14.36&#160;&#160;ShowStringView.cpp--Can the Object Be Dropped?</H4>
+<PRE>     // check that the data object can be dropped in this view
+     m_OKtodrop = FALSE;
+     if (!COleClientItem::CanCreateFromData(pDataObject))
+          return DROPEFFECT_NONE;
+</PRE>
+<PRE>     m_OKtodrop = TRUE;
+</PRE>
+<P>Now the weird stuff starts. The GetGlobalData() member function of the data item
+that is being dragged into this view is called to get the object descriptor information
+mentioned earlier. It returns a handle of a global memory block. Then the SDK function
+GlobalLock() is called to convert the handle into a pointer to the first byte of
+the block and to prevent any other object from allocating the block. This is cast
+to a pointer to an object descriptor structure (the undyingly curious can check about
+2,000 lines into oleidl.h, in the \Program Files\Microsoft Visual Studio\VC98\Include
+folder for most installations, to see the members of this structure) so that the
+sizel and pointl elements can be used to fill the \m_dragsize and m_dragoffset member
+variables.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> That is not a number 1 at the end of those structure elements, but
+	a lowercase letter L. The elements of the sizel structure are cx and cy, but the
+	elements of the pointl structure are x and y. Don't get carried away cutting and
+	pasting. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Finally, GlobalUnlock() reverses the effects of GlobalLock(), making the block
+accessible to others, and GlobalFree() frees the memory. It ends up looking like
+Listing 14.37.</P>
+<P>
+<H4>Listing 14.37&#160;&#160;ShowStringView.cpp--Set dragsize and dragoffset</H4>
+<PRE>     // set dragsize and dragoffset with call to GetGlobalData
+     HGLOBAL hObjectDescriptor = pDataObject-&gt;GetGlobalData(
+          m_cfObjectDescriptorFormat);
+     if (hObjectDescriptor)
+     {
+          LPOBJECTDESCRIPTOR pObjectDescriptor =
+               (LPOBJECTDESCRIPTOR) GlobalLock(hObjectDescriptor);
+          ASSERT(pObjectDescriptor);
+          m_dragsize.cx = (int) pObjectDescriptor-&gt;sizel.cx;
+          m_dragsize.cy = (int) pObjectDescriptor-&gt;sizel.cy;
+          m_dragoffset.cx = (int) pObjectDescriptor-&gt;pointl.x;
+          m_dragoffset.cy = (int) pObjectDescriptor-&gt;pointl.y;
+          GlobalUnlock(hObjectDescriptor);
+          GlobalFree(hObjectDescriptor);
+     }
+     else
+     {
+          m_dragsize = CSize(0,0);
+          m_dragoffset = CSize(0,0);
+</PRE>
+<PRE>     }
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Global memory, also called <I>shared application memory</I>, is allocated
+	from a different place than the memory available from your process space. It is the
+	memory to use when two different processes need to read and write the same memory,
+	and so it comes into play when using ActiveX.<BR>
+	For some ActiveX operations, global memory is too small--imagine trying to transfer
+	a 40MB file through global memory! There is a more general function than GetGlobalData(),
+	called (not surprisingly) GetData(), which can transfer the data through a variety
+	of storage medium choices. Because the object descriptors are small, asking for them
+	in global memory is a sensible approach.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>If the call to GetGlobalData() didn't work, set both member variables to zero
+by zero rectangles. Next, convert those rectangles from OLE coordinates (which are
+device independent) to pixels:</P>
+<P>
+<PRE>// convert sizes with a scratch dc
+     CClientDC dc(NULL);
+     dc.HIMETRICtoDP(&amp;m_dragsize);
+     dc.HIMETRICtoDP(&amp;m_dragoffset);
+</PRE>
+<P>HIMETRICtoDP() is a very useful function that happens to be a member of CClientDC,
+which inherits from the familiar CDC of Chapter 5, &quot;Drawing on the Screen.&quot;
+You create an instance of CClientDC just so you can call the function.</P>
+<P>OnDragEnter() closes with a call to OnDragOver(), so that's the next function
+to write.</P>
+<P>
+<H3><A NAME="Heading16"></A>OnDragOver()</H3>
+<P>This function returns a DROPEFFECT. As you saw earlier in the &quot;Implementing
+a Drag Source&quot; section, if you return DROPEFFECT_MOVE, the source deletes the
+item from itself. Returning DROPEFFECT_NONE rejects the copy. It is OnDragOver()
+that deals with preparing to accept or reject a drop. The overall structure of the
+function looks like this:</P>
+<P>
+<PRE>DROPEFFECT CShowStringView::OnDragOver(COleDataObject* pDataObject,
+    DWORD dwKeyState, CPoint point)
+{
+     // return if dropping is already rejected
+     // determine drop effect according to keys depressed
+     // adjust focus rectangle
+}
+</PRE>
+<P>First, check to see whether OnDragEnter() or an earlier call to OnDragOver() already
+rejected this possible drop:</P>
+<P>
+<PRE>     // return if dropping is already rejected
+     if (!m_OKtodrop)
+     {
+          return DROPEFFECT_NONE;
+     }
+</PRE>
+<P>Next, look at the keys that the user is holding down now, available in the parameter
+passed to this function, dwKeyState. The code you need to add (see Listing 14.38)
+is straightforward.</P>
+<P>
+<H4>Listing 14.38&#160;&#160;ShowStringView.cpp--Determine the Drop Effect</H4>
+<PRE>     // determine drop effect according to keys depressed
+     DROPEFFECT dropeffect = DROPEFFECT_NONE;
+     if ((dwKeyState &amp; (MK_CONTROL|MK_SHIFT) )
+          == (MK_CONTROL|MK_SHIFT))
+     {
+          // Ctrl+Shift force a link
+          dropeffect = DROPEFFECT_LINK;
+     }
+     else if ((dwKeyState &amp; MK_CONTROL)     == MK_CONTROL)
+     {
+          // Ctrl forces a copy
+          dropeffect = DROPEFFECT_COPY;
+     }
+     else if ((dwKeyState &amp; MK_ALT) == MK_ALT)
+     {
+          // Alt forces a move
+          dropeffect = DROPEFFECT_MOVE;
+     }
+     else
+     {
+          // default is to move
+          dropeffect = DROPEFFECT_MOVE;
+</PRE>
+<PRE>     }
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> This code has to be a lot more complex if the document might be smaller
+	than the view, as can happen when you are editing a bitmap in Paint, and especially
+	if the view can scroll. The Microsoft ActiveX container sample, DRAWCLI, (included
+	on the Visual C++ CD) handles these contingencies. Look in the CD folder \Vc98\Samples\Mcl\Mfc\Ole\DrawCli
+	for the file drawvw.cpp and compare that code for OnDragOver() to this code.&#160;
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>If the item has moved since the last time OnDragOver() was called, the focus rectangle
+has to be erased and redrawn at the new location. Because the focus rectangle is
+a simple XOR of the colors, drawing it a second time in the same place removes it.
+The code to adjust the focus rectangle is in Listing 14.39.</P>
+<P>
+<H4>Listing 14.39&#160;&#160;ShowStringView.cpp--Adjust the Focus Rectangle</H4>
+<PRE>     // adjust focus rectangle
+     point -= m_dragoffset;
+     if (point == m_dragpoint)
+     {
+          return dropeffect;
+     }
+     CClientDC dc(this);
+     if (m_FocusRectangleDrawn)
+     {
+          dc.DrawFocusRect(CRect(m_dragpoint, m_dragsize));
+          m_FocusRectangleDrawn = FALSE;
+     }
+     if (dropeffect != DROPEFFECT_NONE)
+     {
+          dc.DrawFocusRect(CRect(point, m_dragsize));
+          m_dragpoint = point;
+          m_FocusRectangleDrawn = TRUE;
+</PRE>
+<PRE>     }
+</PRE>
+<P>To test whether the focus rectangle should be redrawn, this code adjusts the point
+where the user clicked by the offset into the item to determine the top-left corner
+of the item. It can then compare that location to the top-left corner of the focus
+rectangle. If they are the same, there is no need to redraw it. If they are different,
+the focus rectangle might need to be erased.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> The first time OnDragOver() is called, m_dragpoint is uninitialized.
+	That doesn't matter because m_FocusRectangleDrawn is FALSE, and an ASSERT in OnDragEnter()
+	guarantees it. When m_FocusRectangleDrawn is set to TRUE, m_dragpoint gets a value
+	at the same time.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Finally, replace the return statement that was generated for you with one that
+returns the calculated DROPEFFECT:</P>
+<P>
+<PRE>     return dropeffect;
+</PRE>
+<H3><A NAME="Heading17"></A>OnDragLeave()</H3>
+<P>Sometimes a user drags an item right over your view and out the other side. OnDragLeave()
+just tidies up a little by removing the focus rectangle, as shown in Listing 14.40.</P>
+<P>
+<H4>Listing 14.40&#160;&#160;ShowStringView.cpp--ShowStringView::OnDragLeave()</H4>
+<PRE>void CShowStringView::OnDragLeave()
+{
+     CClientDC dc(this);
+     if (m_FocusRectangleDrawn)
+     {
+          dc.DrawFocusRect(CRect(m_dragpoint, m_dragsize));
+          m_FocusRectangleDrawn = FALSE;
+     }
+</PRE>
+<PRE>}
+</PRE>
+<H3><A NAME="Heading18"></A>OnDragDrop()</H3>
+<P>If the user lets go of an item that is being dragged over ShowString, the item
+lands in the container and OnDragDrop() is called. The overall structure is in Listing
+14.41.</P>
+<P>
+<H4>Listing 14.41&#160;&#160;ShowStringView.cpp--Structure of OnDrop()</H4>
+<PRE>BOOL CShowStringView::OnDrop(COleDataObject* pDataObject,
+     DROPEFFECT dropEffect, CPoint point)
+{
+     ASSERT_VALID(this);
+     // remove focus rectangle
+     // paste in the data object
+     // adjust the item dimensions, and make it the current selection
+     // update views and set modified flag
+     return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>Removing the focus rectangle is simple, as shown in Listing 14.42.</P>
+<P>
+<H4>Listing 14.42&#160;&#160;ShowStringView.cpp--Removing the Focus Rectangle</H4>
+<PRE>     // remove focus rectangle
+     CClientDC dc(this);
+     if (m_FocusRectangleDrawn)
+     {
+          dc.DrawFocusRect(CRect(m_dragpoint, m_dragsize));
+          m_FocusRectangleDrawn = FALSE;
+</PRE>
+<PRE>     }
+</PRE>
+<P>Next, create a new item to hold the data object, as shown in Listing 14.43. Note
+the use of the bitwise and (&amp;) to test for a link.</P>
+<P>
+<H4>Listing 14.43&#160;&#160;ShowStringView.cpp--Paste the Data Object</H4>
+<PRE>     // paste the data object
+     CShowStringDoc* pDoc = GetDocument();
+     CShowStringCntrItem* pNewItem = new CShowStringCntrItem(pDoc);
+     ASSERT_VALID(pNewItem);
+     if (dropEffect &amp; DROPEFFECT_LINK)
+     {
+          pNewItem-&gt;CreateLinkFromData(pDataObject);
+     }
+     else
+     {
+          pNewItem-&gt;CreateFromData(pDataObject);
+     }
+</PRE>
+<PRE>     ASSERT_VALID(pNewItem);
+</PRE>
+<P>The size of the container item needs to be set, as shown in Listing 14.44.</P>
+<P>
+<H4>Listing 14.44&#160;&#160;ShowStringView.cpp--Adjust Item Dimensions</H4>
+<PRE>     // adjust the item dimensions, and make it the current selection
+     CSize size;
+     pNewItem-&gt;GetExtent(&amp;size, pNewItem-&gt;GetDrawAspect());
+     dc.HIMETRICtoDP(&amp;size);
+     point -= m_dragoffset;
+     pNewItem-&gt;m_rect = CRect(point,size);
+</PRE>
+<PRE>     m_pSelection = pNewItem;
+</PRE>
+<P>Notice that this code adjusts the place where the user drops the item (point)
+by m_dragoffset, the coordinates into the item where the user clicked originally.</P>
+<P>Finally, make sure the document is saved on exit, because pasting in a new container
+item changes it, and redraw the view:</P>
+<P>
+<PRE>     // update views and set modified flag
+     pDoc-&gt;SetModifiedFlag();
+     pDoc-&gt;UpdateAllViews(NULL);
+     return TRUE;
+</PRE>
+<P>This function always returns TRUE because there is no error checking at the moment
+that might require a return of FALSE. Notice, however, that most problems have been
+prevented; for example, if the data object cannot be used to create a container item,
+the DROPEFFECT would have been set to DROPEFFECT_NONE in OnDragEnter() and this code
+would never have been called. You can be confident this code works.</P>
+<P>
+<H3><A NAME="Heading19"></A>Testing the Drag Target</H3>
+<P>All the confidence in the world is no substitute for testing. Build and execute
+ShowString, and try dragging something into it. To test both the drag source and
+drop target aspects at once, drag something out and then drag it back in. Now this
+is starting to become a really useful container. There's only one task left to do.</P>
+<P>
+<H2><A NAME="Heading20"></A>Deleting an Object</H2>
+<P>You can remove an object from your container by dragging it away somewhere, but
+it makes sense to implement deleting in a more obvious and direct way. The menu item
+generally used for this is Edit, Delete, so you start by adding this item to the
+IDR_SHOWSTTYPE menu before the Insert New Object item. Don't let Developer Studio
+set the ID to ID_EDIT_DELETE; instead, change it to ID_EDIT_CLEAR, the traditional
+resource ID for the command that deletes a contained object. Move to another menu
+item and then return to Edit, Delete, and you see that the prompt has been filled
+in for you as Erase the selection\nErase automatically.</P>
+<P>The view needs to handle this command, so add a message handler as you have done
+throughout this chapter. Follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Right-click CShowStringView in ClassView and choose Add Windows Message
+	Handler.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Choose ID_EDIT_CLEAR from the Class or Object to Handle drop-down box
+	at the lower right.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Choose COMMAND from the New Windows Messages/Events box that appears
+	when you click the ID_EDIT_CLEAR box.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Click Add Handler.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Click OK to accept the suggested name.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Choose UPDATE_COMMAND_UI from the New Windows Messages/Events box and
+	click Add Handler again.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Accept the suggested name.
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>Click OK on the large dialog to complete the process.
+	<P>
+</DL>
+
+<P>The code for these two handlers is very simple. Because the update handler is
+simpler, add code to it first:</P>
+<P>
+<PRE>void CShowStringView::OnUpdateEditClear(CCmdUI* pCmdUI)
+{
+     pCmdUI-&gt;Enable(m_pSelection != NULL);
+}
+</PRE>
+<P>If there is a current selection, it can be deleted. If there is not a current
+selection, the menu item is disabled (grayed). The code to handle the command isn't
+much longer: it's in Listing 14.45.</P>
+<P>
+<H4>Listing 14.45&#160;&#160;ShowStringView.cpp--CShowStringView::OnEditClear()</H4>
+<PRE>void CShowStringView::OnEditClear()
+{
+     if (m_pSelection)
+     {
+          m_pSelection-&gt;Delete();
+          m_pSelection = NULL;
+          GetDocument()-&gt;SetModifiedFlag();
+          GetDocument()-&gt;UpdateAllViews(NULL);
+     }
+</PRE>
+<PRE>}
+</PRE>
+<P>This code checks that there is a selection (even though the menu item is grayed
+when there is no selection) and then deletes it, sets it to NULL so that there is
+no longer a selection, makes sure the document is marked as modified so that the
+user is prompted to save it when exiting, and gets the view redrawn without the deleted
+object.</P>
+<P>Build and execute ShowString, insert something, and delete it by choosing Edit,
+Delete. Now it's an intuitive container that does what you expect a container to
+do.</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch13/ch13.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch15/ch15.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

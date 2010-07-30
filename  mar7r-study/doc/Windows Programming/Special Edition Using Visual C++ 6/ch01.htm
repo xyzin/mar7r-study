@@ -1,0 +1,1506 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 1 -- Building Your First Windows Application</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../fm/fm.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch02/ch02.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 1 -</H1>
+</CENTER>
+<CENTER>
+<H1>Building Your First Windows Application</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Creating a Windows Application</A>
+	<UL>
+		<LI><A HREF="#Heading2">Deciding How Many Documents the Application Supports</A>
+		<LI><A HREF="#Heading3">Databases</A>
+		<LI><A HREF="#Heading4">Compound Document Support</A>
+		<LI><A HREF="#Heading5">Appearance and Other Options</A>
+		<LI><A HREF="#Heading6">Other Options</A>
+		<LI><A HREF="#Heading7">Filenames and Classnames</A>
+		<LI><A HREF="#Heading8">Creating the Application</A>
+		<LI><A HREF="#Heading9">Try It Yourself</A>
+	</UL>
+	<LI><A HREF="#Heading10">Creating a Dialog-Based Application</A>
+	<LI><A HREF="#Heading11">Creating DLLs, Console Applications, and More</A>
+	<UL>
+		<LI><A HREF="#Heading12">ATL COM AppWizard</A>
+		<LI><A HREF="#Heading13">Custom AppWizard</A>
+		<LI><A HREF="#Heading14">Database Project</A>
+		<LI><A HREF="#Heading15">DevStudio Add-In Wizard</A>
+		<LI><A HREF="#Heading16">ISAPI Extension Wizard</A>
+		<LI><A HREF="#Heading17">Makefile</A>
+		<LI><A HREF="#Heading18">MFC ActiveX ControlWizard</A>
+		<LI><A HREF="#Heading19">MFC AppWizard (DLL)</A>
+		<LI><A HREF="#Heading20">Win32 Application</A>
+		<LI><A HREF="#Heading21">Win32 Console Application</A>
+		<LI><A HREF="#Heading22">Win32 Dynamic Link Library</A>
+		<LI><A HREF="#Heading23">Win32 Static Library</A>
+	</UL>
+	<LI><A HREF="#Heading24">Changing Your AppWizard Decisions</A>
+	<LI><A HREF="#Heading25">Understanding AppWizard's Code</A>
+	<UL>
+		<LI><A HREF="#Heading26">A Single Document Interface Application</A>
+		<LI><A HREF="#Heading27">Other Files</A>
+	</UL>
+	<LI><A HREF="#Heading28">Understanding a Multiple Document Interface Application</A>
+	<LI><A HREF="#Heading29">Understanding the Components of a Dialog-Based Application</A>
+	<LI><A HREF="#Heading30">Reviewing AppWizard Decisions and This Chapter</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Creating a Windows Application</H2>
+<P>Visual C++ doesn't just compile code; it generates code. You can create a Windows
+application in minutes with a tool called AppWizard. In this chapter you'll learn
+how to tell AppWizard to make you a starter app with all the Windows boilerplate
+code you want. AppWizard is a very effective tool. It copies into your application
+the code that almost all Windows applications require. After all, you aren't the
+first programmer to need an application with resizable edges, minimize and maximize
+buttons, a File menu with Open, Close, Print Setup, Print, and Exit options, are
+you?</P>
+<P>AppWizard can make many kinds of applications, but what most people want, at least
+at first, is an executable (.exe) program. Most people also want AppWizard to produce
+boilerplate code--the classes, objects, and functions that have to be in every program.
+To create a program like this, Choose File, New and click the Projects tab in the
+New dialog box, as shown in Figure 1.1.</P>
+<P><A HREF="javascript:popUp('01uvc01.gif')"><B>FIG. 1.1</B></A><B> </B><I>The Projects
+tab of the New dialog box is where you choose the kind of application you want to
+build.</I></P>
+<P>Choose MFC AppWizard (EXE) from the list box on the left, fill in a project name,
+and click OK. AppWizard will work through a number of steps. At each step, you make
+a decision about what kind of application you want and then click Next. At any time,
+you can click Back to return to a previous decision, Cancel to abandon the whole
+process, Help for more details, or Finish to skip to the end and create the application
+without answering any more questions (not recommended before the last step). The
+following sections explain each step.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> An MFC application uses MFC, the Microsoft Foundation Classes. You
+	will learn more about MFC throughout this book.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading2"></A>Deciding How Many Documents the Application Supports</H3>
+<P>The first decision to communicate to AppWizard, as shown in Figure 1.2, is whether
+your application should be MDI, SDI, or dialog based. AppWizard generates different
+code and classes for each of these application types.</P>
+<P><A HREF="javascript:popUp('01uvc02.gif')"><B>FIG. 1.2</B></A><B> </B><I>The first
+step in building a typical application with AppWizard is choosing the interface.</I></P>
+<P>The three application types to choose from are as follows:</P>
+
+<UL>
+	<LI>A <I>single document interface</I> (SDI) application, such as Notepad, has only
+	one document open at a time. When you choose File, Open, the currently open file
+	is closed before the new one is opened.
+	<P>
+	<LI>A <I>multiple document interface</I> (MDI) application, such as Excel or Word,
+	can open many documents (typically files) at once. There is a Window menu and a Close
+	item on the File menu. It's a quirk of MFC that if you like multiple views on a single
+	document, you must build an MDI application.
+	<P>
+	<LI>A <I>dialog-based</I> application, such as the Character Map utility that comes
+	with Windows and is shown in Figure 1.3, does not have a document at all. There are
+	no menus. (If you'd like to see Character Map in action, it's usually in the Accessories
+	folder, reached by clicking Start. You may need to install it by using Add/Remove
+	programs under Control Panel.)
+</UL>
+
+<P><A HREF="javascript:popUp('01uvc03.gif')"><B>FIG. 1.3</B></A><B> </B><I>Character
+Map is a dialog-based application.</I></P>
+<P><I><BR>
+</I>As you change the radio button selection, the picture on the left of the screen
+changes to demonstrate how the application appears if you choose this type of application.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE::</strong> Dialog-based applications are quite different from MDI or SDI applications.
+	The AppWizard dialogs are different when you're creating a dialog-based application.
+	They are presented later in the section &quot;Creating a Dialog-Based Application.&quot;&#160;
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Beneath these choices is a checkbox for you to indicate whether you want support
+for the Document/View architecture. This framework for your applications is explained
+in Chapter 4, &quot;Documents and Views.&quot; Experienced Visual C++ developers,
+especially those who are porting an application from another development system,
+might choose to turn off this support. You should leave the option selected.</P>
+<P>Lower on the screen is a drop-down box to select the language for your resources.
+If you have set your system language to anything other than the default, English[United
+States], make sure you set your resources to that language, too. If you don't, you
+will encounter unexpected behavior from ClassWizard later. (Of course, if your application
+is for users who will have their language set to U.S. English, you might not have
+a choice. In that case, change your system language under Control Panel.) Click Next
+after you make your choices.</P>
+<P>
+<H3><A NAME="Heading3"></A>Databases</H3>
+<P>The second step in creating an executable Windows program with AppWizard is to
+choose the level of database support, as shown in Figure 1.4.</P>
+<P><A HREF="javascript:popUp('01uvc04.gif')"><B>FIG. 1.4</B></A><B> </B><I>The second
+step to building a typical application with AppWizard is to set the database options
+you will use.</I></P>
+<P>There are four choices for database support:</P>
+
+<UL>
+	<LI>If you aren't writing a database application, choose None.
+	<P>
+	<LI>If you want to have access to a database but don't want to derive your view from
+	CFormView or have a Record menu, choose Header Files Only.
+	<P>
+	<LI>If you want to derive your view from CFormView and have a Record menu but don't
+	need to serialize a document, choose Database View Without File Support. You can
+	update database records with CRecordset, an MFC class discussed in more detail in
+	Chapter 22, &quot;Database Access.&quot;
+	<P>
+	<LI>If you want to support databases as in the previous option but also need to save
+	a document on disk (perhaps some user options), choose Database View With File Support.
+</UL>
+
+<P>Chapter 22 clarifies these choices and demonstrates database programming with
+MFC. If you choose to have a database view, you must specify a data source now. Click
+the Data Source button to set this up.</P>
+<P>As you select different radio buttons, the picture on the left changes to show
+you the results of your choice. Click Next to move to the next step.</P>
+<P>
+<H3><A NAME="Heading4"></A>Compound Document Support</H3>
+<P>The third step in running AppWizard to create an executable Windows program is
+to decide on the amount of compound document support you want to include, as shown
+in Figure 1.5. OLE (object linking and embedding) has been officially renamed ActiveX
+to clarify the recent technology shifts, most of which are hidden from you by MFC.
+ActiveX and OLE technology are jointly referred to as <I>compound document technology</I>.
+Chapter 13, &quot;ActiveX Concepts,&quot; covers this technology in detail.</P>
+<P><A HREF="javascript:popUp('01uvc05.gif')"><B>FIG. 1.5</B></A><B> </B><I>The third
+step of building a typical application with AppWizard is to set the compound document
+support you will need.</I></P>
+<P>There are five choices for compound document support:</P>
+
+<UL>
+	<LI>If you are not writing an ActiveX application, choose None.
+	<P>
+	<LI>If you want your application to contain embedded or linked ActiveX objects, such
+	as Word documents or Excel worksheets, choose Container. You learn to build an ActiveX
+	container in Chapter 14, &quot;Building an ActiveX Container Application.&quot;
+	<P>
+	<LI>If you want your application to serve objects that can be embedded in other applications,
+	but it never needs to run as a standalone application, choose Mini Server.
+	<P>
+	<LI>If your application serves documents and also functions as a standalone application,
+	choose Full Server. In Chapter 15, &quot;Building an ActiveX Server Application,&quot;
+	you learn to build an ActiveX full server.
+	<P>
+	<LI>If you want your application to have the capability to contain objects from other
+	applications and also to serve its objects to other applications, choose Both Container
+	and Server.
+</UL>
+
+<P>If you choose to support compound documents, you can also support <I>compound
+files</I>. Compound files contain one or more ActiveX objects and are saved in a
+special way so that one of the objects can be changed without rewriting the whole
+file. This spares you a great deal of time. Use the radio buttons in the middle of
+this Step 3 dialog box to say Yes, Please, or No, Thank You to compound files.</P>
+<P>If you want your application to surrender control to other applications through
+automation, check the Automation check box. (Automation is the subject of Chapter
+16, &quot;Building an Automation Server.&quot;) If you want your application to use
+ActiveX controls, select the ActiveX Controls check box. Click Next to move to the
+next step.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> If you want your application to <I>be</I> an ActiveX control, you
+	don't create a typical .exe application as described in this section. Creating ActiveX
+	controls with the ActiveX ControlWizard is covered in Chapter 17, &quot;Building
+	an ActiveX Control.&quot;&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading5"></A>Appearance and Other Options</H3>
+<P>The fourth step in running AppWizard to create an executable Windows program (see
+Figure 1.6) is to determine some of the interface appearance options for your application.
+This Step 4 dialog box contains a number of independent check boxes. Check them if
+you want a feature; leave them unchecked if you don't.</P>
+<P><A HREF="javascript:popUp('01uvc06.gif')"><B>FIG. 1.6</B></A><B> </B><I>The fourth
+step of building a typical application with AppWizard is to set some interface options.</I></P>
+<P>The following are the options that affect your interface's appearance:</P>
+
+<UL>
+	<LI><I>Docking Toolbar</I>. AppWizard sets up a toolbar for you. You can edit it
+	to remove unwanted buttons or to add new ones linked to your own menu items. This
+	is described in Chapter 9, &quot;Status Bars and Toolbars.&quot;
+	<P>
+	<LI><I>Initial Status Bar</I>. AppWizard creates a status bar to display menu prompts
+	and other messages. Later, you can write code to add indicators and other elements
+	to this bar, as described in Chapter 9.
+	<P>
+	<LI><I>Printing and Print Preview</I>. Your application will have Print and Print
+	Preview options on the File menu, and much of the code you need in order to implement
+	printing will be generated by AppWizard. Chapter 6, &quot;Printing and Print Preview,&quot;
+	discusses the rest.
+	<P>
+	<LI><I>Context-Sensitive Help</I>. Your Help menu will gain Index and Using Help
+	options, and some of the code needed to implement Help will be provided by AppWizard.
+	This decision is hard to change later because quite a lot of code is added in different
+	places when implementing Context-Sensitive Help. Chapter 11, &quot;Help,&quot; describes
+	Help implementation.
+	<P>
+	<LI><I>3D Controls</I>. Your application will look like a typical Windows 95 application.
+	If you don't select this option, your dialog boxes will have a white background,
+	and there will be no shadows around the edges of edit boxes, check boxes, and other
+	controls.
+	<P>
+	<LI><I>MAPI(Messaging API)</I>. Your application will be able to use the Messaging
+	API to send fax, email, or other messages. Chapter 18, &quot;Sockets, MAPI, and the
+	Internet,&quot; discusses the Messaging API.
+	<P>
+	<LI><I>Windows</I> <I>Sockets</I>. Your application can access the Internet directly,
+	using protocols like FTP and HTTP (the World Wide Web protocol). Chapter 18 discusses
+	sockets. You can produce Internet programs without enabling socket support if you
+	use the new WinInet classes, discussed in Chapter 19, &quot;Internet Programming
+	with the WinInet Classes.&quot;
+</UL>
+
+<P>You can ask AppWizard to build applications with &quot;traditional&quot; toolbars,
+like those in Word or Visual C++ itself, or with toolbars like those in Internet
+Explorer. You can read more about this in Chapter 9.</P>
+<P>You can also set how many files you want to appear on the recent file list for
+this application. Four is the standard number; change it only if you have good reason
+to do so.</P>
+<P>Clicking the Advanced button at the bottom of this Step 4 dialog box brings up
+the Advanced Options dialog box, which has two tabs. The Document Template Strings
+tab is shown in Figure 1.7. AppWizard builds many names and prompts from the name
+of your application, and sometimes it needs to abbreviate your application name.
+Until you are familiar with the names AppWizard builds, you should check them on
+this Document Template Strings dialog box and adjust them, if necessary. You can
+also change the mainframe caption, which appears in the title bar of your application.
+The file extension, if you choose one, will be incorporated into filenames saved
+by your application and will restrict the files initially displayed when the user
+chooses File, Open.</P>
+<P>The Window Styles tab is shown in Figure 1.8. Here you can change the appearance
+of your application quite dramatically. The first check box, Use Split Window, adds
+all the code needed to implement splitter windows like those in the code editor of
+Developer Studio. The remainder of the Window Styles dialog box sets the appearance
+of your <I>main frame</I> and, for an MDI application, of your <I>MDI child frames</I>.
+Frames hold windows; the system menu, title bar, minimize and maximize boxes, and
+window edges are all frame properties. The main frame holds your entire application.
+An MDI application has a number of MDI child frames--one for each document window,
+inside the main frame.</P>
+<P><A HREF="javascript:popUp('01uvc07.gif')"><B>FIG. 1.7</B></A><B> </B><I>The Document
+Template Strings tab of the Advanced Options dialog box lets you adjust the way names
+are abbreviated.</I></P>
+<P><A HREF="javascript:popUp('01uvc08.gif')"><B>FIG. 1.8</B></A><B> </B><I>The Window
+Styles tab of the Advanced Options dialog box lets you adjust the appearance of your
+windows.</I></P>
+<P>Here are the properties you can set for frames:</P>
+
+<UL>
+	<LI><I>Thick Frame</I>. The frame has a visibly thick edge and can be resized in
+	the usual Windows way. Uncheck this to prevent resizing.
+	<P>
+	<LI><I>Minimize Box</I>. The frame has a minimize box in the top-right corner.
+	<P>
+	<LI><I>Maximize Box</I>. The frame has a maximize box in the top-right corner.
+	<P>
+	<LI><I>System Menu</I>. The frame has a system menu in the top-left corner.
+	<P>
+	<LI><I>Minimized. </I>The frame is minimized when the application starts. For SDI
+	applications, this option will be ignored when the application is running under Windows
+	95.
+	<P>
+	<LI><I>Maximized</I>. The frame is maximized when the application starts. For SDI
+	applications, this option will be ignored when the application is running under Windows
+	95.
+</UL>
+
+<P>When you have made your selections, click Close to return to step 4 and click
+Next to move on to the next step.</P>
+<P>
+<H3><A NAME="Heading6"></A>Other Options</H3>
+<P>The fifth step in running AppWizard to create an executable Windows program (see
+Figure 1.9) asks the leftover questions that are unrelated to menus, OLE, database
+access, or appearance. Do you want comments inserted in your code? You certainly
+do. That one is easy.</P>
+<P><A HREF="javascript:popUp('01uvc09.gif')"><B>FIG. 1.9</B></A><B> </B><I>The fifth
+step of building an application with AppWizard is to decide on comments and the MFC
+library.</I></P>
+<P>The next question isn't as straightforward. Do you want the MFC library as a shared
+DLL or statically linked? A <I>DLL</I> (dynamic link library) is a collection of
+functions used by many different applications. Using a DLL makes your programs smaller
+but makes the installation a little more complex. Have you ever moved an executable
+to another directory, or another computer, only to find it won't run anymore because
+it's missing DLLs? If you statically link the MFC library into your application,
+it is larger, but it is easier to move and copy around.</P>
+<P>If your users are likely to be developers themselves and own at least one other
+application that uses the MFC DLL or aren't intimidated by the need to install DLLs
+as well as the program itself, choose the shared DLL option. The smaller executable
+is convenient for all. If your users are not developers, choose the statically linked
+option. It reduces the technical support issues you have to face with inexperienced
+users. If you write a good install program, you can feel more confident about using
+shared DLLs.</P>
+<P>After you've made your Step 5 choices, click Next to move to Step 6.</P>
+<P>
+<H3><A NAME="Heading7"></A>Filenames and Classnames</H3>
+<P>The final step in running AppWizard to create an executable Windows program is
+to confirm the classnames and the filenames that AppWizard creates for you, as shown
+in Figure 1.10. AppWizard uses the name of the project (FirstSDI in this example)
+to build the classnames and filenames. You should not need to change these names.
+If your application includes a view class, you can change the class from which it
+inherits; the default is CView, but many developers prefer to use another view, such
+as CScrollView or CEditView. The view classes are discussed in Chapter 4. Click Finish
+when this Step 6 dialog box is complete.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Objects, classes, and inheritance are reviewed in Appendix A, &quot;C++
+	Review and Object-Oriented Concepts.&quot; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><A HREF="javascript:popUp('01uvc10.gif')"><B>FIG. 1.10</B></A><B> </B><I>The final
+step of building a typical application with AppWizard is to confirm filenames and
+classnames.</I><B></B></P>
+<H3><A NAME="Heading8"></A>Creating the Application</H3>
+<P>After you click Finish, AppWizard shows you what is going to be created in a dialog
+box, similar to Figure 1.11. If anything here is wrong, click Cancel and work your
+way back through AppWizard with the Back buttons until you reach the dialog box you
+need to change. Move forward with Next, Finish; review this dialog box again; and
+click OK to actually create the application. This takes a few minutes, which is hardly
+surprising because hundreds of code lines, menus, dialog boxes, help text, and bitmaps
+are being generated for you in as many as 20 files. Let it work.</P>
+<P><A HREF="javascript:popUp('01uvc11.gif')"><B>FIG. 1.11</B></A><B> </B><I>When
+AppWizard is ready to build your application, you get one more chance to confirm
+everything.</I></P>
+<P>
+<H3><A NAME="Heading9"></A>Try It Yourself</H3>
+<P>If you haven't started Developer Studio already, do so now. If you've never used
+it before, you may find the interface intimidating. There's a full explanation of
+all the areas, toolbars, menus, and shortcuts in Appendix C, &quot;The Visual Studio
+User Interface, Menus, and Toolbars.&quot;</P>
+<P>Bring up AppWizard by choosing File, New and clicking the Projects tab. On the
+Projects tab, fill in a folder name where you would like to keep your applications;
+AppWizard will make a new folder for each project. Fill in <B>FirstSDI</B> for the
+project name; then move through the six AppWizard steps. Choose an SDI application
+at Step 1, and on all the other steps simply leave the selections as they are and
+click Next. When AppWizard has created the project, choose Build, Build from the
+Developer Studio menu to compile and link the code.</P>
+<P>When the build is complete, choose Build, Execute. You have a real, working Windows
+application, shown in Figure 1.12. Play around with it a little: Resize it, minimize
+it, maximize it.</P>
+<P><A HREF="javascript:popUp('01uvc12.gif')"><B>FIG. 1.12</B></A><B> </B><I>Your
+first application looks like any full-fledged Windows application.</I></P>
+<P>Try out the File menu by choosing File, Open; bring up the familiar Windows File
+Open dialog (though no matter what file you choose, nothing seems to happen); and
+then choose File, Exit to close the application. Execute the program again to continue
+exploring the capabilities that have been automatically generated for you. Move the
+mouse cursor over one of the toolbar buttons and pause; a ToolTip will appear, reminding
+you of the toolbar button's purpose. Click the Open button to confirm that it is
+connected to the File Open command you chose earlier. Open the View menu and click
+Toolbar to hide the toolbar; then choose View Toolbar again to restore it. Do the
+same thing with the status bar. Choose Help, About, and you'll see it even has an
+About box with its own name and the current year in the copyright date (see Figure
+1.13).</P>
+<P>Repeat these steps to create an MDI application called <I>FirstMDI</I>. The creation
+process will differ only on Step 0, where you specify the project name, and Step
+1, where you choose an MDI application. Accept the defaults on all the other steps,
+create the application, build it, and execute it. You'll see something similar to
+Figure 1.14, an MDI application with a single document open. Try out the same operations
+you tried with FirstSDI.</P>
+<P><A HREF="javascript:popUp('01uvc13.gif')"><B>FIG. 1.13</B></A><B> </B><I>You even
+get an About box in this start application.</I></P>
+<P><A HREF="javascript:popUp('01uvc14.gif')"><B>FIG. 1.14</B></A><B> </B><I>An MDI
+application can display a number of documents at once.</I></P>
+<P>Choose File, New, and a second window, FirstM2, appears. Try minimizing, maximizing,
+and restoring these windows. Switch among them using the Window menu. All this functionality
+is yours from AppWizard, and you don't have to write a single line of code to get
+it.</P>
+<P>
+<H2><A NAME="Heading10"></A>Creating a Dialog-Based Application</H2>
+<P>A dialog-based application has no menus other than the system menu, and it cannot
+save or open a file. This makes it good for simple utilities like the Windows Character
+Map. The AppWizard process is a little different for a dialog-based application,
+primarily because such applications can't have a document and therefore can't support
+database access or compound documents. To create a dialog-based application, start
+AppWizard as you did for the SDI or MDI application, but in Step 1 choose a dialog-based
+application, as shown in Figure 1.15. Call this application <B>FirstDialog</B>.</P>
+<P><A HREF="javascript:popUp('01uvc15.gif')"><B>FIG. 1.15</B></A><B> </B><I>To create
+a dialog-based application, specify your preference in Step 1 of the AppWizard process.</I></P>
+<P>Choose Dialog Based and click Next to move to Step 2, shown in Figure 1.16.</P>
+<P><A HREF="javascript:popUp('01uvc16.gif')"><B>FIG. 1.16</B></A><B> </B><I>Step
+2 of the AppWizard process for a dialog-based application involves choosing Help,
+Automation, ActiveX, and Sockets settings.</I></P>
+<P>If you would like an About item on the system menu, select the About Box item.
+To have AppWizard lay the framework for Help, select the Context-Sensitive Help option.
+The third check box, 3D Controls, should be selected for most Windows 95 and Windows
+NT applications. If you want your application to surrender control to other applications
+through automation, as discussed in Chapter 16, select the Automation check box.
+If you want your application to contain ActiveX controls, select the ActiveX Controls
+check box. If you are planning to have this application work over the Internet with
+sockets, check the Windows Sockets box. (Dialog-based apps can't use MAPI because
+they have no document.) Click Next to move to the third step, shown in Figure 1.17.</P>
+<P>As with the SDI and MDI applications created earlier, you want comments in your
+code. The decision between static linking and a shared DLL is also the same as for
+the SDI and MDI applications. If your users are likely to already have the MFC DLLs
+(because they are developers or because they have another product that uses the DLL)
+or if they won't mind installing the DLLs as well as your executable, go with the
+shared DLL to make a smaller executable file and a faster link. Otherwise, choose
+As A Statically Linked Library. Click Next to move to the final step, shown in Figure
+1.18.</P>
+<P><A HREF="javascript:popUp('01uvc17.gif')"><B>FIG. 1.17</B></A><B> </B><I>Step
+3 of the AppWizard process for a dialog-based application deals with comments and
+the MFC library.</I></P>
+<P><A HREF="javascript:popUp('01uvc18.gif')"><B>FIG. 1.18</B></A><B> </B><I>Step
+4 of the AppWizard process for a dialog-based application gives you a chance to adjust
+filenames and classnames.</I></P>
+<P>In this step you can change the names AppWizard chooses for files and classes.
+This is rarely a good idea because it will confuse people who maintain your code
+if the filenames can't be easily distinguished from the classnames, and vice versa.
+If you realize after looking at this dialog that you made a poor choice of project
+name, use Back to move all the way back to the New Project Workspace dialog, change
+the name, click Create, and then use Next to return to this dialog. Click Finish
+to see the summary of the files and classes to be created, similar to that in Figure
+1.19.</P>
+<P>If any information on this dialog isn't what you wanted, click Cancel and then
+use Back to move to the appropriate step and change your choices. When the information
+is right, click OK and watch as the application is created.</P>
+<P>To try it yourself, create an empty dialog-based application yourself, call it
+<I>FirstDialog</I>, and accept the defaults for each step of AppWizard. When it's
+complete, choose Build, Build to compile and link the application. Choose Build,
+Execute to see it in action. Figure 1.20 shows the empty dialog-based application
+running.</P>
+<P><A HREF="javascript:popUp('01uvc19.gif')"><B>FIG. 1.19</B></A><B> </B><I>AppWizard
+confirms the files and classes before creating them.</I></P>
+<P><A HREF="javascript:popUp('01uvc20.gif')"><B>FIG. 1.20</B></A><B> </B><I>A starter
+dialog application includes a reminder of the work ahead of you.</I></P>
+<P>Clicking the OK or Cancel button, or the X in the top-right corner, makes the
+dialog disappear. Clicking the system menu in the top-left corner gives you a choice
+of Move, Close, or About. Figure 1.21 shows the About box that was generated for
+you.</P>
+<P><A HREF="javascript:popUp('01uvc21.gif')"><B>FIG. 1.21</B></A><B> </B><I>The same
+About box is generated for SDI, MDI, and dialog-based applications.</I></P>
+<H2><A NAME="Heading11"></A>Creating DLLs, Console Applications, and More</H2>
+<P>Although most people use AppWizard to create an executable program, it can make
+many other kinds of projects. You choose File, New and then the Projects tab, as
+discussed at the start of this chapter, but choose a different wizard from the list
+on the left of the New dialog box, shown in Figure 1.1. The following are some of
+the other projects AppWizard can create:</P>
+
+<UL>
+	<LI>ATL COM AppWizard
+	<P>
+	<LI>Custom AppWizard
+	<P>
+	<LI>Database Project
+	<P>
+	<LI>DevStudio Add-In Wizard
+	<P>
+	<LI>Extended Stored Procedure AppWizard
+	<P>
+	<LI>ISAPI Extension Wizard
+	<P>
+	<LI>Makefile
+	<P>
+	<LI>MFC ActiveX ControlWizard
+	<P>
+	<LI>MFC AppWizard (dll)
+	<P>
+	<LI>Utility Project
+	<P>
+	<LI>Win32 Application
+	<P>
+	<LI>Win32 Console Application
+	<P>
+	<LI>Win32 Dynamic Link Library
+	<P>
+	<LI>Win32 Static Library
+</UL>
+
+<P>These projects are explained in the following sections.</P>
+<P>
+<H3><A NAME="Heading12"></A>ATL COM AppWizard</H3>
+<P>ATL is the Active Template Library, and it's used to write small ActiveX controls.
+It's generally used by developers who have already mastered writing MFC ActiveX controls,
+though an MFC background is not required to learn ATL. Chapter 17 introduces important
+control concepts while demonstrating how to build an MFC control; Chapter 21, &quot;The
+Active Template Library,&quot; teaches you ATL.</P>
+<P>
+<H3><A NAME="Heading13"></A>Custom AppWizard</H3>
+<P>Perhaps you work in a large programming shop that builds many applications. Although
+AppWizard saves a lot of time, your programmers may spend a day or two at the start
+of each project pasting in your own <I>boilerplate</I>, which is material that is
+the same in every one of your projects. You may find it well worth your time to build
+a Custom AppWizard, a wizard of your very own that puts in your boilerplate as well
+as the standard MFC material. After you have done this, your application type is
+added to the list box on the left of the Projects tab of the New dialog box shown
+in Figure 1.1. Creating and using Custom AppWizards is discussed in Chapter 25, &quot;Achieving
+Reuse with the Gallery and Your Own AppWizards.&quot;</P>
+<P>
+<H3><A NAME="Heading14"></A>Database Project</H3>
+<P>If you have installed the Enterprise Edition of Visual C++, you can create a database
+project. This is discussed in Chapter 23, &quot;SQL and the Enterprise Edition.&quot;</P>
+<P>
+<H3><A NAME="Heading15"></A>DevStudio Add-In Wizard</H3>
+<P>Add-ins are like macros that automate Developer Studio, but they are written in
+C++ or another programming language; macros are written in VBScript. They use automation
+to manipulate Developer Studio.</P>
+<P>
+<H3><A NAME="Heading16"></A>ISAPI Extension Wizard</H3>
+<P>ISAPI stands for Internet Server API and refers to functions you can call to interact
+with a running copy of Microsoft Internet Information Server, a World Wide Web server
+program that serves out Web pages in response to client requests. You can use this
+API to write DLLs used by programs that go far beyond browsing the Web to sophisticated
+automatic information retrieval. This process is discussed in Chapter 18.</P>
+<P>
+<H3><A NAME="Heading17"></A>Makefile</H3>
+<P>If you want to create a project that is used with a different make utility than
+Developer Studio, choose this wizard from the left list in the New Project Workspace
+dialog box. No code is generated. If you don't know what a make utility is, don't
+worry--this wizard is for those who prefer to use a standalone tool to replace one
+portion of Developer Studio.</P>
+<P>
+<H3><A NAME="Heading18"></A>MFC ActiveX ControlWizard</H3>
+<P><I>ActiveX controls</I> are controls you write that can be used on a Visual C++
+dialog, a Visual Basic form, or even a Web page. These controls are the 32-bit replacement
+for the VBX controls many developers were using to achieve intuitive interfaces or
+to avoid reinventing the wheel on every project. Chapter 17 guides you through building
+a control with this wizard.</P>
+<P>
+<H3><A NAME="Heading19"></A>MFC AppWizard (DLL)</H3>
+<P>If you want to collect a number of functions into a DLL, and these functions use
+MFC classes, choose this wizard. (If the functions don't use MFC, choose Win32 Dynamic
+Link Library, discussed a little later in this section.) Building a DLL is covered
+in Chapter 28, &quot;Future Explorations.&quot; AppWizard generates code for you
+so you can get started.</P>
+<P>
+<H3><A NAME="Heading20"></A>Win32 Application</H3>
+<P>There are times when you want to create a Windows application in Visual C++ that
+doesn't use MFC and doesn't start with the boilerplate code that AppWizard produces
+for you. To create such an application, choose the Win32 Application wizard from
+the left list in the Projects tab, fill in the name and folder for your project,
+and click OK. You are not asked any questions; AppWizard simply creates a project
+file for you and opens it. You have to create all your code from scratch and insert
+the files into the project.</P>
+<P>
+<H3><A NAME="Heading21"></A>Win32 Console Application</H3>
+<P>A <I>console application</I> looks very much like a DOS application, though it
+runs in a resizable window. (Console applications are 32-bit applications that won't
+run under DOS, however.) It has a strictly character-based interface with cursor
+keys instead of mouse movement. You use the Console API and character-based I/O functions
+such as printf() and scanf() to interact with the user. Some very rudimentary boilerplate
+code can be generated for you, or you can have just an empty project. Chapter 28
+discusses building and using console applications.</P>
+<P>
+<H3><A NAME="Heading22"></A>Win32 Dynamic Link Library</H3>
+<P>If you plan to build a DLL that does not use MFC and does not need any boilerplate,
+choose the Win32 Dynamic Link Library option instead of MFC AppWizard (dll). You
+get an empty project created right away with no questions.</P>
+<P>
+<H3><A NAME="Heading23"></A>Win32 Static Library</H3>
+<P>Although most code you reuse is gathered into a DLL, you may prefer to use a static
+library because that means you don't have to distribute the DLL with your application.
+Choose this wizard from the left list in the New Project Workspace dialog box to
+create a project file into which you can add object files to be linked into a static
+library, which is then linked into your applications.</P>
+<P>
+<H2><A NAME="Heading24"></A>Changing Your AppWizard Decisions</H2>
+<P>Running AppWizard is a one-time task. Assuming you are making a typical application,
+you choose File, New; click the Projects tab; enter a name and folder; choose MFC
+Application (exe); go through the six steps; create the application starter files;
+and then never touch AppWizard again. However, what if you choose not to have online
+Help and later realize you should have included it?</P>
+<P>AppWizard, despite the name, isn't really magic. It pastes in bits and pieces
+of code you need, and you can paste in those very same bits yourself. Here's how
+to find out what you need to paste in.</P>
+<P>First, create a project with the same options you used in creating the project
+whose settings you want to change, and don't add any code to it. Second, in a different
+folder create a project with the same name and all the same settings, except the
+one thing you want to change (Context-Sensitive Help in this example). Compare the
+files, using WinDiff, which comes with Visual C++. Now you know what bits and pieces
+you need to add to your full-of-code project to implement the feature you forgot
+to ask AppWizard for.</P>
+<P>Some developers, if they discover their mistake soon enough, find it quicker to
+create a new project with the desired features and then paste their own functions
+and resources from the partially built project into the new empty one. It's only
+a matter of taste, but after you go through either process for changing your mind,
+you probably will move a little more slowly through those AppWizard dialog boxes.</P>
+<P>
+<H2><A NAME="Heading25"></A>Understanding AppWizard's Code</H2>
+<P>The code generated by AppWizard may not make sense to you right away, especially
+if you haven't written a C++ program before. You don't need to understand this code
+in order to write your own simple applications. Your programs will be better ones,
+though, if you know what they are doing, so a quick tour of AppWizard's boilerplate
+code is a good idea. You'll see the core of an SDI application, an MDI application,
+and a dialog-based application.</P>
+<P>You'll need the starter applications FirstSDI, FirstMDI, and FirstDialog, so if
+you didn't create them earlier, do so now. If you're unfamiliar with the Developer
+Studio interface, glance through Appendix C to learn how to edit code and look at
+classes.</P>
+<P>
+<H3><A NAME="Heading26"></A>A Single Document Interface Application</H3>
+<P>An SDI application has menus that the user uses to open one document at a time
+and work with that document. This section presents the code that is generated when
+you create an SDI application with no database or compound document support, with
+a toolbar, a status bar, Help, 3D controls, source file comments, and with the MFC
+library as a shared DLL--in other words, when you accept all the AppWizard defaults
+after Step 1.</P>
+<P>Five classes have been created for you. For the application FirstSDI, they are
+as follows:</P>
+
+<UL>
+	<LI>CAboutDlg, a dialog class for the About dialog box
+	<P>
+	<LI>CFirstSDIApp, a CWinApp class for the entire application
+	<P>
+	<LI>CFirstSDIDoc, a document class
+	<P>
+	<LI>CFirstSDIView, a view class
+	<P>
+	<LI>CMainFrame, a frame class
+</UL>
+
+<P>Dialog classes are discussed in Chapter 2, &quot;Dialogs and Controls.&quot; Document,
+view, and frame classes are discussed in Chapter 4. The header file for CFirstSDIApp
+is shown in Listing 1.1. The easiest way for you to see this code is to double-click
+on the classname, CFirstDSIApp, in the ClassView pane. This will edit the header
+file for the class.</P>
+<P>
+<H4>Listing 1.1&#160;&#160;FirstSDI.h--Main Header File for the FirstSDI Application</H4>
+<PRE>// FirstSDI.h : main header file for the FIRSTSDI application
+//
+#if !defined(AFX_FIRSTSDI_H__CDF38D8A_8718_11D0_B02C_0080C81A3AA2__INCLUDED_)
+#define AFX_FIRSTSDI_H__CDF38D8A_8718_11D0_B02C_0080C81A3AA2__INCLUDED_
+#if _MSC_VER &gt;= 1000
+#pragma once
+#endif // _MSC_VER &gt;= 1000
+#ifndef __AFXWIN_H__
+     #error include `stdafx.h' before including this file for PCH
+#endif
+#include &quot;resource.h&quot;       // main symbols
+/////////////////////////////////////////////////////////////////////////////
+// CFirstSDIApp:
+// See FirstSDI.cpp for the implementation of this class
+//
+class CFirstSDIApp : public CWinApp
+{
+public:
+     CFirstSDIApp();
+// Overrides
+     // ClassWizard generated virtual function overrides
+     //{{AFX_VIRTUAL(CFirstSDIApp)
+     public:
+     virtual BOOL InitInstance();
+     //}}AFX_VIRTUAL
+// Implementation
+     //{{AFX_MSG(CFirstSDIApp)
+     afx_msg void OnAppAbout();
+          // NOTE - The ClassWizard will add and remove member functions here.
+          //    DO NOT EDIT what you see in these blocks of generated code!
+     //}}AFX_MSG
+     DECLARE_MESSAGE_MAP()
+};
+/////////////////////////////////////////////////////////////////////////////
+//{{AFX_INSERT_LOCATION}}
+// Microsoft Developer Studio will insert additional declarations
+// immediately before the previous line.
+</PRE>
+<PRE>#endif //!defined(AFX_FIRSTSDI_H__CDF38D8A_8718_11D0_B02C_0080C81A3AA2__INCLUDED_)
+</PRE>
+<P>This code is confusing at the beginning. The #if(!defined) followed by the very
+long string (yours will be different) is a clever form of include guarding. You may
+have seen a code snippet like this before:</P>
+<P>
+<PRE>#ifndef test_h
+#include &quot;test.h&quot;
+#define test_h
+#endif
+</PRE>
+<P>This guarantees that the file test.h will never be included more than once. Including
+the same file more than once is quite likely in C++. Imagine that you define a class
+called Employee, and it uses a class called Manager. If the header files for both
+Employee and Manager include, for example, BigCorp.h, you will get error messages
+from the compiler about &quot;redefining&quot; the symbols in BigCorp.h the second
+time it is included.</P>
+<P>There is a problem with this approach: If someone includes test.h but forgets
+to set test_h, your code will include test.h the second time. The solution is to
+put the test and the definition in the header file instead, so that test.h looks
+like this:</P>
+<P>
+<PRE>#ifndef test_h
+... the entire header file
+#define test_h
+#endif
+</PRE>
+<P>All AppWizard did was generate a more complicated variable name than test_h (this
+wild name prevents problems when you have several files, in different folders and
+projects, with the same name) and use a slightly different syntax to check the variable.
+The #pragma once code is also designed to prevent multiple definitions if this file
+is ever included twice.</P>
+<P>The actual meat of the file is the definition of the class CFirstSDIApp. This
+class inherits from CWinApp, an MFC class that provides most of the functionality
+you need. AppWizard has generated some functions for this class that override the
+ones inherited from the base class. The section of code that begins //Overrides is
+for virtual function overrides. AppWizard generated the odd-looking comments that
+surround the declaration of InitInstance(): ClassWizard will use these to simplify
+the job of adding other overrides later, if they are necessary. The next section
+of code is a message map and declares there is a function called OnAppAbout. You
+can learn all about message maps in Chapter 3, &quot;Messages and Commands.&quot;</P>
+<P>AppWizard generated the code for the CFirstSDIApp constructor, InitInstance(),
+and OnAppAbout() in the file firstsdi.cpp. Here's the constructor, which initializes
+a CFirstSDIApp object as it is created:</P>
+<P>
+<PRE>CFirstSDIApp::CFirstSDIApp()
+{
+    // TODO: add construction code here,
+    // Place all significant initialization in InitInstance
+}
+</PRE>
+<P>This is a typical Microsoft constructor. Because constructors don't return values,
+there's no easy way to indicate that there has been a problem with the initialization.
+There are several ways to deal with this. Microsoft's approach is a two-stage initialization,
+with a separate initializing function so that construction does no initialization.
+For an application, that function is called InitInstance(), shown in Listing 1.2.</P>
+<P>
+<H4>Listing 1.2&#160;&#160;CFirstSDIApp::InitInstance()</H4>
+<PRE>BOOL CFirstSDIApp::InitInstance()
+{
+     AfxEnableControlContainer();
+     // Standard initialization
+     // If you are not using these features and want to reduce the size
+     //  of your final executable, you should remove from the following
+     //  the specific initialization routines you don't need.
+#ifdef _AFXDLL
+     Enable3dControls();        // Call this when using MFC in a shared DLL
+#else
+     Enable3dControlsStatic();  // Call this when linking to MFC statically
+#endif
+     // Change the registry key under which our settings are stored.
+     // You should modify this string to be something appropriate,
+     // such as the name of your company or organization.
+     SetRegistryKey(_T(&quot;Local AppWizard-Generated Applications&quot;));
+     LoadStdProfileSettings();  // Load standard INI file options (including  				 // MRU)
+     // Register the application's document templates. Document templates
+     //  serve as the connection between documents, frame windows, and views.
+     CSingleDocTemplate* pDocTemplate;
+     pDocTemplate = new CSingleDocTemplate(
+          IDR_MAINFRAME,
+          RUNTIME_CLASS(CFirstSDIDoc),
+          RUNTIME_CLASS(CMainFrame),       // main SDI frame window
+          RUNTIME_CLASS(CFirstSDIView));
+     AddDocTemplate(pDocTemplate);
+     // Parse command line for standard shell commands, DDE, file open
+     CCommandLineInfo cmdInfo;
+     ParseCommandLine(cmdInfo);
+     // Dispatch commands specified on the command line
+     if (!ProcessShellCommand(cmdInfo))
+          return FALSE;
+     // The one and only window has been initialized, so show and update it.
+     m_pMainWnd-&gt;ShowWindow(SW_SHOW);
+     m_pMainWnd-&gt;UpdateWindow();
+     return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>InitInstance gets applications ready to go. This one starts by enabling the application
+to contain ActiveX controls with a call to AfxEnableControlContainer() and then turns
+on 3D controls. It then sets up the Registry key under which this application will
+be registered. (The Registry is introduced in Chapter 7, &quot;Persistence and File
+I/O.&quot; If you've never heard of it, you can ignore it for now.)</P>
+<P>InitInstance() goes on to register single document templates, which is what makes
+this an SDI application. Documents, views, frames, and document templates are all
+discussed in Chapter 4.</P>
+<P>Following the comment about parsing the command line, InitInstance() sets up an
+empty CCommandLineInfo object to hold any parameters that may have been passed to
+the application when it was run, and it calls ParseCommandLine() to fill that. Finally,
+it calls ProcessShellCommand() to do whatever those parameters requested. This means
+your application can support command-line parameters to let users save time and effort,
+without effort on your part. For example, if the user types at the command line <B>FirstSDI
+fooble</B>, the application starts and opens the file called <I>fooble</I>. The command-line
+parameters that ProcessShellCommand() supports are the following:</P>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Parameter</B></TD>
+		<TD ALIGN="LEFT"><B>Action</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">None</TD>
+		<TD ALIGN="LEFT">Start app and open new file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Filename</TD>
+		<TD ALIGN="LEFT">Start app and open file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">/p filename</TD>
+		<TD ALIGN="LEFT">Start app and print file to default printer.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">/pt filename printer driver port</TD>
+		<TD ALIGN="LEFT">Start app and print file to the specified printer.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">/dde</TD>
+		<TD ALIGN="LEFT">Start app and await DDE command.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">/Automation</TD>
+		<TD ALIGN="LEFT">Start app as an OLE automation server.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">/Embedding</TD>
+		<TD ALIGN="LEFT">Start app to edit an embedded OLE item.</TD>
+	</TR>
+</TABLE>
+</P>
+<P>If you would like to implement other behavior, make a class that inherits from
+CCommandLineInfo to hold the parsed command line; then override CWinApp:: ParseCommandLine()
+and CWinApp::ProcessShellCommand() in your own App class.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP::</strong> You may already know that you can invoke many Windows programs from
+	the command line; for example, typing <B>Notepad blah.txt</B> at a DOS prompt will
+	open blah.txt in Notepad. Other command line options work, too, so typing <B>Notepad
+	/p blah.txt</B> will open blah.txt in Notepad, print it, and then close Notepad.
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>That's the end of InitInstance(). It returns TRUE to indicate that the rest of
+the application should now run.</P>
+<P>The message map in the header file indicated that the function OnAppAbout() handles
+a message. Which one? Here's the message map from the source file:</P>
+<P>
+<PRE>BEGIN_MESSAGE_MAP(CFirstSDIApp, CWinApp)
+     //{{AFX_MSG_MAP(CFirstSDIApp)
+     ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+          // NOTE - The ClassWizard will add and remove mapping macros here.
+          //    DO NOT EDIT what you see in these blocks of generated code!
+     //}}AFX_MSG_MAP
+     // Standard file-based document commands
+     ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
+     ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
+     // Standard print setup command
+     ON_COMMAND(ID_FILE_PRINT_SETUP, CWinApp::OnFilePrintSetup)
+END_MESSAGE_MAP()
+</PRE>
+<P>This message map catches commands from menus, as discussed in Chapter 3. When
+the user chooses Help About, CFirstSDIApp::OnAppAbout() will be called. When the
+user chooses File New, File Open, or File Print Setup, functions from CWinApp will
+handle that work for you. (You would override those functions if you wanted to do
+something special for those menu choices.) OnAppAbout() looks like this:</P>
+<P>
+<PRE>void CFirstSDIApp::OnAppAbout()
+{
+     CAboutDlg aboutDlg;
+     aboutDlg.DoModal();
+}
+</PRE>
+<P>This code declares an object that is an instance of CAboutDlg, and calls its DoModal()
+function to display the dialog onscreen. (Dialog classes and the DoModal() function
+are both covered in Chapter 2.) There's no need to handle OK or Cancel in any special
+way--this is just an About box.</P>
+<P>
+<H3><A NAME="Heading27"></A>Other Files</H3>
+<P>If you selected Context-Sensitive Help, AppWizard generates an .HPJ file and a
+number of .RTF files to give some context-sensitive help. These files are discussed
+in Chapter 11 in the &quot;Components of the Help System&quot; section.</P>
+<P>AppWizard also generates a README.TXT file that explains what all the other files
+are and what classes have been created. Read this file if all the similar filenames
+become confusing.</P>
+<P>There are also a number of project files used to hold your settings and options,
+to speed build time by saving partial results, and to keep information about all
+your variables and functions. These files have extensions like .ncb, .aps, .dsw,
+and so on. You can safely ignore these files because you will not be using them directly.</P>
+<P>
+<H2><A NAME="Heading28"></A>Understanding a Multiple Document Interface Application</H2>
+<P>A multiple document interface application also has menus, and it enables the user
+to have more than one document open at once. This section presents the code that
+is generated when you choose an MDI application with no database or compound document
+support, but instead with a toolbar, a status bar, Help, 3D controls, source file
+comments, and the MFC library as a shared DLL. As with the SDI application, these
+are the defaults after Step 1. The focus here is on what differs from the SDI application
+in the previous section.</P>
+<P>Five classes have been created for you. For the application FirstMDI, they are</P>
+
+<UL>
+	<LI>CAboutDlg, a dialog class for the About dialog box
+	<P>
+	<LI>CFirstMDIApp, a CWinApp class for the entire application
+	<P>
+	<LI>CFirstMDIDoc, a document class
+	<P>
+	<LI>CFirstMDIView, a view class
+	<P>
+	<LI>CMainFrame, a frame class
+</UL>
+
+<P>The App class header is shown in Listing 1.3.</P>
+<P>
+<H4>Listing 1.3&#160;&#160;FirstMDI.h--Main Header File for the FirstMDI Application</H4>
+<PRE>// FirstMDI.h : main header file for the FIRSTMDI application
+//
+#if !defined(AFX_FIRSTMDI_H__CDF38D9E_8718_11D0_B02C_0080C81A3AA2__INCLUDED_)
+#define AFX_FIRSTMDI_H__CDF38D9E_8718_11D0_B02C_0080C81A3AA2__INCLUDED_
+#if _MSC_VER &gt;= 1000
+#pragma once
+#endif // _MSC_VER &gt;= 1000
+#ifndef __AFXWIN_H__
+     #error include `stdafx.h' before including this file for PCH
+#endif
+#include &quot;resource.h&quot;       // main symbols
+/////////////////////////////////////////////////////////////////////////////
+// CFirstMDIApp:
+// See FirstMDI.cpp for the implementation of this class
+//
+class CFirstMDIApp : public CWinApp
+{
+public:
+     CFirstMDIApp();
+// Overrides
+     // ClassWizard generated virtual function overrides
+     //{{AFX_VIRTUAL(CFirstMDIApp)
+     public:
+     virtual BOOL InitInstance();
+     //}}AFX_VIRTUAL
+// Implementation
+     //{{AFX_MSG(CFirstMDIApp)
+     afx_msg void OnAppAbout();
+          // NOTE - The ClassWizard will add and remove member functions here.
+          //    DO NOT EDIT what you see in these blocks of generated code !
+     //}}AFX_MSG
+     DECLARE_MESSAGE_MAP()
+};
+/////////////////////////////////////////////////////////////////////////////
+//{{AFX_INSERT_LOCATION}}
+// Microsoft Developer Studio will insert additional declarations immediately
+// before the previous line.
+</PRE>
+<PRE>#endif //!defined(AFX_FIRSTMDI_H__CDF38D9E_8718_11D0_B02C_0080C81A3AA2__INCLUDED_)
+</PRE>
+<P>How does this differ from FirstSDI.h? Only in the classnames. The constructor
+is also the same as before. OnAppAbout() is just like the SDI version. How about
+InitInstance()? It is in Listing 1.4.</P>
+<P>
+<H4>Listing 1.4&#160;&#160;CFirstMDIApp::InitInstance()</H4>
+<PRE>BOOL CFirstMDIApp::InitInstance()
+{
+     AfxEnableControlContainer();
+     // Standard initialization
+     // If you are not using these features and want to reduce the size
+     //  of your final executable, you should remove from the following
+     //  the specific initialization routines you don't need.
+#ifdef _AFXDLL
+     Enable3dControls();        // Call this when using MFC in a shared DLL
+#else
+     Enable3dControlsStatic();  // Call this when linking to MFC statically
+#endif
+     // Change the registry key under which your settings are stored.
+     // You should modify this string to be something appropriate,
+     // such as the name of your company or organization.
+     SetRegistryKey(_T(&quot;Local AppWizard-Generated Applications&quot;));
+     LoadStdProfileSettings();  // Load standard INI file options (including  				 // MRU)
+     // Register the application's document templates. Document templates
+     //  serve as the connection between documents, frame windows, and views.
+     CMultiDocTemplate* pDocTemplate;
+     pDocTemplate = new CMultiDocTemplate(
+          IDR_FIRSTMTYPE,
+          RUNTIME_CLASS(CFirstMDIDoc),
+          RUNTIME_CLASS(CChildFrame), // custom MDI child frame
+          RUNTIME_CLASS(CFirstMDIView));
+     AddDocTemplate(pDocTemplate);
+     // create main MDI Frame window
+     CMainFrame* pMainFrame = new CMainFrame;
+     if (!pMainFrame-&gt;LoadFrame(IDR_MAINFRAME))
+          return FALSE;
+     m_pMainWnd = pMainFrame;
+     // Parse command line for standard shell commands, DDE, file open
+     CCommandLineInfo cmdInfo;
+     ParseCommandLine(cmdInfo);
+     // Dispatch commands specified on the command line
+     if (!ProcessShellCommand(cmdInfo))
+          return FALSE;
+     // The main window has been initialized, so show and update it.
+     pMainFrame-&gt;ShowWindow(m_nCmdShow);
+     pMainFrame-&gt;UpdateWindow();
+     return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>What's different here? Using WinDiff can help. WinDiff is a tool that comes with
+Visual C++ and is reached from the Tools menu. (If WinDiff isn't on your Tools menu,
+see the &quot;Tools&quot; section of Appendix C.) Using WinDiff to compare the FirstSDI
+and FirstMDI versions of InitInstance() confirms that, other than the classnames,
+the differences are</P>
+
+<UL>
+	<LI>The MDI application sets up a CMultiDocTemplate and the SDI application sets
+	up a CSingleDocTemplate, as discussed in Chapter 4.
+	<P>
+	<LI>The MDI application sets up a mainframe window and then shows it; the SDI application
+	does not.
+</UL>
+
+<P>This shows a major advantage of the Document/View paradigm: It enables an enormous
+design decision to affect only a small amount of the code in your project and hides
+that decision as much as possible.</P>
+<P>
+<H2><A NAME="Heading29"></A>Understanding the Components of a Dialog-Based Application</H2>
+<P>Dialog applications are much simpler than SDI and MDI applications. Create one
+called <I>FirstDialog</I>, with an About box, no Help, 3D controls, no automation,
+ActiveX control support, no sockets, source file comments, and MFC as a shared DLL.
+In other words, accept all the default options.</P>
+<P>Three classes have been created for you for the application called <I>FirstMDI</I>:</P>
+
+<UL>
+	<LI>CAboutDlg, a dialog class for the About dialog box
+	<P>
+	<LI>CFirstDialogApp, a CWinApp class for the entire application
+	<P>
+	<LI>CFirstDialogDlg, a dialog class for the entire application
+</UL>
+
+<P>The dialog classes are the subject of Chapter 2. Listing 1.5 shows the header
+file for CFirstDialogApp.</P>
+<P>
+<H4>Listing 1.5&#160;&#160;dialog16.h--Main Header File</H4>
+<PRE>// FirstDialog.h : main header file for the FIRSTDIALOG application
+//
+#if !defined(AFX_FIRSTDIALOG_H__CDF38DB4_8718_11D0_B02C_0080C81A3AA2__INCLUDED_)
+#define AFX_FIRSTDIALOG_H__CDF38DB4_8718_11D0_B02C_0080C81A3AA2__INCLUDED_
+#if _MSC_VER &gt;= 1000
+#pragma once
+#endif // _MSC_VER &gt;= 1000
+#ifndef __AFXWIN_H__
+     #error include `stdafx.h' before including this file for PCH
+#endif
+#include &quot;resource.h&quot;          // main symbols
+/////////////////////////////////////////////////////////////////////////////
+// CFirstDialogApp:
+// See FirstDialog.cpp for the implementation of this class
+//
+class CFirstDialogApp : public CWinApp
+{
+public:
+     CFirstDialogApp();
+// Overrides
+     // ClassWizard generated virtual function overrides
+     //{{AFX_VIRTUAL(CFirstDialogApp)
+     public:
+     virtual BOOL InitInstance();
+     //}}AFX_VIRTUAL
+// Implementation
+     //{{AFX_MSG(CFirstDialogApp)
+          // NOTE - The ClassWizard will add and remove member functions here.
+          //    DO NOT EDIT what you see in these blocks of generated code !
+     //}}AFX_MSG
+     DECLARE_MESSAGE_MAP()
+};
+/////////////////////////////////////////////////////////////////////////////
+//{{AFX_INSERT_LOCATION}}
+// Microsoft Developer Studio will insert additional declarations immediately
+// before the previous line.
+#endif // !defined(AFX_FIRSTDIALOG_H__CDF38DB4_8718_11D0_B02C_0080C81A3AA2
+</PRE>
+<PRE>&#172;__INCLUDED_)
+</PRE>
+<P>CFirstDialogApp inherits from CWinApp, which provides most of the functionality.
+CWinApp has a constructor, which does nothing, as did the SDI and MDI constructors
+earlier in this chapter, and it overrides the virtual function InitInstance(), as
+shown in Listing 1.6.</P>
+<P>
+<H4>Listing 1.6&#160;&#160;FirstDialog.cpp--CDialog16App::InitInstance()</H4>
+<PRE>BOOL CFirstDialogApp::InitInstance()
+{
+     AfxEnableControlContainer();
+     // Standard initialization
+     // If you are not using these features and want to reduce the size
+     //  of your final executable, you should remove from the following
+     //  the specific initialization routines you don't need.
+#ifdef _AFXDLL
+     Enable3dControls();         // Call this when using MFC in a shared DLL
+#else
+     Enable3dControlsStatic();   // Call this when linking to MFC statically
+#endif
+     CFirstDialogDlg dlg;
+     m_pMainWnd = &amp;dlg;
+     int nResponse = dlg.DoModal();
+     if (nResponse == IDOK)
+     {
+          // TODO: Place code here to handle when the dialog is
+          //  dismissed with OK
+     }
+     else if (nResponse == IDCANCEL)
+     {
+          // TODO: Place code here to handle when the dialog is
+          // dismissed with Cancel
+     }
+     // Because the dialog has been closed, return FALSE so that you exit the
+     //  application, rather than start the application's message pump.
+     return FALSE;
+</PRE>
+<PRE>}
+</PRE>
+<P>This enables 3D controls, because you asked for them, and then puts up the dialog
+box that is the entire application. To do that, the function declares an instance
+of CDialog16Dlg, dlg, and then calls the DoModal() function of the dialog, which
+displays the dialog box onscreen and returns IDOK if the user clicks OK, or IDCANCEL
+if the user clicks Cancel. (This process is discussed further in Chapter 2.) It's
+up to you to make that dialog box actually do something. Finally, InitInstance()
+returns FALSE because this is a dialog-based application and when the dialog box
+is closed, the application is ended. As you saw earlier for the SDI and MDI applications,
+InitInstance() usually returns TRUE to mean &quot;everything is fine--run the rest
+of the application&quot; or FALSE to mean &quot;something went wrong while initializing.&quot;
+Because there is no &quot;rest of the application,&quot; dialog-based apps always
+return FALSE from their InitInstance().</P>
+<P>
+<H2><A NAME="Heading30"></A>Reviewing AppWizard Decisions and This Chapter</H2>
+<P>AppWizard asks a lot of questions and starts you down a lot of roads at once.
+This chapter explains InitInstance and shows some of the code affected by the very
+first AppWizard decision: whether to have AppWizard generate a dialog-based, SDI,
+or MDI application. Most of the other AppWizard decisions are about topics that take
+an entire chapter. The following table summarizes those choices and where you can
+learn more:</P>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Step</B></TD>
+		<TD ALIGN="LEFT"><B>Decision</B></TD>
+		<TD ALIGN="LEFT"><B>Chapter</B></TD>
+		<TD ALIGN="LEFT"><B>Dialog</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">0</TD>
+		<TD ALIGN="LEFT">MFC DLL or</TD>
+		<TD ALIGN="LEFT">28, Future Explorations</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">non-MFC DLL</TD>
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">0</TD>
+		<TD ALIGN="LEFT">OCX Control</TD>
+		<TD ALIGN="LEFT">17, Building an ActiveX</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">Control</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">0</TD>
+		<TD ALIGN="LEFT">Console</TD>
+		<TD ALIGN="LEFT">28, Future Explorations</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">Application</TD>
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">0</TD>
+		<TD ALIGN="LEFT">Custom</TD>
+		<TD ALIGN="LEFT">25, Achieving Reuse with the</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">AppWizards</TD>
+		<TD ALIGN="LEFT">Gallery and Your Own AppWizard</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">0</TD>
+		<TD ALIGN="LEFT">ISAPI Extension</TD>
+		<TD ALIGN="LEFT">18, Sockets, MAPI, and the</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">Internet Wizard</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">1</TD>
+		<TD ALIGN="LEFT">Language Support</TD>
+		<TD ALIGN="LEFT">28, Future Explorations</TD>
+		<TD ALIGN="LEFT">Yes</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">2</TD>
+		<TD ALIGN="LEFT">Database Support</TD>
+		<TD ALIGN="LEFT">22, Database Access</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">3</TD>
+		<TD ALIGN="LEFT">Compound</TD>
+		<TD ALIGN="LEFT">14, Building an ActiveX</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">Document Container</TD>
+		<TD ALIGN="LEFT">Container Application</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">3</TD>
+		<TD ALIGN="LEFT">Compound Document</TD>
+		<TD ALIGN="LEFT">15, Building an ActiveX</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">Mini-Server</TD>
+		<TD ALIGN="LEFT">Server Application</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">3</TD>
+		<TD ALIGN="LEFT">Compound Document</TD>
+		<TD ALIGN="LEFT">15, Building an ActiveX</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">Full Server</TD>
+		<TD ALIGN="LEFT">Server Application</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">3</TD>
+		<TD ALIGN="LEFT">Compound Files</TD>
+		<TD ALIGN="LEFT">14, Building an ActiveX</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">Container Application</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">3</TD>
+		<TD ALIGN="LEFT">Automation</TD>
+		<TD ALIGN="LEFT">16, Building an Automation</TD>
+		<TD ALIGN="LEFT">Yes</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">Server</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">3</TD>
+		<TD ALIGN="LEFT">Using ActiveX</TD>
+		<TD ALIGN="LEFT">17, Building an ActiveX</TD>
+		<TD ALIGN="LEFT">Yes</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">Controls</TD>
+		<TD ALIGN="LEFT">Control</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">4</TD>
+		<TD ALIGN="LEFT">Docking Toolbar</TD>
+		<TD ALIGN="LEFT">9, Status Bars and Toolbars</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">4</TD>
+		<TD ALIGN="LEFT">Status Bar</TD>
+		<TD ALIGN="LEFT">9, Status Bars and Toolbars</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">4</TD>
+		<TD ALIGN="LEFT">Printing and</TD>
+		<TD ALIGN="LEFT">6, Printing and Print</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">Print Preview</TD>
+		<TD ALIGN="LEFT">Preview</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">4</TD>
+		<TD ALIGN="LEFT">Context-Sensitive</TD>
+		<TD ALIGN="LEFT">11, Help</TD>
+		<TD ALIGN="LEFT">Yes</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">Help</TD>
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">4</TD>
+		<TD ALIGN="LEFT">3D Controls</TD>
+		<TD ALIGN="LEFT">--</TD>
+		<TD ALIGN="LEFT">Yes</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">4</TD>
+		<TD ALIGN="LEFT">MAPI</TD>
+		<TD ALIGN="LEFT">18, Sockets, MAPI,</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">and the Internet</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">4</TD>
+		<TD ALIGN="LEFT">Windows Sockets</TD>
+		<TD ALIGN="LEFT">18, Sockets, MAPI,</TD>
+		<TD ALIGN="LEFT">Yes</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">and the Internet</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">4</TD>
+		<TD ALIGN="LEFT">Files in MRU list</TD>
+		<TD ALIGN="LEFT">--</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">5</TD>
+		<TD ALIGN="LEFT">Comments in code</TD>
+		<TD ALIGN="LEFT">--</TD>
+		<TD ALIGN="LEFT">Yes</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">5</TD>
+		<TD ALIGN="LEFT">MFC library</TD>
+		<TD ALIGN="LEFT">--</TD>
+		<TD ALIGN="LEFT">Yes</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">6</TD>
+		<TD ALIGN="LEFT">Base class for View</TD>
+		<TD ALIGN="LEFT">4, Documents and Views</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+</TABLE>
+</P>
+<P>Because some of these questions are not applicable for dialog-based applications,
+this table has a Dialog column <I>Yes</I> that indicates this decision applies to
+dialog-based applications, too. An entry of <B>--</B> in the Chapter column means
+that this decision doesn't really warrant discussion. These topics get a sentence
+or two in passing in this chapter or elsewhere.</P>
+<P>By now you know how to create applications that don't do much of anything. To
+make them do something, you need menus or dialog controls that give commands, and
+you need other dialog controls that gather more information. These are the subject
+of the next chapter, Chapter 2, &quot;Dialogs and Controls.&quot;</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../fm/fm.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch02/ch02.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A><BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

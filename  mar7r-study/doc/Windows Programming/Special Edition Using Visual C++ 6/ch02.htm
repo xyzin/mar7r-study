@@ -1,0 +1,774 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 2 -- Dialogs and Controls</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch01/ch01.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch03/ch03.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 2 -</H1>
+
+<H1>Dialogs and Controls</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Understanding Dialog Boxes</A>
+	<LI><A HREF="#Heading2">Creating a Dialog Box Resource</A>
+	<UL>
+		<LI><A HREF="#Heading3">Defining Dialog Box and Control IDs</A>
+		<LI><A HREF="#Heading4">Creating the Sample Dialog Box</A>
+	</UL>
+	<LI><A HREF="#Heading5">Writing a Dialog Box Class</A>
+	<LI><A HREF="#Heading6">Using the Dialog Box Class</A>
+	<UL>
+		<LI><A HREF="#Heading7">Arranging to Display the Dialog Box</A>
+		<LI><A HREF="#Heading8">Behind the Scenes</A>
+		<LI><A HREF="#Heading9">Using a List Box Control</A>
+		<LI><A HREF="#Heading10">Using Radio Buttons</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1><B></B></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Understanding Dialog Boxes</H2>
+<P>Windows programs have a graphical user interface. In the days of DOS, the program
+could simply print a prompt onscreen and direct the user to enter whatever value
+the program needed. With Windows, however, getting data from the user is not as simple,
+and most user input is obtained from dialog boxes. For example, a user can give the
+application details about a request by typing in edit boxes, choosing from list boxes,
+selecting radio buttons, checking or unchecking check boxes, and more. These components
+of a dialog box are called <I>controls</I>.</P>
+<P>Chances are that your Windows application will have several dialog boxes, each
+designed to retrieve a specific type of information from your user. For each dialog
+box that appears onscreen, there are two entities you need to develop: a <I>dialog
+box resource</I> and a <I>dialog box</I> <I>class</I>.</P>
+<P>The dialog box resource is used to draw the dialog box and its controls onscreen.
+The class holds the values of the dialog box, and it is a member function of the
+class that causes the dialog box to be drawn onscreen. They work together to achieve
+the overall effect: making communication with the program easier for your user.</P>
+<P>You build a dialog box resource with the resource editor, adding controls to it
+and arranging them to make the control easy to use. Class Wizard then helps you to
+create a dialog box class, typically derived from the MFC class CDialog, and to connect
+the resource to the class. Usually, each control on the dialog box resource corresponds
+to one member variable in the class. To display the dialog box, you call a member
+function of the class. To set the control values to defaults before displaying the
+dialog box, or to determine the values of the controls after the user is finished
+with the box, you use the member variables of the class.</P>
+<P>
+<H2><A NAME="Heading2"></A>Creating a Dialog Box Resource</H2>
+<P>The first step in adding a dialog box to your MFC application is creating the
+dialog box resource, which acts as a sort of template for Windows. When Windows sees
+the dialog box resource in your program, it uses the commands in the resource to
+construct the dialog box for you.</P>
+<P>In this chapter you learn to work with dialog boxes by adding one to a simple
+application. Create an SDI application just as you did in Chapter 1, &quot;Building
+Your First Windows Application,&quot; calling it simply SDI. You will create a dialog
+box resource and a dialog box class for the application, write code to display the
+dialog box, and write code to use the values entered by the user.</P>
+<P>To create a dialog box resource, first open the application. Choose Insert, Resource
+from Developer Studio's menu bar. The Insert Resource dialog box, shown in Figure
+2.1, appears. Double-click Dialog in the Resource Type box. The dialog box editor
+appears, as shown in Figure 2.2.</P>
+<P>Bring up the Properties dialog box for the new dialog box by choosing View, Properties.
+Change the caption to <B>Sample Dialog</B>, as shown in Figure 2.3. You'll be using
+the Properties dialog box quite a lot as you work on this dialog box resource, so
+pin it to the screen by clicking the pushpin in the upper-left corner.</P>
+<P><A HREF="javascript:popUp('02uvc01.gif')"><B>FIG. 2.1</B></A><B> </B><I>Double-click
+Dialog on the Insert Resource dialog box.</I></P>
+
+<P><A HREF="javascript:popUp('02uvc02.gif')"><B>FIG. 2.2</B></A><B> </B><I>A brand
+new dialog box resource has a title, an OK button, and a Cancel button.</I></P>
+
+<P><A HREF="javascript:popUp('02uvc03.gif')"><B>FIG. 2.3</B></A><B> </B><I>Use the
+Dialog Properties dialog box to change the title of the new dialog box.</I></P>
+
+<P>The control palette shown at the far right of Figure 2.2 is used to add controls
+to the dialog box resource. Dialog boxes are built and changed with a very visual
+WYSIWYG interface. If you need a button on your dialog box, you grab one from the
+control palette, drop it where you want it, and change the caption from Button1 to
+Lookup, or Connect, or whatever you want the button to read. All the familiar Windows
+controls are available for your dialog boxes:</P>
+<P>
+
+<UL>
+	<LI><I>Static text. </I>Not really a control, this is used to label other controls
+	such as edit boxes.
+	<P>
+	<LI><I>Edit box.</I> Single line or multiline, this is a place for users to type
+	strings or numbers as input to the program. Read-only edit boxes are used to display
+	text.
+	<P>
+	<LI><I>Button. </I>Every dialog box starts with OK and Cancel buttons, but you can
+	add as many of your own as you want.
+	<P>
+	<LI><I>Check box.</I> You use this control to set options on or off; each option
+	can be selected or deselected independently.
+	<P>
+	<LI><I>Radio button. </I>You use this to select only one of a number of related options.
+	Selecting one button deselects the rest.
+	<P>
+	<LI><I>List box.</I> You use this box type to select one item from a list hardcoded
+	into the dialog box or filled in by the program as the dialog box is created. The
+	user cannot type in the selection area.
+	<P>
+	<LI><I>Combo box.</I> A combination of an edit box and a list box, this control enables
+	users to select from a list or type their response, if the one they want isn't on
+	the list.
+</UL>
+
+<P>The sample application in this chapter is going to have a dialog box with a selection
+of controls on it, to demonstrate the way they are used.</P>
+<P>
+<H3><A NAME="Heading3"></A>Defining Dialog Box and Control IDs</H3>
+<P>Because dialog boxes are often unique to an application (with the exception of
+the common dialog boxes), you almost always create your own IDs for both the dialog
+box and the controls it contains. You can, if you want, accept the default IDs that
+the dialog box editor creates for you. However, these IDs are generic (for example,
+IDD_DIALOG1, IDC_EDIT1, IDC_RADIO1, and so on), so you'll probably want to change
+them to something more specific. In any case, as you can tell from the default IDs,
+a dialog box's ID usually begins with the prefix IDD, and control IDs usually begin
+with the prefix IDC. You change these IDs in the Properties dialog box: Click the
+control (or the dialog box background to select the entire background), and choose
+View, Properties unless the Properties dialog box is already pinned in place; then
+change the resource ID to a descriptive name that starts with IDD for a dialog and
+IDC for a control.</P>
+<P>
+<H3><A NAME="Heading4"></A>Creating the Sample Dialog Box</H3>
+<P>Click the Edit box button on the control palette, and then click in the upper-left
+corner of the dialog box to place the edit box. If necessary, grab a moving handle
+and move it until it is in approximately the same place as the edit box in Figure
+2.4. Normally, you would change the ID from Edit1, but for this sample leave it unchanged.</P>
+<P><A HREF="javascript:popUp('02uvc04.gif')"><B>FIG. 2.4</B></A><B> </B><I>You can
+build a simple dialog box quickly in the resource editor.</I></P>
+
+<P><I></I>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you aren't sure which control palette button inserts an edit box
+	(or any other type of control), just hold the pointer still over one of the buttons
+	for a short time. A ToolTip will appear, reminding you of the name of the control
+	associated with the button. Move the pointer from button to button until you find
+	the one for the edit box.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Add a check box and three radio buttons to the dialog box so that it resembles
+Figure 2.4. Change the captions on the radio buttons to <B>One</B>, <B>Two</B>, and
+<B>Three</B>. To align all these controls, click one, and then while holding down
+the Ctrl key, click each of the rest of them. Choose Layout, Align, Left, and if
+necessary drag the stack of controls over with the mouse while they are all selected.
+Then choose Layout, Space Evenly, Down, to adjust the vertical spacing.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> The commands on the Layout menu are also on the Dialog toolbar, which
+	appears at the bottom of your screen while you are using the resource editor. The
+	toolbar symbols are repeated on the menu to help you learn which button is associated
+	with each menu item.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Click the One radio button again and bring up the Properties dialog box. Select
+the Group check box. This indicates that this is the first of a group of buttons.
+When you select a radio button, all the other buttons in the group are deselected.</P>
+<P>Add a list box to the dialog box, to the right of the radio buttons, and resize
+it to match Figure 2.4. With the list box highlighted, choose View, Properties to
+bring up the Properties dialog box if it is not still pinned in place. Select the
+Styles tab and make sure that the Sort box is not selected. When this box is selected,
+the strings in your list box are automatically presented in alphabetical order. For
+this application, they should be presented in the order that they are added.</P>
+<P>
+<H2><A NAME="Heading5"></A>Writing a Dialog Box Class</H2>
+<P>When the resource is complete, bring up ClassWizard by choosing View, ClassWizard.
+ClassWizard recognizes that this new dialog box resource does not have a class associated
+with it and offers to build one for you, as shown in Figure 2.5. Leave the Create
+a New Class radio button selected, and click OK. The New Class dialog box appears,
+as shown in Figure 2.6. Fill in the classname as <B>CSdiDialog</B> and click OK.
+ClassWizard creates a new class, prepares the source file (SdiDialog.cpp) and header
+file (SdiDialog.h), and adds them to your project.</P>
+<P><A HREF="javascript:popUp('02uvc05.gif')"><B>FIG. 2.5</B></A><B> </B><I>ClassWizard
+makes sure you don't forget to create a class to go with your new dialog box resource.</I></P>
+
+<P>You connect the dialog box resources to your code with the Member Variables tab
+of ClassWizard, shown in Figure 2.7. Click IDC_CHECK1 and then click the Add Variable
+button. This brings up the Add Member Variable dialog box, shown in Figure 2.8.</P>
+<P><A HREF="javascript:popUp('02uvc06.gif')"><B>FIG. 2.6</B></A><B> </B><I>Creating
+a dialog box class is simple with ClassWizard.</I></P>
+
+<P><A HREF="javascript:popUp('02uvc07.gif')"><B>FIG. 2.7</B></A><B> </B><I>The Member
+Variables tab of ClassWizard connects dialog box controls to dialog box class member
+variables.</I></P>
+
+<P>A member variable in the new dialog box class can be connected to a control's
+value or to the control. This sample demonstrates both kinds of connection. For IDC_CHECK1,
+fill in the variable name as <B>m_check</B>, and make sure that the Category drop-down
+box has Value selected. If you open the Variable Type drop-down box, you will see
+that the only possible choice is BOOL. Because a check box can be either selected
+or not selected, it can be connected only to a BOOL variable, which holds the value
+TRUE or FALSE. Click OK to complete the connection.</P>
+<P><A HREF="javascript:popUp('02uvc08.gif')"><B>FIG. 2.8</B></A><B> </B><I>You choose
+the name for the member variable associated with each control.</I></P>
+
+<P>Here are the data types that go with each control type:</P>
+<P>
+
+<UL>
+	<LI><I>Edit box.</I> Usually a string but also can be other data types, including
+	int, float, and long
+	<P>
+	<LI><I>Check box.</I> int
+	<P>
+	<LI><I>Radio button.</I> int
+	<P>
+	<LI><I>List box.</I> String
+	<P>
+	<LI><I>Combo box.</I> String
+	<P>
+	<LI><I>Scrollbar.</I> int
+</UL>
+
+<P>Connect IDC_EDIT1 in the same way, to a member variable called m_edit of type
+CString as a Value. Connect IDC_LIST1 as a Control to a member variable called m_listbox
+of type CListBox. Connect IDC_RADIO_1, the first of the group of radio buttons, as
+a Value to an int member variable called m_radio.</P>
+<P>After you click OK to add the variable, ClassWizard offers, for some kinds of
+variables, the capability to validate the user's data entry. For example, when an
+edit control is selected, a field under the variables list allows you to set the
+maximum number of characters the user can enter into the edit box (see Figure 2.9).
+Set it to 10 for m_edit. If the edit box is connected to a number (int or float),
+this area of ClassWizard is used to specify minimum or maximum values for the number
+entered by the user. The error messages asking the user to try again are generated
+automatically by MFC with no work on your part.</P>
+<P><A HREF="javascript:popUp('02uvc09.gif')"><B>FIG. 2.9</B></A><B> </B><I>Enter
+a number in the Maximum Characters field to limit the length of a user's entry.</I></P>
+
+<P><I></I>
+<H2><A NAME="Heading6"></A>Using the Dialog Box Class</H2>
+<P>Now that you have your dialog box resource built and your dialog box class written,
+you can create objects of that class within your program and display the associated
+dialog box element. The first step is to decide what will cause the dialog box to
+display. Typically, it is a menu choice, but because adding menu items and connecting
+them to code are not covered until Chapter 8, &quot;Building a Complete Application:
+ShowString,&quot; you can simply have the dialog box display when the application
+starts running. To display the dialog box, you call the DoModal() member function
+of the dialog box class.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B>Modeless Dialog Boxes</B><BR>
+	</P>
+
+	<P>Most of the dialog boxes you will code will be modal dialog boxes. A modal dialog
+	box is on top of all the other windows in the application: The user must deal with
+	the dialog box and then close it before going on to other work. An example of this
+	is the dialog box that comes up when the user chooses File, Open in any Windows application.<BR>
+	</P>
+
+	<P>A modeless dialog box enables the user to click the underlying application and
+	do some other work and then return to the dialog box. An example of this is the dialog
+	box that comes up when the user chooses Edit, Find in many Windows applications.<BR>
+	</P>
+
+	<P>Displaying a modeless dialog box is more difficult than displaying a modal one.
+	The dialog box object, the instance of the dialog box class, must be managed carefully.
+	Typically, it is created with new and destroyed with delete when the user closes
+	the dialog box with Cancel or OK. You have to override a number of functions within
+	the dialog box class. In short, you should be familiar and comfortable with modal
+	dialog boxes before you attempt to use a modeless dialog box. When you're ready,
+	look at the Visual C++ sample called MODELESS that comes with Developer Studio. The
+	fastest way to open this sample is by searching for MODELESS in InfoViewer. Searching
+	in InfoViewer is covered in Appendix C, &quot;The Visual Studio User Interface, Menus,
+	and Toolbars.&quot;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading7"></A>Arranging to Display the Dialog Box</H3>
+<P>Select the ClassView in the project workspace pane, expand the SDI Classes item,
+and then expand CSdiApp. Double-click the InitInstance() member function. This function
+is called whenever the application starts. Scroll to the top of the file, and after
+the other #include statements, add this directive:</P>
+<P>
+<PRE>#include &quot;sdidialog.h&quot;
+</PRE>
+<P>This ensures that the compiler knows what a CSdiDialog class is when it compiles
+this file.</P>
+<P>Double-click InitInstance() in the ClassView again to bring the cursor to the
+beginning of the function. Scroll down to the end of the function, and just before
+the return at the end of the function, add the lines in Listing 2.1.</P>
+<P>
+<H4>Listing 2.1&#160;&#160;SDI.CPP--Lines to Add at the End of CSdiApp::InitInstance()</H4>
+<PRE>     CSdiDialog dlg;
+     dlg.m_check = TRUE;
+     dlg.m_edit = &quot;hi there&quot;;
+     CString msg;
+     if (dlg.DoModal() == IDOK)
+     {
+          msg = &quot;You clicked OK. &quot;;
+     }
+     else
+     {
+          msg = &quot;You cancelled. &quot;;
+     }
+     msg += &quot;Edit box is: &quot;;
+     msg += dlg.m_edit;
+</PRE>
+<PRE>     AfxMessageBox (msg);
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B>Entering Code</B><BR>
+	</P>
+
+	<P>As you enter code into this file, you may want to take advantage of a feature
+	that makes its debut in this version of Visual C++: Autocompletion. Covered in more
+	detail in Appendix C, Autocompletion saves you the trouble of remembering all the
+	member variables and functions of a class. If you type dlg. and then pause, a window
+	will appear, listing all the member variables and functions of the class CSdiDialog,
+	including those it inherited from its base class. If you start to type the variable
+	you want--for example, typing m_--the list will scroll to variables starting with
+	m_. Use the arrow keys to select the one you want, and press Space to select it and
+	continue typing code. You are sure to find this feature a great time saver. If the
+	occasional pause as you type bothers you, Autocompletion can be turned off by choosing
+	Tools, Options and clicking the Editor tab. Deselect the parts of Autocompletion
+	you no longer want.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>This code first creates an instance of the dialog box class. It sets the check
+box and edit box to simple default values. (The list box and radio buttons are a
+little more complex and are added later in this chapter, in &quot;Using a List Box
+Control&quot; and &quot;Using Radio Buttons.&quot;) The dialog box displays onscreen
+by calling its DoModal() function, which returns a number represented by IDOK if
+the user clicks OK and IDCANCEL if the user clicks Cancel. The code then builds a
+message and displays it with the AfxMessageBox function.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> The CString class has a number of useful member functions and operator
+	overloads. As you see here, the += operator tacks characters onto the end of a string.
+	For more about the CString class, consult Appendix F, &quot;Useful Classes.&quot;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Build the project by choosing Build, Build or by clicking the Build button on
+the Build toolbar. Run the application by choosing Build, Execute or by clicking
+the Execute Program button on the Build toolbar. You will see that the dialog box
+displays with the default values you just coded, as shown in Figure 2.10. Change
+them, and click OK. You should get a message box telling you what you did, such as
+the one in Figure 2.11. Now the program sits there, ready to go, but because there
+is no more for it to do, you can close it by choosing File, Exit or by clicking the
+- in the top-right corner.</P>
+
+<P><A HREF="javascript:popUp('02uvc10.gif')"><B>FIG. 2.10</B></A><B> </B><I>Your
+application displays the dialog box when it first runs.</I></P>
+
+<P><A HREF="javascript:popUp('02uvc11.gif')"><B>FIG. 2.11</B></A><B> </B><I>After
+you click OK, the application echoes the contents of the edit control.</I></P>
+
+<P>Run it again, change the contents of the edit box, and this time click Cancel
+on the dialog box. Notice in Figure 2.12 that the edit box is reported as still hi
+there. This is because MFC does not copy the control values into the member variables
+when the user clicks Cancel. Again, just close the application after the dialog box
+is gone.</P>
+
+<P><A HREF="javascript:popUp('02uvc12.gif')"><B>FIG. 2.12</B></A><B> </B><I>When
+you click Cancel, the application ignores any changes you made.</I></P>
+
+<P>Be sure to try entering more characters into the edit box than the 10 you specified
+with ClassWizard. You will find you cannot type more than 10 characters--the system
+just beeps at you. If you try to paste in something longer than 10 characters, only
+the first 10 characters appear in the edit box.</P>
+
+<P>
+<H3><A NAME="Heading8"></A>Behind the Scenes</H3>
+<P>You may be wondering what's going on here. When you click OK on the dialog box,
+MFC arranges for a function called OnOK() to be called. This function is inherited
+from CDialog, the base class for CSdiDialog. Among other things, it calls a function
+called DoDataExchange(), which ClassWizard wrote for you. Here's how it looks at
+the moment:</P>
+<P>
+<PRE>void CSdiDialog::DoDataExchange(CDataExchange* pDX)
+{
+     CDialog::DoDataExchange(pDX);
+     //{{AFX_DATA_MAP(CSdiDialog)
+     DDX_Control(pDX, IDC_LIST1, m_listbox);
+     DDX_Check(pDX, IDC_CHECK1, m_check);
+     DDX_Text(pDX, IDC_EDIT1, m_edit);
+     DDV_MaxChars(pDX, m_edit, 10);
+     DDX_Radio(pDX, IDC_RADIO1, m_radio);
+     //}}AFX_DATA_MAP
+}
+</PRE>
+<P>The functions with names that start with DDX all perform data exchange: Their
+second parameter is the resource ID of a control, and the third parameter is a member
+variable in this class. This is the way that ClassWizard connected the controls to
+member variables--by generating this code for you. Remember that ClassWizard also
+added these variables to the dialog box class by generating code in the header file
+that declares them.</P>
+<P>There are 34 functions whose names begin with DDX: one for each type of data that
+might be exchanged between a dialog box and a class. Each has the type in its name.
+For example, DDX_Check is used to connect a check box to a BOOL member variable.
+DDX_Text is used to connect an edit box to a CString member variable. ClassWizard
+chooses the right function name when you make the connection.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Some DDX functions are not generated by ClassWizard. For example,
+	when you connect a list box as a Value, your only choice for type is CString. Choosing
+	that causes ClassWizard to generate a call to DDX_LBString(), which connects the
+	selected string in the list box to a CString member variable. There are cases when
+	the integer index into the list box might be more useful, and there is a DDX_LBIndex()
+	function that performs that exchange. You can add code to DoDataExchange(), outside
+	the special ClassWizard comments, to make this connection. If you do so, remember
+	to add the member variable to the class yourself. You can find the full list of DDX
+	functions in the online documentation.&#160;n
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Functions with names that start with DDV perform data validation. ClassWizard
+adds a call to DDV_MaxChars right after the call to DDX_Text that filled m_edit with
+the contents of IDC_EDIT1. The second parameter of the call is the member variable
+name, and the third is the limit: how many characters can be in the string. If a
+user ever managed to get extra characters into a length-validated string, the DDV_MaxChars()
+function contains code that puts up a warning box and gets the user to try again.
+You can just set the limit and count on its being enforced.</P>
+<P>
+<H3><A NAME="Heading9"></A>Using a List Box Control</H3>
+<P>Dealing with the list box is more difficult because only while the dialog box
+is onscreen is the list box control a real window. You cannot call a member function
+of the list box control class unless the dialog box is onscreen. (This is true of
+any control that you access as a control rather than as a value.) This means that
+you must initialize the list box (fill it with strings) and use it (determine which
+string is selected) in functions that are called by MFC while the dialog box is onscreen.</P>
+<P>When it is time to initialize the dialog box, just before it displays onscreen,
+a CDialog function named OnInitDialog() is called. Although the full explanation
+of what you are about to do will have to wait until Chapter 3, &quot;Messages and
+Commands,&quot; follow the upcoming steps to add the function to your class.</P>
+<P>In ClassView, right-click CSdiDialog and choose Add Windows Message Handler. The
+New Windows Message and Event Handlers dialog box shown in Figure 2.13 appears. Choose
+WM_INITDIALOG from the list and click Add Handler. The message name disappears from
+the left list and appears in the right list. Click it and then click Edit Existing
+to see the code.</P>
+<P><A HREF="javascript:popUp('02uvc13.gif')"><B>FIG. 2.13</B></A><B> </B><I>The New
+Windows Message and Event Handlers dialog box helps you override OnInitDialog().</I></P>
+
+<P>Remove the TODO comment and add calls to the member functions of the list box
+so that the function is as shown in Listing 2.2.</P>
+<P>
+<H4>Listing 2.2&#160;&#160;SDIDIALOG.CPP--CSdiDialog::OnInitDialog()</H4>
+<PRE>BOOL CSdiDialog::OnInitDialog()
+{
+     CDialog::OnInitDialog();
+    
+     m_listbox.AddString(&quot;First String&quot;);
+     m_listbox.AddString(&quot;Second String&quot;);
+     m_listbox.AddString(&quot;Yet Another String&quot;);
+     m_listbox.AddString(&quot;String Number Four&quot;);
+     m_listbox.SetCurSel(2);
+    
+     return TRUE;  // return TRUE unless you set the focus to a control
+                   // EXCEPTION: OCX Property Pages should return FALSE
+</PRE>
+<PRE>}
+</PRE>
+<P>This function starts by calling the base class version of OnInitDialog() to do
+whatever behind-the-scenes work MFC does when dialog boxes are initialized. Then
+it calls the list box member function AddString() which, as you can probably guess,
+adds a string to the list box. The strings will be displayed to the user in the order
+that they were added with AddString(). The final call is to SetCurSel(), which sets
+the current selection. As you see when you run this program, the index you pass to
+SetCurSel() is zero based, which means that item 2 is the third in the list, counting
+0, 1, 2.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Usually, the strings of a list box are not hardcoded like this. To
+	set them from elsewhere in your program, you have to add a CStringArray member variable
+	to the dialog box class and a function to add strings to that array. The OnInitDialog()
+	would use the array to fill the list box. Alternatively, you can use another one
+	of MFC's collection classes or even fill the list box from a database. For more about
+	CStringArray and other MFC collection classes, consult Appendix F. Database programming
+	is covered in Chapter 22, &quot;Database Access.&quot;&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>In order to have the message box display some indication of what was selected
+in the list box, you have to add another member variable to the dialog box class.
+This member variable will be set as the dialog box closes and can be accessed after
+it is closed. In ClassView, right-click CSdiDialog and choose Add Member Variable.
+Fill in the dialog box, as shown in Figure 2.14, and then click OK. This adds the
+declaration of the CString called m_selected to the header file for you. (If the
+list box allowed multiple selections, you would have to use a CStringArray to hold
+the list of selected items.) Strictly speaking, the variable should be private, and
+you should either add a public accessor function or make CSdiApp::InitInstance()
+a friend function to CSdiDialog in order to be truly object oriented. Here you take
+an excusable shortcut. The general rule still holds: Member variables should be private.</P>
+<P><A HREF="javascript:popUp('02uvc14.gif')"><B>FIG. 2.14</B></A><B> </B><I>Add a
+CString to your class to hold the string that was selected in the list box.</I></P>
+
+<P><I></I>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Object-oriented concepts (such as accessor functions), friend functions,
+	and the reasoning behind private member variables are discussed in Appendix A, &quot;C++
+	Review and Object-Oriented Concepts.&quot;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>This new member variable is used to hold the string that the user selected. It
+is set when the user clicks OK or Cancel. To add a function that is called when the
+user clicks OK, follow these steps:</P>
+<P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Right-click CSdiDialog in the ClassView, and choose Add Windows Message
+	Handler.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>In the New Windows Message and Event Handlers dialog box, shown in
+	Figure 2.15, highlight ID_OK in the list box at the lower right, labeled Class or
+	Object to Handle.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('02uvc15.gif')"><B>FIG. 2.15</B></A><B> </B><I>Add a
+function to handle the user's clicking OK on your dialog box.</I></P>
+
+<P><I></I>
+
+<DL>
+	<DD><B>3. </B>In the far right list box, select BN_CLICKED. You are adding a function
+	to handle the user's clicking the OK button once.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Click the Add Handler button. The Add Member Function dialog box shown
+	in Figure 2.16 appears.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('02uvc16.gif')"><B>FIG. 2.16</B></A><B> </B><I>ClassWizard
+suggests a very good name for this event handler: Do not change it.</I></P>
+
+<P><I></I>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>5. </B>Accept the suggested name, OnOK(), by clicking OK.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Click the Edit Existing button to edit the code, and add lines as shown
+	in Listing 2.3.
+	<P>
+</DL>
+
+<H4>Listing 2.3&#160;&#160;SDIDIALOG.CPP--CSdiDialog::OnOK()</H4>
+<PRE>void CSdiDialog::OnOK()
+{
+     int index = m_listbox.GetCurSel();
+     if (index != LB_ERR)
+     {
+          m_listbox.GetText(index, m_selected);
+     }
+     else
+     {
+          m_selected = &quot;&quot;;
+     }
+     CDialog::OnOK();
+</PRE>
+<PRE>}
+</PRE>
+<P>This code calls the list box member function GetCurSel(), which returns a constant
+represented by LB_ERR if there is no selection or if more than one string has been
+selected. Otherwise, it returns the zero-based index of the selected string. The
+GetText() member function fills m_selected with the string at position index. After
+filling this member variable, this function calls the base class OnOK() function
+to do the other processing required.</P>
+<P>In a moment you will add lines to CSdiApp::InitInstance() to mention the selected
+string in the message box. Those lines will execute whether the user clicks OK or
+Cancel, so you need to add a function to handle the user's clicking Cancel. Simply
+follow the numbered steps for adding OnOK, except that you choose ID_CANCEL from
+the top-right box and agree to call the function OnCancel. The code, as shown in
+Listing 2.4, resets m_selected because the user canceled the dialog box.</P>
+<P>
+<H4>Listing 2.4&#160;&#160;SDIDIALOG.CPP--CSdiDialog::OnCancel()</H4>
+<PRE>void CSdiDialog::OnCancel()
+{
+     m_selected = &quot;&quot;;
+     CDialog::OnCancel();
+</PRE>
+<PRE>}
+</PRE>
+<P>Add these lines to CSdiApp::InitInstance() just before the call to AfxMessageBox():</P>
+<P>
+<PRE>     msg += &quot;. List Selection: &quot;;
+     msg += dlg.m_selected;
+</PRE>
+<P>Build the application, run it, and test it. Does it work as you expect? Does it
+resemble Figure 2.17?</P>
+<P><A HREF="javascript:popUp('02uvc17.gif')"><B>FIG. 2.17</B></A><B> </B><I>Your
+application now displays strings in the list box.</I></P>
+
+<P><I></I>
+<H3><A NAME="Heading10"></A>Using Radio Buttons</H3>
+<P>You may have already noticed that when the dialog box first appears onscreen,
+none of the radio buttons are selected. You can arrange for one of them to be selected
+by default: Simply add two lines to CSdiDialog::OnInitDialog(). These lines set the
+second radio button and save the change to the dialog box:</P>
+<P>
+<PRE>m_radio = 1;
+UpdateData(FALSE);
+</PRE>
+<P>You may recall that m_radio is the member variable to which the group of radio
+buttons is connected. It is a zero-based index into the group of buttons, indicating
+which one is selected. Button 1 is the second button. The call to UpdateData() refreshes
+the dialog box controls with the member variable values. The parameter indicates
+the direction of transfer: UpdateData(TRUE) would refresh the member variables with
+the control values, wiping out the setting of m_radio you just made.</P>
+<P>Unlike list boxes, a group of radio buttons can be accessed after the dialog box
+is no longer onscreen, so you won't need to add code to OnOK() or OnCancel(). However,
+you have a problem: how to convert the integer selection into a string to tack on
+the end of msg. There are lots of approaches, including the Format() function of
+CString, but in this case, because there are not many possible selections, a switch
+statement is readable and quick. At the end of CSdiApp::InitInstance(), add the lines
+in Listing 2.5 just before the call to AfxMessageBox().</P>
+<P>
+<H4>Listing 2.5&#160;&#160;SDIDIALOG.CPP--Lines to Add to CSdiApp::InitInstance()</H4>
+<PRE>     msg += &quot;\r\n&quot;;
+     msg += &quot;Radio Selection: &quot;;
+     switch (dlg.m_radio)
+     {
+     case 0:
+          msg += &quot;0&quot;;
+          break;
+     case 1:
+          msg += &quot;1&quot;;
+          break;
+     case 2:
+          msg += &quot;2&quot;;
+          break;
+     default:
+          msg += &quot;none&quot;;
+          break;
+</PRE>
+<PRE>     }
+</PRE>
+<P>The first new line adds two special characters to the message. <I>Return</I>,
+represented by \r, and <I>new line</I>, represented by \n, combine to form the Windows
+end-of-line marker. This adds a line break after the part of the message you have
+built so far. The rest of msg will appear on the second line of the message box.
+The switch statement is an ordinary piece of C++ code, which was also present in
+C. It executes one of the case statements, depending on the value of dlg.m_radio.</P>
+<P>Once again, build and test the application. Any surprises? It should resemble
+Figure 2.18. You are going to be building and using dialog boxes throughout this
+book, so take the time to understand how this application works and what it does.
+You may want to step through it with the debugger and watch it in action. You can
+read all about debugging in Chapter 24, &quot;Improving Your Application's Performance,&quot;
+and in Appendix D, &quot;Debugging.&quot;</P>
+
+<P><A HREF="javascript:popUp('02uvc18.gif')"><B>FIG. 2.18</B></A><B> </B><I>Your
+application now selects Button Two by default.</I></P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch01/ch01.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch03/ch03.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+<BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

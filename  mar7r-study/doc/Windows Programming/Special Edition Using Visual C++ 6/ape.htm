@@ -1,0 +1,802 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Appendix E -- MFC Macros and Globals</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../apd/apd.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../apf/apf.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- E -</H1>
+</CENTER>
+<CENTER>
+<H1>MFC Macros and Globals</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Application Information and Management Functions</A>
+	<LI><A HREF="#Heading2">ClassWizard Comment Delimiters</A>
+	<LI><A HREF="#Heading3">Collection Class Helper Functions</A>
+	<LI><A HREF="#Heading4">CString Formatting and Message-Box Display</A>
+	<LI><A HREF="#Heading5">Data Types</A>
+	<LI><A HREF="#Heading6">Diagnostic Services</A>
+	<LI><A HREF="#Heading7">Exception Processing</A>
+	<LI><A HREF="#Heading8">Message-Map Macros</A>
+	<LI><A HREF="#Heading9">Runtime Object Model Services</A>
+	<LI><A HREF="#Heading10">Standard Command and Window IDs</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>When you're writing programs, you must use many types of data and operations again
+and again. Sometimes, you have to do something as simple as creating a portable integer
+data type. Other times, you need to do something a little more complex, such as extracting
+a word from a long word value or storing the position of the mouse pointer. As you
+might know, when you compile your program with Visual C++, many constants and variables
+are already defined. You can use these in your programs to save time writing code
+and to make your programs more portable and more readable for other programmers.
+In the following tables, you'll have a look at the most important of these globally
+available constants, macros, and variables.</P>
+<P>Because there are so many constants, macros, and global variables, it is helpful
+to divide them into the following ten categories. The next sections describe each
+of these categories and the symbols they define:</P>
+
+<UL>
+	<LI>Application information and management
+	<P>
+	<LI>ClassWizard comment delimiters
+	<P>
+	<LI>Collection class helpers
+	<P>
+	<LI>CString formatting and message-box display
+	<P>
+	<LI>Data types
+	<P>
+	<LI>Diagnostic services
+	<P>
+	<LI>Exception processing
+	<P>
+	<LI>Message maps
+	<P>
+	<LI>Runtime object model services
+	<P>
+	<LI>Standard command and window IDs
+</UL>
+
+<H2><A NAME="Heading1"></A>Application Information and Management Functions</H2>
+<P>Because a typical Visual C++ application contains only one application object
+but many other objects created from other MFC classes, you frequently need to obtain
+information about the application in different places in a program. Visual C++ defines
+a set of global functions that return this information to any class in a program.
+These functions, listed in Table E.1, can be called from anywhere within an MFC program.
+For example, you frequently need to get a pointer to an application's main window.
+The following function call accomplishes that task:</P>
+<P>
+<PRE>CWnd* pWnd = AfxGetMainWnd();
+</PRE>
+<H4>Table E.1&#160;&#160;Application Information and Management</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Function</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxBeginThread()</TD>
+		<TD ALIGN="LEFT">Creates a new thread (see Chapter 27, &quot;Multitasking with Windows Threads&quot;)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxEndThread()</TD>
+		<TD ALIGN="LEFT">Terminates a thread</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxGetApp()</TD>
+		<TD ALIGN="LEFT">Gets the application's CWinApp pointer</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxGetAppName()</TD>
+		<TD ALIGN="LEFT">Gets the application's name</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxGetInstanceHandle()</TD>
+		<TD ALIGN="LEFT">Gets the application's instance handle</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxGetMainWnd()</TD>
+		<TD ALIGN="LEFT">Gets a pointer to the application's main window</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxGetResourceHandle()</TD>
+		<TD ALIGN="LEFT">Gets the application's resource handle</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxGetThread()</TD>
+		<TD ALIGN="LEFT">Gets a pointer to a CWinThread object</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxRegisterClass()</TD>
+		<TD ALIGN="LEFT">Registers a window class in an MFC DLL</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxRegisterWndClass()</TD>
+		<TD ALIGN="LEFT">Registers a Windows window class in an MFC application</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxSetResourceHandle()</TD>
+		<TD ALIGN="LEFT">Sets the instance handle that determines where to load the application's default
+			resources</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxSocketInit()</TD>
+		<TD ALIGN="LEFT">Initializes Windows Sockets (see Chapter 18, &quot;Sockets, MAPI, and the Internet&quot;)</TD>
+	</TR>
+</TABLE>
+
+<H2><A NAME="Heading2"></A>ClassWizard Comment Delimiters</H2>
+<P>Visual C++ defines a number of delimiters that ClassWizard uses to keep track
+of what it's doing, as well as to locate specific areas of source code. Although
+you'll rarely, if ever, use these macros yourself, you will see them embedded in
+your AppWizard applications, so you might like to know exactly what they do. Table
+E.2 fills you in.</P>
+<P>
+<H4>Table E.2&#160;&#160;ClassWizard Delimiters</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Delimiter</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AFX_DATA</TD>
+		<TD ALIGN="LEFT">Starts and ends member variable declarations in header files that are associated
+			with dialog data exchange</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AFX_DATA_INIT</TD>
+		<TD ALIGN="LEFT">Starts and ends dialog data exchange variable initialization in a dialog class's
+			constructor</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AFX_DATA_MAP</TD>
+		<TD ALIGN="LEFT">Starts and ends dialog data exchange function calls in a dialog class's DoDataExchange()
+			function</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AFX_DISP</TD>
+		<TD ALIGN="LEFT">Starts and ends Automation declarations in header files</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AFX_DISP_MAP</TD>
+		<TD ALIGN="LEFT">Starts and ends Automation mapping in implementation files</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AFX_EVENT</TD>
+		<TD ALIGN="LEFT">Starts and ends ActiveX event declarations in header files</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AFX_EVENT_MAP</TD>
+		<TD ALIGN="LEFT">Starts and ends ActiveX events in implementation files</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AFX_FIELD</TD>
+		<TD ALIGN="LEFT">Starts and ends member variable declarations in header files that are associated
+			with database record field exchange</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AFX_FIELD_INIT</TD>
+		<TD ALIGN="LEFT">Starts and ends record field exchange member variable initialization in a record
+			set class's constructor</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AFX_FIELD_MAP</TD>
+		<TD ALIGN="LEFT">Starts and ends record field exchange function calls in a record set class's DoFieldExchange()
+			function</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AFX_MSG</TD>
+		<TD ALIGN="LEFT">Starts and ends ClassWizard entries in header files for classes that use message
+			maps</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AFX_MSG_MAP</TD>
+		<TD ALIGN="LEFT">Starts and ends message map entries</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AFX_VIRTUAL</TD>
+		<TD ALIGN="LEFT">Starts and ends virtual function overrides in header files</TD>
+	</TR>
+</TABLE>
+
+<H2><A NAME="Heading3"></A>Collection Class Helper Functions</H2>
+<P>Because certain types of data structures are so commonly used in programming,
+MFC defines collection classes that enable you to get these common data structures
+initialized quickly and manipulated easily. MFC includes collection classes for arrays,
+linked lists, and mapping tables. (See Appendix F, &quot;Useful Classes,&quot; for
+more on these constructs.) Each of these types of collections contains elements that
+represent the individual pieces of data that compose the collection. To make it easier
+to access these elements, MFC defines a set of functions created from templates (see
+Chapter 26, &quot;Exceptions and Templates,&quot; for more on templates.) Table E.3
+shows the functions, and you provide the implementation for each particular data
+type.</P>
+<P>For example, if you want to keep a sorted list, the functions that insert new
+items into the list must be able to compare two Truck objects or two Employee objects
+to decide where to put a new Truck or Employee. You implement CompareElements() for
+the Truck class or Employee class, and then the collection class code can use this
+function to decide where to put new additions to the collection.</P>
+<P>
+<H4>Table E.3&#160;&#160;Collection Class Helper Functions</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Function</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CompareElements()</TD>
+		<TD ALIGN="LEFT">Checks elements for equality</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ConstructElements()</TD>
+		<TD ALIGN="LEFT">Constructs new elements (works similar to a class constructor)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DestructElements()</TD>
+		<TD ALIGN="LEFT">Destroys elements (works similar to a class destructor)</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DumpElements()</TD>
+		<TD ALIGN="LEFT">Provides diagnostic output in text form</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">HashKey()</TD>
+		<TD ALIGN="LEFT">Calculates hashing keys</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SerializeElements()</TD>
+		<TD ALIGN="LEFT">Saves or loads elements to or from an archive</TD>
+	</TR>
+</TABLE>
+
+<H2><A NAME="Heading4"></A>CString Formatting and Message-Box Display</H2>
+<P>If you've done much Visual C++ programming, you know that MFC features a special
+string class, called CString, that makes string handling under C++ less cumbersome.
+CString objects are used extensively throughout MFC programs and are discussed in
+Appendix F. There are times when CString is not the right class, though, such as
+when dealing with strings in a resource's string table. These global functions, which
+replace format characters in string tables, provide the CString Format() capability
+for resource strings. There's also a global function for displaying a message box.</P>
+<P>
+<H4>Table E.4&#160;&#160;CString Formatting and Message-Box Functions</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Function</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxFormatString1()</TD>
+		<TD ALIGN="LEFT">Replaces the format characters (such as %1) in a string resource with a given string</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxFormatString2()</TD>
+		<TD ALIGN="LEFT">Replaces the format characters %1 and %2 in a string resource with the given strings</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxMessageBox()</TD>
+		<TD ALIGN="LEFT">Displays a message box</TD>
+	</TR>
+</TABLE>
+
+<H2><A NAME="Heading5"></A>Data Types</H2>
+<P>The most commonly used constants are those that define a portable set of data
+types. You've seen tons of these constants (named in all uppercase letters) used
+in Windows programs. You'll recognize many of these from the Windows SDK. Others
+are included only as part of Visual C++. You use these constants exactly as you would
+any other data type. For example, to declare an unsigned integer variable, you'd
+write something like this:</P>
+<P>
+<PRE>UINT flag;
+</PRE>
+<P>Table E.5 lists the most commonly used data types defined by Visual C++ for Windows
+95/98 and NT. Searching in the help index on any one of these types will lead you
+to a page in the online help that lists all the data types used in MFC and the Windows
+SDK.</P>
+<P>
+<H4>Table E.5&#160;&#160;Commonly Used Data Types</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Data Type</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">BOOL</TD>
+		<TD ALIGN="LEFT">Boolean value</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">BSTR</TD>
+		<TD ALIGN="LEFT">32-bit pointer to character data</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">BYTE</TD>
+		<TD ALIGN="LEFT">8-bit unsigned integer</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">COLORREF</TD>
+		<TD ALIGN="LEFT">32-bit color value</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DWORD</TD>
+		<TD ALIGN="LEFT">32-bit unsigned integer</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LONG</TD>
+		<TD ALIGN="LEFT">32-bit signed integer</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LPARAM</TD>
+		<TD ALIGN="LEFT">32-bit window-procedure parameter</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LPCRECT</TD>
+		<TD ALIGN="LEFT">32-bit constant RECT structure pointer</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LPCSTR</TD>
+		<TD ALIGN="LEFT">32-bit string-constant pointer</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LPSTR</TD>
+		<TD ALIGN="LEFT">32-bit string pointer</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LPVOID</TD>
+		<TD ALIGN="LEFT">32-bit void pointer</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LRESULT</TD>
+		<TD ALIGN="LEFT">32-bit window-procedure return value</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">POSITION</TD>
+		<TD ALIGN="LEFT">The position of an element in a collection</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">UINT</TD>
+		<TD ALIGN="LEFT">32-bit unsigned integer</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">WNDPROC</TD>
+		<TD ALIGN="LEFT">32-bit window-procedure pointer</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">WORD</TD>
+		<TD ALIGN="LEFT">16-bit unsigned integer</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">WPARAM</TD>
+		<TD ALIGN="LEFT">32-bit window-procedure parameter</TD>
+	</TR>
+</TABLE>
+
+<H2><A NAME="Heading6"></A>Diagnostic Services</H2>
+<P>When you have written your program, you're far from finished. Then comes the grueling
+task of testing, which means rolling up your sleeves, cranking up your debugger,
+and weeding out all the gotchas hiding in your code. Luckily, Visual C++ provides
+many macros, functions, and global variables for incorporating diagnostic abilities
+into your projects. By using these tools, you can print output to a debugging window,
+check the integrity of memory blocks, and much more. Table E.6 lists these valuable
+diagnostic macros, functions, and global variables. Many are discussed in Chapter
+24, &quot;Improving Your Application's Performance,&quot; and Appendix D, &quot;Debugging.&quot;</P>
+<P>
+<H4>Table E.6&#160;&#160;Diagnostic Macros, Functions, and Global Variables</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Symbol</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxCheckMemory()</TD>
+		<TD ALIGN="LEFT">Verifies the integrity of allocated memory.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxDoForAllClasses()</TD>
+		<TD ALIGN="LEFT">Calls a given iteration function for all classes that are derived from CObject and
+			that incorporate runtime type checking.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxDoForAllObjects()</TD>
+		<TD ALIGN="LEFT">Calls a given iteration function for all objects derived from CObject and allocated
+			with the new operator.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">afxDump</TD>
+		<TD ALIGN="LEFT">A global CDumpContext object that enables a program to send information to the debugger
+			window.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxDump()</TD>
+		<TD ALIGN="LEFT">Dumps an object's state during a debugging session.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxEnableMemoryTracking()</TD>
+		<TD ALIGN="LEFT">Toggles memory tracking.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxIsMemoryBlock()</TD>
+		<TD ALIGN="LEFT">Checks that memory allocation was successful.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxIsValidAddress()</TD>
+		<TD ALIGN="LEFT">Checks that a memory address range is valid for the program.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxIsValidString()</TD>
+		<TD ALIGN="LEFT">Checks string pointer validity.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">afxMemDF</TD>
+		<TD ALIGN="LEFT">A global variable that controls memory-allocation diagnostics. It can be set to allocMemDF,
+			DelayFreeMemDF, or checkAlwaysMemDF.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxSetAllocHook()</TD>
+		<TD ALIGN="LEFT">Sets a user-defined hook function that is called whenever memory allocation is performed.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">afxTraceEnabled</TD>
+		<TD ALIGN="LEFT">A global variable that enables or disables TRACE output.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">afxTraceFlags</TD>
+		<TD ALIGN="LEFT">A global variable that enables the MFC reporting features.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ASSERT</TD>
+		<TD ALIGN="LEFT">Prints a message and exits the program if the ASSERT expression is FALSE (see Chapter
+			24).</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ASSERT_VALID</TD>
+		<TD ALIGN="LEFT">Validates an object by calling the object's AssertValid() function.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DEBUG_NEW</TD>
+		<TD ALIGN="LEFT">Used in place of the new operator to trace memory-leak problems (see Chapter 23).</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TRACE</TD>
+		<TD ALIGN="LEFT">Creates formatted strings for debugging output (see Chapter 23).</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TRACE0</TD>
+		<TD ALIGN="LEFT">Same as TRACE but requires no arguments in the format string.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TRACE1</TD>
+		<TD ALIGN="LEFT">Same as TRACE but requires one argument in the format string.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TRACE2</TD>
+		<TD ALIGN="LEFT">Same as TRACE but requires two arguments in the format string.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TRACE3</TD>
+		<TD ALIGN="LEFT">Same as TRACE but requires three arguments in the format string.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">VERIFY</TD>
+		<TD ALIGN="LEFT">Like ASSERT, but VERIFY evaluates the ASSERT expression in both the debug and release
+			versions of MFC. If the assertion fails, a message is printed and the program is
+			halted only in the debug version.</TD>
+	</TR>
+</TABLE>
+
+<H2><A NAME="Heading7"></A>Exception Processing</H2>
+<P><I>Exceptions</I> give a program greater control over how errors are handled (see
+Chapter 26). Before exceptions were part of the language, MFC developers used macros
+to achieve the same results. Now that exceptions are firmly established in Visual
+C++, a number of functions make it easier to throw exceptions of various types. These
+macros and functions are listed in Table E.7.</P>
+<P>
+<H4>Table E.7&#160;&#160;Exception Macros and Functions</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Symbol</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxAbort()</TD>
+		<TD ALIGN="LEFT">Terminates an application upon a fatal error</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxThrowArchiveException()</TD>
+		<TD ALIGN="LEFT">Throws an archive exception</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxThrowDAOException()</TD>
+		<TD ALIGN="LEFT">Throws a CDAOException</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxThrowDBException()</TD>
+		<TD ALIGN="LEFT">Throws a CDBException</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxThrowFileException()</TD>
+		<TD ALIGN="LEFT">Throws a file exception</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxThrowMemoryException()</TD>
+		<TD ALIGN="LEFT">Throws a memory exception</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxThrowNotSupportedException()</TD>
+		<TD ALIGN="LEFT">Throws a not-supported exception</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxThrowOleDispatchException()</TD>
+		<TD ALIGN="LEFT">Throws an OLE automation exception</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxThrowOleException()</TD>
+		<TD ALIGN="LEFT">Throws an OLE exception</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxThrowResourceException()</TD>
+		<TD ALIGN="LEFT">Throws a resource-not-found exception</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AfxThrowUserException()</TD>
+		<TD ALIGN="LEFT">Throws an end user exception</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AND_CATCH</TD>
+		<TD ALIGN="LEFT">Begins code that will catch specified exceptions not caught in the preceding TRY
+			block</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AND_CATCH_ALL</TD>
+		<TD ALIGN="LEFT">Begins code that will catch all exceptions not caught in the preceding TRY block</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CATCH</TD>
+		<TD ALIGN="LEFT">Begins code for catching an exception</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CATCH_ALL</TD>
+		<TD ALIGN="LEFT">Begins code for catching all exceptions</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">END_CATCH</TD>
+		<TD ALIGN="LEFT">Ends CATCH or AND_CATCH code blocks</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">END_CATCH_ALL</TD>
+		<TD ALIGN="LEFT">Ends CATCH_ALL code blocks</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">THROW</TD>
+		<TD ALIGN="LEFT">Throws a given exception</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">THROW_LAST</TD>
+		<TD ALIGN="LEFT">Throws the most recent exception to the next handler</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TRY</TD>
+		<TD ALIGN="LEFT">Starts code that will accommodate exception handling</TD>
+	</TR>
+</TABLE>
+
+<H2><A NAME="Heading8"></A>Message-Map Macros</H2>
+<P>Windows is an event-driven operating system, which means that every Windows application
+must handle a flood of messages that flow between an application and the system.
+MFC does away with the clunky switch statements that early Windows programmers had
+to construct to handle messages and replaces those statements with a message map.
+A <I>message map</I> is nothing more than a table that matches a message with its
+message handler (see Chapter 3, &quot;Messages and Commands&quot;). To simplify the
+declaration and definition of these tables, Visual C++ defines a set of message-map
+macros. Many of these macros, which are listed in Table E.8, will already be familiar
+to experienced MFC programmers.</P>
+<P>
+<H4>Table E.8&#160;&#160;Message-Map Macros</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Macro</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">BEGIN_MESSAGE_MAP</TD>
+		<TD ALIGN="LEFT">Begins a message-map definition</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DECLARE_MESSAGE_MAP</TD>
+		<TD ALIGN="LEFT">Starts a message-map declaration</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">END_MESSAGE_MAP</TD>
+		<TD ALIGN="LEFT">Ends a message-map definition</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ON_COMMAND</TD>
+		<TD ALIGN="LEFT">Begins a command-message message-map entry</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ON_COMMAND_RANGE</TD>
+		<TD ALIGN="LEFT">Begins a command-message message-map entry that maps multiple messages to a single
+			handler</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ON_CONTROL</TD>
+		<TD ALIGN="LEFT">Begins a control-notification message-map entry</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ON_CONTROL_RANGE</TD>
+		<TD ALIGN="LEFT">Begins a control-notification message-map entry that maps multiple control IDs to
+			a single handler</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ON_MESSAGE</TD>
+		<TD ALIGN="LEFT">Begins a user-message message-map entry</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ON_REGISTERED_MESSAGE</TD>
+		<TD ALIGN="LEFT">Begins a registered user-message message-map entry</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ON_UPDATE_COMMAND_UI</TD>
+		<TD ALIGN="LEFT">Begins a command-update message-map entry</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ON_UPDATE_COMMAND_UI_RANGE</TD>
+		<TD ALIGN="LEFT">Begins a command-update message-map entry that maps multiple command-update messages
+			to a single handler</TD>
+	</TR>
+</TABLE>
+
+<H2><A NAME="Heading9"></A>Runtime Object Model Services</H2>
+<P>Frequently in your programs, you need access to information about classes at runtime.
+MFC supplies a macro for obtaining this type of information in a CRuntimeClass structure.
+In addition, the MFC application framework relies on a set of macros to declare and
+define runtime abilities (such as object serialization and dynamic object creation).
+If you've used AppWizard at all, you've seen these macros in the generated source-code
+files. If you're an advanced MFC programmer, you might have even used these macros
+yourself. Table E.9 lists the runtime macros and their descriptions.</P>
+<P>
+<H4>Table E.9&#160;&#160;Runtime Services Macros</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Macro</B></TD>
+		<TD ALIGN="LEFT"><B>File</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DECLARE_DYNAMIC</TD>
+		<TD ALIGN="LEFT">Class declaration(.h)</TD>
+		<TD ALIGN="LEFT">Enables runtime class information access</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DECLARE_DYNCREATE</TD>
+		<TD ALIGN="LEFT">Class declaration(.h)</TD>
+		<TD ALIGN="LEFT">Enables the class (derived from CObject) to be created dynamically and also enables
+			runtime class information access</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DECLARE_OLECREATE</TD>
+		<TD ALIGN="LEFT">Class declaration (.h)</TD>
+		<TD ALIGN="LEFT">Enables object creation with OLE automation</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DECLARE_SERIAL</TD>
+		<TD ALIGN="LEFT">Class declaration (.h)</TD>
+		<TD ALIGN="LEFT">Enables object serialization, as well as runtime class information access</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">IMPLEMENT_DYNAMIC</TD>
+		<TD ALIGN="LEFT">Class implementation (.cpp)</TD>
+		<TD ALIGN="LEFT">Enables runtime class information access</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">IMPLEMENT_DYNCREATE</TD>
+		<TD ALIGN="LEFT">Class implementation (.cpp)</TD>
+		<TD ALIGN="LEFT">Enables dynamic creation of the object and runtime information access</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">IMPLEMENT_OLECREATE</TD>
+		<TD ALIGN="LEFT">Class implementation (.cpp)</TD>
+		<TD ALIGN="LEFT">Enables object creation with OLE</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">IMPLEMENT_SERIAL</TD>
+		<TD ALIGN="LEFT">Class implementation (.cpp)</TD>
+		<TD ALIGN="LEFT">Enables object serialization and runtime class information access</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">RUNTIME_CLASS</TD>
+		<TD ALIGN="LEFT"></TD>
+		<TD ALIGN="LEFT">Returns a CRuntimeClass structure for the given class</TD>
+	</TR>
+</TABLE>
+
+<H2><A NAME="Heading10"></A>Standard Command and Window IDs</H2>
+<P>A Windows application user can generate myriad standard messages. For example,
+whenever the user selects a menu command from a standard menu like File or Edit,
+the program sends a message. Each standard command is represented by an ID. To relieve
+the programmer of having to define the dozens of IDs often used in a Windows application,
+Visual C++ defines these symbols in a file called AFXRES.H. Some of these IDs have
+obvious purposes (for example, ID_FILE_OPEN), but many others are used internally
+by MFC for everything from mapping standard Windows messages to their handlers, to
+defining string-table IDs, to assigning IDs to toolbar and status bar styles.</P>
+<P>There are far too many of these identifiers to list here. However, if you're interested
+in seeing them, just open the AFXRES.H file from your Visual C++ installation folder.</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../apd/apd.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../apf/apf.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

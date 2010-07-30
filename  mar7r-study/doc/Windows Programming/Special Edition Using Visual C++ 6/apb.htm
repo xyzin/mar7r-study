@@ -1,0 +1,791 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Appendix B -- Windows Programming Review and a Look Inside CWnd</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../apa/apa.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../apc/apc.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- B -</H1>
+
+<H1>Windows Programming Review and a Look Inside CWnd</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Programming for Windows</A>
+	<UL>
+		<LI><A HREF="#Heading2">A C-Style Window Class</A>
+		<LI><A HREF="#Heading3">Window Creation</A>
+	</UL>
+	<LI><A HREF="#Heading4">Encapsulating the Windows API</A>
+	<LI><A HREF="#Heading5">Inside CWnd</A>
+	<LI><A HREF="#Heading6">Getting a Handle on All These MFC Classes</A>
+	<UL>
+		<LI><A HREF="#Heading7">CObject</A>
+		<LI><A HREF="#Heading8">CCmdTarget</A>
+		<LI><A HREF="#Heading9">CWnd</A>
+		<LI><A HREF="#Heading10">All Those Other Classes</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>The Microsoft Foundation Classes were written for one single purpose: to make
+Windows programming easier by providing classes with methods and data that handle
+tasks common to all Windows programs. The classes that are in MFC are designed to
+be useful to a Windows programmer specifically. The methods within each class perform
+tasks that Windows programmers often need to perform. Many of the classes have a
+close correspondence to structures and <I>window</I> <I>classes</I>, in the old Windows
+sense of the word <I>class</I>. Many of the methods correspond closely to API (Application
+Programming Interface) functions already familiar to Windows programmers, who often
+refer to them as the Windows SDK or as SDK functions.</P>
+<P>
+<H2><A NAME="Heading1"></A>Programming for Windows</H2>
+<P>If you've programmed for Windows in C, you know that the word <I>class</I> was
+used to describe a window long before C++ programming came to Windows. A window class
+is vital to any Windows C program. A standard structure holds the data that describes
+this window class, and the operating system provides a number of standard window
+classes. A programmer usually builds a new window class for each program and registers
+it by calling an API function, RegisterClass(). Windows that appear onscreen can
+then be created, based on that class, by calling another API function, CreateWindow().</P>
+<P>
+<H3><A NAME="Heading2"></A>A C-Style Window Class</H3>
+<P>The WNDCLASS structure, which describes the window class, is equivalent to the
+WNDCLASSA structure, which looks like Listing B.1.</P>
+<P>
+<H4>Listing B.1&#160;&#160;WNDCLASSA Structure from WINUSER.H</H4>
+<PRE>typedef struct tagWNDCLASSA {
+    UINT        style;
+    WNDPROC     lpfnWndProc;
+    int         cbClsExtra;
+    int         cbWndExtra;
+    HINSTANCE   hInstance;
+    HICON       hIcon;
+    HCURSOR     hCursor;
+    HBRUSH      hbrBackground;
+    LPCSTR      lpszMenuName;
+    LPCSTR      lpszClassName;
+</PRE>
+<PRE>} WNDCLASSA, *PWNDCLASSA, NEAR *NPWNDCLASSA, FAR *LPWNDCLASSA;
+</PRE>
+<P>WINUSER.H sets up two very similar window class structures: WNDCLASSA for programs
+that use normal strings and WNDCLASSW for Unicode programs. Chapter 28, &quot;Future
+Explorations,&quot; covers Unicode programs in the &quot;Unicode&quot; section.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> WINUSER.H is code supplied with Developer Studio. It's typically in
+	the folder \Program Files\ Files\Microsoft Visual Studio\VC98\include.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>If you were creating a Windows program in C, you would need to fill a WNDCLASS
+structure. The members of the WNDCLASS structure are as follows:</P>
+<P>
+
+<UL>
+	<LI>style--A number made by combining standard styles, represented with constants
+	like CS_GLOBALCLASS or CS_OWNDC, with the bitwise or operator (|). A perfectly good
+	class can be registered with a style value of 0; the other styles are for exceptions
+	to normal procedure.
+	<P>
+	<LI>lpfnWndProc--A pointer to a function that is the Windows Procedure (generally
+	called the WindProc) for the class. Refer to Chapter 3, &quot;Messages and Commands,&quot;
+	for a discussion of this function.
+	<P>
+	<LI>cbClsExtra--The number of extra bytes to add to the window class. It's usually
+	0, but C programmers would sometimes build a window class with extra data in it.
+	<P>
+	<LI>cbWndExtra--The number of extra bytes to add to each instance of the window,
+	usually 0.
+	<P>
+	<LI>hInstance--A handle to an instance of an application, the running program that
+	is registering this window class. For now, think of this as a way for the window
+	class to reach the application that uses it.
+	<P>
+	<LI>hIcon--An icon to be drawn when the window is minimized. Typically, this is set
+	with a call to another API function, LoadIcon().
+	<P>
+	<LI>hCursor--The cursor that displays when the mouse is over the screen window associated
+	with this window class. Typically, this is set with a call to the API function LoadCursor().
+	<P>
+	<LI>hbrBackground--The brush to be used for painting the window background. The API
+	call to GetStockObject() is the usual way to set this variable.
+	<P>
+	<LI>lpszMenuName--A long pointer to a string that is zero terminated and contains
+	the name of the menu for the window class.
+	<P>
+	<LI>lpszClassName--The name for this window class, to be used by CreateWindow(),
+	when a window (an instance of the window class) is created. You make up a name.
+</UL>
+
+<H3><A NAME="Heading3"></A>Window Creation</H3>
+<P>If you've never written a Windows program before, having to fill out a WNDCLASS
+structure might intimidate you. This is the first step, though, in Windows programming
+in C. However, you can always find simple sample programs to copy, like this one:</P>
+<P>
+<PRE>WNDCLASS wcInit;
+ wcInit.style = 0;
+ wcInit.lpfnWndProc = (WNDPROC)MainWndProc;
+ wcInit.cbClsExtra = 0;
+ wcInit.cbWndExtra = 0;
+ wcInit.hInstance = hInstance;
+ wcInit.hIcon = LoadIcon (hInstance, MAKEINTRESOURCE(ID_ICON));
+ wcInit.hCursor = LoadCursor (NULL, IDC_ARROW);
+ wcInit.hbrBackground = GetStockObject (WHITE_BRUSH);
+ wcInit.lpszMenuName = &quot;DEMO&quot;;
+ wcInit.lpszClassName =&quot;NewWClass&quot;;
+ return (RegisterClass (&amp;wcInit));
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B>Hungarian Notation</B><BR>
+	</P>
+
+	<P>You might wonder what kind of variable name lpszClassName is or why it's wcInit
+	and not just Init. The reason for this is Microsoft programmers use a variable naming
+	convention called <I>Hungarian Notation</I>. It is so named because a Hungarian programmer
+	named Charles Simonyi popularized it at Microsoft (and probably because at first
+	glance, the variable names seem to be written in another language).<BR>
+	</P>
+
+	<P>In Hungarian Notation, the variable is given a descriptive name, like Count or
+	ClassName, that starts with a capital letter. If it is a multiword name, each word
+	is capitalized. Then, before the descriptive name, letters are added to indicate
+	the variable type--for example, nCount for an integer or bFlag for a Boolean (TRUE
+	or FALSE) variable. In this way, the programmer should never forget a variable type
+	or do something foolish such as pass a signed variable to a function that is expecting
+	an unsigned value.<BR>
+	</P>
+
+	<P>The style has gained widespread popularity, although some people hate it. If you
+	long for the good old days of arguing where to put the braces, or better still whether
+	to call them brace, face, or squiggle brackets, but can't find anyone to rehash those
+	old wars anymore, you can probably find somebody to argue about Hungarian Notation
+	instead. The arguments in favor boil down to &quot;you catch yourself making stupid
+	mistakes,&quot; and the arguments against it to &quot;it's ugly and hard to read.&quot;
+	The practical truth is that the structures used by the API and the classes defined
+	in MFC all use Hungarian Notation, so you might as well get used to it. You'll probably
+	find yourself doing it for your own variables, too. The prefixes are as follows:
+	<BR>
+	
+	<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+<B>Prefix </B>			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+<B>Variable Type </B>			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+<B>Comment </B>			</BLOCKQUOTE>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+a 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Array 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+b 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Boolean 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+d 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Double 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+h 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Handle			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+i 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Integer 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+&quot;index into&quot; 			</BLOCKQUOTE>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+l 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Long 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+lp 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Long pointer to 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+lpfn 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Long pointer to function 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+m_ 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Member variable 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+n 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Integer 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+&quot;number of&quot; 			</BLOCKQUOTE>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+p 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Pointer to 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+s 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+String 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+sz 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Zero-terminated string 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+u 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Unsigned integer 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+C 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">
+
+			<BLOCKQUOTE>
+Class 			</BLOCKQUOTE>
+		</TD>
+		<TD ALIGN="LEFT">			<P>
+		</TD>
+	</TR>
+	</TABLE>
+<BR>
+	</P>
+
+	<P>Many people add their own type conventions to variable names; the wc in wcInit
+	stands for <I>window</I> <I>class</I>.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Filling the wcInit structure and calling RegisterClass is standard stuff: registering
+a class called NewWClass with a menu called DEMO and a WindProc called MainWndProc.
+Everything else about it is ordinary to an experienced Windows C programmer. After
+registering the class, when those old-time Windows programmers wanted to create a
+window onscreen, out popped some code like this:</P>
+<P>
+<PRE> HWND hWnd;
+ hInst = hInstance;
+ hWnd = CreateWindow (
+ &quot;NewWClass&quot;,
+ &quot;Demo 1&quot;,
+ WS_OVERLAPPEDWINDOW,
+ CW_USEDEFAULT,
+ CW_USEDEFAULT,
+ CW_USEDEFAULT,
+ CW_USEDEFAULT,
+ NULL,
+ NULL,
+ hInstance,
+ NULL);
+ if (! hWnd)
+ return (FALSE);
+ ShowWindow (hWnd, nCmdShow);
+ UpdateWindow (hWnd);
+</PRE>
+<P>This code calls CreateWindow(), then ShowWindow(), and UpdateWindow(). The parameters
+to the API function CreateWindow() are as follows:</P>
+<P>
+
+<UL>
+	<LI>lpClassName--A pointer to the classname that was used in the RegisterClass()
+	call.
+	<P>
+	<LI>lpWindowName--The window name. You make this up.
+	<P>
+	<LI>dwStyle--The window style, made by combining #define constants with the | operator.
+	For a primary application window like this one, WS_OVERLAPPEDWINDOW is standard.
+	<P>
+	<LI>x--The window's horizontal position. CW_USEDEFAULT lets the operating system
+	calculate sensible defaults, based on the user's screen settings.
+	<P>
+	<LI>y--The window's vertical position. CW_USEDEFAULT lets the operating system calculate
+	sensible defaults, based on the user's screen settings.
+	<P>
+	<LI>nWidth--The window's width. CW_USEDEFAULT lets the operating system calculate
+	sensible defaults, based on the user's screen settings.
+	<P>
+	<LI>nHeight--The window's height. CW_USEDEFAULT lets the operating system calculate
+	sensible defaults, based on the user's screen settings.
+	<P>
+	<LI>hWndParent--The handle of the parent or owner window. (Some windows are created
+	by other windows, which own them.) NULL means that there is no parent to this window.
+	<P>
+	<LI>hMenu--The handle to a menu or child-window identifier, in other words a window
+	owned by this window. NULL means that there are no children.
+	<P>
+	<LI>hInstance--The handle of the application instance that is creating this window.
+	<P>
+	<LI>lpParam--A pointer to any extra parameters. None are needed in this example.
+</UL>
+
+<P>CreateWindow()returns a window handle--everybody calls his window handles hWnd--and
+this handle is used in the rest of the standard code. If it's NULL, the window creation
+failed. If the handle returned has any non-NULL value, the creation succeeded and
+the handle is passed to ShowWindow() and UpdateWindow(), which together draw the
+actual window onscreen.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B>Handles</B><BR>
+	</P>
+
+	<P>A <I>handle</I> is more than just a pointer. Windows programs refer to resources
+	such as windows, icons, cursors, and so on, with a handle. Behind the scenes there
+	is a handle table that tracks the resource's address as well as information about
+	the resource type. It's called a <I>handle</I> because a program uses it as a way
+	to &quot;get hold of&quot; a resource. Handles are typically passed to functions
+	that need to use resources and are returned from functions that allocate resources.<BR>
+	</P>
+
+	<P>There are a number of basic handle types: HWND for a window handle, HICON for
+	an icon handle, and so on. No matter what kind of handle is used, remember that it's
+	a way to reach a resource so that you can use the resource.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H2><A NAME="Heading4"></A>Encapsulating the Windows API</H2>
+<P>API functions create and manipulate windows onscreen, handle drawing, connect
+programs to Help files, facilitate threading, manage memory, and much more. When
+these functions are encapsulated into MFC classes, your programs can accomplish these
+same basic Windows tasks, with less work on your part.</P>
+<P>There are literally thousands of API functions, and it can take six months to
+a year to get a good handle on the API, so this book doesn't attempt to present a
+minitutorial on the API. In the &quot;Programming for Windows&quot; section earlier
+in this chapter, you were reminded about two API functions, RegisterClass() and CreateWindow().
+These illustrate what was difficult about C Windows programming with the API and
+how the MFC classes make it easier. Documentation on the API functions is available
+on MSDN, which comes with Visual C++.</P>
+<P>
+<H2><A NAME="Heading5"></A>Inside CWnd</H2>
+<P>CWnd is an enormously important MFC class. Roughly a third of all the MFC classes
+use it as a base class--classes such as CDialog, CEditView, CButton, and many more.
+It serves as a wrapper for the old-style window class and the API functions that
+create and manipulate window classes. For example, the only public member variable
+is m_hWnd, the member variable that stores the window handle. This variable is set
+by the member function CWnd::Create() and used by almost all the other member functions
+when they call their associated API functions.</P>
+<P>You might think that the call to the API function CreateWindow() would be handled
+automatically in the CWnd constructor, CWnd::CWnd, so that when the constructor is
+called to initialize a CWnd object, the corresponding window on the screen is created.
+This would save you, the programmer, a good deal of effort because you can't forget
+to call a constructor. In fact, that's not what Microsoft has chosen to do. The constructor
+looks like this:</P>
+<P>
+<PRE>CWnd::CWnd()
+{
+ AFX_ZERO_INIT_OBJECT(CCmdTarget);
+}
+</PRE>
+<P>AFX_ZERO_INIT_OBJECT is just a macro, expanded by the C++ compiler's preprocessor,
+that uses the C function memset to zero out every byte of every member variable in
+the object, like this:</P>
+<P>
+<PRE>#define AFX_ZERO_INIT_OBJECT(base_class) 
+&#172; memset(((base_class*)this)+1, 0, sizeof(*this) 
+&#172; - sizeof(class base_class));
+</PRE>
+<P>The reason why Microsoft chose not to call CreateWindow() in the constructor is
+that con-structors can't return a value. If something goes wrong with the window
+creation, there are no elegant or neat ways to deal with it. Instead, the constructor
+does almost nothing, a step that essentially can't fail, and the call to CreateWindow()
+is done from within the member function Cwnd::Create()or the closely related CWnd::CreateEx(),
+which looks like the one in Listing B.2.</P>
+<P>
+<H4>Listing B.2&#160;&#160;CWnd::CreateEx() from WINCORE.CPP</H4>
+<PRE>BOOL CWnd::CreateEx(DWORD dwExStyle, LPCTSTR lpszClassName,
+ LPCTSTR lpszWindowName, DWORD dwStyle,
+ int x, int y, int nWidth, int nHeight,
+ HWND hWndParent, HMENU nIDorHMenu, LPVOID lpParam)
+{
+ // allow modification of several common create parameters
+ CREATESTRUCT cs;
+ cs.dwExStyle = dwExStyle;
+ cs.lpszClass = lpszClassName;
+ cs.lpszName = lpszWindowName;
+ cs.style = dwStyle;
+ cs.x = x;
+ cs.y = y;
+ cs.cx = nWidth;
+ cs.cy = nHeight;
+ cs.hwndParent = hWndParent;
+ cs.hMenu = nIDorHMenu;
+ cs.hInstance = AfxGetInstanceHandle();
+ cs.lpCreateParams = lpParam;
+ if (!PreCreateWindow(cs))
+ {
+ PostNcDestroy();
+ return FALSE;
+ }
+ AfxHookWindowCreate(this);
+ HWND hWnd = ::CreateWindowEx(cs.dwExStyle, cs.lpszClass,
+ cs.lpszName, cs.style, cs.x, cs.y, cs.cx, cs.cy,
+ cs.hwndParent, cs.hMenu, cs.hInstance, cs.lpCreateParams);
+#ifdef _DEBUG
+ if (hWnd == NULL)
+ {
+ TRACE1(&quot;Warning: Window creation failed: &#194;
+ GetLastError returns 0x%8.8X\n&quot;,
+ GetLastError());
+ }
+#endif
+ if (!AfxUnhookWindowCreate())
+ PostNcDestroy();
+ // cleanup if CreateWindowEx fails too soon
+ if (hWnd == NULL)
+ return FALSE;
+ ASSERT(hWnd == m_hWnd); // should have been set in send msg hook
+ return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> WINCORE.CPP is code supplied with Developer Studio. It's typically
+	in the folder \Program Files\Microsoft Visual Studio\VC98\mfc\src.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>This sets up a CREATESTRUCT structure very much like a WNDCLASS and fills it with
+the parameters that were passed to CreateEx(). It calls PreCreateWindow, AfxHookWindowCreate(),
+::CreateWindow(), and AfxUnhookWindowCreate() before checking hWnd and returning.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> The AFX prefix on many useful MFC functions dates back to the days
+	when Microsoft's internal name for its class library was Application Framework. The
+	:: in the call to CreateWindow identifies it as an API function, sometimes referred
+	to as an SDK function in this context. The other functions are member functions of
+	CWnd that set up other background boilerplate for you.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>On the face of it, there doesn't seem to be any effort saved here. You declare
+an instance of some CWnd object, call its Create() function, and have to pass just
+as many parameters as you did in the old C way of doing things. What's the point?
+Well, CWnd is really a class from which to inherit. Things become much simpler in
+the derived classes. Take CButton, for example, a class that encapsulates the concept
+of a button on a dialog box. A button is just a tiny window, but its behavior is
+constrained--for example, the user can't resize a button. Its Create() member function
+looks like this:</P>
+<P>
+<PRE>BOOL CButton::Create(LPCTSTR lpszCaption, DWORD dwStyle,
+ const RECT&amp; rect, CWnd* pParentWnd, UINT nID)
+{
+ CWnd* pWnd = this;
+ return pWnd-&gt;Create(_T(&quot;BUTTON&quot;), lpszCaption, dwStyle, rect, pParentWnd, nID);
+}
+</PRE>
+<P>That amounts to a lot fewer parameters. If you want a button, you create a button
+and let the class hierarchy fill in the rest.</P>
+<P>
+<H2><A NAME="Heading6"></A>Getting a Handle on All These MFC Classes</H2>
+<P>There are more than 200 MFC classes. Why so many? What do they do? How can any
+normal human keep track of them and know which one to use for what? Good questions.
+Questions that will take a large portion of this book to answer. The first half of
+this book presents the most commonly used MFC classes. This section looks at some
+of the more important base classes.</P>
+<P>
+<H3><A NAME="Heading7"></A>CObject</H3>
+<P>Figure B.1 shows a high-level overview of the inheritance tree for the classes
+in MFC. Only a handful of MFC classes do not inherit from CObject. CObject contains
+the basic functionality that all the MFC classes (and most of the new classes you
+create) will be sure to need, such as persistence support and diagnostic output.
+As well, classes derived from CObject can be contained in the MFC container classes,
+discussed in Appendix F, &quot;Useful Classes.&quot;</P>
+
+<P><A HREF="javascript:popUp('0buvc01.gif')"><B>FIG. B.1</B></A><B> </B><I>Almost
+all the classes in MFC inherit from CObject.</I></P>
+
+<P><I></I>
+<H3><A NAME="Heading8"></A>CCmdTarget</H3>
+<P>Some of the classes that inherit from CObject, such as CFile and CException, and
+their derived classes don't need to interact directly with the user and the operating
+system through messages and commands. All the classes that do need to receive messages
+and commands inherit from CCmdTarget. Figure B.2 shows a bird's-eye view of CCmdTarget's
+derived classes, generally called <I>command</I> <I>targets</I>.</P>
+<P><A HREF="javascript:popUp('0buvc02.gif')"><B>FIG. B.2</B></A><B> </B><I>Any class
+that will receive a command must inherit from CCmdTarget.</I></P>
+
+<P><I></I>
+<H3><A NAME="Heading9"></A>CWnd</H3>
+<P>As already mentioned, CWnd is an extremely important class. Only classes derived
+from CWnd can receive messages; threads and documents can receive commands but not
+messages.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Chapter 3, &quot;Messages and Commands,&quot; explores the distinction
+	between commands and messages. Chapter 4, &quot;Documents and Views,&quot; explains
+	documents, and Chapter 27, &quot;Multitasking with Windows Threads,&quot; explains
+	threads.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>CWnd provides window-oriented functionality, such as calls to CreateWindow and
+DestroyWindow, functions to handle painting the window onscreen, processing messages,
+talking to the Clipboard, and much more--almost 250 member functions in all. Only
+a handful of these will need to be overridden in derived classes. Figure B.3 shows
+the classes that inherit from CWnd; there are so many control classes that to list
+them all would clutter up the diagram, so they are lumped together as control classes.</P>
+<P>
+<H3><A NAME="Heading10"></A>All Those Other Classes</H3>
+<P>So far you've seen 10 classes in these three figures. What about the other 200+?
+You'll meet them in context throughout the book. If there's a specific class you're
+wondering about, check the index. Check the online help, too, because every class
+is documented there. Also, don't forget that the full source for MFC is included
+with every copy of Visual C++. Reading the source is a hard way to figure out how
+a class works, but sometimes you need that level of detail.&#160;</P>
+
+<P><A HREF="javascript:popUp('0buvc03.gif')"><B>FIG. B.3</B></A><B> </B><I>Any class
+that will receive a message must inherit from CWnd, which provides lots of window-related
+functions.</I></P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../apa/apa.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../apc/apc.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+<BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

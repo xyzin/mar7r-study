@@ -1,0 +1,556 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 24 -- Improving Your Application's Performance</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch23/ch23.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch25/ch25.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 24 -</H1>
+
+<H1>Improving Your Application's Performance</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Preventing Errors with ASSERT and TRACE</A>
+	<UL>
+		<LI><A HREF="#Heading2">ASSERT: Detecting Logic Errors</A>
+		<LI><A HREF="#Heading3">TRACE: Isolating Problem Areas in Your Program</A>
+	</UL>
+	<LI><A HREF="#Heading4">Adding Debug-Only Features</A>
+	<LI><A HREF="#Heading5">Sealing Memory Leaks</A>
+	<UL>
+		<LI><A HREF="#Heading6">Common Causes of Memory Leaks</A>
+		<LI><A HREF="#Heading7">Debug new and delete</A>
+		<LI><A HREF="#Heading8">Automatic Pointers</A>
+	</UL>
+	<LI><A HREF="#Heading9">Using Optimization to Make Efficient Code</A>
+	<LI><A HREF="#Heading10">Finding Bottlenecks by Profiling</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>When developing a new application, there are various challenges developers must
+meet. You need your application to compile, to run without blowing up, and you must
+be sure that it does what you want it to do. On some projects, there is time to determine
+whether your application can run faster and use less memory or whether you can have
+a smaller executable file. The performance improvement techniques discussed in this
+chapter can prevent your program from blowing up and eliminate the kind of thinkos
+that result in a program calculating or reporting the wrong numbers. These improvements
+are not merely final tweaks and touch-ups on a finished product.</P>
+<P>You should form the habit of adding an ounce of prevention to your code as you
+write and the habit of using the debugging capabilities that Developer Studio provides
+you to confirm what's going on in your program. If you save all your testing to the
+end, both the testing and the bug-fixing will be much harder than if you had been
+testing all along. Also, of course, any bug you manage to prevent will never have
+to be fixed at all!</P>
+<P>
+<H2><A NAME="Heading1"></A>Preventing Errors with ASSERT and TRACE</H2>
+<P>The developers of Visual C++ did not invent the concepts of asserting and tracing.
+Other languages support these ideas, and they are taught in many computer science
+courses. What is exciting about the Visual C++ implementation of these concepts is
+the clear way in which your results are presented and the ease with which you can
+suppress assertions and TRACE statements in release versions of your application.</P>
+<P>
+<H3><A NAME="Heading2"></A>ASSERT: Detecting Logic Errors</H3>
+<P>The ASSERT macro enables you to check a condition that you logically believe should
+always be TRUE. For example, imagine you are about to access an array like this:</P>
+<P>
+<PRE>array[i] = 5;
+</PRE>
+<P>You want to be sure that the index, i, isn't less than zero and larger than the
+number of elements allocated for the array. Presumably you have already written code
+to calculate i, and if that code has been written properly, i must be between 0 and
+the array size. An ASSERT statement will verify that:</P>
+<P>
+<PRE>ASSERT( i &gt; 0 &amp;&amp; i &lt; ARRAYSIZE)
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> There is no semicolon (;) at the end of the line because ASSERT is
+	a macro, not a function. Older C programs may call a function named assert(), but
+	you should replace these calls with the ASSERT macro because ASSERT disappears during
+	a release build, as discussed later in this section.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>You can check your own logic with ASSERT statements. They should never be used
+to check for user input errors or bad data in a file. Whenever the condition inside
+an ASSERT statement is FALSE, program execution halts with a message telling you
+which assertion failed. At this point, you know you have a logic error, or a developer
+error, that you need to correct. Here's another example:</P>
+<P>
+<PRE>// Calling code must pass a non-null pointer 
+void ProcessObject( Foo * fooObject )
+{
+       ASSERT( fooObject )
+       // process object
+}
+</PRE>
+<P>This code can dereference the pointer in confidence, knowing execution will be
+halted if the pointer is NULL.</P>
+<P>You probably already know that Developer Studio makes it simple to build debug
+and release versions of your programs. The debug version #defines a constant, _DEBUG,
+and macros and other pre-processor code can check this constant to determine the
+build type. When _DEBUG isn't defined, the ASSERT macro does nothing. This means
+there is no speed constraint in the final code, as there would be if you added if
+statements yourself to test for logic errors. There is no need for you to go through
+your code, removing ASSERT statements when you release your application, and, in
+fact, it's better to leave them there to help the developers who work on version
+2. They document your assumptions, and they'll be there when the debugging work starts
+again. In addition, ASSERT can't help you if there is a problem with the release
+version of your code because it is used to find logic and design errors before you
+release version 1.0 of your product.</P>
+<P>
+<H3><A NAME="Heading3"></A>TRACE: Isolating Problem Areas in Your Program</H3>
+<P>As discussed in Appendix D, &quot;Debugging,&quot; the power of the Developer
+Studio debugger is considerable. You can step through your code one line at a time
+or run to a breakpoint, and you can see any of your variables' values in watch windows
+as you move through the code. This can be slow, however, and many developers use
+TRACE statements as a way of speeding up this process and zeroing in on the problem
+area. Then they turn to more traditional step-by-step debugging to isolate the bad
+code.</P>
+<P>In the old days, isolating bad code meant adding lots of print statements to your
+program, which is problematic in a Windows application. Before you start to think
+up workarounds, such as printing to a file, relax. The TRACE macro does everything
+you want, and like ASSERT, it magically goes away in release builds.</P>
+<P>There are several TRACE macros: TRACE, TRACE0, TRACE1, TRACE2, and TRACE3. The
+number-suffix indicates the number of parametric arguments beyond a simple string,
+working much like printf. The different versions of TRACE were implemented to save
+data segment space.</P>
+<P>When you generate an application with AppWizard, many ASSERT and TRACE statements
+are added for you. Here's a TRACE example:</P>
+<P>
+<PRE>if (!m_wndToolBar.Create(this)
+    || !m_wndToolBar.LoadToolBar(IDR_MAINFRAME))
+{
+    TRACE0(&quot;Failed to create toolbar\n&quot;);
+    return -1;      // fail to create
+}
+</PRE>
+<P>If the creation of the toolbar fails, this routine will return -1, which signals
+to the calling program that something is wrong. This will happen in both debug and
+release builds. In debug builds, though, a trace output will be sent to help the
+programmer understand what went wrong.</P>
+<P>All the TRACE macros write to afxDump, which is usually the debug window, but
+can be set to stderr for console applications. The number-suffix indicates the parametric
+argument count, and you use the parametric values within the string to indicate the
+passed data type--for example, to send a TRACE statement that includes the value
+of an integer variable:</P>
+<P>
+<PRE>TRACE1(&quot;Error Number: %d\n&quot;, -1 );
+</PRE>
+<P>or to pass two arguments, maybe a string and an integer:</P>
+<P>
+<PRE>TRACE2(&quot;File Error %s, error number: %d\n&quot;, __FILE__, -1 );
+</PRE>
+<P>The most difficult part of tracing is making it a habit. Sprinkle TRACE statements
+anywhere you return error values: before ASSERT statements and in areas where you
+are unsure that you constructed your code correctly. When confronted with unexpected
+behavior, add TRACE statements first so that you better understand what is going
+on before you start debugging.</P>
+<P>
+<H2><A NAME="Heading4"></A>Adding Debug-Only Features</H2>
+<P>If the idea of code that isn't included in a release build appeals to you, you
+may want to arrange for some of your own code to be included in debug builds but
+not in release builds. It's easy. Just wrap the code in a test of the _DEBUG constant,
+like this:</P>
+<P>
+<PRE>#ifdef _DEBUG
+    // debug code here
+#endif
+</PRE>
+<P>In release builds, this code will not be compiled at all.</P>
+<P>All the settings and configurations of the compiler and linker are kept separately
+for debug and release builds and can be changed independently. For example, many
+developers use different compiler warning levels. To bump your warning level to 4
+for debug builds only, follow these steps:</P>
+<P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Choose Project, Settings, which opens the Project Settings dialog box,
+	shown in Figure 24.1.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Choose Debug or Release from the drop-down list box at the upper left.
+	If you choose All Configurations, you'll change debug and release settings simultaneously.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Click the C/C++ tab and set the Warning Level to Level 4, as shown
+	in Figure 24.2. The default is Level 3, which you will use for the release version
+	(see Figure 24.3).
+	<P>
+</DL>
+
+<P>Warning level 4 will generate a lot more errors than level 3. Some of those errors
+will probably come from code you didn't even write, such as MFC functions. You'll
+just have to ignore those warnings.</P>
+<P><A HREF="javascript:popUp('24uvc01.gif')"><B>FIG. 24.1</B></A><B> </B><I>The Project
+Settings dialog box enables you to set configuration items for different phases of
+development.</I></P>
+
+<P><A HREF="javascript:popUp('24uvc02.gif')"><B>FIG. 24.2</B></A><B> </B><I>Warning
+levels can be set higher during development.</I></P>
+
+<P><A HREF="javascript:popUp('24uvc03.gif')"><B>FIG. 24.3</B></A><B> </B><I>Warning
+levels are usually lower in a production release.</I></P>
+
+<P><I></I>
+<H2><A NAME="Heading5"></A>Sealing Memory Leaks</H2>
+<P>A memory leak can be the most pernicious of errors. Small leaks may not cause
+any execution errors in your program until it is run for an exceptionally long time
+or with a larger-than-usual data file. Because most programmers test with tiny data
+files or run the program for only a few minutes when they are experimenting with
+parts of it, memory leaks may not reveal themselves in everyday testing. Alas, memory
+leaks may well reveal themselves to your users when the program crashes or otherwise
+misbehaves.</P>
+<P>
+<H3><A NAME="Heading6"></A>Common Causes of Memory Leaks</H3>
+<P>What does it mean when your program has a memory leak? It means that your program
+allocated memory and never released it. One very simple cause is calling new to allocate
+an object or an array of objects on the heap and never calling delete. Another cause
+is changing the pointer kept in a variable without deleting the memory the pointer
+was pointing to. More subtle memory leaks arise when a class with a pointer as a
+member variable calls new to assign the pointer but doesn't have a copy constructor,
+assignment operator, or destructor. Listing 24.1 illustrates some ways that memory
+leaks are caused.</P>
+<P>
+<H4>Listing 24.1&#160;&#160;Causing Memory Leaks</H4>
+<PRE>// simple pointer leaving scope
+{
+  int * one = new int;
+  *one = 1;
+} // one is out of scope now, and wasn't deleted
+// mismatched new and delete: new uses delete and new[] uses delete[]
+{
+float * f = new float[10];
+// use array
+delete f; // Oops! Deleted f[0] correct version is delete [] f;
+}
+// pointer of new memory goes out of scope before delete
+{
+    const char * DeleteP = &quot;Don't forget P&quot;;
+    char * p = new char[strlen(DeleteP) + 1];
+    strcpy( p, DeleteP );
+} // scope ended before delete[]
+class A
+{
+   public:
+      int * pi;
+}
+A::A()
+{
+    pi = new int();
+    *pi = 3;
+}
+//  ..later on, some code using this class..
+A firsta;   //allocates an int for first.pi to point to
+B seconda;  //allocates another int for seconda.pi
+seconda=firsta;
+// will perform a bitwise (shallow) copy. Both objects 
+// have a pi that points to the first int allocated. 
+// The pointer to the second int allocated is gone
+</PRE>
+<PRE>// forever. 
+</PRE>
+<P>The code fragments all represent ways in which memory can be allocated and the
+pointer to that memory lost before deallocation. After the pointer goes out of scope,
+you can't reclaim the memory, and no one else can use it either. It's even worse
+when you consider exceptions, discussed in Chapter 26, &quot;Exceptions and Templates,&quot;
+because if an exception is thrown, your flow of execution may leave a function before
+reaching the delete at the bottom of the code. Because destructors are called for
+objects that are going out of scope as the stack unwinds, you can prevent some of
+these problems by putting delete calls in destructors. This, too, is discussed in
+more detail in Chapter 26, in the &quot;Placing the catch Block&quot; section.</P>
+<P>Like all bugs, the secret to dealing with memory leaks is to prevent them--or
+to detect them as soon as possible when they occur. You can develop some good habits
+to help you:</P>
+<P>
+
+<UL>
+	<LI>If a class contains a pointer and allocates that pointer with new, be sure to
+	code a destructor that deletes the memory. Also, code a copy constructor and an operator
+	(=).
+	<P>
+	<LI>If a function will allocate memory and return something to let the calling program
+	access that memory, it must return a pointer instead of a reference. You can't delete
+	a reference.
+	<P>
+	<LI>If a function will allocate memory and then delete it later in the same function,
+	allocate the memory on the stack, if at all possible, so that you don't forget to
+	delete it.
+	<P>
+	<LI>Never change a pointer's value unless you have first deleted the object or array
+	it was pointing to. Never increment a pointer that was returned by new.
+</UL>
+
+<H3><A NAME="Heading7"></A>Debug new and delete</H3>
+<P>MFC has a lot to offer the programmer who is looking for memory leaks. In debug
+builds, whenever you use new and delete, you are actually using special debug versions
+that track the filename and line number on which each allocation occurred and match
+up deletes with their news. If memory is left over as the program ends, you get a
+warning message in the output section, as shown in Figure 24.4.</P>
+<P><A HREF="javascript:popUp('24uvc04.gif')"><B>FIG. 24.4</B></A><B> </B><I>Memory
+leaks are detected automatically in debug builds.</I></P>
+
+<P>To see this for yourself, create an AppWizard MDI application called Leak, accepting
+all the defaults. In the InitInstance() function of the application class (CLeakApp
+in this example), add this line:</P>
+<P>
+<PRE>int* pi = new int[20];
+</PRE>
+<P>Build a debug version of the application and run it by choosing Build, Start Debug,
+and Go, or click the Go button on the Build minibar. You will see output like Figure
+24.4. Notice that the filename (Leak.cpp) and line number where the memory was allocated
+are provided in the error message. Double-click that line in the output window, and
+the editor window displays Leak.cpp with the cursor on line 54. (The coordinates
+in the lower-right corner always remind you what line number you are on.) If you
+were writing a real application, you would now know what the problem is. Now you
+must determine where to fix it (more specifically, where to put the delete).</P>
+<P>
+<H3><A NAME="Heading8"></A>Automatic Pointers</H3>
+<P>When a program is executing within a particular scope, like a function, all variables
+allocated in that function are allocated on the stack. The <I>stack</I> is a temporary
+storage space that shrinks and grows, like an accordion. The stack is used to store
+the current execution address before a function call, the arguments passed to the
+function, and the local function objects and variables.</P>
+<P>When the function returns, the <I>stack pointer</I> is reset to that location
+where the prior execution point was stored. This makes the stack space after the
+reset location available to whatever else needs it, which means those elements allocated
+on the stack in the function are gone. This process is referred to as <I>stack unwinding.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Objects or variables defined with the keyword static are not allocated
+	on the stack.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Stack unwinding also happens when an exception occurs. To reliably restore the
+program to its state before an exception occurred in the function, the stack is unwound.
+Stack-wise variables are gone, and the destructors for stack-wise objects are called.
+Unfortunately, the same is not true for dynamic objects. The handles (for example,
+pointers) are unwound, but the unwinding process doesn't call delete. This causes
+a memory leak.</P>
+<P>In some cases, the solution is to add delete statements to the destructors of
+objects that you know will be destructed as part of the unwinding, so they can use
+these pointers before they go out of scope. A more general approach is to replace
+simple pointers with a C++ class that can be used just like a pointer but contains
+a destructor that deletes any memory at the location where it points. Don't worry,
+you don't have to write such a class: One is included in the Standard Template Library,
+which comes with Visual C++. Listing 24.2 is a heavily edited version of the auto_ptr
+class definition, presented to demonstrate the key concepts.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you haven't seen template code before, it's explained in Chapter
+	26.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H4>Listing 24.2&#160;&#160;A Scaled-Down Version of the auto_ptr Class</H4>
+<PRE>  // This class is not complete. Use the complete definition in 
+  //the Standard Template Library.
+   template &lt;class T&gt;
+   class auto_ptr
+   {
+   public:
+           auto_ptr( T *p = 0) : rep(p) {} 
+          // store pointer in the class
+          ~auto_ptr(){ delete rep; }            // delete internal rep
+          // include pointer conversion members
+          inline T* operator-&gt;() const { return rep; }
+          inline T&amp; operator*() const { return *rep; }
+    private:
+          T * rep;
+</PRE>
+<PRE>   };
+</PRE>
+<P>The class has one member variable, a pointer to whatever type that you want a
+pointer to. It has a one-argument constructor to build an auto_ptr from an int* or
+a Truck* or any other pointer type. The destructor deletes the memory pointed to
+by the internal member variable. Finally, the class overrides -&gt; and *, the dereferencing
+operators, so that dereferencing an auto_ptr feels just like dereferencing an ordinary
+pointer.</P>
+<P>If there is some class C to which you want to make an automatic pointer called
+p, all you do is this:</P>
+<P>
+<PRE>auto_ptr&lt;C&gt; p(new C());
+</PRE>
+<P>Now you can use p as though it were a C*--for example:</P>
+<P>
+<PRE>p-&gt;Method();   // calls C::Method()
+</PRE>
+<P>You never have to delete the C object that p points to, even in the event of an
+exception, because p was allocated on the stack. When it goes out of scope, its destructor
+is called, and the destructor calls delete on the C object that was allocated in
+the new statement.</P>
+<P>You can read more about managed pointers and exceptions in Chapter 26.</P>
+<P>
+<H2><A NAME="Heading9"></A>Using Optimization to Make Efficient Code</H2>
+<P>There was a time when programmers were expected to optimize their code themselves.
+Many a night was spent arguing about the order in which to test conditions or about
+which variables should be register instead of automatic storage. These days, compilers
+come with optimizers that can speed execution or shrink program size far beyond what
+a typical programmer can accomplish by hand.</P>
+<P>Here's a simple example of how optimizers work. Imagine you have written a piece
+of code like this:</P>
+<P>
+<PRE>for (i=0;i&lt;10;i++)
+{
+    y=2;
+    x[i]=5;
+}
+for (i=0; i&lt;10; i++)
+{
+    total += x[i];
+}
+</PRE>
+<P>Your code will run faster, with no effect on the final results, if you move the
+y=2 in front of the first loop. In addition, you can easily combine the two loops
+into a single loop. If you do that, it's faster to add 5 to total each time than
+it is to calculate the address of x[i] to retrieve the value just stored in it. Really
+bright optimizers may even realize that total can be calculated outside the loop
+as well. The revised code might look like this:</P>
+<P>
+<PRE>y=2;
+for (i=0;i&lt;10;i++)
+{
+    x[i]=5;
+}
+    total += 50;
+</PRE>
+<P>Optimizers do far more than this, of course, but this example gives you an idea
+of what's going on behind the scenes. It's up to you whether the optimizer focuses
+on speed, occasionally at the expense of memory usage, or tries to minimize memory
+usage, perhaps at a slighter lower speed.</P>
+<P>To set the optimization options for your project, select the Project, Settings
+command from Developer Studio's menu bar. The Project Settings property sheet, first
+shown in Figure 24.1, appears. Click the C/C++ tab and make sure you are looking
+at the Release settings; then select Optimizations in the Category box. Keep optimization
+turned off for debug builds because the code in your source files and the code being
+executed won't match line for line, which will confuse you and the debugger. You
+should turn on some kind of optimization for release builds. Choose from the drop-down
+list box, as shown in Figure 24.5.</P>
+<P><A HREF="javascript:popUp('24uvc05.gif')"><B>FIG. 24.5</B></A><B> </B><I>Select
+the type of optimization you want.</I></P>
+
+<P>If you select the Customize option in the Optimizations box, you can select from
+the list of individual optimizations, including Assume No Aliasing, Global Optimizations,
+Favor Fast Code, Generate Intrinsic Functions, Frame-Pointer Omission, and more.
+However, as you can tell from these names, you really have to know what you're doing
+before you set up a custom optimization scheme. For now, accept one of the schemes
+that have been laid out for you.</P>
+<P>
+<H2><A NAME="Heading10"></A>Finding Bottlenecks by Profiling</H2>
+<P>Profiling an application lets you discover <I>bottlenecks</I>, pieces of code
+that are slowing your application's execution and deserve special attention. It's
+pointless to hand-optimize a routine unless you know that the routine is called often
+enough for its speed to matter.</P>
+<P>Another use of a profiler is to see whether the test cases you have put together
+result in every one of your functions being called or in each line of your code being
+executed. You may think you have selected test inputs that guarantee this; however,
+the profiler can confirm it for you.</P>
+<P>Visual C++ includes a profiler integrated with the IDE: All you need to do is
+use it. First, adjust your project settings to include profiler information. Bring
+up the Project Settings property sheet as you did in the preceding section and click
+the Link tab. Check the Enable Profiling check box. Click OK and rebuild your project.
+Links will be slower now because you can't do an incremental link when you are planning
+to profile, but you can go back to your old settings after you've learned a little
+about the way your program runs. Choose Build, Profile and the Profile dialog box,
+shown in Figure 24.6, appears.</P>
+<P><A HREF="javascript:popUp('24uvc06.gif')"><B>FIG. 24.6</B></A><B> </B><I>A profiler
+can gather many kinds of information.</I></P>
+
+<P>If you aren't sure what any of the radio buttons on this dialog box mean, click
+the question mark in the upper-right corner and then click the radio button. You'll
+receive a short explanation of the option. (If you would like to add this kind of
+context-sensitive Help to your own applications, be sure to read Chapter 11, &quot;Help.&quot;)</P>
+
+<P>You don't profile as a method to catch bugs, but it can help to validate your
+testing or show you the parts of your application that need work, which makes it
+a vital part of the developer's toolbox. Get in the habit of profiling all your applications
+at least once in the development cycle.</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch23/ch23.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch25/ch25.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+<BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

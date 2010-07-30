@@ -1,0 +1,2063 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 10 -- Common Controls</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch09/ch09.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch11/ch11.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 10 -</H1>
+
+<H1>Common Controls</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">The Progress Bar Control</A>
+	<UL>
+		<LI><A HREF="#Heading2">Creating the Progress Bar</A>
+		<LI><A HREF="#Heading3">Initializing the Progress Bar</A>
+		<LI><A HREF="#Heading4">Manipulating the Progress Bar</A>
+	</UL>
+	<LI><A HREF="#Heading5">The Slider Control</A>
+	<UL>
+		<LI><A HREF="#Heading6">Creating the Trackbar</A>
+		<LI><A HREF="#Heading7">Initializing the Trackbar</A>
+		<LI><A HREF="#Heading8">Manipulating the Slider</A>
+	</UL>
+	<LI><A HREF="#Heading9">The Up-Down Control</A>
+	<UL>
+		<LI><A HREF="#Heading10">Creating the Up-Down Control</A>
+	</UL>
+	<LI><A HREF="#Heading11">The Image List Control</A>
+	<UL>
+		<LI><A HREF="#Heading12">Creating the Image List</A>
+		<LI><A HREF="#Heading13">Initializing the Image List</A>
+	</UL>
+	<LI><A HREF="#Heading14">The List View Control</A>
+	<UL>
+		<LI><A HREF="#Heading15">Creating the List View</A>
+		<LI><A HREF="#Heading16">Creating the List View's Columns</A>
+		<LI><A HREF="#Heading17">Creating the List View's Items</A>
+		<LI><A HREF="#Heading18">Manipulating the List View</A>
+	</UL>
+	<LI><A HREF="#Heading19">The Tree View Control</A>
+	<UL>
+		<LI><A HREF="#Heading20">Creating the Tree View</A>
+		<LI><A HREF="#Heading21">Creating the Tree View's Items</A>
+		<LI><A HREF="#Heading22">Manipulating the Tree View</A>
+	</UL>
+	<LI><A HREF="#Heading23">The Rich Edit Control</A>
+	<UL>
+		<LI><A HREF="#Heading24">Creating the Rich Edit Control</A>
+		<LI><A HREF="#Heading25">Initializing the Rich Edit Control</A>
+		<LI><A HREF="#Heading26">Manipulating the Rich Edit Control</A>
+	</UL>
+	<LI><A HREF="#Heading27">IP Address Control</A>
+	<LI><A HREF="#Heading28">The Date Picker Control</A>
+	<LI><A HREF="#Heading29">Month Calendar Control</A>
+	<LI><A HREF="#Heading30">Scrolling the View</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>As a Windows user, you're accustomed to seeing controls such as buttons, list
+boxes, menus, and edit boxes. As Windows developed, however, Microsoft noticed that
+developers routinely create other types of controls in their programs: toolbars,
+status bars, progress bars, tree views, and others. To make life easier for Windows
+programmers, Microsoft included these popular controls as part of the operating environment
+of Windows 95 (as well as later versions of Windows NT and then Windows 98). Now
+Windows programmers no longer need to create from scratch their own versions of these
+controls. This chapter introduces you to many of the 32-bit Windows common controls.
+The toolbar and status bar controls are covered in Chapter 9, &quot;Status Bars and
+Toolbars,&quot; and property sheets are covered in Chapter 12, &quot;Property Pages
+and Sheets.&quot;</P>
+<P>This chapter's sample program is called Common. It demonstrates nine of the Windows
+95 common controls: the progress bar, slider, up-down, list view, tree view, rich
+edit, IP address, date picker, and month calendar controls, all of which are shown
+in Figure 10.1. In the following sections, you learn the basics of creating and using
+these controls in your own applications.</P>
+<P><A HREF="javascript:popUp('10uvc01.gif')"><B>FIG. 10.1</B></A><B> </B><I>The Common
+sample application demonstrates nine Windows 95 common controls.</I></P>
+
+<P>To make Common, create a new project with AppWizard and name it <B>Common</B>.
+Choose a single-document interface (SDI) application in Step 1 and accept all the
+defaults until Step 6. Drop down the Base Class box and choose CScrollView from the
+list. This ensures that users can see all the controls in the view, even if they
+have to scroll to do so. Click Finish and then OK to complete the process.</P>
+<P>The controls themselves are declared as data members of the view class. Double-click
+CCommonView in ClassView to edit the header file and add the lines in Listing 10.1
+in the Attributes section. As you can see, the progress bar is an object of the CProgressCtrl
+class. It's discussed in the next section, and the other controls are discussed in
+later sections of this chapter.</P>
+<P>
+<H4>Listing 10.1&#160;&#160;CommonView.h--Declaring the Controls</H4>
+<PRE>protected:
+   //Progress Bar
+    CProgressCtrl m_progressBar;
+   //Trackbar or Slider
+    CSliderCtrl m_trackbar;
+    BOOL m_timer;
+   // Up-Down or Spinner
+    CSpinButtonCtrl m_upDown;
+    CEdit m_buddyEdit;
+   // List View
+    CListCtrl m_listView;
+    CImageList m_smallImageList;
+    CImageList m_largeImageList;
+    CButton m_smallButton;
+    CButton m_largeButton;
+    CButton m_listButton;
+    CButton m_reportButton;
+   // Tree View
+    CTreeCtrl m_treeView;
+    CImageList m_treeImageList;
+   // Rich Edit
+    CRichEditCtrl m_richEdit;
+    CButton m_boldButton;
+    CButton m_leftButton;
+    CButton m_centerButton;
+    CButton m_rightButton;
+   // IP Address
+   CIPAddressCtrl m_ipaddress;
+   // Date Picker
+   CDateTimeCtrl m_date;
+   // Month Calendar
+</PRE>
+<PRE>   CMonthCalCtrl m_month;
+</PRE>
+<P>Expand the CCommonView class. Double-click CCommonView::OnDraw() in ClassView
+and replace the TODO comment with these lines:</P>
+<P>
+<PRE>pDC-&gt;TextOut(20, 22, &quot;Progress Bar Control&quot;);
+pDC-&gt;TextOut(270, 22, &quot;Trackbar Control:&quot;);
+pDC-&gt;TextOut(20, 102, &quot;Up-Down Control&quot;);
+pDC-&gt;TextOut(160, 102, &quot;List View Control&quot;);
+pDC-&gt;TextOut(20, 240, &quot;Tree View Control&quot;);
+pDC-&gt;TextOut(180, 240, &quot;Rich Edit Control&quot;);
+pDC-&gt;TextOut(470, 22, &quot;IP Address Control&quot;);
+pDC-&gt;TextOut(470, 102, &quot;Date Picker Control&quot;);
+pDC-&gt;TextOut(470, 240, &quot;Month Calendar Control&quot;);
+</PRE>
+<P>These label the controls that you will add to CCommonView in this chapter.</P>
+<P>
+<H2><A NAME="Heading1"></A>The Progress Bar Control</H2>
+<P>The common control that's probably easiest to use is the progress bar, which is
+nothing more than a rectangle that slowly fills in with colored blocks. The more
+colored blocks that are filled in, the closer the task is to being complete. When
+the progress bar is completely filled in, the task associated with the progress bar
+is also complete. You might use a progress bar to show the status of a sorting operation
+or to give the user visual feedback about a large file that's being loaded.</P>
+<P>
+<H3><A NAME="Heading2"></A>Creating the Progress Bar</H3>
+<P>Before you can use a progress bar, you must create it. Often in an MFC program,
+the controls are created as part of a dialog box. However, Common displays its controls
+in the application's main window, the view of this single-document interface (SDI)
+application. Documents and views are introduced in Chapter 4, &quot;Documents and
+Views.&quot; All the controls are created in the view class OnCreate() function,
+which responds to the WM_CREATE Windows message. To set up this function, right-click
+CCommonView in ClassView and choose Add Windows Message Handler. Choose WM_CREATE
+from the list on the left and click Add and Edit. Add this line in place of the TODO
+comment:</P>
+<P>
+<PRE>CreateProgressBar();
+</PRE>
+<P>Right-click CCommonView in ClassView again and this time choose Add Member Function.
+Enter <B>void</B> for the Function Type and enter <B>CreateProgressBar()</B> for
+the Function Declaration. Leave the access as Public. Click OK to add the function;
+then add the code in Listing 10.2.</P>
+<P>
+<H4>Listing 10.2&#160;&#160;CommonView.cpp--CCommonView::CreateProgressBar()</H4>
+<PRE>void CCommonView::CreateProgressBar()
+{
+    m_progressBar.Create(WS_CHILD | WS_VISIBLE | WS_BORDER,
+        CRect(20, 40, 250, 80), this, IDC_PROGRESSBAR);
+    m_progressBar.SetRange(1, 100);
+    m_progressBar.SetStep(10);
+    m_progressBar.SetPos(50);
+    m_timer = FALSE;
+</PRE>
+<PRE>}
+</PRE>
+<P>CreateProgressBar() first creates the progress bar control by calling the control's
+Create() function. This function's four arguments are the control's style flags,
+the control's size (as a CRect object), a pointer to the control's parent window,
+and the control's ID. The resource ID, IDC_PROGRESSBAR, is added by hand. To add
+resource symbols to your own applications, choose View, Resource Symbols and click
+the New button. Type in a resource ID Name, such as IDC_PROGRESSBAR, and accept the
+default Value Visual Studio provides.</P>
+<P>The style constants are the same constants that you use for creating any type
+of window (a control is nothing more than a special kind of window, after all). In
+this case, you need at least the following:</P>
+<P>
+
+<UL>
+	<LI>WS_CHILD&#160;&#160;Indicates that the control is a child window
+	<P>
+	<LI>WS_VISIBLE&#160;&#160;Ensures that the user can see the control
+</UL>
+
+<P>The WS_BORDER is a nice addition because it adds a dark border around the control,
+setting it off from the rest of the window.</P>
+<P>
+<H3><A NAME="Heading3"></A>Initializing the Progress Bar</H3>
+<P>To initialize the control, CCommonView::CreateProgressBar() calls SetRange(),
+SetStep(), and SetPos(). Because the range and the step rate are related, a control
+with a range of 1-10 and a step rate of 1 works almost identically to a control with
+a range of 1-100 and a step rate of 10.</P>
+<P>When this sample application starts, the progress bar is already half filled with
+colored blocks. (This is purely for aesthetic reasons. Usually a progress bar begins
+its life empty.) It's half full because CreateProgressBar() calls SetPos() with the
+value of 50, which is the midpoint of the control's range.</P>
+<P>
+<H3><A NAME="Heading4"></A>Manipulating the Progress Bar</H3>
+<P>Normally you update a progress bar as a long task moves toward completion. In
+this sample, you will fake it by using a timer. When the user clicks in the background
+of the view, start a timer that generates WM_TIMER messages periodically. Catch these
+messages and advance the progress bar. Here's what to do:</P>
+<P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Open ClassWizard. Make sure that CCommonView is selected in the upper-right
+	drop- down box.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Scroll most of the way through the list box on the right until you
+	find WM_LBUTTONDOWN, the message generated when the user clicks on the view. Select
+	it.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Click Add Function; then click Edit Code.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Edit OnLButtonDown() so that it looks like this:
+	<P>
+</DL>
+
+<PRE>void CCommonView::OnLButtonDown(UINT nFlags, CPoint point) 
+{
+   if (m_timer)
+   {
+      KillTimer(1);
+      m_timer = FALSE;
+   }
+   else
+   {
+      SetTimer(1, 500, NULL);
+      m_timer = TRUE;
+   }
+   CView::OnLButtonDown(nFlags, point);
+}
+</PRE>
+<P>This code enables users to turn the timer on or off with a click. The parameter
+of 500 in the SetTimer call is the number of milliseconds between WM_TIMER messages:
+This timer will send a message twice a second.</P>
+<P>
+
+<DL>
+	<DT></DT>
+	<DD><B>5. </B>In case a timer is still going when the view closes, you should override
+	OnDestroy() to kill the timer. Right-click CCommonView in ClassView yet again and
+	choose Add Windows Message Handler. Select WM_DESTROY and click Add and Edit. Replace
+	the TODO comment with this line:
+	<P>
+</DL>
+
+<PRE>KillTimer(1);
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>6. </B>Now, catch the timer messages. Open ClassWizard and, as before, scroll
+	through the list of messages in the far right list box. WM_TIMER is the second-to-last
+	message in the alphabetic list, so drag the elevator all the way to the bottom and
+	select WM_TIMER. Click Add Function and then click Edit Code. Replace the TODO comment
+	with this line:
+	<P>
+</DL>
+
+<PRE>m_progressBar.StepIt();
+</PRE>
+<P>The StepIt() function increments the progress bar control's value by the step
+rate, causing new blocks to be displayed in the control as the control's value setting
+counts upward. When the control reaches its maximum, it automatically starts over.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong>otice that no CProgressCtrl member functions control the size or number
+	of blocks that will fit into the control. These attributes are indirectly controlled
+	by the size of the control.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Build Common and execute it to see the progress bar in action. Be sure to try
+stopping the timer as well as starting it.</P>
+<P>
+<H2><A NAME="Heading5"></A>The Slider Control</H2>
+<P>Many times in a program you might need the user to enter a value within a specific
+range. For this sort of task, you use MFC's CSliderCtrl class to create a slider
+(also called <I>trackbar</I>) control. For example, suppose you need the user to
+enter a percentage. In this case, you want the user to enter values only in the range
+of 0-100. Other values would be invalid and could cause problems in your program.</P>
+<P>By using the slider control, you can force the user to enter a value in the specified
+range. Although the user can accidentally enter a wrong value (a value that doesn't
+accomplish what the user wants to do), there is no way to enter an invalid value
+(one that brings your program crashing down like a stone wall in an earthquake).</P>
+<P>For a percentage, you create a slider control with a minimum value of 0 and a
+maximum value of 100. Moreover, to make the control easier to position, you might
+want to place tick marks at each setting that's a multiple of 10, providing 11 tick
+marks in all (including the one at 0). Common creates exactly this type of slider.</P>
+<P>To use a slider, the user clicks the slider's slot. This moves the slider forward
+or backward, and often the selected value appears near the control. When a slider
+has the focus, the user can also control it with the Up and Down arrow keys and the
+Page Up and Page Down keys.</P>
+<P>
+<H3><A NAME="Heading6"></A>Creating the Trackbar</H3>
+<P>You are going to need a resource symbol for the trackbar control, so just as you
+did for the progress bar, choose View, Resource Symbols and click New. Enter IDC_TRACKBAR
+for the resource ID Name and accept the suggested Value. In CCommonView::OnCreate(),
+add a call to CreateTrackbar(). Then add the new member function as you added CreateProgressBar()
+and type in the code in Listing 10.3.</P>
+<P>
+<H4>Listing 10.3&#160;&#160;CommonView.cpp--CCommonView::CreateTrackBar()</H4>
+<PRE>void CCommonView::CreateTrackbar()
+{
+    m_trackbar.Create(WS_CHILD | WS_VISIBLE | WS_BORDER |
+        TBS_AUTOTICKS | TBS_BOTH | TBS_HORZ,
+        CRect(270, 40, 450, 80), this, IDC_TRACKBAR);
+    m_trackbar.SetRange(0, 100, TRUE);
+    m_trackbar.SetTicFreq(10);
+    m_trackbar.SetLineSize(1);
+    m_trackbar.SetPageSize(10);
+</PRE>
+<PRE>}
+</PRE>
+<P>As with the progress bar, the first step is to create the slider control by calling
+its Create() member function. This function's four arguments are the control's style
+flags, the control's size (as a CRect object), a pointer to the control's parent
+window, and the control's ID. The style constants include the same constants that
+you would use for creating any type of window, with the addition of special styles
+used with sliders. Table 10.1 lists these special styles.</P>
+<P>
+<H4>Table 10.1&#160;&#160;Slider Styles</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Style</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TBS_AUTOTICKS		</TD>
+		<TD ALIGN="LEFT">Enables the slider to automatically draw its tick marks		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TBS_BOTH		</TD>
+		<TD ALIGN="LEFT">Draws tick marks on both sides of the slider		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TBS_BOTTOM		</TD>
+		<TD ALIGN="LEFT">Draws tick marks on the bottom of a horizontal slider		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TBS_ENABLESELRANGE		</TD>
+		<TD ALIGN="LEFT">Enables a slider to display a subrange of values		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TBS_HORZ		</TD>
+		<TD ALIGN="LEFT">Draws the slider horizontally		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TBS_LEFT		</TD>
+		<TD ALIGN="LEFT">Draws tick marks on the left side of a vertical slider		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TBS_NOTICKS		</TD>
+		<TD ALIGN="LEFT">Draws a slider with no tick marks		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TBS_RIGHT		</TD>
+		<TD ALIGN="LEFT">Draws tick marks on the right side of a vertical slider		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TBS_TOP		</TD>
+		<TD ALIGN="LEFT">Draws tick marks on the top of a horizontal slider		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TBS_VERT		</TD>
+		<TD ALIGN="LEFT">Draws a vertical slider		</TD>
+	</TR>
+</TABLE>
+
+<H3><A NAME="Heading7"></A>Initializing the Trackbar</H3>
+<P>Usually, when you create a slider control, you want to set the control's range
+and tick frequency. If the user is going to use the control from the keyboard, you
+also need to set the control's line and page size. In Common, the program initializes
+the trackbar with calls to SetRange(), SetTicFreq(), SetLineSize(), and SetPageSize(),
+as you saw in Listing 10.3. The call to SetRange() sets the trackbar's minimum and
+maximum values to 0 and 100. The arguments are the minimum value, the maximum value,
+and a Boolean value indicating whether the slider should redraw itself after setting
+the range. Notice that the tick frequency and page size are then set to be the same.
+This isn't absolutely required, but it's a very good idea. Most people assume that
+the tick marks indicate the size of a page, and you will confuse your users if the
+tick marks are more or less than a page apart.</P>
+<P>A number of other functions can change the size of your slider, the size of the
+thumb, the current selection, and more. You can find all the details in the online
+documentation.</P>
+<P>
+<H3><A NAME="Heading8"></A>Manipulating the Slider</H3>
+<P>A slider is really just a special scrollbar control. When the user moves the slider,
+the control generates WM_HSCROLL messages, which you will arrange to catch. Open
+ClassWizard, select the Message Maps tab, make sure CCommonView is selected in the
+upper-right box, and find WM_HSCROLL in the list on the right. Select it, click Add
+Function, and then click Edit Code. Type in the code in Listing 10.4.</P>
+<P>
+<H4>Listing 10.4&#160;&#160;CommonView.cpp--CCommonView::OnHScroll()</H4>
+<PRE>void CCommonView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+    CSliderCtrl* slider = (CSliderCtrl*)pScrollBar;
+    int position = slider-&gt;GetPos();
+    char s[10];
+    wsprintf(s, &quot;%d   &quot;, position);
+    CClientDC clientDC(this);
+    clientDC.TextOut(390, 22, s);
+    CScrollView::OnHScroll(nSBCode, nPos, pScrollBar);
+</PRE>
+<PRE>}
+</PRE>
+<P>Looking at this code, you see that the control itself doesn't display the current
+position as a number nearby; it's the OnHScroll() function that displays the number.
+Here's how it works:</P>
+<P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>OnHScroll()'s fourth parameter is a pointer to the scroll object that
+	generated the WM_HSCROLL message.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>The function first casts this pointer to a CSliderCtrl pointer; then
+	it gets the current position of the trackbar's slider by calling the CSliderCtrl
+	member function GetPos().
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>After the program has the slider's position, it converts the integer
+	to a string and displays that string in the window with TextOut().
+	<P>
+</DL>
+
+<P>To learn how to make text appear onscreen, refer to Chapter 5, &quot;Drawing on
+the Screen.&quot; Before moving on to the next control, build Common and test it.
+Click around on the slider and watch the number change.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you have Windows set to Large Fonts (perhaps because you have a
+	high screen resolution), the current slider value might not be displayed in quite
+	the right place because the string &quot;Trackbar Control&quot; takes up more space
+	on the screen with large fonts. If this happens, simply change the TextOut call to
+	write the current slider value a little farther to the right.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H2><A NAME="Heading9"></A>The Up-Down Control</H2>
+<P>The trackbar control isn't the only way you can get a value in a predetermined
+range from the user. If you don't need the trackbar for visual feedback, you can
+use an up-down control, which is little more than a couple of arrows that the user
+clicks to increase or decrease the control's setting. Typically, an edit control
+next to the up-down control, called a <I>buddy edit</I> control or just a <I>buddy</I>
+control, displays the value to the user.</P>
+<P>In the Common application, you can change the setting of the up-down control by
+clicking either of its arrows. When you do, the value in the attached edit box changes,
+indicating the up-down control's current setting. After the control has the focus,
+you can also change its value by pressing your keyboard's Up and Down arrow keys.</P>
+<P>
+<H3><A NAME="Heading10"></A>Creating the Up-Down Control</H3>
+<P>Add another call to CCommonView::OnCreate(), this time calling it <B>CreateUpDownCtrl()</B>.
+Add the member function and the code in Listing 10.5. Also add resource symbols for
+IDC_BUDDYEDIT and IDC_UPDOWN.</P>
+<P>
+<H4>Listing 10.5&#160;&#160;CommonView.cpp--CCommonView::CreateUpDownCtrl()</H4>
+<PRE>void CCommonView::CreateUpDownCtrl()
+{
+    m_buddyEdit.Create(WS_CHILD | WS_VISIBLE | WS_BORDER,
+        CRect(50, 120, 110, 160), this, IDC_BUDDYEDIT);
+    m_upDown.Create(WS_CHILD | WS_VISIBLE | WS_BORDER |
+        UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_ARROWKEYS,
+        CRect(0, 0, 0, 0), this, IDC_UPDOWN);
+    m_upDown.SetBuddy(&amp;m_buddyEdit);
+    m_upDown.SetRange(1, 100);
+    m_upDown.SetPos(50);
+</PRE>
+<PRE>}
+</PRE>
+<P>The program creates the up-down control by first creating the associated buddy
+control to which the up-down control communicates its current value. In most cases,
+including this one, the buddy control is an edit box, created by calling the CEdit
+class's Create() member function. This function's four arguments are the control's
+style flags, the control's size, a pointer to the control's parent window, and the
+control's ID. If you recall the control declarations, m_buddyEdit is an object of
+the CEdit class.</P>
+<P>Now that the program has created the buddy control, it can create the up-down
+control in much the same way, by calling the object's Create() member function. As
+you can probably guess by now, this function's four arguments are the control's style
+flags, the control's size, a pointer to the control's parent window, and the control's
+ID. As with most controls, the style constants include the same constants that you
+use for creating any type of window. The CSpinButtonCtrl class, of which m_upDown
+is an object, however, defines special styles to be used with up-down controls. Table
+10.2 lists these special styles.</P>
+<P>
+<H4>Table 10.2&#160;&#160;Up-Down Control Styles</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Styles</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">UDS_ALIGNLEFT		</TD>
+		<TD ALIGN="LEFT">Places the up-down control on the left edge of the buddy control		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">UDS_ALIGNRIGHT		</TD>
+		<TD ALIGN="LEFT">Places the up-down control on the right edge of the buddy control		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">UDS_ARROWKEYS		</TD>
+		<TD ALIGN="LEFT">Enables the user to change the control's values by using the keyboard's Up and Down
+			arrow keys		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">UDS_AUTOBUDDY		</TD>
+		<TD ALIGN="LEFT">Makes the previous window the buddy control		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">UDS_HORZ		</TD>
+		<TD ALIGN="LEFT">Creates a horizontal up-down control		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">UDS_NOTHOUSANDS		</TD>
+		<TD ALIGN="LEFT">Eliminates separators between each set of three digits		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">UDS_SETBUDDYINT		</TD>
+		<TD ALIGN="LEFT">Displays the control's value in the buddy control		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">UDS_WRAP		</TD>
+		<TD ALIGN="LEFT">Causes the control's value to wrap around to its minimum when the maximum is reached,
+			and vice versa		</TD>
+	</TR>
+</TABLE>
+</P>
+<P>This chapter's sample application establishes the up-down control with calls to
+SetBuddy(), SetRange(), and SetPos(). Thanks to the UDS_SETBUDDYINT flag passed to
+Create() and the call to the control's SetBuddy() member function, Common doesn't
+need to do anything else for the control's value to appear on the screen. The control
+automatically handles its buddy. Try building and testing now.</P>
+<P>You might want up-down controls that move faster or slower than in this sample
+or that use hex numbers rather than base-10 numbers. Look at the member functions
+of this control in the online documentation, and you will see how to do that.</P>
+<P>
+<H2><A NAME="Heading11"></A>The Image List Control</H2>
+<P>Often you need to use images that are related in some way. For example, your application
+might have a toolbar with many command buttons, each of which uses a bitmap for its
+icon. In a case like this, it would be great to have some sort of program object
+that could not only hold the bitmaps but also organize them so that they can be accessed
+easily. That's exactly what an image list control does for you--it stores a list
+of related images. You can use the images any way that you see fit in your program.
+Several common controls rely on image lists. These controls include the following:</P>
+<P>
+
+<UL>
+	<LI>List view controls
+	<P>
+	<LI>Tree view controls
+	<P>
+	<LI>Property pages
+	<P>
+	<LI>Toolbars
+</UL>
+
+<P>You will undoubtedly come up with many other uses for image lists. You might,
+for example, have an animation sequence that you'd like to display in a window. An
+image list is the perfect storage place for the frames that make up an animation,
+because you can easily access any frame just by using an index.</P>
+<P>If the word <I>index</I> makes you think of arrays, you're beginning to understand
+how an image list stores images. An image list is very similar to an array that holds
+pictures rather than integers or floating-point numbers. Just as with an array, you
+initialize each &quot;element&quot; of an image list and thereafter can access any
+part of the &quot;array&quot; by using an index.</P>
+<P>You won't, however, see an image list control in your running application in the
+same way that you can see a status bar or a progress bar control. This is because
+(again, similar to an array) an image list is only a storage structure for pictures.
+You can display the images stored in an image list, but you can't display the image
+list itself. Figure 10.2 shows how an image list is organized.</P>
+<P><A HREF="javascript:popUp('03fig02.gif')"><B>FIG. 10.2</B></A><B> </B><I>An image
+list is much like an array of pictures.</I></P>
+
+<P><I></I>
+<H3><A NAME="Heading12"></A>Creating the Image List</H3>
+<P>In the Common Controls App application, image lists are used with the list view
+and tree view controls, so the image lists for the controls are created in the CreateListView()
+and CreateTreeView() local member functions and are called from CCommonView::OnCreate().
+Just as with the other controls, add calls to these functions to OnCreate() and then
+add the functions to the class. You will see the full code for those functions shortly,
+but because they are long, this section presents the parts that are relevant to the
+image list.</P>
+<P>A list view uses two image lists: one for small images and the other for large
+ones. The member variables for these lists have already been added to the class,
+so start coding CreateListView() with a call to each list's Create() member function,
+like this:</P>
+<P>
+<PRE>m_smallImageList.Create(16, 16, FALSE, 1, 0);
+m_largeImageList.Create(32, 32, FALSE, 1, 0);
+</PRE>
+<P>The Create() function's five arguments are</P>
+<P>
+
+<UL>
+	<LI>The width of the pictures in the control
+	<P>
+	<LI>The height of the pictures
+	<P>
+	<LI>A Boolean value indicating whether the images contain a mask
+	<P>
+	<LI>The number of images initially in the list
+	<P>
+	<LI>The number of images by which the list can dynamically grow
+</UL>
+
+<P>This last value is 0 to indicate that the list isn't allowed to grow during runtime.
+The Create() function is overloaded in the CImageList class so that you can create
+image lists in various ways. You can find the other versions of Create() in your
+Visual C++ online documentation.</P>
+<P>
+<H3><A NAME="Heading13"></A>Initializing the Image List</H3>
+<P>After you create an image list, you will want to add images to it. After all,
+an empty image list isn't of much use. The easiest way to add the images is to include
+the images as part of your application's resource file and load them from there.
+Add these four lines to CreateListView() to fill each list with images:</P>
+<P>
+<PRE>HICON hIcon = ::LoadIcon (AfxGetResourceHandle(),
+    MAKEINTRESOURCE(IDI_ICON1));
+m_smallImageList.Add(hIcon);
+hIcon = ::LoadIcon (AfxGetResourceHandle(),
+      MAKEINTRESOURCE(IDI_ICON2));
+m_largeImageList.Add(hIcon);
+</PRE>
+<P>Here the program first gets a handle to the icon. Then it adds the icon to the
+image list by calling the image list's Add() member function. (In this case, the
+list includes only one icon. In other applications, you might have a list of large
+icons for folders, text files, and so on, as well as another list of small icons
+for the same purposes.) To create the first icon, choose Insert, Resource and double-click
+Icon. Then edit the new blank icon in the Resource Editor. (It will automatically
+be called IDI_ICON1.) Click the New Device Image toolbar button next to the drop-down
+box that says Standard (32*32) and choose Small (16*16) on the dialog that appears;
+click OK. You can spend a long time making a beautiful icon or just quickly fill
+in the whole grid with black and then put a white circle on it with the Ellipse tool.
+Add another icon, IDI_ICON2, and leave it as 32*32. Draw a similar symbol on this
+icon.</P>
+<P>You can use many member functions to manipulate an object of the CImageList class,
+adjusting colors, removing images, and much more. The online documentation provides
+more details on these member functions.</P>
+<P>You can write the first few lines of CreateTreeView() now. It uses one image list
+that starts with three images. Here's the code to add:</P>
+<P>
+<PRE>   m_treeImageList.Create(13, 13, FALSE, 3, 0);
+   HICON hIcon = ::LoadIcon(AfxGetResourceHandle(),
+      MAKEINTRESOURCE(IDI_ICON3));
+   m_treeImageList.Add(hIcon);
+   hIcon = ::LoadIcon(AfxGetResourceHandle(),
+      MAKEINTRESOURCE(IDI_ICON4));
+   m_treeImageList.Add(hIcon);
+   hIcon = ::LoadIcon(AfxGetResourceHandle(),
+      MAKEINTRESOURCE(IDI_ICON5));
+   m_treeImageList.Add(hIcon);
+</PRE>
+<P>Create IDI_ICON3, IDI_ICON4, and IDI_ICON5 the same way you did the first two
+icons. All three are 32*32. Draw circles as before. If you leave the background the
+same murky green you started with, rather than fill it with black, the circles will
+appear on a transparent background--a nice effect.</P>
+<P>
+<H2><A NAME="Heading14"></A>The List View Control</H2>
+<P>A list view control simplifies the job of building an application that works with
+lists of objects and organizes those objects in such a way that the program's user
+can easily determine each object's attributes. For example, consider a group of files
+on a disk. Each file is a separate object associated with a number of attributes,
+including the file's name, size, and the most recent modification date. When you
+explore a folder, you see files either as icons in a window or as a table of entries,
+each entry showing the attributes associated with the files. You have full control
+over the way that the file objects are displayed, including which attributes are
+shown and which are unlisted. The common controls include something called a <I>list
+view control</I>, so you can organize lists in exactly the same way. If you'd like
+to see an example of a full-fledged list view control, open the Windows Explorer
+(see Figure 10.3). The right side of the window shows how the list view control can
+organize objects in a window. (The left side of the window contains a tree view control,
+which you will learn about later in this chapter in the section titled &quot;The
+Tree View Control.&quot;) In the figure, the list view is currently set to the report
+view, in which each object in the list receives its own line, showing not only the
+object's name but also the attributes associated with that object.</P>
+<P><A HREF="javascript:popUp('10uvc03.gif')"><B>FIG. 10.3</B></A><B> </B><I>Windows
+Explorer uses a list view control to organize file information.</I></P>
+
+<P>The user can change the way objects are organized in a list view control. Figure
+10.4, for example, shows the list view portion of the Explorer set to the large-icon
+setting, and Figure 10.5 shows the small-icon setting, which enables the user to
+see more objects (in this case, files) in the window. With a list view control, the
+user can edit the names of objects in the list and in the report view can sort objects,
+based on data displayed in a particular column.</P>
+<P><A HREF="javascript:popUp('10uvc04.gif')"><B>FIG. 10.4</B></A><B> </B><I>Here's
+Explorer's list view control set to large icons.</I></P>
+
+<P><A HREF="javascript:popUp('10uvc05.gif')"><B>FIG. 10.5</B></A><B> </B><I>Here's
+Explorer's list view control set to small icons.</I></P>
+
+<P>Common will also sport a list view control, although not as fancy as Explorer's.
+You will add a list view and some buttons to switch between the small-icon, large-icon,
+list, and report views.</P>
+<P>
+<H3><A NAME="Heading15"></A>Creating the List View</H3>
+<P>How does all this happen? Well, it does require more work than the progress bar,
+trackbar, or up-down controls (it could hardly take less). You will write the rest
+of CreateListView(), which performs the following tasks:</P>
+<P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Creates and fills the image list controls
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Creates the list view control itself
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Associates the image lists with the list view
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Creates the columns
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Sets up the columns
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Creates the items
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Sets up the items
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>Creates the buttons
+	<P>
+</DL>
+
+<P>After creating the image lists, CreateListView() goes on to create the list view
+control by calling the class's Create() member function, as usual. Add these lines
+to CreateListView():</P>
+<P>
+<PRE>// Create the List View control.
+    m_listView.Create(WS_VISIBLE | WS_CHILD | WS_BORDER |
+        LVS_REPORT | LVS_NOSORTHEADER | LVS_EDITLABELS,
+        CRect(160, 120, 394, 220), this, IDC_LISTVIEW);
+</PRE>
+<P>The CListCtrl class, of which m_listView is an object, defines special styles
+to be used with list view controls. Table 10.3 lists these special styles and their
+descriptions.</P>
+<P>
+<H4>Table 10.3&#160;&#160;List View Styles</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Style</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_ALIGNLEFT		</TD>
+		<TD ALIGN="LEFT">Left-aligns items in the large-icon and small-icon views		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_ALIGNTOP		</TD>
+		<TD ALIGN="LEFT">Top-aligns items in the large-icon and small-icon views		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_AUTOARRANGE		</TD>
+		<TD ALIGN="LEFT">Automatically arranges items in the large-icon and small-icon views		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_EDITLABELS		</TD>
+		<TD ALIGN="LEFT">Enables the user to edit item labels		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_ICON		</TD>
+		<TD ALIGN="LEFT">Sets the control to the large-icon view		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_LIST		</TD>
+		<TD ALIGN="LEFT">Sets the control to the list view		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_NOCOLUMNHEADER		</TD>
+		<TD ALIGN="LEFT">Shows no column headers in report view		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_NOITEMDATA		</TD>
+		<TD ALIGN="LEFT">Stores only the state of each item		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_NOLABELWRAP		</TD>
+		<TD ALIGN="LEFT">Disallows multiple-line item labels		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_NOSCROLL		</TD>
+		<TD ALIGN="LEFT">Turns off scrolling		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_NOSORTHEADER		</TD>
+		<TD ALIGN="LEFT">Turns off the button appearance of column headers		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_OWNERDRAWFIXED		</TD>
+		<TD ALIGN="LEFT">Enables owner-drawn items in report view		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_REPORT		</TD>
+		<TD ALIGN="LEFT">Sets the control to the report view		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_SHAREIMAGELISTS		</TD>
+		<TD ALIGN="LEFT">Prevents the control from destroying its image lists when the control no longer needs
+			them		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_SINGLESEL		</TD>
+		<TD ALIGN="LEFT">Disallows multiple selection of items		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_SMALLICON		</TD>
+		<TD ALIGN="LEFT">Sets the control to the small-icon view		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_SORTASCENDING		</TD>
+		<TD ALIGN="LEFT">Sorts items in ascending order		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LVS_SORTDESCENDING		</TD>
+		<TD ALIGN="LEFT">Sorts items in descending order		</TD>
+	</TR>
+</TABLE>
+</P>
+<P>The third task in CreateListView() is to associate the control with its image
+lists with two calls to SetImageList(). Add these lines to CreateListView():</P>
+<P>
+<PRE>m_listView.SetImageList(&amp;m_smallImageList, LVSIL_SMALL);
+m_listView.SetImageList(&amp;m_largeImageList, LVSIL_NORMAL);
+</PRE>
+<P>This function takes two parameters: a pointer to the image list and a flag indicating
+how the list is to be used. Three constants are defined for this flag: LVSIL_SMALL
+(which indicates that the list contains small icons), LVSIL_NORMAL (large icons),
+and LVSIL_STATE (state images). The SetImageList() function returns a pointer to
+the previously set image list, if any.</P>
+<P>
+<H3><A NAME="Heading16"></A>Creating the List View's Columns</H3>
+<P>The fourth task is to create the columns for the control's report view. You need
+one main column for the item itself and one column for each sub-item associated with
+an item. For example, in Explorer's list view, the main column holds file and folder
+names. Each additional column holds the sub-items for each item, such as the file's
+size, type, and modification date. To create a column, you must first declare a LV_COLUMN
+structure. You use this structure to pass information to and from the system. After
+you add the column to the control with InsertColumn(), you can use the structure
+to create and insert another column. Listing 10.6 shows the LV_COLUMN structure.</P>
+<P>
+<H4>Listing 10.6&#160;&#160;The LV_COLUMN Structure, Defined by MFC</H4>
+<PRE>typedef struct _LV_COLUMN
+{
+    UINT mask;       // Flags indicating valid fields
+    int fmt;         // Column alignment
+    int cx;          // Column width
+    LPSTR pszText;   // Address of string buffer
+    int cchTextMax;  // Size of the buffer
+    int iSubItem;    // Subitem index for this column
+</PRE>
+<PRE>} LV_COLUMN;
+</PRE>
+<P>The mask member of the structure tells the system which members of the structure
+to use and which to ignore. The flags you can use are</P>
+<P>
+
+<UL>
+	<LI>LVCF_FMT&#160;&#160;fmt is valid.
+	<P>
+	<LI>LVCF_SUBITEM&#160;&#160;iSubItem is valid.
+	<P>
+	<LI>LVCF_TEXT&#160;&#160;pszText is valid.
+	<P>
+	<LI>LVCF_WIDTH&#160;&#160;cx is valid.
+</UL>
+
+<P>The fmt member denotes the column's alignment and can be LVCFMT_CENTER, LVCFMT_LEFT,
+or LVCFMT_RIGHT. The alignment determines how the column's label and items are positioned
+in the column.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> The first column, which contains the main items, is always aligned
+	to the left. The other columns in the report view can be aligned however you like.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The cx field specifies the width of each column, whereas pszText is the address
+of a string buffer. When you're using the structure to create a column (you also
+can use this structure to obtain information about a column), this string buffer
+contains the column's label. The cchTextMax member denotes the size of the string
+buffer and is valid only when retrieving information about a column.</P>
+<P>CreateListView() creates a temporary LV_COLUMN structure, sets the elements, and
+then inserts it into the list view as column 0, the main column. This process is
+repeated for the other two columns. Add these lines to CreateListView():</P>
+<P>
+<PRE>// Create the columns.
+    LV_COLUMN lvColumn;
+    lvColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+    lvColumn.fmt = LVCFMT_CENTER;
+    lvColumn.cx = 75;
+    lvColumn.iSubItem = 0;
+    lvColumn.pszText = &quot;Column 0&quot;;
+    m_listView.InsertColumn(0, &amp;lvColumn);
+    lvColumn.iSubItem = 1;
+    lvColumn.pszText = &quot;Column 1&quot;;
+    m_listView.InsertColumn(1, &amp;lvColumn);
+    lvColumn.iSubItem = 2;
+    lvColumn.pszText = &quot;Column 2&quot;;
+    m_listView.InsertColumn(1, &amp;lvColumn); 
+</PRE>
+<H3><A NAME="Heading17"></A>Creating the List View's Items</H3>
+<P>The fifth task in CreateListView() is to create the items that will be listed
+in the columns when the control is in its report view. Creating items is not unlike
+creating columns. As with columns, Visual C++ defines a structure that you must initialize
+and pass to the function that creates the items. This structure is called LV_ITEM
+and is defined as shown in Listing 10.7.</P>
+<P>
+<H4>Listing 10.7&#160;&#160;The LV_ITEM Structure, Defined by MFC</H4>
+<PRE>typedef struct _LV_ITEM
+{
+    UINT   mask;         // Flags indicating valid fields
+    int    iItem;        // Item index
+    int    iSubItem;     // Sub-item index
+    UINT   state;        // Item's current state
+    UINT   stateMask;    // Valid item states.
+    LPSTR  pszText;      // Address of string buffer
+    int    cchTextMax;   // Size of string buffer
+    int    iImage;       // Image index for this item
+    LPARAM lParam;       // Additional information as a 32-bit value
+</PRE>
+<PRE>} LV_ITEM;
+</PRE>
+<P>In the LV_ITEM structure, the mask member specifies the other members of the structure
+that are valid. The flags you can use are</P>
+<P>
+
+<UL>
+	<LI>LVIF_IMAGE&#160;&#160;iImage is valid.
+	<P>
+	<LI>LVIF_PARAM&#160;&#160;lParam is valid.
+	<P>
+	<LI>LVIF_STATE&#160;&#160;state is valid.
+	<P>
+	<LI>LVIF_TEXT&#160;&#160;pszText is valid.
+</UL>
+
+<P>The iItem member is the index of the item, which you can think of as the row number
+in report view (although the items' position can change when they're sorted). Each
+item has a unique index. The iSubItem member is the index of the sub-item, if this
+structure is defining a sub-item. You can think of this value as the number of the
+column in which the item will appear. For example, if you're defining the main item
+(the first column), this value should be 0.</P>
+<P>The state and stateMask members hold the item's current state and its valid states,
+which can be one or more of the following:</P>
+<P>
+
+<UL>
+	<LI>LVIS_CUT&#160;&#160;The item is selected for cut and paste.
+	<P>
+	<LI>LVIS_DROPHILITED&#160;&#160;The item is a highlighted drop target.
+	<P>
+	<LI>LVIS_FOCUSED&#160;&#160;The item has the focus.
+	<P>
+	<LI>LVIS_SELECTED&#160;&#160;The item is selected.
+</UL>
+
+<P>The pszText member is the address of a string buffer. When you use the LV_ITEM
+structure to create an item, the string buffer contains the item's text. When you
+are obtaining information about the item, pszText is the buffer where the information
+will be stored, and cchTextMax is the size of the buffer. If pszText is set to LPSTR_TEXTCALLBACK,
+the item uses the callback mechanism. Finally, the iImage member is the index of
+the item's icon in the small-icon and large-icon image lists. If set to I_IMAGECALLBACK,
+the iImage member indicates that the item uses the callback mechanism.</P>
+<P>CreateListView() creates a temporary LV_ITEM structure, sets the elements, and
+then inserts it into the list view as item 0. Two calls to SetItemText() add sub-items
+to this item so that each column has some text in it, and the whole process is repeated
+for two other items. Add these lines:</P>
+<P>
+<PRE>// Create the items.
+    LV_ITEM lvItem;
+    lvItem.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_STATE;
+    lvItem.state = 0;     
+    lvItem.stateMask = 0; 
+    lvItem.iImage = 0;
+    lvItem.iItem = 0;
+    lvItem.iSubItem = 0;
+    lvItem.pszText = &quot;Item 0&quot;;
+    m_listView.InsertItem(&amp;lvItem);
+    m_listView.SetItemText(0, 1, &quot;Sub Item 0.1&quot;);
+    m_listView.SetItemText(0, 2, &quot;Sub Item 0.2&quot;);
+    lvItem.iItem = 1;
+    lvItem.iSubItem = 0;
+    lvItem.pszText = &quot;Item 1&quot;;
+    m_listView.InsertItem(&amp;lvItem);
+    m_listView.SetItemText(1, 1, &quot;Sub Item 1.1&quot;);
+    m_listView.SetItemText(1, 2, &quot;Sub Item 1.2&quot;);
+    lvItem.iItem = 2;
+    lvItem.iSubItem = 0;
+    lvItem.pszText = &quot;Item 2&quot;;
+    m_listView.InsertItem(&amp;lvItem);
+    m_listView.SetItemText(2, 1, &quot;Sub Item 2.1&quot;);
+    m_listView.SetItemText(2, 2, &quot;Sub Item 2.2&quot;);
+</PRE>
+<P>Now you have created a list view with three columns and three items. Normally
+the values wouldn't be hard-coded, as this was, but instead would be filled in with
+values calculated by the program.</P>
+<P>
+<H3><A NAME="Heading18"></A>Manipulating the List View</H3>
+<P>You can set a list view control to four different types of views: small icon,
+large icon, list, and report. In Explorer, for example, the toolbar features buttons
+that you can click to change the view, or you can select the view from the View menu.
+Although Common doesn't have a snazzy toolbar like Explorer, it will include four
+buttons (labeled Small, Large, List, and Report) that you can click to change the
+view. Those buttons are created as the sixth step in CreateListView(). Add these
+lines to complete the function:</P>
+<P>
+<PRE>// Create the view-control buttons.
+    m_smallButton.Create(&quot;Small&quot;, WS_VISIBLE | WS_CHILD | WS_BORDER,
+        CRect(400, 120, 450, 140), this, IDC_LISTVIEW_SMALL);
+    m_largeButton.Create(&quot;Large&quot;, WS_VISIBLE | WS_CHILD | WS_BORDER,
+        CRect(400, 145, 450, 165), this, IDC_LISTVIEW_LARGE);
+    m_listButton.Create(&quot;List&quot;, WS_VISIBLE | WS_CHILD | WS_BORDER,
+        CRect(400, 170, 450, 190), this, IDC_LISTVIEW_LIST);
+    m_reportButton.Create(&quot;Report&quot;, WS_VISIBLE | WS_CHILD | WS_BORDER,
+        CRect(400, 195, 450, 215), this, IDC_LISTVIEW_REPORT);
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you're using large fonts, these buttons will need to be more than
+	50 pixels wide. This code creates each button from position 400 to 450--make the
+	second number larger to widen the buttons.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Edit the message map in CommonView.h to declare the handlers for each of these
+buttons so that it looks like this:</P>
+<P>
+<PRE>// Generated message map functions
+protected:
+        //{{AFX_MSG(CCommonView)
+        afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+        afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+        afx_msg void OnDestroy();
+        afx_msg void OnTimer(UINT nIDEvent);
+        afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+        //}}AFX_MSG
+        afx_msg void OnSmall();
+        afx_msg void OnLarge();
+        afx_msg void OnList();
+        afx_msg void OnReport();
+        DECLARE_MESSAGE_MAP()
+};
+</PRE>
+<P>Edit the message map in CommonView.cpp to associate the messages with the functions:</P>
+<P>
+<PRE>BEGIN_MESSAGE_MAP(CCommonView, CScrollView)
+   //{{AFX_MSG_MAP(CCommonView)
+   ON_WM_CREATE()
+   ON_WM_LBUTTONDOWN()
+   ON_WM_DESTROY()
+   ON_WM_TIMER()
+   ON_WM_HSCROLL()
+   //}}AFX_MSG_MAP
+   ON_COMMAND(IDC_LISTVIEW_SMALL, OnSmall)
+   ON_COMMAND(IDC_LISTVIEW_LARGE, OnLarge)
+   ON_COMMAND(IDC_LISTVIEW_LIST, OnList)
+   ON_COMMAND(IDC_LISTVIEW_REPORT, OnReport)
+   // Standard printing commands
+   ON_COMMAND(ID_FILE_PRINT, CScrollView::OnFilePrint)
+   ON_COMMAND(ID_FILE_PRINT_DIRECT, CScrollView::OnFilePrint)
+   ON_COMMAND(ID_FILE_PRINT_PREVIEW, CScrollView::OnFilePrintPreview)
+END_MESSAGE_MAP()
+</PRE>
+<P>Choose View, Resource Symbols and click New to add new IDs for each constant referred
+to in this new code:</P>
+<P>
+
+<UL>
+	<LI>IDC_LISTVIEW
+	<P>
+	<LI>IDC_LISTVIEW_SMALL
+	<P>
+	<LI>IDC_LISTVIEW_LARGE
+	<P>
+	<LI>IDC_LISTVIEW_LIST
+	<P>
+	<LI>IDC_LISTVIEW_REPORT
+</UL>
+
+<P>The four handlers will each call SetWindowLong(), which sets a window's attribute.
+Its arguments are the window's handle, a flag that specifies the value to be changed,
+and the new value. For example, passing GWL_STYLE as the second value means that
+the window's style should be changed to the style given in the third argument. Changing
+the list view control's style (for example, to LVS_SMALLICON) changes the type of
+view that it displays. With that in mind, add the four handler functions to the bottom
+of CommonView.cpp:</P>
+<P>
+<PRE>void CCommonView::OnSmall() 
+{
+   SetWindowLong(m_listView.m_hWnd, GWL_STYLE,
+      WS_VISIBLE | WS_CHILD | WS_BORDER |
+      LVS_SMALLICON | LVS_EDITLABELS);
+}
+void CCommonView::OnLarge() 
+{
+   SetWindowLong(m_listView.m_hWnd, GWL_STYLE,
+      WS_VISIBLE | WS_CHILD | WS_BORDER |
+      LVS_ICON | LVS_EDITLABELS);
+}
+void CCommonView::OnList() 
+{
+   SetWindowLong(m_listView.m_hWnd, GWL_STYLE,
+      WS_VISIBLE | WS_CHILD | WS_BORDER |
+      LVS_LIST | LVS_EDITLABELS);
+}
+void CCommonView::OnReport() 
+{
+   SetWindowLong(m_listView.m_hWnd, GWL_STYLE,
+      WS_VISIBLE | WS_CHILD | WS_BORDER |
+      LVS_REPORT | LVS_EDITLABELS);
+}
+</PRE>
+<P>In addition to changing the view, you can program a number of other features for
+your list view controls. When the user does something with the control, Windows sends
+a WM_NOTIFY message to the parent window. The most common notifications sent by a
+list view control are the following:</P>
+<P>
+
+<UL>
+	<LI>LVN_COLUMNCLICK&#160;&#160;Indicates that the user clicked a column header
+	<P>
+	<LI>LVN_BEGINLABELEDIT&#160;&#160;Indicates that the user is about to edit an item's
+	label
+	<P>
+	<LI>LVN_ENDLABELEDIT&#160;&#160;Indicates that the user is ending the label-editing
+	process
+</UL>
+
+<P>Why not have Common allow editing of the first column in this list view? You start
+by overriding the virtual function OnNotify() that was inherited by CCommonView from
+CScrollView. Right-click CCommonView in ClassView and choose Add Virtual Function.
+Select OnNotify() from the list on the left and click Add and Edit; then add these
+lines of code at the beginning of the function, replacing the TODO comment:</P>
+<P>
+<PRE>LV_DISPINFO* lv_dispInfo = (LV_DISPINFO*) lParam;
+     if (lv_dispInfo-&gt;hdr.code == LVN_BEGINLABELEDIT)
+     {
+          CEdit* pEdit = m_listView.GetEditControl();
+          // Manipulate edit control here.
+     }
+     else if (lv_dispInfo-&gt;hdr.code == LVN_ENDLABELEDIT)
+     {
+          if ((lv_dispInfo-&gt;item.pszText != NULL) &amp;&amp;
+               (lv_dispInfo-&gt;item.iItem != -1))
+          {
+              m_listView.SetItemText(lv_dispInfo-&gt;item.iItem,
+                   0, lv_dispInfo-&gt;item.pszText);
+          }
+     }
+</PRE>
+<P>The three parameters received by OnNotify() are the message's WPARAM and LPARAM
+values and a pointer to a result code. In the case of a WM_NOTIFY message coming
+from a list view control, the WPARAM is the list view control's ID. If the WM_NOTIFY
+message is the LVN_BEGINLABELEDIT or LVN_ENDLABELEDIT notification, the LPARAM is
+a pointer to an LV_DISPINFO structure, which itself contains NMHDR and LV_ITEM structures.
+You use the information in these structures to manipulate the item that the user
+is trying to edit.</P>
+<P>If the notification is LVN_BEGINLABELEDIT, your program can do whatever pre-editing
+initialization it needs to do, usually by calling GetEditControl() and then working
+with the pointer returned to you. This sample application shows you only how to get
+that pointer.</P>
+<P>When handling label editing, the other notification to watch out for is LVN_ENDLABELEDIT,
+which means that the user has finished editing the label, by either typing the new
+label or canceling the editing process. If the user has canceled the process, the
+LV_DISPINFO structure's item.pszText member will be NULL, or the item.iItem member
+will be -1. In this case, you need do nothing more than ignore the notification.
+If, however, the user completed the editing process, the program must copy the new
+label to the item's text, which OnNotify() does with a call to SetItemText(). The
+CListCtrl object's SetItemText() member function requires three arguments: the item
+index, the sub-item index, and the new text.</P>
+<P>At this point you can build Common again and test it. Click each of the four buttons
+to change the view style. Also, try editing one of the labels in the first column
+of the list view.</P>
+<P>Figure 10.1 already showed you the report view for this list view. Figure 10.6
+shows the application's list view control displaying small icons, and Figure 10.7
+shows the large icons. (Some controls in these figures have yet to be covered in
+this chapter.)</P>
+<P>You can do a lot of other things with a list view control. A little time invested
+in exploring and experimenting can save you a lot of time writing your user interface.</P>
+<P><A HREF="javascript:popUp('10uvc06.gif')"><B>FIG. 10.6</B></A><B> </B><I>Here's
+the sample application's list view control set to small icons.</I></P>
+
+<P><A HREF="javascript:popUp('10uvc07.gif')"><B>FIG. 10.7</B></A><B> </B><I>Here's
+the sample application's list view control set to large icons.</I></P>
+<H2><B></B></H2>
+
+<H2><A NAME="Heading19"></A>The Tree View Control</H2>
+<P>In the preceding section, you learned how to use the list view control to organize
+the display of many items in a window. The list view control enables you to display
+items both as objects in a window and objects in a report organized into columns.
+Often, however, the data you'd like to organize for your application's user is best
+placed in a hierarchical view. That is, elements of the data are shown as they relate
+to one other. A good example of a hierarchical display is the directory tree used
+by Windows to display directories and the files that they contain.</P>
+<P>MFC provides this functionality in the CTreeCtrl class. This versatile control
+displays data in various ways, all the while retaining the hierarchical relationship
+between the data objects in the view.</P>
+<P>If you'd like to see an example of a tree view control, revisit Windows Explorer
+(see Figure 10.8). The left side of the window shows how the tree view control organizes
+objects in a window. (The right side of the window contains a list view control,
+which you learned about in the preceding section). In the figure, the tree view displays
+not only the storage devices on the computer but also the directories and files stored
+on those devices. The tree clearly shows the hierarchical relationship between the
+devices, directories, and files, and it enables the user to open and close branches
+on the tree to explore different levels.</P>
+<P><A HREF="javascript:popUp('10uvc08.gif')"><B>FIG. 10.8</B></A><B> </B><I>A tree
+view control displays a hierarchical relationship between items.</I></P>
+
+<P><I></I>
+<H3><A NAME="Heading20"></A>Creating the Tree View</H3>
+<P>Tree views are a little simpler than list views. You will write the rest of CreateTreeView(),
+which performs the following tasks:</P>
+<P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Creates an image list
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Creates the tree view itself
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Associates the image list with the list view
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Creates the root item
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Creates child items
+	<P>
+</DL>
+
+<P>Creating the image list, creating the tree control, and associating the control
+with the image list are very similar to the steps completed for the image list. You've
+already written the code to create the image list, so add these lines to CreateTreeView():</P>
+<P>
+<PRE>// Create the Tree View control.
+     m_treeView.Create(WS_VISIBLE | WS_CHILD | WS_BORDER |
+          TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS |
+          TVS_EDITLABELS, CRect(20, 260, 160, 360), this,
+          IDC_TREEVIEW);
+     m_treeView.SetImageList(&amp;m_treeImageList, TVSIL_NORMAL);
+</PRE>
+<P>(Remember to add a resource ID for IDC_TREEVIEW.) The CTreeCtrl class, of which
+m_treeView is an object, defines special styles to be used with tree view controls.
+Table 10.4 lists these special styles.</P>
+<P>
+<H4>Table 10.4&#160;&#160;Tree View Control Styles</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Style</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TVS_DISABLEDRAGDROP		</TD>
+		<TD ALIGN="LEFT">Disables drag-and-drop operations		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TVS_EDITLABELS		</TD>
+		<TD ALIGN="LEFT">Enables the user to edit labels		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TVS_HASBUTTONS		</TD>
+		<TD ALIGN="LEFT">Gives each parent item a button		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TVS_HASLINES		</TD>
+		<TD ALIGN="LEFT">Adds lines between items in the tree		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TVS_LINESATROOT		</TD>
+		<TD ALIGN="LEFT">Adds a line between the root and child items		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TVS_SHOWSELALWAYS		</TD>
+		<TD ALIGN="LEFT">Forces a selected item to stay selected when losing focus		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TVS_NOTOOLTIPS		</TD>
+		<TD ALIGN="LEFT">Suppresses ToolTips for the tree items		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">TVS_SINGLEEXPAND		</TD>
+		<TD ALIGN="LEFT">Expands or collapses tree items with a single click rather than a double click		</TD>
+	</TR>
+</TABLE>
+
+<H3><A NAME="Heading21"></A>Creating the Tree View's Items</H3>
+<P>Creating items for a tree view control is much like creating items for a list
+view control. As with the list view, Visual C++ defines a structure that you must
+initialize and pass to the function that creates the items. This structure is called
+TVITEM and is defined in Listing 10.8.</P>
+<P>
+<H4>Listing 10.8&#160;&#160;The TVITEM Structure, Defined by MFC</H4>
+<PRE>typedef struct _TVITEM
+{
+    UINT       mask;
+    HTREEITEM  hItem;
+    UINT       state;
+    UINT       stateMask;
+    LPSTR      pszText;
+    int        cchTextMax;
+    int        iImage;
+    int        iSelectedImage;
+    int        cChildren;
+    LPARAM     lParam;
+</PRE>
+<PRE>} TV_ITEM;
+</PRE>
+<P>In the TVITEM structure, the mask member specifies the other structure members
+that are valid. The flags you can use are as follows:</P>
+<P>
+
+<UL>
+	<LI>TVIF_CHILDREN&#160;&#160;cChildren is valid.
+	<P>
+	<LI>TVIF_HANDLE&#160;&#160;hItem is valid.
+	<P>
+	<LI>TVIF_IMAGE&#160;&#160;iImage is valid.
+	<P>
+	<LI>TVIF_PARAM&#160;&#160;lParam is valid.
+	<P>
+	<LI>TVIF_SELECTEDIMAGE&#160;&#160;iSelectedImage is valid.
+	<P>
+	<LI>TVIF_STATE&#160;&#160;state and stateMask are valid.
+	<P>
+	<LI>TVIF_TEXT&#160;&#160;pszText and cchTextMax are valid.
+</UL>
+
+<P>The hItem member is the handle of the item, whereas the state and stateMask members
+hold the item's current state and its valid states, which can be one or more of TVIS_BOLD,
+TVIS_CUT, TVIS_DROPHILITED, TVIS_EXPANDED, TVIS_EXPANDEDONCE, TVIS_FOCUSED, TVIS_OVERLAYMASK,
+TVIS_SELECTED, TVIS_STATEIMAGEMASK, and TVIS_USERMASK.</P>
+<P>The pszText member is the address of a string buffer. When using the TVITEM structure
+to create an item, the string buffer contains the item's text. When obtaining information
+about the item, pszText is the buffer where the information will be stored, and cchTextMax
+is the size of the buffer. If pszText is set to LPSTR_TEXTCALLBACK, the item uses
+the callback mechanism. Finally, the iImage member is the index of the item's icon
+in the image list. If set to I_IMAGECALLBACK, the iImage member indicates that the
+item uses the callback mechanism.</P>
+<P>The iSelectedImage member is the index of the icon in the image list that represents
+the item when the item is selected. As with iImage, if this member is set to I_IMAGECALLBACK,
+the iSelectedImage member indicates that the item uses the callback mechanism. Finally,
+cChildren specifies whether there are child items associated with the item.</P>
+<P>In addition to the TVITEM structure, you must initialize a TVINSERTSTRUCT structure
+that holds information about how to insert the new structure into the tree view control.
+That structure is declared in Listing 10.9.</P>
+<P>
+<H4>Listing 10.9&#160;&#160;The TVINSERTSTRUCT Structure, Defined by MFC</H4>
+<PRE>typedef struct tagTVINSERTSTRUCT {
+    HTREEITEM hParent;
+    HTREEITEM hInsertAfter;
+#if (_WIN32_IE &gt;= 0x0400)
+    union
+    {
+        TVITEMEX itemex;
+        TVITEM item;
+    } DUMMYUNIONNAME;
+#else
+    TVITEM item;
+#endif
+</PRE>
+<PRE>} TVINSERTSTRUCT, FAR *LPTVINSERTSTRUCT;
+</PRE>
+<P>In this structure, hParent is the handle to the parent tree-view item. A value
+of NULL or TVI_ROOT specifies that the item should be placed at the root of the tree.
+The hInsertAfter member specifies the handle of the item after which this new item
+should be inserted. It can also be one of the flags TVI_FIRST (beginning of the list),
+TVI_LAST (end of the list), or TVI_SORT (alphabetical order). Finally, the item member
+is the TVITEM structure containing information about the item to be inserted into
+the tree.</P>
+<P>Common first initializes the TVITEM structure for the root item (the first item
+in the tree). Add these lines:</P>
+<P>
+<PRE>// Create the root item.
+     TVITEM tvItem;
+     tvItem.mask =
+          TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+     tvItem.pszText = &quot;Root&quot;;
+     tvItem.cchTextMax = 4;
+     tvItem.iImage = 0;
+     tvItem.iSelectedImage = 0;
+     TVINSERTSTRUCT tvInsert;
+     tvInsert.hParent = TVI_ROOT;
+     tvInsert.hInsertAfter = TVI_FIRST;
+     tvInsert.item = tvItem;
+     HTREEITEM hRoot = m_treeView.InsertItem(&amp;tvInsert);
+</PRE>
+<P>The CTreeCtrl member function InsertItem() inserts the item into the tree view
+control. Its single argument is the address of the TVINSERTSTRUCT structure.</P>
+<P>CreateTreeView() then inserts the remaining items into the tree view control.
+Add these lines to insert some hard-coded sample items into the tree view:</P>
+<P>
+<PRE>// Create the first child item.
+     tvItem.pszText = &quot;Child Item 1&quot;;
+     tvItem.cchTextMax = 12;
+     tvItem.iImage = 1;
+     tvItem.iSelectedImage = 1;
+     tvInsert.hParent = hRoot;
+     tvInsert.hInsertAfter = TVI_FIRST;
+     tvInsert.item = tvItem;
+     HTREEITEM hChildItem = m_treeView.InsertItem(&amp;tvInsert);
+     // Create a child of the first child item.
+     tvItem.pszText = &quot;Child Item 2&quot;;
+     tvItem.cchTextMax = 12;
+     tvItem.iImage = 2;
+     tvItem.iSelectedImage = 2;
+     tvInsert.hParent = hChildItem;
+     tvInsert.hInsertAfter = TVI_FIRST;
+     tvInsert.item = tvItem;
+     m_treeView.InsertItem(&amp;tvInsert);
+     // Create another child of the root item.
+     tvItem.pszText = &quot;Child Item 3&quot;;
+     tvItem.cchTextMax = 12;
+     tvItem.iImage = 1;
+     tvItem.iSelectedImage = 1;
+     tvInsert.hParent = hRoot;
+     tvInsert.hInsertAfter = TVI_LAST;
+     tvInsert.item = tvItem;
+     m_treeView.InsertItem(&amp;tvInsert); 
+</PRE>
+<H3><A NAME="Heading22"></A>Manipulating the Tree View</H3>
+<P>Just as with the list view control, you can edit the labels of the items in Common's
+tree view. Also, like the list view control, this process works because the tree
+view sends WM_NOTIFY messages that trigger a call to the program's OnNotify() function.</P>
+<P>OnNotify() handles the tree-view notifications in almost exactly the same way
+as the list-view notifications. The only difference is in the names of the structures
+used. Add these lines to OnNotify() before the return statement:</P>
+<P>
+<PRE>TV_DISPINFO* tv_dispInfo = (TV_DISPINFO*) lParam;
+     if (tv_dispInfo-&gt;hdr.code == TVN_BEGINLABELEDIT)
+     {
+          CEdit* pEdit = m_treeView.GetEditControl();
+          // Manipulate edit control here.
+     }
+     else if (tv_dispInfo-&gt;hdr.code == TVN_ENDLABELEDIT)
+     {
+          if (tv_dispInfo-&gt;item.pszText != NULL)
+          {
+              m_treeView.SetItemText(tv_dispInfo-&gt;item.hItem,
+                   tv_dispInfo-&gt;item.pszText);
+          }
+    }
+</PRE>
+<P>The tree view control sends a number of other notification messages, including
+TVN_BEGINDRAG, TVN_BEGINLABELEDIT, TVN_BEGINRDRAG, TVN_DELETEITEM, TVN_ENDLABELEDIT,
+TVN_GETDISPINFO, TVN_GETINFOTIP, TVN_ITEMEXPANDED, TVN_ITEMEXPANDING, TVN_KEYDOWN,
+TVN_SELCHANGED, TVN_SELCHANGING, TVN_SETDISPINFO, and TVN_SINGLEEXPAND. Check your
+Visual C++ online documentation for more information about handling these notification
+messages.</P>
+<P>Now is a good time to again build and test Common. Be sure to try expanding and
+collapsing the levels of the tree and editing a label. If you can't see all the control,
+maximize the application and adjust your screen resolution if you can. The application
+will eventually scroll but not just yet.</P>
+<P>
+<H2><A NAME="Heading23"></A>The Rich Edit Control</H2>
+<P>If you took all the energy expended on writing text-editing software and you concentrated
+that energy on other, less mundane programming problems, computer science would probably
+be a decade ahead of where it is now. Although that might be an exaggeration, it
+is true that when it comes to text editors, a huge amount of effort has been dedicated
+to reinventing the wheel. Wouldn't it be great to have one piece of text-editing
+code that all programmers could use as the starting point for their own custom text
+editors?</P>
+<P>With Visual C++'s CRichEditCtrl control, you get a huge jump on any text-editing
+functionality that you need to install in your applications. The rich edit control
+is capable of handling fonts, paragraph styles, text color, and other types of tasks
+that are traditionally found in text editors. In fact, a rich edit control (named
+for the fact that it handles text in Rich Text Format) provides a solid starting
+point for any text-editing tasks that your application must handle. Your users can</P>
+<P>
+
+<UL>
+	<LI>Type text.
+	<P>
+	<LI>Edit text, using cut-and-paste and sophisticated drag-and-drop operations.
+	<P>
+	<LI>Set text attributes such as font, point size, and color.
+	<P>
+	<LI>Apply underline, bold, italic, strikethrough, superscript, and subscript properties
+	to text.
+	<P>
+	<LI>Format text, using various alignments and bulleted lists.
+	<P>
+	<LI>Lock text from further editing.
+	<P>
+	<LI>Save and load files.
+</UL>
+
+<P>As you can see, a rich edit control is powerful. It is, in fact, almost a complete
+word-processor-in-a-box that you can plug into your program and use immediately.
+Of course, because a rich edit control offers so many features, there's a lot to
+learn. This section gives you a quick introduction to creating and manipulating a
+rich edit control.</P>
+<P>
+<H3><A NAME="Heading24"></A>Creating the Rich Edit Control</H3>
+<P>Add a call to CreateRichEdit() to the view class's OnCreate() function and then
+add the function to the class. Listing 10.10 shows the code you should add to the
+function. Add resource IDs for IDC_RICHEDIT, IDC_RICHEDIT_ULINE, IDC_RICHEDIT_LEFT,
+IDC_RICHEDIT_CENTER, and IDC_RICHEDIT_RIGHT.</P>
+<P>
+<H4>Listing 10.10&#160;&#160;CommonView.cpp--CCommonView::CreateRichEdit()</H4>
+<PRE>void CCommonView::CreateRichEdit()
+{
+     m_richEdit.Create(WS_CHILD | WS_VISIBLE | WS_BORDER |
+          ES_AUTOVSCROLL | ES_MULTILINE,
+          CRect(180, 260, 393, 360), this, IDC_RICHEDIT);
+     m_boldButton.Create(&quot;ULine&quot;, WS_VISIBLE | WS_CHILD | WS_BORDER,
+          CRect(400, 260, 450, 280), this, IDC_RICHEDIT_ULINE);
+     m_leftButton.Create(&quot;Left&quot;, WS_VISIBLE | WS_CHILD | WS_BORDER,
+          CRect(400, 285, 450, 305), this, IDC_RICHEDIT_LEFT);
+     m_centerButton.Create(&quot;Center&quot;, WS_VISIBLE | WS_CHILD | WS_BORDER,
+          CRect(400, 310, 450, 330), this, IDC_RICHEDIT_CENTER);
+     m_rightButton.Create(&quot;Right&quot;, WS_VISIBLE | WS_CHILD | WS_BORDER,
+          CRect(400, 335, 450, 355), this, IDC_RICHEDIT_RIGHT);
+</PRE>
+<PRE>}
+</PRE>
+<P>As usual, things start with a call to the control's Create() member function.
+The style constants include the same constants that you would use for creating any
+type of window, with the addition of special styles used with rich edit controls.
+Table 10.5 lists these special styles.</P>
+<P>
+<H4>Table 10.5&#160;&#160;Rich Edit Styles</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Style</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ES_AUTOHSCROLL		</TD>
+		<TD ALIGN="LEFT">Automatically scrolls horizontally		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ES_AUTOVSCROLL		</TD>
+		<TD ALIGN="LEFT">Automatically scrolls vertically		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ES_CENTER		</TD>
+		<TD ALIGN="LEFT">Centers text		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ES_LEFT		</TD>
+		<TD ALIGN="LEFT">Left-aligns text		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ES_LOWERCASE		</TD>
+		<TD ALIGN="LEFT">Lowercases all text		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ES_MULTILINE		</TD>
+		<TD ALIGN="LEFT">Enables multiple lines		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ES_NOHIDESEL		</TD>
+		<TD ALIGN="LEFT">Doesn't hide selected text when losing the focus		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ES_OEMCONVERT		</TD>
+		<TD ALIGN="LEFT">Converts from ANSI characters to OEM characters and back to ANSI		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ES_PASSWORD		</TD>
+		<TD ALIGN="LEFT">Displays characters as asterisks		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ES_READONLY		</TD>
+		<TD ALIGN="LEFT">Disables editing in the control		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ES_RIGHT		</TD>
+		<TD ALIGN="LEFT">Right-aligns text		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ES_UPPERCASE		</TD>
+		<TD ALIGN="LEFT">Uppercases all text		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ES_WANTRETURN		</TD>
+		<TD ALIGN="LEFT">Inserts return characters into text when Enter is pressed		</TD>
+	</TR>
+</TABLE>
+
+<H3><A NAME="Heading25"></A>Initializing the Rich Edit Control</H3>
+<P>The rich edit control is perfectly usable as soon as it is created. Member functions
+manipulate the control extensively, formatting and selecting text, enabling and disabling
+many control features, and more. As always, check your online documentation for all
+the details on these member functions.</P>
+<P>
+<H3><A NAME="Heading26"></A>Manipulating the Rich Edit Control</H3>
+<P>This sample application shows you the basics of using the rich edit control by
+setting character attributes and paragraph formats. When you include a rich edit
+control in an application, you will probably want to give the user some control over
+its contents. For this reason, you usually create menu and toolbar commands for selecting
+the various options that you want to support in the application. In Common, the user
+can click four buttons to control the rich edit control.</P>
+<P>You've already added the code to create these buttons. Add lines to the message
+map in the header file to declare the handlers:</P>
+<P>
+<PRE>afx_msg void OnULine();
+afx_msg void OnLeft();
+afx_msg void OnCenter();
+afx_msg void OnRight();
+</PRE>
+<P>Similarly, add these lines to the message map in the source file:</P>
+<P>
+<PRE>ON_COMMAND(IDC_RICHEDIT_ULINE, OnULine)
+ON_COMMAND(IDC_RICHEDIT_LEFT, OnLeft)
+ON_COMMAND(IDC_RICHEDIT_CENTER, OnCenter)
+ON_COMMAND(IDC_RICHEDIT_RIGHT, OnRight)
+</PRE>
+<P>Each of these functions is simple. Add them each to CommonView.cpp. OnULine()
+looks like this:</P>
+<P>
+<PRE>void CCommonView::OnULine()
+{
+     CHARFORMAT charFormat;
+     charFormat.cbSize = sizeof(CHARFORMAT);
+     charFormat.dwMask = CFM_UNDERLINE;
+     m_richEdit.GetSelectionCharFormat(charFormat);
+     if (charFormat.dwEffects &amp; CFM_UNDERLINE)
+          charFormat.dwEffects = 0;
+     else
+         charFormat.dwEffects = CFE_UNDERLINE;
+     m_richEdit.SetSelectionCharFormat(charFormat);
+     m_richEdit.SetFocus();
+}
+</PRE>
+<P>OnULine() creates and initializes a CHARFORMAT structure, which holds information
+about character formatting and is declared in Listing 10.11.</P>
+<P>
+<H4>Listing 10.11&#160;&#160;The CHARFORMAT Structure, Defined by MFC</H4>
+<PRE>typedef struct _charformat
+{
+    UINT     cbSize;
+    _WPAD    _wPad1;
+    DWORD    dwMask;
+    DWORD    dwEffects;
+    LONG     yHeight;
+    LONG     yOffset;
+    COLORREF crTextColor;
+    BYTE     bCharSet;
+    BYTE     bPitchAndFamily;
+    TCHAR    szFaceName[LF_FACESIZE];
+    _WPAD    _wPad2;
+</PRE>
+<PRE>} CHARFORMAT;
+</PRE>
+<P>In a CHARFORMAT structure, cbSize is the size of the structure. dwMask indicates
+which members of the structure are valid (can be a combination of CFM_BOLD, CFM_CHARSET,
+CFM_COLOR, CFM_FACE, CFM_ITALIC, CFM_OFFSET, CFM_PROTECTED, CFM_SIZE, CFM_STRIKEOUT,
+and CFM_UNDERLINE). dwEffects is the character effects (can be a combination of CFE_AUTOCOLOR,
+CFE_BOLD, CFE_ITALIC, CFE_STRIKEOUT, CFE_UNDERLINE, and CFE_PROTECTED). yHeight is
+the character height, and yOffset is the character baseline offset (for super- and
+subscript characters). crTextColor is the text color. bCharSet is the character set
+value (see the ifCharSet member of the LOGFONT structure). bPitchAndFamily is the
+font pitch and family, and szFaceName is the font name.</P>
+<P>After initializing the CHARFORMAT structure, as needed, to toggle underlining,
+OnULine() calls the control's GetSelectionCharFormat() member function. This function,
+whose single argument is a reference to the CHARFORMAT structure, fills the character
+format structure. OnULine() checks the dwEffects member of the structure to determine
+whether to turn underlining on or off. The bitwise and operator, &amp;, is used to
+test a single bit of the variable.</P>
+<P>Finally, after setting the character format, OnULine() returns the focus to the
+rich edit control. By clicking a button, the user has removed the focus from the
+rich edit control. You don't want to force the user to keep switching back manually
+to the control after every button click, so you do it by calling the control's SetFocus()
+member function.</P>
+<P>Common also enables the user to switch between the three types of paragraph alignment.
+This is accomplished similarly to toggling character formats. Listing 10.12 shows
+the three functions--OnLeft(), OnRight(), and OnCenter()--that handle the alignment
+commands. Add the code for these functions to CommonView.cpp. As you can see, the
+main difference is the use of the PARAFORMAT structure instead of CHARFORMAT and
+the call to SetParaFormat() instead of SetSelectionCharFormat().</P>
+<P>
+<H4>Listing 10.12&#160;&#160;CommonView.cpp--Changing Paragraph Formats</H4>
+<PRE>void CCommonView::OnLeft()
+{
+    PARAFORMAT paraFormat;
+    paraFormat.cbSize = sizeof(PARAFORMAT);
+    paraFormat.dwMask = PFM_ALIGNMENT;
+    paraFormat.wAlignment = PFA_LEFT;
+    m_richEdit.SetParaFormat(paraFormat);
+    m_richEdit.SetFocus();
+}
+void CCommonView::OnCenter()
+{
+    PARAFORMAT paraFormat;
+    paraFormat.cbSize = sizeof(PARAFORMAT);
+    paraFormat.dwMask = PFM_ALIGNMENT;
+    paraFormat.wAlignment = PFA_CENTER;
+    m_richEdit.SetParaFormat(paraFormat);
+    m_richEdit.SetFocus();
+}
+void CCommonView::OnRight()
+{
+    PARAFORMAT paraFormat;
+    paraFormat.cbSize = sizeof(PARAFORMAT);
+    paraFormat.dwMask = PFM_ALIGNMENT;
+    paraFormat.wAlignment = PFA_RIGHT;
+    m_richEdit.SetParaFormat(paraFormat);
+    m_richEdit.SetFocus();
+</PRE>
+<PRE>}
+</PRE>
+<P>After adding all that code, it's time to build and test again. First, click in
+the text box to give it the focus. Then, start typing. Want to try out character
+attributes? Click the ULine button to add underlining to either selected text or
+the next text you type. To try out paragraph formatting, click the Left, Center,
+or Right button to specify paragraph alignment. (Again, if you're using large text,
+adjust the button size if the labels don't fit.) Figure 10.9 shows the rich edit
+control with some different character and paragraph styles used.</P>
+<P><A HREF="javascript:popUp('10uvc10.gif')"><B>FIG. 10.9</B></A><B> </B><I>A rich
+edit control is almost a complete word processor.</I></P>
+
+<P><I></I>
+<H2><A NAME="Heading27"></A>IP Address Control</H2>
+<P>If you're writing an Internet-aware program, you might have already wondered how
+you're going to validate certain kinds of input from your users. One thing you could
+ask for is an IP address, like this one:</P>
+<P>
+<PRE>205.210.40.1
+</PRE>
+<P>IP addresses always have four parts, separated by dots, and each part is always
+a number between 1 and 255. The IP address picker guarantees that the user will give
+you information that meets this format.</P>
+<P>To try it out, add yet another line to OnCreate(), this time a call to CreateIPAddress().
+Add the function to the class. The code is really simple; just add a call to Create():</P>
+<P>
+<PRE>void CCommonView::CreateIPAddress()
+{
+   m_ipaddress.Create(WS_CHILD | WS_VISIBLE | WS_BORDER,
+       CRect(470,40,650,65), this, IDC_IPADDRESS);
+}
+</PRE>
+<P>Remember to add a resource ID for IDC_IPADDRESS. No special styles are related
+to this simple control. There are some useful member functions to get, set, clear,
+or otherwise manipulate the address. Check them out in the online documentation.</P>
+<P>Build and run Common, and try entering numbers or letters into the parts of the
+field. Notice how the control quietly fixes bad values (enter <B>999</B> into one
+part, for example) and how it moves you along from part to part as you enter the
+third digit or type a dot. It's a simple control, but if you need to obtain IP addresses
+from the user, this is the only way to fly.</P>
+<P>
+<H2><A NAME="Heading28"></A>The Date Picker Control</H2>
+<P>How many different applications ask users for dates? It can be annoying to have
+to type a date according to some preset format. Many users prefer to click on a calendar
+to select a day. Others find this very slow and would rather type the date, especially
+if they're merely changing an existing date. The date picker control, in the MFC
+class CDateTimeCtrl, gives your users the best of both worlds.</P>
+<P>Start, as usual, by adding a call to CreateDatePicker() to CCommonView::OnCreate()
+and then adding the function to the class. Add the resource ID for IDC_DATE. Like
+the IP Address control, the date picker needs only to be created. Add this code to
+CommonView.cpp:</P>
+<P>
+<PRE>void CCommonView::CreateDatePicker()
+{
+   m_date.Create(WS_CHILD | WS_VISIBLE | DTS_SHORTDATEFORMAT,
+      CRect(470,120,650,150), this, IDC_DATE);
+}
+</PRE>
+<P>The CDateTimeCtrl class, of which m_date is an object, defines special styles
+to be used with date picker controls. Table 10.6 lists these special styles.</P>
+<P>
+<H4>Table 10.6&#160;&#160;Date Picker Control Styles</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Style</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DTS_APPCANPARSE		</TD>
+		<TD ALIGN="LEFT">Instructs the date control to give more control to your application while the user
+			edits dates.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DTS_LONGDATEFORMAT		</TD>
+		<TD ALIGN="LEFT">After the date is picked, displays it like Monday, May 18, 1998 or whatever your
+			locale has defined for long dates.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DTS_RIGHTALIGN		</TD>
+		<TD ALIGN="LEFT">Aligns the calendar with the right edge of the control (if you don't specify this
+			style, it will align with the left edge).		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DTS_SHOWNONE		</TD>
+		<TD ALIGN="LEFT">A date is optional: A check box indicates that a date has been selected.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DTS_SHORTDATEFORMAT		</TD>
+		<TD ALIGN="LEFT">After the date is picked, displays it like 5/18/98 or whatever your locale has defined
+			for short dates.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DTS_TIMEFORMAT		</TD>
+		<TD ALIGN="LEFT">Displays the time as well as the date.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">DTS_UPDOWN		</TD>
+		<TD ALIGN="LEFT">Uses an up-down control instead of a calendar for picking.		</TD>
+	</TR>
+</TABLE>
+</P>
+<P>There are a number of member functions that you might use to set colors and fonts
+for this control, but the most important function is GetTime(), which gets you the
+date and time entered by the user. It fills in a COleDateTime or CTime object, or
+a SYSTEMTIME structure, which you can access by individual members. Here's the declaration
+of SYSTEMTIME:</P>
+<P>
+<PRE>typedef struct _SYSTEMTIME {
+ WORD wYear; 
+ WORD wMonth;
+ WORD wDayOfWeek;
+ WORD wDay;
+ WORD wHour;
+ WORD wMinute;
+ WORD wSecond;
+ WORD wMilliseconds;
+} SYSTEMTIME;
+</PRE>
+<P>If you want to do anything with this date, you're probably going to find it easier
+to work with as a CTime object. The CTime class is discussed in Appendix F, &quot;Useful
+Classes.&quot;</P>
+<P>For now, you probably just want to see how easy it is to use the control, so build
+and test Common yet again. Click the drop-down box next to the short date, and you
+will see how the date picker got its name. Choose a date and see the short date change.
+Edit the date and then drop the month down again, and you will see that the highlight
+has moved to the day you entered. Notice, also, that today's date is circled on the
+month part of this control.</P>
+<P>This month calendar is a control of its own. One is created by the date picker,
+but you will create another one in the next section.</P>
+<P>
+<H2><A NAME="Heading29"></A>Month Calendar Control</H2>
+<P>The month calendar control used by the date picker is compact and neat. Putting
+one into Common is very simple. Add a call to CreateMonth() to CCommonView::OnCreate()
+and add the function to the class. Add a resource ID for IDC_MONTH, too; then add
+the code for CreateMonth(). Here it is:</P>
+<P>
+<PRE>void CCommonView::CreateMonth()
+{
+   m_month.Create(WS_CHILD | WS_VISIBLE | DTS_SHORTDATEFORMAT,
+      CRect(470,260,650,420), this, IDC_MONTH);
+}
+</PRE>
+<P>You can use many of the DTS_ styles when creating your month calendar control.
+In addition, the CMonthCalCtrl class, of which m_month is an object, defines special
+styles to be used with month calendar controls. Table 10.7 lists these special styles.</P>
+<P>
+<H4>Table 10.7&#160;&#160;Month Calendar Control Styles</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Style</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MCS_DAYSTATE		</TD>
+		<TD ALIGN="LEFT">Instructs the control to send MCN_GETDAYSTATE messages to the application so that
+			special days (such as holidays) can be displayed in bold.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MCS_MULTISELECT		</TD>
+		<TD ALIGN="LEFT">Enables the user to choose a range of dates.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MCS_NOTODAY		</TD>
+		<TD ALIGN="LEFT">Suppresses the Today date at the bottom of the control. The user can display today's
+			date by clicking the word <I>Today</I>.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MCS_NOTODAY_CIRCLE		</TD>
+		<TD ALIGN="LEFT">Suppresses the circling of today's date.		</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MCS_WEEKNUMBERS		</TD>
+		<TD ALIGN="LEFT">Numbers each week in the year from 1 to 52 and displays the numbers at the left of
+			the calendar.		</TD>
+	</TR>
+</TABLE>
+</P>
+<P>A number of member functions enable you to customize the control, setting the
+colors, fonts, and whether weeks start on Sunday or Monday. You will be most interested
+in GetCurSel(), which fills a COleDateTime, CTime, or LPSYSTEMTIME with the currently
+selected date.</P>
+<P>Build and test Common again and really exercise the month control this time. (Make
+the window larger if you can't see the whole control.) Try moving from month to month.
+If you're a long way from today's date, click the Today down at the bottom to return
+quickly. This is a neat control and should quickly replace the various third-party
+calendars that so many developers have been using.</P>
+<P>
+<H2><A NAME="Heading30"></A>Scrolling the View</H2>
+<P>After adding all these controls, you might find that they don't all fit in the
+window. As Figure 10.10 shows, no scrollbars appear, even though CCommonView inherits
+from CScrollView. You need to set the scroll sizes in order for scrolling to work
+properly.</P>
+<P><A HREF="javascript:popUp('10uvc11.gif')"><B>FIG. 10.10</B></A><B> </B><I>The
+view doesn't automatically gain scrollbars as more controls are added.</I></P>
+
+<P>Expand CCommonView and double-click OnInitialUpdate() in ClassView. Edit it so
+that it looks like this:</P>
+<P>
+<PRE>void CCommonView::OnInitialUpdate()
+{
+        CScrollView::OnInitialUpdate();
+        CSize sizeTotal;
+        sizeTotal.cx = 700;
+        sizeTotal.cy = 500;
+        SetScrollSizes(MM_TEXT, sizeTotal);
+}
+</PRE>
+<P>The last control you added, the month calendar, ran from the coordinates (470,
+260) to (650, 420). This code states that the entire document is 700*500 pixels,
+so it leaves a nice white margin between that last control and the edge of the view.
+When the displayed window is less than 700*500, you get scrollbars. When it's larger,
+you don't. The call to SetScrollSizes() takes care of all the work involved in making
+scrollbars, sizing them to represent the proportion of the document that is displayed,
+and dealing with the user's scrollbar clicks. Try it yourself--build Common one more
+time and experiment with resizing it and scrolling around. (The scrollbars weren't
+there before because the OnInitialUpdate() generated by AppWizard stated that the
+app was 100*100 pixels, which wouldn't require scrollbars.)</P>
+<P>So, what's going on? Vertical scrolling is fine, but horizontal scrolling blows
+up your application, right? You can use the techniques described in Appendix D, &quot;Debugging,&quot;
+to find the cause. The problem is in OnHScroll(), which assumed that any horizontal
+scrolling was related to the slider control and acted accordingly. Edit that function
+so that it looks like this:</P>
+<P>
+<PRE>void CCommonView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+{
+    CSliderCtrl* slider = (CSliderCtrl*)pScrollBar;
+   if (slider == &amp;m_trackbar)
+   {
+      int position = slider-&gt;GetPos();
+      char s[10];
+      wsprintf(s, &quot;%d   &quot;, position);
+      CClientDC clientDC(this);
+      clientDC.TextOut(390, 22, s);
+   }
+   
+   CScrollView::OnHScroll(nSBCode, nPos, pScrollBar);
+}
+</PRE>
+<P>Now the slider code is executed only when the scrollbar that was clicked is the
+one kept in m_trackbar. The rest of the time, the work is simply delegated to the
+base class. For the last time, build and test Common--everything should be perfect
+now.</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch09/ch09.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch11/ch11.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+<BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

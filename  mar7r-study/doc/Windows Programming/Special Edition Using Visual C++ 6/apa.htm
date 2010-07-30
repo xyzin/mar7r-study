@@ -1,0 +1,955 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Appendix A -- C++ Review and Object-Oriented Concepts</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch28/ch28.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../apb/apb.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- A -</H1>
+</CENTER>
+<CENTER>
+<H1>C++ Review and Object-Oriented Concepts</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Working with Objects</A>
+	<UL>
+		<LI><A HREF="#Heading2">What Is an Object?</A>
+		<LI><A HREF="#Heading3">Why Use Objects?</A>
+		<LI><A HREF="#Heading4">What Is a Class?</A>
+		<LI><A HREF="#Heading5">Where Are the Functions?</A>
+		<LI><A HREF="#Heading6">How Are Objects Initialized?</A>
+		<LI><A HREF="#Heading7">What Is Overloading?</A>
+	</UL>
+	<LI><A HREF="#Heading8">Reusing Code and Design with Inheritance</A>
+	<UL>
+		<LI><A HREF="#Heading9">What Is Inheritance?</A>
+		<LI><A HREF="#Heading10">What Is Protected Access?</A>
+		<LI><A HREF="#Heading11">What Is Overriding?</A>
+		<LI><A HREF="#Heading12">What Is Polymorphism?</A>
+	</UL>
+	<LI><A HREF="#Heading13">Managing Memory</A>
+	<UL>
+		<LI><A HREF="#Heading14">Allocating and Releasing Memory</A>
+		<LI><A HREF="#Heading15">Pointers as Member Variables</A>
+		<LI><A HREF="#Heading16">Dynamic Objects</A>
+		<LI><A HREF="#Heading17">Destructors and Pointers</A>
+		<LI><A HREF="#Heading18">Running Destructors Accidentally</A>
+		<LI><A HREF="#Heading19">What Else Should I Know?</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Working with Objects</H2>
+<P>C++ is an object-oriented programming language. You can use it to write programs
+that are not object-oriented, like the &quot;Hello World!&quot; example in Chapter
+28, &quot;Future Explorations,&quot; but its real power comes from the way it helps
+you to implement your applications as objects rather than procedures. As a Visual
+C++ programmer, you will make extensive use of MFC, the Microsoft Foundation Classes:
+These are implementations of objects almost every application uses.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>TIP:</STRONG> If you never worked with C++ before you picked up this book,
+	you are likely to need more help than one chapter can provide. As an introduction,
+	consider using any of Jesse Liberty's books on C++: <I>Sams Teach Yourself C++ in
+	24 Hours</I>,<I> Sams Teach Yourself C++ in 21 Days</I>, or <I>Sams Teach Yourself
+	C++ in 21 Days: Complete Compiler Edition</I>. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading2"></A>What Is an Object?</H3>
+<P>An object is a bundle, a clump, a gathering together of items of information that
+belong together, and functions that work on those items of information. For example,
+a BankAccount object might gather up a customer number, account number, and current
+balance--these three pieces of information are required for all bank accounts. Many
+languages provide a way to group related information together into <I>structures</I>
+or <I>records</I> or whatever the language calls the feature. However, where an object
+differs from these is in including functions, or behavior, as well as information.
+Our BankAccount object will have Deposit(), Withdraw(), and GetBalance() functions,
+for example. Figure A.1 shows one way of looking at the design of an object.</P>
+<P><A HREF="javascript:popUp('appafig01.gif')"><B>FIG. A.1</B></A><B> </B><I>Objects
+combine information (variables) and behavior (functions).</I></P>
+<P>
+<H3><A NAME="Heading3"></A>Why Use Objects?</H3>
+<P>There are many advantages to an object-oriented approach to application development,
+but the two most important are maintanability and robustness. That's what you call
+them when you're persuading your manager to switch to C++. In your day-to-day life,
+they mean you can change one thing without breaking anything else, and you don't
+have to count on remembering to always do step B whenever you do step A. Both these
+benefits arise because code from outside our BankAccount object can't directly access
+any information inside the object, only through the functions you've added to the
+object. For example, imagine that some piece of code creates a bank account like
+this:</P>
+<P>
+<PRE>BankAccount account;
+</PRE>
+<P>That code can now deposit or withdraw money or find out the balance in the account,
+like this:</P>
+<P>
+<PRE>account.Deposit(100.00);
+account.Withdraw(50.00);
+float newbalance = account.GetBalance();
+</PRE>
+<P>That code cannot work on the balance directly, like this:</P>
+<P>
+<PRE>account.balance = 100.00;
+account.balance -= 50.00;
+float newbalance = account.balance;
+</PRE>
+<P>This information hiding doesn't seek to protect the numeric value of the account
+balance--the three lines of code that work are obviously using and affecting that
+value. Instead, information hiding protects design decisions made by the programmer,
+and it leaves you free to change them later.</P>
+<P>As an example, say you decide to use a floating point number to represent the
+account balance, the number of dollars in the account. Later, you change your mind,
+deciding that using an integer that represents the number of pennies in the account
+would be faster, or more accurate, or less of a burden on available memory. Of course,
+you will have to change the code for Deposit() and Withdraw(), which will still take
+floating point arguments, to convert from dollars to pennies. After you do that,
+all the code that other people wrote that called those functions will work perfectly:
+They'll never know you changed anything. If you're the one writing the whole project,
+you'll know that you have no work to do other than the changes within your BankAccount
+object. If other code could talk to balance directly, as in the second set of three
+lines, you'd have to find every place in the whole application that does so and change
+it to convert from dollars to pennies or from pennies to dollars. What a nightmare!</P>
+<P>What if you never make such a fundamental change as that? After all, it's rare
+to change the type of a variable partway through the project. Well then, imagine
+a change in the business rules governing withdrawals. When the project started, you
+were told that accounts couldn't be overdrawn, so you wrote code for the Withdraw()
+function that looked like this:</P>
+<P>
+<PRE>balance -= amounttowithdraw;
+if (balance &lt; 0)
+    balance += amounttowithdraw; //reverse transaction
+</PRE>
+<P>Then, just as the application was almost complete, you were told that, in fact,
+many accounts have overdraft protection and you should have written the following:</P>
+<P>
+<PRE>balance -= amounttowithdraw;
+if (balance &lt; -overdraftlimit)
+    balance += amounttowithdraw; //reverse transaction
+</PRE>
+<P>If all withdrawals go through the Withdraw() function, your life is easy: Make
+one change in the function, and everything's taken care of. If lots of other places
+in the code were processing withdrawals themselves, by just lowering the value of
+balance, you would have to find all those places and fix the overdraft check in each
+place. If you missed one, your program would have a strange and subtle bug that missed
+overdrafts in some situations and caught them in others. The object-oriented way
+is much safer.</P>
+<P>
+<H3><A NAME="Heading4"></A>What Is a Class?</H3>
+<P>In any bank, there are many bank accounts: yours, mine, and thousands of others.
+They all have fundamental things in common: They have a balance and a customer, and
+certain kinds of transactions are allowed with them. In a banking application, you
+will have perhaps thousands of bank account objects, and each will be an instance
+of the BankAccount class.</P>
+<P>When you define a class, you define what it means to be a BankAccount (or a Truck,
+or an Employee, or whatever). You list the information that is kept by objects of
+this class in the form of member variables, and the things objects of this class
+can do, in the form of member functions. Also, you make it clear which parts of the
+class you want to protect with information hiding. Listing A.1 shows a declaration
+for the class BankAccount.</P>
+<P>
+<H4>Listing A.1&#160;&#160;Declaring the BankAccount Class</H4>
+<PRE>class BankAccount
+{
+   private:
+      float balance;
+      char[8] customer_id;
+      char[8] account_num;
+   public:
+    float GetBalance();
+    void Withdraw(float amounttowithdraw);
+    void Deposit(float amounttodeposit);
+</PRE>
+<PRE>};
+</PRE>
+<P>The keyword private before the three variables directs the compiler not to compile
+code that accesses these variables, unless that code is within a member function
+of BankAccount. The keyword public before the three functions tells the compiler
+any code at all can call them. This is a typical arrangement for a well-designed
+object-oriented program: All the variables are private, and all the functions are
+public.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>TIP:</STRONG> Occasionally, you might write a function for an object that
+	is used to perform some repetitive task. It's not always appropriate for other objects
+	to use that function to direct your object to perform that task. In this case, you
+	can make the function private. Many developers make variables public to save the
+	bother of writing public functions to access the variable. There's rarely a good
+	reason to do this; it's just laziness. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Now if certain code declares two bank accounts, mine and yours, each will have
+its own balance, customer_id, and account_num variables. Depositing money into my
+bank account will not affect your balance. Listing A.2 shows some code that creates
+bank accounts and then exercises their functions.</P>
+<P>
+<H4>Listing A.2&#160;&#160;Using BankAccount Objects</H4>
+<PRE>BankAccount mine, yours;
+mine.Deposit(1000);
+yours.Deposit(100);
+mine.Withdraw(500);
+float mybalance = mine.GetBalance();
+</PRE>
+<PRE>float yourbalance = yours.GetBalance();
+</PRE>
+<H3><A NAME="Heading5"></A>Where Are the Functions?</H3>
+<P>The three member functions--Deposit(), Withdraw(), and GetBalance()--must be written,
+and their code must be compiled. You can put the code for these functions in two
+places: inside the class declaration (called <I>inline</I> <I>code</I>) or outside
+the class declaration, usually in a separate file. Only very short and simple functions
+should have inline code because long functions here make the class declaration hard
+to read. If all three functions in this sample class had inline code, the class declaration
+would be as shown in Listing A.3.</P>
+<P>
+<H4>Listing A.3&#160;&#160;BankAccount with Inline Code</H4>
+<PRE>class BankAccount
+{
+   private:
+      float balance;
+      char[8] customer_id;
+      char[8] account_num;
+   public:
+    float GetBalance() { return balance;}
+    void Withdraw(float amounttowithdraw)
+       {
+        balance -= amounttowithdraw;
+        if (balance &lt; 0)
+           balance += amounttowithdraw; //reverse transaction
+       }
+    void Deposit(float amounttodeposit) {balance += amounttodeposit;}
+</PRE>
+<PRE>};
+</PRE>
+<P>Notice that the semicolon after the function names in Listing A.1 has been replaced
+by the function body, surrounded by braces. The Withdraw() function is a little too
+long to include in the class declaration like this and would be better placed outside
+the class. Because all functions in an object-oriented program belong to a class,
+when you provide the code, you must indicate the name of the class to which the function
+belongs. Listing A.4 shows the code for Withdraw() as it might appear outside the
+class declaration. The two colons (::) between the classname and the function name
+are called the <I>scope resolution operator</I>.</P>
+<P>
+<H4>Listing A.4&#160;&#160;BankAccount's Withdraw() Function</H4>
+<PRE>void BankAccount::Withdraw(float amounttowithdraw)
+       {
+        balance -= amounttowithdraw;
+        if (balance &lt; 0)
+           balance += amounttowithdraw; //reverse transaction
+</PRE>
+<PRE>       }
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>NOTE:</STRONG> Usually, the class declaration is placed in a file of its
+	own with a name such as BankAccount.h so that it can be used by all the other code
+	that makes BankAccount objects or calls BankAccount functions. This file is generally
+	referred to as the <I>header</I> <I>file</I>. Typically, the rest of the code is
+	placed in another file with a name such as BankAccount.cpp, referred to as the <I>implementation</I>
+	<I>file</I>.&#160;n 
+<HR>
+<BR>
+	
+<HR>
+<B>Inline Functions</B></P>
+	<P>It's easy to confuse inline code, such as that in Listing A.3, with inline functions.
+	The compiler can choose to make any function an inline function, which provides tremendous
+	performance improvements for small functions. Because it can harm performance for
+	long functions, generally the compiler, not the programmer, makes the decision about
+	inlining. When you provide inline code, you are suggesting to the compiler that the
+	function be inlined. Another way to make this suggestion is to use the keyword inline
+	with the code outside the class declaration, like this:</P>
+	<PRE>inline void BankAccount::Withdraw(float amounttowithdraw)
+{
+balance -= amounttowithdraw;
+if (balance &lt; 0)
+balance += amounttowithdraw; //reverse transaction
+}</PRE>
+	<P>If this function will be called from other objects, don't inline it like this
+	in the .cpp file. Leave it in the header file or make a separate file for inline
+	functions, an .inl file, and #include it into each file that calls the member functions.
+	That way the compiler will be able to find the code.</P>
+	<P>The compiler might not inline a function, even though it has inline code (in the
+	class declaration) or you use the inline keyword. If you know what you're doing,
+	the __forceinline keyword introduced in Visual C++ 6 enables you to insist that a
+	function be inlined. (Notice that this keyword, like all nonstandard compiler keywords,
+	starts with two underscores.) Because this can cause code bloat and slow your application,
+	use this feature only when you have an almost complete application and are looking
+	for performance improvements. This is a Visual C++-only keyword that won't work with
+	other compilers. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Perhaps you've already seen one of the other advantages of C++. Functions generally
+require much fewer parameters. In another language, you might pass the account number
+into each of these three functions to make it clear which balance you want to know
+about or change. Perhaps you would pass the balance itself into a Withdraw() function
+that checks the business rules and then approves or denies the withdrawal. However,
+because these BankAccount functions are member functions, they have all the member
+variables of the object to work with and don't require them as parameters. That makes
+all your code simpler to read and maintain.</P>
+<P>
+<H3><A NAME="Heading6"></A>How Are Objects Initialized?</H3>
+<P>In C, you can just declare a variable, like this:</P>
+<P>
+<PRE>int i;
+</PRE>
+<P>If you prefer, you can declare it and initialize it at the same time, like this:</P>
+<P>
+<PRE>int i = 3;
+</PRE>
+<P>A valid bank account needs values for its customer_id and account_num member variables.
+You can probably start with a balance of 0, but what sensible defaults can you use
+for the other two? More importantly, where would you put the code that assigns these
+values to the variables? In C++, every object has an initializer function called
+a <I>constructor</I>, and it handles this work. A constructor is different from ordinary
+member functions in two ways: Its name is the name of the class, and it doesn't have
+a return type, not even void. Perhaps you might write a constructor like the one
+in Listing A.5 for the BankAccount class.</P>
+<P>
+<H4>Listing A.5&#160;&#160;BankAccount Constructor</H4>
+<PRE>BankAccount::BankAccount(char* customer, char* account, float startbalance)
+       {
+        strcpy(customer_id, customer);
+        strcpy(account_num, account);
+        balance = startbalance;
+</PRE>
+<PRE>       }
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>TIP:</STRONG> strcpy() is a function from the C runtime library, available
+	to all C and C++ programs, that copies strings. The code in Listing A.5 copies the
+	strings that were passed to the constructor into the member variables. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>After writing the BankAccount constructor, you would add its declaration to the
+class by adding this line to the class declaration:</P>
+<P>
+<PRE>BankAccount(char* customer, char* account, float startbalance);
+</PRE>
+<P>Notice that there is no return type. You don't need the class name and scope resolution
+operator because you are in the class definition, and the semicolon at the end of
+the line indicates that the code is outside the class declaration.</P>
+<P>Now, when you declare a BankAccount object, you can initialize by providing constructor
+parameters, like this:</P>
+<P>
+<PRE>BankAccount account(&quot;AB123456&quot;,&quot;11038-30&quot;,100.00);
+</PRE>
+<H3><A NAME="Heading7"></A>What Is Overloading?</H3>
+<P>Imagine the banking application you are writing also deals with credit cards and
+that there is a CreditCard class. You might want a GetBalance() function in that
+class, too. In C, functions weren't associated with classes. They were all global,
+and you couldn't have two functions with the same name. In C++ you can. Imagine that
+you write some code like this:</P>
+<P>
+<PRE>BankAccount account(&quot;AB123456&quot;,&quot;11038-30&quot;,100.00);
+float accountbalance = account.GetBalance();
+CreditCard card(&quot;AB123456&quot;, &quot;4500 000 000 000&quot;, 1000.00);
+card.GetBalance();
+</PRE>
+<P>Most developers can see that the second line will call the BankAccount GetBalance()
+function, whose full name is BankAccount::GetBalance(), and the fourth line will
+call CreditCard::GetBalance(). In a sense, these functions don't have the same name.
+This is one example of overloading, and it's a really nice thing for developers because
+it lets you use a simple and intuitive name for all your functions, instead of one
+called GetBankAccountBalance() and another called GetCreditCardBalance().</P>
+<P>There's another, even nicer situation in which you might want two functions with
+the same name, and that's within a single class. Take, for example, that BankAccount
+constructor you saw a little earlier in this chapter. It might be annoying to pass
+in a zero balance all the time. What if you could have two constructors, one that
+takes the customer identifier, account number, and starting balance and another that
+takes only the customer and account identifiers? You might add them to the class
+declaration like this:</P>
+<P>
+<PRE>BankAccount(char* customer, char* account, float startbalance);
+BankAccount(char* customer, char* account);
+</PRE>
+<P>As Listing A.6 shows, the code for these functions would be very similar. You
+might feel that you need different names for them, but you don't. The compiler tells
+them apart by their <I>signature</I>: the combination of their full names and all
+the parameter types that they take. This isn't unique to constructors: All functions
+can be overloaded as long as at least one aspect of the signature is different for
+the two functions that have the same name.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>TIP:</STRONG> Two functions in the same class, with the same name, must differ
+	in the type or number of parameters. If they differ only in the return type, that
+	is not a valid overload. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H4>Listing A.6&#160;&#160;Two BankAccount Constructors</H4>
+<PRE>BankAccount::BankAccount(char* customer, char* account, float startbalance)
+       {
+        strcpy(customer_id, customer);
+        strcpy(account_num, account);
+        balance = startbalance;
+       }
+BankAccount::BankAccount(char* customer, char* account)
+       {
+        strcpy(customer_id, customer);
+        strcpy(account_num, account);
+        balance = 0;
+</PRE>
+<PRE>       }
+</PRE>
+<H2><A NAME="Heading8"></A>Reusing Code and Design with Inheritance</H2>
+<P>Maintainability and robustness, thanks to information hiding, are two of the features
+that inspire people to switch to object-oriented programming. Another is reuse. You
+can reuse other people's objects, calling their public functions and ignoring their
+design decisions, by simply making an object that is an instance of the class and
+calling the functions. The hundreds of classes that make up MFC are a good example.
+C++ enables another form of reuse as well, called <I>inheritance</I>.</P>
+<P>
+<H3><A NAME="Heading9"></A>What Is Inheritance?</H3>
+<P>To stick with the banking example, imagine that after you have BankAccount implemented,
+tested, and working perfectly, you decide to add checking and savings accounts to
+your system. You would like to reuse the code you have already written for BankAccount,
+not just copy it into each of these new classes. To see whether you should reuse
+by making an object and calling its functions or reuse by inheriting, you try saying
+these sample sentences:</P>
+<P>A checking account IS a bank account.</P>
+<P>A checking account HAS a bank account part.</P>
+<P>A savings account IS a bank account.</P>
+<P>A savings account HAS a bank account part.</P>
+<P>Most people agree that the IS sentences sound better. In contrast, which of the
+following would you choose?</P>
+<P>A car IS an engine (with some seats and wheels)</P>
+<P>A car HAS an engine (and some seats and wheels)</P>
+<P>If the IS sentences don't sound silly, inheritance is the way to implement your
+design. Listing A.7 contains possible class declarations for the two new classes.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>TIP:</STRONG> The class reusing code in this way is called a <I>derived</I>
+	class or sometimes a <I>subclass</I>. The class providing the code is called the
+	<I>base</I> class or sometimes the <I>superclass</I>. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H4>Listing A.7&#160;&#160;CheckingAccount and SavingsAccount</H4>
+<PRE>class SavingsAccount: public BankAccount
+{
+   private:
+      float interestrate;
+   public:
+    SavingsAccount(char* customer, char* account, 
+                   float startbalance, float interest);
+    void CreditInterest(int days);
+};
+class CheckingAccount: public BankAccount
+{
+   public:
+    Checking(char* customer, char* account, float startbalance);
+    void PrintStatement(int month);
+</PRE>
+<PRE>};
+</PRE>
+<P>Now, if someone makes a CheckingAccount object, he can call functions that CheckingAccount
+inherited from BankAccount or functions that were written specially for CheckingAcount.
+Here's an example:</P>
+<P>
+<PRE>CheckingAccount ca(&quot;AB123456&quot;,&quot;11038-30&quot;,100.00); 
+ca.Deposit(100);
+ca.PrintStatement(5);
+</PRE>
+<P>What's terrific about this is what happens when someone changes the business rules.
+Perhaps management notices that there are no service charges in this system and instructs
+you to add them. You will charge 10 cents for each deposit and withdrawal, and subtract
+the service charges on instruction from some monthly maintenance code that another
+developer is writing. You open up BankAccount.h and add a private member variable
+called servicecharges. You set this to zero in the constructor and increase it by
+0.1 in both Deposit() and Withdraw(). Then you add a public function called ApplyServiceCharges()
+that reduces the balance and resets the charges to zero.</P>
+<P>At this point in most other languages, you'd have to repeat all this for CheckingAccount
+and SavingsAccount. Not in C++! You have to add a line to the constructors for these
+classes, but you don't change anything else. You can reuse your changes as easily
+as you reused your BankAccount class in the first place.</P>
+<P>
+<H3><A NAME="Heading10"></A>What Is Protected Access?</H3>
+<P>Without writing all of CheckingAccount::PrintStatement(), you can assume it will
+need to know the balance of the account. To spare any hard-to-read code that would
+put that number onscreen, consider this line of code:</P>
+<P>
+<PRE>float bal = balance;
+</PRE>
+<P>This line, inside CheckingAccount::PrintStatement(), will not compile. balance
+is a private member variable, and no code can access it, other than code in BankAccount
+member functions. Though this probably seems outrageous, it's actually very useful.
+Remember the possible design decision that would change the type of balance from
+float to int? How would the BankAccount programmer know all the classes out there
+that inherited from BankAccount and rely on the type of the balance member variable?
+It's much simpler to prevent access by any other code. After all, CheckingAccount::PrintStatement()
+can use a public function, GetBalance(), to achieve the desired result.</P>
+<P>If you want to grant code in derived classes direct access to a member variable,
+and you're confident that you will never need to find all these classes to repeat
+some change in all of them, you can make the variable protected rather than private.
+The class declaration for BankAccount would start like this:</P>
+<P>
+<PRE>class BankAccount
+{
+   protected:
+      float balance;
+   private:
+      char[8] customer_id;
+      char[8] account_num;
+   // ...
+};
+</PRE>
+<H3><A NAME="Heading11"></A>What Is Overriding?</H3>
+<P>At times, your class will inherit from a base class that already provides a function
+you need, but the code for that function isn't quite what you want. For example,
+BankAccount might have a Display() function that writes onscreen the values of the
+three member variables: customer_id, account_num, and balance. Other code could create
+BankAccount, CheckingAccount, or SavingsAccount objects and display them by calling
+this function. No problem. Well, there is one little problem: All SavingsAccount
+objects have an interestrate variable as well, and it would be nice if the Display()
+function showed its value, too. You can write your own code for SavingsAccount::Display().
+This is called an <I>override</I> of the function from the base class.</P>
+<P>You want SavingsAccount::Display() to do everything that BankAccount::Display()
+does and then do the extra things unique to savings accounts. The best way to achieve
+this is to call BankAccount::Display() (that's its full name) from within SavingsAccount::Display().
+Besides saving you time typing or copying and pasting, you won't have to recopy later
+if someone changes the base class Display().</P>
+<P>
+<H3><A NAME="Heading12"></A>What Is Polymorphism?</H3>
+<P>Polymorphism is a tremendously useful feature of C++, but it doesn't sneak up
+on you. You can use it only if you are using inheritance and pointers, and then only
+if the base class in your inheritance hierarchy deliberately activates it. Consider
+the code in Listing A.8.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>TIP:</STRONG> If you haven't worked with pointers before, you may find the
+	&amp;, *, and -&gt; operators used in this code example confusing. &amp; means <I>address
+	of</I> and obtains a pointer from a variable. * means <I>contents of</I> and uses
+	a pointer to access the variable it points to. -&gt; is used when the pointer has
+	the address of an object rather than an integer, float, or other fundamental type.
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H4>Listing A.8&#160;&#160;Inheritance and Pointers</H4>
+<PRE>BankAccount ba(&quot;AB123456&quot;,&quot;11038-30&quot;,100.00);
+CheckingAccount ca(&quot;AB123456&quot;,&quot;11038-32&quot;,200.00);
+SavingsAccount sa(&quot;AB123456&quot;,&quot;11038-39&quot;,1000.00, 0.03);
+BankAccount* pb = &amp;ba;
+CheckingAccount* pc = &amp;ca;
+SavingsAccount* ps = &amp;sa;
+pb-&gt;Display();
+pc-&gt;Display();
+ps-&gt;Display();
+BankAccount* pc2 = &amp;ca;
+BankAccount* ps2 = &amp;sa;
+pc2-&gt;Display();
+ps2-&gt;Display();
+</PRE>
+<PRE>};
+</PRE>
+<P>In this example, there are three objects and five pointers. pb, pc, and ps are
+straightforward, but pc2 and ps2 represent what is often called an <I>upcast</I>:
+A pointer that points to a derived class object is being carried around as a pointer
+to a base class object. Although there doesn't seem to be any use at all in doing
+such a thing in this code example, it would be very useful to be able to make an
+array of BankAccount pointers and then pass it to a function that wouldn't have to
+know that SavingsAccount or CheckingAccount objects even existed. You will see an
+example of that in a moment, but first you need to be clear about what's happening
+in Listing A.8.</P>
+<P>The call to pb-&gt;Display() will execute the BankAccount::Display() function,
+not surprisingly. The call to pc-&gt;Display() would execute CheckingAccount::Display()
+if you had written one, but because CheckingAccount only inherits the base class
+code, this call will be to BankAccount::Display(), also. The call to ps-&gt;Display()
+will execute the override, SavingsAccount::Display(). This is exactly the behavior
+you want. Each account will be displayed completely and properly.</P>
+<P>Things aren't as simple when it comes to pc2 and ps2, however. These pointers,
+though they point to a CheckingAccount object and a SavingsAccount object, are declared
+to be of type pointer-to-BankAccount. Each of the display calls will execute the
+BankAccount::Display() function, which is not what you want at all. To achieve the
+desired behavior, you must include the keyword virtual in your declaration of BankAccount::Display().
+(The keyword must appear in the base class declaration of the function.) When you
+do so, you are asking for polymorphism, asking that the same line of code sometimes
+do quite different things. To see how this can happen, consider a function such as
+this one:</P>
+<P>
+<PRE>void SomeClass::DisplayAccounts(BankAccount* a[], int numaccounts)
+{
+   for (int i = 0; i &lt; numaccounts; i++)
+   {
+       a[i]-&gt;Display();
+   }
+}
+</PRE>
+<P>This function takes an array of BankAccount pointers, goes through the array,
+and displays each account. If, for example, the first pointer is pointing to a CheckingAccount
+object, BankAccount::Display() will be executed. If the second pointer is pointing
+to a SavingsAccount object, and Display() is virtual, SavingsAccount::Display() will
+be executed. You can't tell by looking at the code which lines will be executed,
+and that's polymorphism.</P>
+<P>It's a tremendously useful feature. Without it, you'd have to write switch statements
+that decide which function to call, and every time you add another kind of BankAccount,
+you'd have to find those switch statements and change them. With it, you can add
+as many new kinds of BankAccount classes as you want, and you never have to change
+SomeClass::DisplayAccounts() to accommodate that.</P>
+<P>
+<H2><A NAME="Heading13"></A>Managing Memory</H2>
+<P>When you declare an object in a block of code, it lasts only until the last line
+of code in the block has been executed. Then the object goes out of scope, and its
+memory is reclaimed. If you want some cleanup task taken care of, you write a <I>destructor
+</I>(the opposite of a constructor) for the object, and the system will call the
+destructor before reclaiming the memory.</P>
+<P>Often you want to create an object that will continue to exist past the lifetime
+of the function that created it. You must, of course, keep a pointer to the object
+somewhere. A very common situation is to have the pointer as a member variable of
+a class: The constructor for the class allocates the memory, and the destructor releases
+it.</P>
+<P>
+<H3><A NAME="Heading14"></A>Allocating and Releasing Memory</H3>
+<P>In C, you allocate memory like this with the malloc() function. For example, to
+allocate enough memory for a single integer, you would write</P>
+<P>
+<PRE>int *pi = (int *) malloc ( sizeof(int) );
+</PRE>
+<P>However, when you allocate memory for an object, you want the constructor to run.
+malloc(), written long before C++ was developed, can't call constructors. Therefore,
+you use an operator called new to allocate and initialize the memory, like this:</P>
+<P>
+<PRE>BankAccount* pb = new BankAccount(&quot;AB123456&quot;,&quot;11038-30&quot;,100.00);
+</PRE>
+<P>The parameters after the classname are passed along to the constructor, as they
+were when you allocated a BankAccount within a block. Not only does new call the
+constructor, but you also don't have to calculate the number of bytes you need with
+sizeof, and you don't have to cast the pointer you receive back. This is a handy
+operator.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>TIP:</STRONG> The place where this memory is allocated is technically called
+	the<I> free store</I>. Many C++ developers call it the<I> heap</I>. On the other
+	hand, variables allocated within a block are said to be <I>on the stack</I>. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>When you're finished with the object you allocated with new, you use the delete
+operator to get rid of it, like this:</P>
+<P>
+<PRE>delete pb;
+</PRE>
+<P>delete will call the destructor and then reclaim the memory. The older C function,
+free(), must never be used to release memory that was allocated with new. If you
+allocate some other memory (say, a dynamic array of integers) with malloc(), you
+must release it with free() rather than delete. Many developers find it simpler to
+leave free() and malloc() behind forever and use new and delete exclusively.</P>
+<P>new can be used for array allocation, like this:</P>
+<P>
+<PRE>int * numbers = new int[100];
+</PRE>
+<P>When you are finished with memory that was allocated like this, always use the
+array form of delete to release it:</P>
+<P>
+<PRE>delete[] numbers;
+</PRE>
+<H3><A NAME="Heading15"></A>Pointers as Member Variables</H3>
+<P>It's common to use pointers within objects. Consider the BankAccount class that's
+been the example throughout this chapter. Why should it carry around a character
+string representing a customer identifier? Wouldn't it be better to carry around
+a pointer to an object that is an instance of the class Customer? This is easy to
+do. Remove the private customer_id variable and add a Customer pointer to the class
+declaration, like this:</P>
+<P>
+<PRE>Customer* pCustomer;
+</PRE>
+<P>You would have to write code in the constructor that finds the right Customer
+object using only the customer identifer passed to the constructor, and you would
+probably add two new constructors that take Customer pointers. You can't take away
+a public function after you've written it, because someone might be relying on it.
+If you are sure no one is, you could remove it.</P>
+<P>Now a BankAccount can do all sorts of useful things by delegating to the Customer
+object it is associated with. Need to print the customer's name and address at the
+top of the statement? No problem, have the Customer object do it:</P>
+<P>
+<PRE>pCustomer-&gt;PrintNameandAddress();
+</PRE>
+<P>This is a terrific way to reuse all the work that went into formatting the name
+and address in the Customer class. It also completely isolates you from changes in
+that format later.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>TIP:</STRONG> This kind of reuse is generally called <I>aggregation</I> or
+	<I>containment</I> and is contrasted with inheritance. It corresponds to the HAS
+	sentences presented in the inheritance section. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading16"></A>Dynamic Objects</H3>
+<P>A BankAccount is always associated with exactly one Customer object. However,
+there are other things about a BankAccount that might or might not exist. Perhaps
+an account is associated with a CreditCard, and if so, possible overdrafts are covered
+from that card.</P>
+<P>To implement this in code, you would add another private member variable to the
+BankAccount class:</P>
+<P>
+<PRE>CreditCard *pCard;
+</PRE>
+<P>All the constructors written so far would set this pointer to NULL to indicate
+that it doesn't point to a valid CreditCard:</P>
+<P>
+<PRE>pCard = NULL;
+</PRE>
+<P>You could then add a public function such as AddCreditCard() that would set the
+pointer. The code could be inline, like this:</P>
+<P>
+<PRE>void AddCreditCard(CreditCard* card) {pCard = card;}
+</PRE>
+<P>The new code for Withdraw() would probably look like this:</P>
+<P>
+<PRE>void BankAccount::Withdraw(float amounttowithdraw)
+ {
+     balance -= amounttowithdraw;
+     if (balance &lt; 0)
+        {
+           if (pCard)
+           {
+              int hundreds = - (int) (balance / 100); 
+              hundreds++;
+              pCard-&gt;CashAdvance(hundreds * 100);
+              balance += hundreds * 100;
+           }
+           else
+              balance += amounttowithdraw; //reverse transaction
+      }
+ }
+</PRE>
+<P>This rounds the overdraft (not the withdrawal) to the nearest hundred and obtains
+that amount from the credit card. If this account has no associated card, it reverses
+the transaction, as before.</P>
+<P>
+<H3><A NAME="Heading17"></A>Destructors and Pointers</H3>
+<P>When a BankAccount object is thrown away, the Customer or CreditCard objects to
+which it might have had pointers continue to exist. That means BankAccount doesn't
+need a destructor at the moment. Many times, objects with pointers as member variables
+do need destructors.</P>
+<P>Consider the situation of ordering new checks. When the checks arrive, the charge
+is taken out of the account. Perhaps you will make a CheckOrder object to gather
+up the information and will add a function to CheckingAccount to make one of these.
+Without taking this example too far afield by trying to design CheckOrder, the OrderChecks()
+function might look like this:</P>
+<P>
+<PRE>CheckingAccount::OrderChecks()
+{
+   pOrder = new CheckOrder( /* whatever parameters the constructor takes */);
+}   
+</PRE>
+<P>You would add pOrder as a private member variable of CheckingAccount:</P>
+<P>
+<PRE>   CheckOrder* pOrder; 
+</PRE>
+<P>In the constructor for CheckingAccount, you would set pOrder to NULL because a
+brand new account doesn't have an outstanding check order.</P>
+<P>When the checks arrive, whatever outside code called OrderChecks() could call
+ChecksArrive(), which would look like this:</P>
+<P>
+<PRE>CheckingAccount::ChecksArrive()
+{
+    balance -= pOrder.GetCharge();
+    delete pOrder;
+    pOrder = NULL;
+}   
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>NOTE:</STRONG> This function will be able to access balance directly like
+	this only if balance was protected in BankAccount rather than private, as discussed
+	earlier.&#160;n 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The delete operator will clean up the order object by running its destructor and
+then reclaim the memory. You set the pointer to NULL afterwards to make sure that
+no other code tries to use the pointer, which no longer points to a valid CheckOrder
+object.</P>
+<P>What if a CheckingAccount is closed while an order is outstanding? If you throw
+away the pointer, the memory occupied by the CheckOrder object will never be reclaimed.
+You will have to write a destructor for CheckingAccount that cleans this up. Remember
+that constructors always have the same name as the class. Destructor names are always
+a tilde (~) followed by the name of the class. CheckingAccount::~CheckingAccount()
+would look like this:</P>
+<P>
+<PRE>CheckingAccount::~CheckingAccount()
+{
+    delete pOrder;
+}   
+</PRE>
+<H3><A NAME="Heading18"></A>Running Destructors Accidentally</H3>
+<P>When a class has a destructor that does something destructive, you have to be
+very careful to make sure that it isn't unexpectedly called and causes you trouble.
+Look at the code in Listing A.9. It makes a CheckingAccount object, orders checks,
+passes the object to some function or another, and then tells the account that the
+checks have arrived.</P>
+<P>
+<H4>Listing A.9&#160;&#160;Accidental Destruction</H4>
+<PRE>CheckingAccount ca(&quot;AB123456&quot;,&quot;11038-32&quot;,200.00);
+ca.OrderChecks();
+SomeFunction(ca);
+</PRE>
+<PRE>ca.ChecksArrive();
+</PRE>
+<P>This looks harmless enough. However, when you pass the CheckingAccount object
+to SomeFunction(), the system makes a copy of it to give to the function. This copy
+is identical to ca: It has a pointer in it that points to the same CheckOrder as
+ca. When the call to SomeFunction() returns, the copy is no longer needed, so the
+system runs the destructor and reclaims the memory. Unfortunately, the destructor
+for the temporary CheckingAccount object will delete its CheckOrder, which is also
+ca's CheckOrder. The call to ChecksArrive() can't work because the CheckOrder object
+is gone.</P>
+<P>There are two ways to deal with this problem. The first is to change SomeFunction()
+so that it takes a pointer to a CheckingAccount or a reference to a CheckingAccount.
+The second is to write a function called a <I>copy</I> <I>constructor</I> that controls
+the way the temporary CheckingAccount is made. References and copy constructors are
+beyond the scope of this chapter. If the function takes a pointer, no copy is made,
+and there can be no accidental destruction.</P>
+<P>
+<H3><A NAME="Heading19"></A>What Else Should I Know?</H3>
+<P>If you bought a book solely on C++ or attended a week-long introductory course,
+you would learn a number of other C++ features, including the following:</P>
+
+<UL>
+	<LI>Default parameter values
+	<P>
+	<LI>Constructor initializer line
+	<P>
+	<LI>The const keyword
+	<P>
+	<LI>Passing parameters by reference
+	<P>
+	<LI>Returning values by reference
+	<P>
+	<LI>Static member variables and static member functions
+	<P>
+	<LI>Copy constructors
+	<P>
+	<LI>Operator overloading
+</UL>
+
+<P>Two topics not always covered in introductory material are exceptions and templates.
+These are discussed in Chapter 26, &quot;Exceptions and Templates.&quot;</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch28/ch28.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../apb/apb.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

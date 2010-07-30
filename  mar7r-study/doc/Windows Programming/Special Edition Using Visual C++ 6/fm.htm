@@ -1,0 +1,405 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ figDoc.write(zhtm);
+ figDoc.close();
+ popUpWin.focus();
+ }
+
+//-->
+
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Introduction</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"></H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch01/ch01.htm"><IMG SRC="../button/next.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Next chapter" BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif"
+WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1></H1>
+</CENTER>
+<H1></H1>
+<CENTER>
+<H1>Introduction<A HREF="#HeadingA"></A></H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#HeadingA">About the Author</A>
+	<LI><A HREF="#HeadingB">Dedication</A>
+	<LI><A HREF="#HeadingC">Acknowledgments</A>
+	<LI><A HREF="#Heading1">Who Should Read This Book?</A>
+	<LI><A HREF="#Heading2">Before You Start Reading</A>
+	<LI><A HREF="#Heading3">What This Book Covers</A>
+	<UL>
+		<LI><A HREF="#Heading4">Dialogs and Controls</A>
+		<LI><A HREF="#Heading5">Messages and Commands</A>
+		<LI><A HREF="#Heading6">The View/Document Paradigm</A>
+		<LI><A HREF="#Heading7">Drawing Onscreen</A>
+		<LI><A HREF="#Heading8">Printing on Paper</A>
+		<LI><A HREF="#Heading9">Persistence and File I/O</A>
+		<LI><A HREF="#Heading10">ActiveX Programming</A>
+		<LI><A HREF="#Heading11">The Internet</A>
+		<LI><A HREF="#Heading12">Database Access</A>
+		<LI><A HREF="#Heading13">Advanced Material</A>
+	</UL>
+	<LI><A HREF="#Heading14">Conventions Used in This Book</A>
+	<LI><A HREF="#Heading15">Time to Get Started</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<H2><A NAME="HeadingA"></A>About the Author</H2>
+<P><B>Kate Gregory</B> is a founding partner of Gregory Consulting Limited (<B>www.gregcons.com</B>),
+which has been providing consulting and development services throughout North America
+since 1986. Her experience with C++ stretches back to before Visual C++ existed--she
+enthusiastically converted upon seeing the first release. Gregory Consulting develops
+software and Web sites and specializes in combining software development with Web
+site development to create active sites. They build quality custom and off-the-shelf
+software components for Web pages and other applications.</P>
+<P>
+<H2><A NAME="HeadingB"></A>Dedication</H2>
+<P><I>To my children, Beth and Kevin, who keep me connected to the world away from
+the keyboard, and remind me every day how good it feels to learn new things.</I></P>
+<P>
+<H2><A NAME="HeadingC"></A>Acknowledgments</H2>
+<P>Writng a book is hard, hard work. What makes it possible is the support I get
+from those around me. First, as always, my family, Brian, Beth, and Kevin, who know
+it's only temporary. Brian does double duty as both supportive husband and world's
+best technical editor. This time around I was lucky enough to have Bryan Oliver helping,
+shooting figures, testing code, finding bugs, and generally pitching in. Thanks,
+Bryan.</P>
+<P>There's an army of editors, proofers, indexers, illustrators, and general saints
+who turn my Word documents into the book you hold in your hand. Many of the team
+members this time have been involved in other Que projects with me, and I know that
+I landed the &quot;good ones&quot; for this book. Special mention has to go to Olaf
+Meding, who provided a terrific tech edit based on a fast-changing product. Joe Massoni
+and Mike Blaszczak at Microsoft have also earned my gratitude during this release
+cycle.</P>
+<P>While I cheerfully share the credit for the accurate and educational aspects of
+this book, the mistakes and omissions I have to claim as mine alone. Please bring
+them to my attention so that they can be corrected in subsequent printings and editions.
+I am as grateful as ever to readers who have done so in the past, and improved this
+book in the process.</P>
+<P><B>Introduction</B></P>
+<P>Visual C++ is a powerful and complex tool for building 32-bit applications for
+Window 95 and Windows NT. These applications are much larger and more complex than
+their predecessors for 16-bit Windows or older programs that didn't use a graphical
+user interface. Yet, as program size and complexity has increased, programmer effort
+has decreased, at least for programmers who are using the right tools.</P>
+<P>Visual C++ is one of the right tools. With its code-generating wizards, it can
+produce the shell of a working Windows application in seconds. The class library
+included with Visual C++, the Microsoft Foundation Classes (MFC), has become the
+industry standard for Windows software development in a variety of C++ compilers.
+The visual editing tools make layout of menus and dialogs a snap. The time you invest
+in learning to use this product will pay for itself on your first Windows programming
+project.</P>
+<P>
+<H2><A NAME="Heading1"></A>Who Should Read This Book?</H2>
+<P>This book teaches you how to use Visual C++ to build 32-bit Windows applications,
+including database applications, Internet applications, and applications that tap
+the power of the ActiveX technology. That's a tall order, and to fit all that in
+less than a thousand pages, some things have to go. This book does not teach you
+the following:</P>
+
+<UL>
+	<LI><I>The C++ programming language</I>: You should already be familiar with C++.
+	Appendix A, &quot;C++ Review and Object-Oriented Concepts,&quot; is a review for
+	those whose C++ skills need a boost.
+	<P>
+	<LI><I>How to use Windows applications</I>: You should be a proficient Windows user,
+	able to resize and move windows, double-click, and recognize familiar toolbar buttons,
+	for example.
+	<P>
+	<LI><I>How to use Visual C++ as a C compiler</I>: If you already work in C, you can
+	use Visual C++ as your compiler, but new developers should take the plunge into C++.
+	<P>
+	<LI><I>Windows programming without MFC</I>: This, too, is okay for those who know
+	it, but not something to learn now that MFC exists.
+	<P>
+	<LI><I>The internals of ActiveX programming</I>: This is referred to in the ActiveX
+	chapters, which tell you only what you need to know to make it work.
+</UL>
+
+<P>You should read this book if you fit one of these categories:</P>
+
+<UL>
+	<LI>You know some C++ and some Windows programming techniques<B> </B>and are new
+	to Visual C++. You will learn the product much more quickly than you would if you
+	just tried writing programs.
+	<P>
+	<LI>You've been working with previous versions of Visual C++. Many times users learn
+	one way to do things and end up overlooking some of the newer productivity features.
+	<P>
+	<LI>You've been working with Visual C++ 6 for a while and are beginning to suspect
+	you're doing things the hard way. Maybe you are.
+	<P>
+	<LI>You work in Visual C++ 6 regularly, and you need to add<B> </B>a feature to your
+	product. For tasks like Help, printing, and threading, you'll find a &quot;hand up&quot;
+	to get started.
+</UL>
+
+<H2><A NAME="Heading2"></A>Before You Start Reading</H2>
+<P>You need a copy of Visual C++ 6 and must have it installed. The installation process
+is simple and easy to follow, so it's not covered in this book.</P>
+<P>Before you buy Visual C++ 6, you need a 32-bit Windows operating system: Windows
+95, Windows 98, or Windows NT Server or Workstation. That means your machine must
+be reasonably powerful and modern--say, a 486 or better for your processor, at least
+16MB of RAM and 500MB of disk space, and a screen that can do 800 * 600 pixel displays
+or even finer resolutions. The illustrations in this book were all prepared at a
+resolution of 800 * 600 and, as you will see, at times things become a little crowded.
+The sample code is all available on the Web, so following along will be simpler if
+you also have a modem and access to the Web.</P>
+<P>Finally, you need to make a promise to yourself--that you will follow along in
+Visual C++ as you read this book, clicking and typing and trying things out. You
+don't need to type all the code if you don't want to: It's all on the Web site for
+you to look at. However, you should be ready to open the files and look at the code
+as you go.</P>
+<P>
+<H2><A NAME="Heading3"></A>What This Book Covers</H2>
+<P>A topic such as Windows programming in Visual C++ covers a lot of ground. This
+book contains 28 chapters and 6 reference appendixes (A to F). Be sure to look over
+the titles of the appendixes now and turn to them whenever you are unsure how to
+do something. They provide valuable references for the following:</P>
+
+<UL>
+	<LI>Appendix A, &quot;C++ Review and Object-Oriented Concepts,&quot; reminds you
+	of the basics of the C++ language and the principles and benefits of object-oriented
+	programming.
+	<P>
+	<LI>Appendix B, &quot;Windows Programming Review and a Look Inside CWnd,&quot; covers
+	the specifics of Windows programming that are now hidden from you by MFC classes
+	such as CWnd.
+	<P>
+	<LI>Appendix C, &quot;The Visual Studio User Interface, Menus, and Toolbars,&quot;
+	explains all the menus, toolbars, editing areas on the screens, shortcuts, and so
+	on, that make up the highly complicated and richly powerful interface between you
+	and Visual Studio.
+	<P>
+	<LI>Appendix D, &quot;Debugging,&quot; explains the extra menus, windows, toolbars,
+	and commands involved in debugging a running application.
+	<P>
+	<LI>Appendix E, &quot;MFC Macros and Globals,&quot; summarizes the many preprocessor
+	macros and global variables and functions sprinkled throughout code generated by
+	the Developer Studio wizards.
+	<P>
+	<LI>Appendix F, &quot;Useful Classes,&quot; describes the classes used throughout
+	the book to manipulate dates, strings, and collections of objects.
+</UL>
+
+<P>Depending on your background and willingness to poke around in menus and the online
+help, you might just skim these appendixes once and never return, or you might fill
+them full of bookmarks and yellow stickies. Although they don't lead you through
+the sample applications, they will teach you a lot.</P>
+<P>The mainstream of the book is in Chapters 1 through 28. Each chapter teaches you
+an important programming task or sometimes two closely related tasks, such as building
+a taskbar or adding Help to an application. Detailed instructions show you how to
+build a working application, or several working applications, in each chapter.</P>
+<P>The first nine chapters cover concepts found in almost every Windows application;
+after that, the tasks become less general. Here's a brief overview of some of the
+work that is covered.</P>
+<P>
+<H3><A NAME="Heading4"></A>Dialogs and Controls</H3>
+<P>What Windows program doesn't have a dialog box? an edit box? a button? Dialog
+boxes and controls are vital to Windows user interfaces, and all of them, even the
+simple button or piece of static text, are windows. The common controls enable you
+to take advantage of the learning time users have devoted to other programs and the
+programming time developers have put in on the operating system in order to use the
+same File Open dialog box as everybody else, the same hierarchical tree control,
+and so on. Learn more about all these controls in Chapters 2, &quot;Dialogs and Controls,&quot;
+and 10, &quot;Windows 95 Common Controls.&quot;</P>
+<P>
+<H3><A NAME="Heading5"></A>Messages and Commands</H3>
+<P>Messages form the heart of Windows programming. Whenever anything happens on a
+Windows machine, such as a user clicking the mouse or pressing a key, a message is
+triggered and sent to one or more windows, which do something about it. Visual C++
+makes it easy for you to write code that catches these messages and acts on them.
+Chapter 3, &quot;Messages and Commands,&quot; explains the concept of messages and
+how MFC and other aspects of Visual C++ enable you to deal with them.</P>
+<P>
+<H3><A NAME="Heading6"></A>The View/Document Paradigm</H3>
+<P>A <I>paradigm</I> is a model, a way of looking at things. The designers of MFC
+chose to design the framework based on the assumption that every program has something
+it wants to save in a file. That collection of information is referred to as the
+<I>document</I>. A <I>view</I> is one way of looking at a document. There are many
+advantages to separating the view and the document, explained further in Chapter
+4, &quot;Documents and Views.&quot; MFC provides classes from which to inherit your
+document class and your view class, so that common programming tasks such as implementing
+scrollbars are no longer your problem.</P>
+<P>
+<H3><A NAME="Heading7"></A>Drawing Onscreen</H3>
+<P>No matter how smart your Windows program is, if you can't tell the user what's
+going on by putting some words or pictures onscreen, no one will know what the program
+has done. A remarkable amount of the work is automatically done by your view classes
+(one of the advantages of adopting the document/view paradigm), but at times you
+have to do the drawing yourself. You learn about device contexts, scrolling, and
+more in Chapter 5, &quot;Drawing on the Screen.&quot;</P>
+<P>
+<H3><A NAME="Heading8"></A>Printing on Paper</H3>
+<P>Adding printing capabilities to your program is sometimes the simplest thing in
+the world because the code you use to draw onscreen can be reused to draw on paper.
+If more than one page of information is involved, though, things become tricky. Chapter
+6, &quot;Printing and Print Preview,&quot; explains all this, as well as mapping
+modes, headers and footers, and more.</P>
+<P>
+<H3><A NAME="Heading9"></A>Persistence and File I/O</H3>
+<P>Some good things are meant to be only temporary, such as the display of a calculator
+or an online chat window. However, most programs can save their documents to a file
+and open and load that file to re-create a document that has been stored. MFC simplifies
+this by using archives and extending the use of the stream I/O operators &gt;&gt;
+and &lt;&lt;. You learn all about reading and writing to files in Chapter 7, &quot;Persistence
+and File I/O.&quot;</P>
+<P>
+<H3><A NAME="Heading10"></A>ActiveX Programming</H3>
+<P>ActiveX is the successor to OLE, and it's the technology that facilitates communication
+between applications at the object level, enabling you to embed a Word document in
+an Excel spreadsheet or to embed any of hundreds of kinds of objects in any ActiveX
+application. ActiveX chapters include Chapters 13, &quot;ActiveX Concepts,&quot;
+14, &quot;Building an ActiveX Container Application,&quot; 15, &quot;Building an
+ActiveX Server Application,&quot; 16, &quot;Building an Automation Server,&quot;
+and 17, &quot;Building an ActiveX Control.&quot;</P>
+<P>
+<H3><A NAME="Heading11"></A>The Internet</H3>
+<P>Microsoft recognizes that distributed computing, in which work is shared between
+two or more computers, is becoming more and more common. Programs need to talk to
+each other, people need to send messages across a LAN or around the world, and MFC
+has classes that support these kinds of communication. The four Internet chapters
+in this book are Chapter 18, &quot;Sockets, MAPI, and the Internet,&quot; Chapter
+19, &quot;Internet Programming with the WinInet Classes,&quot; Chapter 20, &quot;Building
+an Internet ActiveX Control,&quot; and Chapter 21, &quot;The Active Template Library.&quot;</P>
+<P>
+<H3><A NAME="Heading12"></A>Database Access</H3>
+<P>Database programming keeps getting easier. ODBC, Microsoft's Open DataBase Connectivity
+package, enables your code to call API functions that access a huge variety of database
+files--Oracle, DBase, an Excel spreadsheet, a plain text file, old legacy mainframe
+systems using SQL, whatever! You call a standard name function, and the API provided
+by the database vendor or a third party handles the translation. The details are
+in Chapters 22, &quot;Database Access,&quot; and 23, &quot;SQL and the Enterprise
+Edition.&quot;</P>
+<P>
+<H3><A NAME="Heading13"></A>Advanced Material</H3>
+<P>For developers who have mastered the basics, this book features some advanced
+chapters to move your programming skills forward. You will learn how to prevent memory
+leaks, find bottlenecks, and locate bugs in your code with the techniques discussed
+in Chapter 24, &quot;Improving Your Application's Performance.&quot;</P>
+<P>Reuse is a hugely popular concept in software development at the moment, especially
+with managers who see a chance to lower their development budget. If you'd like to
+write reusable code and components, Chapter 25, &quot;Achieving Reuse with the Gallery
+and Your Own AppWizards,&quot; will take you there.</P>
+<P>Often C++ programmers are so busy learning the basics of how to make programs
+work that they miss the features that make C++ truly powerful. You will learn in
+Chapter 26, &quot;Exceptions and Templates,&quot; how to catch errors efficiently
+and how to use one set of code in many different situations.</P>
+<P>As user demands for high-performance software continue to multiply, developers
+must learn entirely new techniques to produce powerful applications that provide
+fast response times. For many developers, writing multithreaded applications is a
+vital technique. Learn about threading in Chapter 27, &quot;Multitasking with Windows
+Threads.&quot;</P>
+<P>Chapter 28, &quot;Future Explorations,&quot; introduces you to topics that are
+definitely not for beginners. Learn how to create console applications, use and build
+your own DLLs, and work with Unicode.</P>
+<P>
+<H2><A NAME="Heading14"></A>Conventions Used in This Book</H2>
+<P>One thing this book has plenty of is code. Sometimes you need to see only a line
+or two, so the code is mixed in with the text, like this:</P>
+<P>
+<PRE>int SomeFunction( int x, int y);
+{
+     return x+y;
+}
+</PRE>
+<P>You can tell the difference between code and regular text by the fonts used for
+each. Sometimes, you'll see a piece of code that's too large to mix in with the text:
+You will find an example in Listing 0.1.</P>
+<P>
+<H4>Listing 0.1</H4>
+<PRE>CHostDialog dialog(m_pMainWnd);
+    if (dialog.DoModal() == IDOK)
+    {
+         AppSocket = new CSocket();
+         if (AppSocket-&gt;Connect(dialog.m_hostname,119))
+         {
+              while (AppSocket-&gt;GetStatus() == CONNECTING)
+              {
+                   YieldControl();
+              }
+              if (AppSocket-&gt;GetStatus() == CONNECTED)
+              {
+               CString response = AppSocket-&gt;GetLine();
+                   SocketAvailable = TRUE;
+              }
+         }
+    }
+     if (!SocketAvailable)
+     {
+          AfxMessageBox(&quot;Can't connect to server. Please
+     &#172; quit.&quot;,MB_OK|MB_ICONSTOP);
+</PRE>
+<PRE>     }
+</PRE>
+<P>The character on the next-to-last line (&#172;) is called the <I>code continuation
+character</I>. It indicates a place where a line of code had to be broken to fit
+it on the page, but in reality the line doesn't break there. If you're typing code
+from the book, don't break the line there--keep going. If you're reading along in
+code that was generated for you by Visual C++, don't be confused when the line doesn't
+break there.</P>
+<P>Remember, the code is in the book so that you can understand what's going on,
+not for you to type it. All the code is on the companion Web site as well. Sometimes
+you will work your way through the development of an application and see several
+versions of a block of code as you go--the final version is on the Web site. You'll
+find the site by going to <A HREF="http://www.mcp.com/info"><B>www.mcp.com/info</B></A>
+or <A HREF="http://www.gregcons.com/uvc6.htm"><B>www.gregcons.com/uvc6.htm</B></A>.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<STRONG>TIP:</STRONG> This is a Tip: a shortcut or an interesting feature you might
+	want to know about. 
+<HR>
+</P>
+	<P>
+<HR>
+<STRONG>NOTE:</STRONG> This is a Note: It explains a subtle but important point.
+	Don't skip Notes, even if you're the kind who skips Tips.&#160;n 
+<HR>
+
+	<P>
+<HR>
+<STRONG>CAUTION:</STRONG><B> </B>This is a Caution, and it's serious. It warns you
+	of the horrible consequences if you make a false step, so be sure to read all of
+	these that you come across. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>When a word is being defined or emphasized, it's in <I>italic</I>.<I> </I>The
+names of variables, functions, and C++ classes are all in monospaced font. Internet
+URLS and things you should type are in <B>bold</B>. Remember, an URL ne

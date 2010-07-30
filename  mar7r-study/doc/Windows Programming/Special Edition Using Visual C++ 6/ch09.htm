@@ -1,0 +1,787 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 9 -- Status Bars and Toolbars</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch08/ch08.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch10/ch10.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 9 -</H1>
+</CENTER>
+<CENTER>
+<H1>Status Bars and Toolbars</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Working with Toolbars</A>
+	<UL>
+		<LI><A HREF="#Heading2">Deleting Toolbar Buttons</A>
+		<LI><A HREF="#Heading3">Adding Buttons to a Toolbar</A>
+		<LI><A HREF="#Heading4">The CToolBar Class's Member Functions</A>
+	</UL>
+	<LI><A HREF="#Heading5">Working with Status Bars</A>
+	<UL>
+		<LI><A HREF="#Heading6">Creating a New Command ID</A>
+		<LI><A HREF="#Heading7">Creating the Default String</A>
+		<LI><A HREF="#Heading8">Adding the ID to the Indicators Array</A>
+		<LI><A HREF="#Heading9">Creating the Pane's Command-Update Handler</A>
+		<LI><A HREF="#Heading10">Setting the Status Bar's Appearance</A>
+	</UL>
+	<LI><A HREF="#Heading11">Working with Rebars</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>Building a good user interface is half the battle of programming a Windows application.
+Luckily, Visual C++ and its AppWizard supply an amazing amount of help in creating
+an application that supports all the expected user-interface elements, including
+menus, dialog boxes, toolbars, and status bars. The subjects of menus and dialog
+boxes are covered in Chapters 2, &quot;Dialogs and Controls,&quot; and 8, &quot;Building
+a Complete Application: ShowString.&quot; In this chapter, you learn how to get the
+most out of toolbars and status bars.</P>
+<P>
+<H2><A NAME="Heading1"></A>Working with Toolbars</H2>
+<P>The buttons on a toolbar correspond to commands, just as the items on a menu do.
+Although you can add a toolbar to your application with AppWizard, you still need
+to use a little programming polish to make things just right. This is because every
+application is different and AppWizard can create only the most generally useful
+toolbar for most applications. When you create your own toolbars, you will probably
+want to add or delete buttons to support your application's unique command set.</P>
+<P>For example, when you create a standard AppWizard application with a toolbar,
+AppWizard creates the toolbar shown in Figure 9.1. This toolbar provides buttons
+for the commonly used commands in the File and Edit menus, as well as a button for
+displaying the About dialog box. What if your application doesn't support these commands?
+It's up to you to modify the default toolbar to fit your application.</P>
+<P><A HREF="javascript:popUp('09uvc01.gif')"><B>FIG. 9.1</B></A><B> </B><I>The default
+toolbar provides buttons for commonly used commands.</I></P>
+<P>
+<H3><A NAME="Heading2"></A>Deleting Toolbar Buttons</H3>
+<P>Create a multiple document interface application with a toolbar by choosing File,
+New; selecting the Project tab; highlighting MFC AppWizard (exe); naming the application
+<B>Tool</B>; and accepting the defaults in every dialog box. If you like, you can
+click the Finish button in step 1 to speed up the process. AppWizard provides a docking
+toolbar by default. Build and run the application, and you should see a toolbar of
+your own, just like Figure 9.1.</P>
+
+<P>Before moving on, play with this toolbar a little. On the View menu, you can toggle
+whether the toolbar is displayed. Turn it off and then on again. Now click and hold
+on the toolbar between buttons and pull it down into the working area of your application.
+Let it go, and it's a floating palette. Drag it around and drop it at the bottom
+of the application or one of the sides--it will dock against any side of the main
+window. Watch the tracking rectangle change shape to show you it will dock if you
+drop it. Drag it back off again so that it's floating and close it by clicking the
+small x in the upper-right corner. Bring it back with the View menu and notice that
+it comes back right where you left it. All this functionality is yours free from
+AppWizard and MFC.</P>
+
+<P>The first step in modifying the toolbar is to delete buttons you no longer need.
+To do this, first select the ResourceView tab to display your application's resources
+by clicking on the + next to Tool Resources. Click the + next to Toolbar and double-click
+the IDR_MAINFRAME toolbar resource to edit it, as shown in Figure 9.2. (The Graphics
+and Colors palettes, shown floating in Figure 9.2, are docked by default. You can
+move them around by grabbing the wrinkles at the top.)</P>
+
+<P><A HREF="javascript:popUp('09uvc02.gif')"><B>FIG. 9.2</B></A> <I>Use the toolbar
+editor to customize your application's toolbar.</I></P>
+
+<P>After you have the toolbar editor on the screen, deleting buttons is as easy as
+dragging the unwanted buttons from the toolbar. Place your mouse pointer on the button,
+hold down the left mouse button, and drag the unwanted button away from the toolbar.
+When you release the mouse button, the toolbar button disappears. In the Tool application,
+delete all the buttons except the Help button with a yellow question mark. Figure
+9.3 shows the edited toolbar with only the Help button remaining. The single blank
+button template is only a starting point for the next button you want to create.
+If you leave it blank, it doesn't appear in the final toolbar.</P>
+
+<P><A HREF="javascript:popUp('09uvc03.gif')"><B>FIG. 9.3</B></A><B> </B><I>This edited
+toolbar has only a single button left (not counting the blank button template).</I></P>
+<H3><A NAME="Heading3"></A>Adding Buttons to a Toolbar</H3>
+<P>Adding buttons to a toolbar is a two-step process: First you draw the button's
+icon, and then you match the button with its command. To draw a new button, first
+click the blank button template in the toolbar. The blank button appears enlarged
+in the edit window, as shown in Figure 9.4.</P>
+<P><A HREF="javascript:popUp('09uvc04.gif')"><B>FIG. 9.4</B></A><B> </B><I>Click
+the button template to open it in the button editor.</I></P>
+<P>Suppose you want to create a toolbar button that draws a red circle in the application's
+window. Draw a red circle on the blank button with the Ellipse tool, and you've created
+the button's icon. Open the properties box and give the button an appropriate ID,
+such as ID_CIRCLE in this case.</P>
+<P>Now you need to define the button's description and ToolTip. The description appears
+in the application's status bar. In this case, a description of &quot;Draws a red
+circle in the window&quot; might be good. The ToolTip appears whenever the user leaves
+the mouse pointer over the button for a second or two, acting as a reminder of the
+button's purpose. A ToolTip of <I>Circle</I> would be appropriate for the circle
+button. Type these two text strings into the Prompt box. The description comes first,
+followed by the newline character (\n) and the ToolTip, as shown in Figure 9.5.</P>
+<P><A HREF="javascript:popUp('09uvc05.gif')"><B>FIG. 9.5</B></A><B> </B><I>After
+drawing the button, specify its properties.</I></P>
+<P>You've now defined a command ID for your new toolbar button. Usually, you use
+the command ID of an existing menu item already connected to some code. In these
+cases, simply choose the existing command ID from the drop-down box, and your work
+is done. The prompt is taken from the properties of the menu item, and the message
+handler has already been arranged for the menu item. You will already be handling
+the menu item, and that code will handle the toolbar click, too. In this application,
+the toolbar button doesn't mirror a menu item, so you will associate the ID with
+a message-handler function that MFC automatically calls when the user clicks the
+button.</P>
+<P>To do this, follow these steps:</P>
+
+<DL>
+	<DD><B>1. </B>Make sure the button for which you want to create a message handler
+	is selected in the custom toolbar, and then open ClassWizard.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>The MFC ClassWizard property sheet appears, with the button's ID already
+	selected (see Figure 9.6). To add the message-response function, select in the Class
+	Name box the class to which you want to add the function (the sample application
+	uses the view class).
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Double-click the COMMAND selection in the Messages box.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Accept the function name that MFC suggests in the next message box,
+	and you're all set. Click OK to finalize your changes.
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> If you haven't defined a message-response function for a toolbar
+	button, or if there is no instance of the class that catches the message, MFC disables
+	the button when you run the application. For example, if the message is caught by
+	the document or view in an MDI application and there is no open document, the button
+	is disabled. The same is true for menu commands--in fact, for all intents and purposes,
+	toolbar buttons <I>are</I> menu commands. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><A HREF="javascript:popUp('09uvc06.gif')"><B>FIG. 9.6</B></A><B> </B><I>You can
+use ClassWizard to catch messages from your toolbar buttons.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<BR>
+	<strong>NOTE:</strong> Ordinarily, toolbar buttons duplicate menu commands, providing a
+	quicker way for the user to select commonly used commands in the menus. In that case,
+	the menu item and the toolbar button both represent the exact same command, and you
+	give both the same ID. Then the same message-response function is called, whether
+	the user selects the command from the menu bar or the toolbar.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>If you compile and run the application now, you will see the window shown in Figure
+9.7. In the figure, you can see the new toolbar button, as well as its ToolTip and
+description line. The toolbar looks sparse in this example, but you can add as many
+buttons as you like.</P>
+<P>You can create as many buttons as you need; just follow the same procedure for
+each. After you have created the buttons, you're through with the toolbar resources
+and ready to write the code that responds to the buttons. For example, in the previous
+example, a circle button was added to the toolbar, and a message-response function,
+called OnCircle(), was added to the program. MFC calls that message-response function
+whenever the user clicks the associated button. However, right now, that function
+doesn't do anything, as shown in Listing 9.1.</P>
+<P><A HREF="javascript:popUp('09uvc07.gif')"><B>FIG. 9.7</B></A><B> </B><I>The new
+toolbar button shows its ToolTip and description.</I></P>
+<P>
+<H4>Listing 9.1&#160;&#160;An Empty Message-Response Function</H4>
+<PRE>void CToolView::OnCircle() 
+{
+    // TODO: Add your command handler code here
+    
+</PRE>
+<PRE>}
+</PRE>
+<P>Although the circle button is supposed to draw a red circle in the window, you
+can see that the OnCircle() function is going to need a little help accomplishing
+that task. Add the lines shown in Listing 9.2 to the function so that the circle
+button will do what it's supposed to do, as shown in Figure 9.8. This drawing code
+makes a brush, selects it into the DC, draws an ellipse with it, and then restores
+the old brush. The details of drawing are discussed in Chapter 5, &quot;Drawing on
+the Screen.&quot;</P>
+<P>
+<H4>Listing 9.2&#160;&#160;CToolView::OnCircle()</H4>
+<PRE>void CToolView::OnCircle() 
+{
+     CClientDC clientDC(this);
+     CBrush newBrush(RGB(255,0,0));
+     CBrush* oldBrush = clientDC.SelectObject(&amp;newBrush);
+     clientDC.Ellipse(20, 20, 200, 200);
+     clientDC.SelectObject(oldBrush);
+</PRE>
+<PRE>}
+</PRE>
+<H3><A NAME="Heading4"></A>The CToolBar Class's Member Functions</H3>
+<P>In most cases, after you have created your toolbar resource and associated its
+buttons with the appropriate command IDs, you don't need to bother any more with
+the toolbar. The code generated by AppWizard creates the toolbar for you, and MFC
+takes care of calling the buttons' response functions for you. However, at times
+you might want to change the toolbar's default behavior or appearance in some way.
+In those cases, you can call on the CToolBar class's member functions, which are
+listed in Table 9.1 along with their descriptions. The toolbar is accessible from
+the CMainFrame class as the m_wndToolBar member variable. Usually, you change the
+toolbar behavior in CMainFrame::OnCreate().</P>
+<P><A HREF="javascript:popUp('09uvc08.gif')"><B>FIG. 9.8</B></A><B> </B><I>After
+adding code to OnCircle(), the new toolbar button actually does something.</I></P>
+<P>
+<H4>Table 9.1&#160;&#160;Member Functions of the CToolBar Class</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Function</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CommandToIndex()</TD>
+		<TD ALIGN="LEFT">Obtains the index of a button, given its ID</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Create()</TD>
+		<TD ALIGN="LEFT">Creates the toolbar</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetButtonInfo()</TD>
+		<TD ALIGN="LEFT">Obtains information about a button</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetButtonStyle()</TD>
+		<TD ALIGN="LEFT">Obtains a button's style</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetButtonText()</TD>
+		<TD ALIGN="LEFT">Obtains a button's text label</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetItemID()</TD>
+		<TD ALIGN="LEFT">Obtains the ID of a button, given its index</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetItemRect()</TD>
+		<TD ALIGN="LEFT">Obtains an item's display rectangle, given its index</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetToolBarCtrl()</TD>
+		<TD ALIGN="LEFT">Obtains a reference to the CToolBarCtrl object represented by the CToolBar object</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LoadBitmap()</TD>
+		<TD ALIGN="LEFT">Loads the toolbar's button images</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LoadToolBar()</TD>
+		<TD ALIGN="LEFT">Loads a toolbar resource</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetBitmap()</TD>
+		<TD ALIGN="LEFT">Sets a new toolbar button bitmap</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetButtonInfo()</TD>
+		<TD ALIGN="LEFT">Sets a button's ID, style, and image number</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetButtons()</TD>
+		<TD ALIGN="LEFT">Sets the IDs for the toolbar buttons</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetButtonStyle()</TD>
+		<TD ALIGN="LEFT">Sets a button's style</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetButtonText()</TD>
+		<TD ALIGN="LEFT">Sets a button's text label</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetHeight()</TD>
+		<TD ALIGN="LEFT">Sets the toolbar's height</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetSizes()</TD>
+		<TD ALIGN="LEFT">Sets the button sizes</TD>
+	</TR>
+</TABLE>
+</P>
+<P>Normally, you don't need to call the toolbar's methods, but you can achieve some
+unusual results when you do, such as the extra high toolbar shown in Figure 9.9.
+(The buttons are the same size, but the toolbar window is bigger.) This toolbar resulted
+from a call to the toolbar object's SetHeight() member function. The CToolBar class's
+member functions enable you to perform this sort of toolbar trickery, but use them
+with great caution.</P>
+<P><A HREF="javascript:popUp('09uvc09.gif')"><B>FIG. 9.9</B></A><B> </B><I>You can
+use a toolbar object's member functions to change how the toolbar looks and acts.</I></P>
+<P>
+<H2><A NAME="Heading5"></A>Working with Status Bars</H2>
+<P>Status bars are mostly benign objects that sit at the bottom of your application's
+window, doing whatever MFC instructs them to do. This consists of displaying command
+descriptions and the status of various keys on the keyboard, including the Caps Lock
+and Scroll Lock keys. In fact, status bars are so mundane from the programmer's point
+of view (at least they are in an AppWizard application) that they aren't even represented
+by a resource that you can edit like a toolbar. When you tell AppWizard to incorporate
+a status bar into your application, there's not much left for you to do.</P>
+<P>Or is there? A status bar, just like a toolbar, must reflect the interface needs
+of your specific application. For that reason, the CStatusBar class features a set
+of methods with which you can customize the status bar's appearance and operation.
+Table 9.2 lists the methods along with brief descriptions.</P>
+<P>
+<H4>Table 9.2&#160;&#160;Methods of the CStatusBar Class</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Method</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CommandToIndex()</TD>
+		<TD ALIGN="LEFT">Obtains an indicator's index, given its ID</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Create()</TD>
+		<TD ALIGN="LEFT">Creates the status bar</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetItemID()</TD>
+		<TD ALIGN="LEFT">Obtains an indicator's ID, given its index</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetItemRect()</TD>
+		<TD ALIGN="LEFT">Obtains an item's display rectangle, given its index</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetPaneInfo()</TD>
+		<TD ALIGN="LEFT">Obtains information about an indicator</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetPaneStyle()</TD>
+		<TD ALIGN="LEFT">Obtains an indicator's style</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetPaneText()</TD>
+		<TD ALIGN="LEFT">Obtains an indicator's text</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetStatusBarCtrl()</TD>
+		<TD ALIGN="LEFT">Obtains a reference to the CStatusBarCtrl object represented by the CStatusBar object</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetIndicators()</TD>
+		<TD ALIGN="LEFT">Sets the indicators' IDs</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetPaneInfo()</TD>
+		<TD ALIGN="LEFT">Sets the indicators' IDs, widths, and styles</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetPaneStyle()</TD>
+		<TD ALIGN="LEFT">Sets an indicator's style</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetPaneText()</TD>
+		<TD ALIGN="LEFT">Sets an indicator's text</TD>
+	</TR>
+</TABLE>
+</P>
+<P>When you create a status bar as part of an AppWizard application, you see a window
+similar to that shown in Figure 9.10. (To make your own, create a project called
+<B>Status</B> and accept all the defaults, as you did for the Tool application.)
+The status bar has several parts, called <I>panes</I>, that display certain information
+about the status of the application and the system. These panes, which are marked
+in Figure 9.10, include indicators for the Caps Lock, Num Lock, and Scroll Lock keys,
+as well as a message area for showing status text and command descriptions. To see
+a command description, place your mouse pointer over a button on the toolbar (see
+Figure 9.11).</P>
+<P>The most common way to customize a status bar is to add new panes. To add a pane
+to a status bar, complete these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Create a command ID for the new pane.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Create a default string for the pane.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Add the pane's command ID to the status bar's indicators array.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Create a command-update handler for the pane.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('09uvc10.gif')"><B>FIG. 9.10</B></A><B> </B><I>The default
+MFC status bar contains a number of informative panes.</I></P>
+<P>The following sections cover these steps in detail.</P>
+<P><A HREF="javascript:popUp('09uvc11.gif')"><B>FIG. 9.11</B></A><B> </B><I>The message
+area is mainly used for command descriptions.</I></P>
+<H3><A NAME="Heading6"></A>Creating a New Command ID</H3>
+<P>This step is easy, thanks to Visual C++'s symbol browser. To add the command ID,
+start by choosing View, Resource Symbols. When you do, you see the Resource Symbols
+dialog box (see Figure 9.12), which displays the currently defined symbols for your
+application's resources. Click the New button, and the New Symbol dialog box appears.
+Type the new ID, <B>ID_MYNEWPANE</B>, into the Name box (see Figure 9.13). Usually,
+you can accept the value that MFC suggests for the ID.</P>
+<P><A HREF="javascript:popUp('09uvc12.gif')"><B>FIG. 9.12</B></A><B> </B><I>Use the
+Resource Symbols dialog box to add new command IDs to your application.</I></P>
+<P><A HREF="javascript:popUp('09uvc13.gif')"><B>FIG. 9.13</B></A><B> </B><I>Type
+the new ID's name and value into the New Symbol dialog box.</I></P>
+<P>Click the OK and Close buttons to finalize your selections, and your new command
+ID is defined.</P>
+<P>
+<H3><A NAME="Heading7"></A>Creating the Default String</H3>
+<P>You have now defined a resource ID, but it isn't being used. To represent a status
+bar pane, the ID must have a default string defined for it. To define the string,
+first go to the ResourceView window (by clicking the ResourceView tab in the workspace
+pane) and double-click the String Table resource to open it in the string table editor,
+as shown in Figure 9.14.</P>
+<P>Now, choose Insert, New String to open the String Properties dialog box. Type
+the new pane's command ID <B>ID_MYNEWPANE</B> into the ID box (or choose it from
+the drop-down list) and the default string (<B>Default string</B> in this case) into
+the Caption box (see Figure 9.15).</P>
+<P>
+<H3><A NAME="Heading8"></A>Adding the ID to the Indicators Array</H3>
+<P>When MFC constructs your status bar, it uses an array of IDs to determine which
+panes to display and where to display them. This array of IDs is passed as an argument
+to the status bar's SetIndicators() member function, which is called in the CMainFrame
+class's OnCreate() function. You find this array of IDs, shown in Listing 9.3, near
+the top of the MainFrm.cpp file. One way to reach these lines in the source code
+editor is to switch to ClassView, expand CMainFrame, double-click OnCreate(), and
+scroll up one page. Alternatively, you could use FileView to open MainFrm.cpp and
+scroll down to this code.</P>
+<P><A HREF="javascript:popUp('09uvc14.gif')"><B>FIG. 9.14</B></A><B> </B><I>Define
+the new pane's default string in the string table.</I></P>
+<P><A HREF="javascript:popUp('09uvc15.gif')"><B>FIG. 9.15</B></A><B> </B><I>Use the
+String Properties dialog box to define the new pane's default string.</I></P>
+<P>
+<H4>Listing 9.3&#160;&#160;MainFrm.cpp--The Indicator Array</H4>
+<PRE>static UINT indicators[] =
+{
+    ID_SEPARATOR,           // status line indicator
+    ID_INDICATOR_CAPS,
+    ID_INDICATOR_NUM,
+    ID_INDICATOR_SCRL,
+</PRE>
+<PRE>};
+</PRE>
+<P>To add your new pane to the array, type the pane's ID into the array at the position
+in which you want it to appear in the status bar, followed by a comma. (The first
+pane, ID_SEPARATOR, should always remain in the first position.) Listing 9.4 shows
+the indicator array with the new pane added.</P>
+<P>
+<H4>Listing 9.4&#160;&#160;MainFrm.cpp--The Expanded Indicator Array</H4>
+<PRE>static UINT indicators[] =
+{
+    ID_SEPARATOR,           // status line indicator
+    ID_MYNEWPANE,
+    ID_INDICATOR_CAPS,
+    ID_INDICATOR_NUM,
+    ID_INDICATOR_SCRL,
+</PRE>
+<PRE>};
+</PRE>
+<H3><A NAME="Heading9"></A>Creating the Pane's Command-Update Handler</H3>
+<P>MFC doesn't automatically enable new panes when it creates the status bar. Instead,
+you must create a command-update handler for the new pane and enable the pane yourself.
+(You first learned about command-update handlers in Chapter 4, &quot;Messages and
+Commands.&quot;) Also, for most applications, the string displayed in the pane is
+calculated on-the-fly--the default string you defined in an earlier step is only
+a placeholder.</P>
+<P>Normally, you use ClassWizard to arrange for messages to be caught, but ClassWizard
+doesn't help you catch status bar messages. You must add the handler entries to the
+message map yourself and then add the code for the handler. You add entries to the
+message map in the header file and the map in the source file, and you add them outside
+the special AFX_MSG_MAP comments used by ClassWizard.</P>
+<P>Double-click CMainFrame in ClassView to open the header file, and scroll to the
+bottom. Edit the message map so that it resembles Listing 9.5. When you write your
+own applications, you will use a variety of function names to update status bar panes,
+but the rest of the declaration will always be the same.</P>
+<P>
+<H4>Listing 9.5&#160;&#160;MainFrm.h--Message Map</H4>
+<PRE>// Generated message map functions
+protected:
+     //{{AFX_MSG(CMainFrame)
+     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+          // NOTE - the ClassWizard will add and remove member functions here.
+          //    DO NOT EDIT what you see in these blocks of generated code!
+     //}}AFX_MSG
+     afx_msg void OnUpdateMyNewPane(CCmdUI *pCmdUI);
+</PRE>
+<PRE>     DECLARE_MESSAGE_MAP()
+</PRE>
+<P>Next, you add the handler to the source message map to associate the command ID
+with the handler. Open any CMainFrame function and scroll upwards until you find
+the message map; then edit it so that it looks like Listing 9.6.</P>
+<P>
+<H4>Listing 9.6&#160;&#160;MainFrm.cpp--Message Map</H4>
+<PRE>BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
+    //{{AFX_MSG_MAP(CMainFrame)
+        // NOTE - the ClassWizard will add and remove mapping macros here.
+        //    DO NOT EDIT what you see in these blocks of generated code !
+    ON_WM_CREATE()
+    //}}AFX_MSG_MAP
+    ON_UPDATE_COMMAND_UI(ID_MYNEWPANE, OnUpdateMyNewPane)
+</PRE>
+<PRE>END_MESSAGE_MAP()
+</PRE>
+<P>You have now arranged for the CMainFrame member function OnUpdateMyNewPane() to
+be called whenever the status bar pane ID_MYNEWPANE needs to be updated.</P>
+<P>Now you're ready to write the new command-update handler. In the handler, you
+will enable the new pane and set its contents. Listing 9.7 shows the command-update
+handler for the new pane; add this code to mainfrm.cpp. As you can see, it uses a
+member variable called m_paneString. Update handlers should be very quick--the job
+of making sure that m_paneString holds the right string should be tackled in a function
+that is called less often.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Command update handlers are discussed in Chapter 3, &quot;Messages
+	and Commands,&quot; in the &quot;Understanding Command Updates&quot; section. They
+	have to be quick because the system calls them whenever it refreshes the display.
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H4>Listing 9.7&#160;&#160;CMainFrame::OnUpdateMyNewPane()</H4>
+<PRE>void CMainFrame::OnUpdateMyNewPane(CCmdUI *pCmdUI) 
+{
+    pCmdUI-&gt;Enable(); 
+    pCmdUI-&gt;SetText(m_paneString); 
+</PRE>
+<PRE>}
+</PRE>
+<H3><A NAME="Heading10"></A>Setting the Status Bar's Appearance</H3>
+<P>To add the last touch to your status bar demonstration application, you will want
+a way to set m_paneString. To initialize it, double-click on the CMainFrame constructor
+to edit it, and add this line:</P>
+<P>
+<PRE><B>    m_paneString = &quot;Default string&quot;;</B>
+</PRE>
+<P>The value you entered in the string table is only to assure Visual Studio that
+the resource ID you created is in use. Right-click CMainFrame in ClassView and choose
+Add Member Variable to add m_paneString as a private member variable. The type should
+be CString.</P>
+<P>To set up the status bar for the first time, add these lines to CMainFrame::OnCreate(),
+just before the return statement:</P>
+<P>
+<PRE><B>     CClientDC dc(this);</B>
+<B>     SIZE size = dc.GetTextExtent(m_paneString);</B>
+<B>     int index = m_wndStatusBar.CommandToIndex(ID_MYNEWPANE);</B>
+<B>     m_wndStatusBar.SetPaneInfo(index,ID_MYNEWPANE, SBPS_POPOUT, size.cx);</B>
+</PRE>
+<P>These lines set the text string and the size of the pane. You set the size of
+the pane with a call to SetPaneInfo(), which needs the index of the pane and the
+new size. CommandToIndex() obtains the index of the pane, and GetTextExtent() obtains
+the size. As a nice touch, the call to SetPaneInfo() uses the SBPS_POPOUT style to
+create a pane that seems to stick out from the status bar, rather than be indented.</P>
+<P>The user will change the string by making a menu selection. Open the IDR_STATUSTYPE
+menu in the resource editor and add a Change String item to the File menu. (Working
+with menus is discussed for the first time in Chapter 8.) Let Developer Studio assign
+it the resource ID ID_FILE_CHANGESTRING.</P>
+<P>Open ClassWizard and add a handler for this command; it should be caught by CMainFrame
+because that's where the m_paneString variable is kept. ClassWizard offers to call
+the handler OnFileChangestring(), and you should accept this name. Click OK twice
+to close ClassWizard.</P>
+<P>Insert a new dialog box into the application and call it <B>IDD_PANEDLG</B>. The
+title should be <B>Change Pane String</B>. Add a single edit box, stretched the full
+width of the dialog box, and leave the ID as IDC_EDIT1. Add a static text item just
+above the edit box with the caption <B>New String:</B>. With the dialog box open
+in the resource editor, open ClassWizard. Create a new class for the dialog box called
+CPaneDlg, and associate the edit control, IDC_EDIT1, with a CString member variable
+of the dialog class called m_paneString.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Adding dialog boxes to applications and associating them with classes
+	are discussed in more depth in several earlier chapters, including Chapters 2 and
+	8. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Switch to ClassView, expand CMainFrame, and double-click OnFileChangeString()
+to edit it. Add the code shown in Listing 9.8.</P>
+<P>
+<H4>Listing 9.8&#160;&#160;CMainFrame::OnFileChangestring()</H4>
+<PRE>void CMainFrame::OnFileChangestring() 
+{
+    CPaneDlg dialog(this);
+    dialog.m_paneString = m_paneString;
+    int result = dialog.DoModal();
+    if (result == IDOK)
+    {
+        m_paneString = dialog.m_paneString;
+        CClientDC dc(this);
+        SIZE size = dc.GetTextExtent(m_paneString);
+        int index = m_wndStatusBar.CommandToIndex(ID_MYNEWPANE);
+        m_wndStatusBar.SetPaneInfo(index,
+            ID_MYNEWPANE, SBPS_POPOUT, size.cx);
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>This code displays the dialog box, and, if the user exits the dialog box by clicking
+OK, changes the text string and resets the size of the pane. The code is very similar
+to the lines you added to OnCreate(). Scroll up to the top of MainFrm.cpp and add
+this line:</P>
+<P>
+<PRE>#include &quot;panedlg.h&quot;
+</PRE>
+<P>This tells the compiler what the CPaneDlg class is. Build and run the Status application,
+and you should see the window shown in Figure 9.16. As you can see, the status bar
+contains an extra panel displaying the text Default string. If you choose File, Change
+String, a dialog box appears into which you can type a new string for the panel.
+When you exit the dialog box via the OK button, the text appears in the new panel,
+and the panel resizes itself to accommodate the new string (see Figure 9.17).</P>
+<P><A HREF="javascript:popUp('09uvc16.gif')"><B>FIG. 9.16</B></A><B> </B><I>The Status
+Bar Demo application shows how to add and manage a status bar panel.</I></P>
+<P>
+<H2><A NAME="Heading11"></A>Working with Rebars</H2>
+<P>Rebars are toolbars that contain controls other than toolbar buttons. It was possible
+to add other controls to normal toolbars in the past, but difficult. With rebars,
+it's simple.</P>
+<P>Start by using AppWizard to make a project call ReBar. Accept all the defaults
+on each step, or click Finish on step 1 to speed the process a little. When the project
+is generated, double-click CMainFrame in ClassView to edit the header file. This
+frame holds the open documents and is where a classic toolbar goes. The rebar for
+this sample will go here, too. Add the rebar as a public member variable:</P>
+<P>
+<PRE>CReBar m_rebar;
+</PRE>
+<P><A HREF="javascript:popUp('09uvc17.gif')"><B>FIG. 9.17</B></A><B> </B><I>The panel
+resizes itself to fit the new string.</I></P>
+<P>In this sample application, you will add a check box to the bar--you can add any
+kind of control at all. A check box, a radio button, and a command button (like the
+OK or Cancel button on a dialog) are all represented by the CButton class, with slightly
+different styles. Add the check box to the header file right after the rebar, like
+this:</P>
+<P>
+<PRE>CButton m_check;
+</PRE>
+<P>You saw in the previous section that an application's toolbar is created and initialized
+in the OnCreate() function of the mainframe class. The same is true for rebars. Expand
+CMainFrame in ClassView, and double-click OnCreate() to edit it. Add these lines
+just before the final return statement:</P>
+<P>
+<PRE>   if (!m_rebar.Create(this) )
+   {
+      TRACE0(&quot;Failed to create rebar\n&quot;);
+      return -1;      // fail to create
+   }
+</PRE>
+<P>The check box control will need a resource ID. When you create a control with
+the dialog editor, the name you give the control is automatically associated with
+a number. This control will be created in code, so you will have to specify the resource
+ID yourself, as you did for the new pane in the status bar earlier in this chapter.
+Choose View, Resource Symbols and click the New button. Type the name <B>IDC_CHECK</B>
+and accept the number suggested. This adds a line to resource.h, defining IDC_CHECK,
+and assures you that other controls will not reuse this resource ID.</P>
+<P>Back in CMainFrame::OnCreate(), add these lines to create the check box (note
+the styles carefully):</P>
+<P>
+<PRE>   if (!m_check.Create(&quot;Check Here&quot;, 
+         WS_CHILD|WS_VISIBLE|BS_AUTOCHECKBOX,
+         CRect(0,0,20,20), this, IDC_CHECK)  )
+   {
+      TRACE0(&quot;Failed to create checkbox\n&quot;);
+      return -1;      // fail to create
+   }
+</PRE>
+<P>Finally, add this line to add a band containing the check box control to the rebar:</P>
+<P>
+<PRE>   m_rebar.AddBar(&amp;m_check, &quot;On The Bar&quot;, NULL, 
+                   RBBS_BREAK | RBBS_GRIPPERALWAYS);
+</PRE>
+<P>AddBar() takes four parameters: a pointer to the control that will be added, some
+text to put next to it, a pointer to a bitmap to use for the background image on
+the rebar, and a rebar style, made by combining any of these style flags:</P>
+
+<UL>
+	<LI>RBBS_BREAK puts the band on a new line, even if there's room for it at the end
+	of an existing line.
+	<P>
+	<LI>RBBS_CHILDEDGE puts the band against a child window of the frame.
+	<P>
+	<LI>RBBS_FIXEDBMP prevents moving the bitmap if the band is resized by the user.
+	<P>
+	<LI>RBBS_FIXEDSIZE prevents the user from resizing the band.
+	<P>
+	<LI>RBBS_GRIPPERALWAYS guarantees sizing wrinkles are present.
+	<P>
+	<LI>RBBS_HIDDEN hides the band.
+	<P>
+	<LI>RBBS_NOGRIPPER suppresses sizing wrinkles.
+	<P>
+	<LI>RBBS_NOVERT hides the band when the rebar is vertical.
+	<P>
+	<LI>RBBS_VARIABLEHEIGHT enables the band to be resized by the rebar.
+</UL>
+
+<P>At this point, you can build the project and run it. You should see your rebar,
+as in Figure 9.18. The check box works in that you can select and deselect it, but
+nothing happens when you do.</P>
+<P><A HREF="javascript:popUp('09uvc18.gif')"><B>FIG. 9.18</B></A><B> </B><I>The rebar
+contains a check box.</I></P>
+<P>To react when the user clicks the button, you need to catch the message and do
+something based

@@ -1,0 +1,1562 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 21 -- The Active Template Library</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch20/ch20.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch22/ch22.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 21 -</H1>
+</CENTER>
+<CENTER>
+<H1>The Active Template Library</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Why Use the ATL?</A>
+	<LI><A HREF="#Heading2">Using AppWizard to Get Started</A>
+	<LI><A HREF="#Heading3">Using the Object Wizard</A>
+	<UL>
+		<LI><A HREF="#Heading4">Adding a Control to the Project</A>
+		<LI><A HREF="#Heading5">Naming the Control</A>
+		<LI><A HREF="#Heading6">Setting Control Attributes</A>
+		<LI><A HREF="#Heading7">Supporting Stock Properties</A>
+	</UL>
+	<LI><A HREF="#Heading8">Adding Properties to the Control</A>
+	<UL>
+		<LI><A HREF="#Heading9">Code from the Object Wizard</A>
+		<LI><A HREF="#Heading10">Adding the ReadyState Stock Property</A>
+		<LI><A HREF="#Heading11">Adding Custom Properties</A>
+		<LI><A HREF="#Heading12">Initializing the Properties</A>
+		<LI><A HREF="#Heading13">Adding the Asynchronous Property</A>
+	</UL>
+	<LI><A HREF="#Heading14">Drawing the Control</A>
+	<LI><A HREF="#Heading15">Persistence and a Property Page</A>
+	<UL>
+		<LI><A HREF="#Heading16">Adding a Property Page</A>
+		<LI><A HREF="#Heading17">Connecting the Property Page to CDieRoll</A>
+		<LI><A HREF="#Heading18">Persistence in a Property Bag</A>
+	</UL>
+	<LI><A HREF="#Heading19">Using the Control in Control Pad</A>
+	<LI><A HREF="#Heading20">Adding Events</A>
+	<UL>
+		<LI><A HREF="#Heading21">Adding Methods to the Event Interface</A>
+		<LI><A HREF="#Heading22">Implementing the IConnectionPoint Interface</A>
+		<LI><A HREF="#Heading23">Firing the Click Event</A>
+		<LI><A HREF="#Heading24">Firing the ReadyStateChange Event</A>
+	</UL>
+	<LI><A HREF="#Heading25">Exposing the DoRoll() Function</A>
+	<LI><A HREF="#Heading26">Registering as init Safe and script Safe</A>
+	<LI><A HREF="#Heading27">Preparing the Control for Use in Design Mode</A>
+	<LI><A HREF="#Heading28">Minimizing Executable Size</A>
+	<LI><A HREF="#Heading29">Using the Control in a Web Page</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>The Active Template Library (ATL) is a collection of C++ class templates that
+you can use to build ActiveX controls. These small controls generally don't use MFC,
+the Microsoft Foundation Classes, at all. Writing an ActiveX control with ATL requires
+a lot more knowledge of COM and interfaces than writing an MFC ActiveX control, because
+MFC protects you from a lot of low-level COM concepts. Using ATL is not for the timid,
+but it pays dividends in smaller, tighter controls. This chapter rewrites the Dieroll
+control of Chapter 17, &quot;Building an ActiveX Control,&quot; and Chapter 20, &quot;Building
+an Internet ActiveX Control,&quot; by using ATL rather than MFC as in those chapters.
+You will learn the important COM/ActiveX concepts that were skimmed over while you
+were using MFC.</P>
+<P>
+<H2><A NAME="Heading1"></A>Why Use the ATL?</H2>
+<P>Building an ActiveX Control with MFC is simple, as you saw in Chapters 17 and
+20. You can get by without knowing what a COM interface is or how to use a type library.
+Your control can use all sorts of handy MFC classes, such as CString and CWnd, can
+draw itself by using CDC member functions, and more. The only downside is that users
+of your control need the MFC DLLs, and if those DLLs aren't on their system already,
+the delay while 600KB or so of CAB file downloads will be significant.</P>
+<P>The alternative to MFC is to obtain the ActiveX functionality from the ATL and
+to call Win32 SDK functions, just as C programmers did when writing for Windows in
+the days before Visual C++ and MFC. The Win32 SDK is a lot to learn and won't be
+fully covered in this chapter. The good news is that if you're familiar with major
+MFC classes, such as CWnd and CDC, you will recognize a lot of these SDK functions,
+even if you've never seen them before. Many MFC member functions are merely wrappers
+for SDK functions.</P>
+<P>How much download time can you save? The MFC control from Chapter 20 is nearly
+30KB plus, of course, the MFC DLLs. The ATL control built in this chapter is, at
+most, 100KB and is fully self-contained. With a few tricks, you could reduce it to
+50KB of control and 20KB for the ATL DLL--one-tenth the size of the total control
+and DLL from Chapter 20!</P>
+<P>
+<H2><A NAME="Heading2"></A>Using AppWizard to Get Started</H2>
+<P>There's an AppWizard that knows how to make ATL controls, and it makes your job
+much simpler than it would be without the wizard. As always, choose File, New and
+click the Projects tab on the New dialog. Fill in an appropriate directory and name
+the project <B>DieRollControl</B>, as shown in Figure 21.1. Click OK.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> It's tempting to name the project <I>DieRoll</I>, but later in this
+	process you will be inserting a control into the project--that control will be called
+	<I>DieRoll</I>, so to avoid name conflicts, choose a longer name for the project.&#160;
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><A HREF="javascript:popUp('21uvc01.gif')"><B>FIG. 21.1</B></A><B> </B><I>AppWizard
+makes creating an ATL control simple.</I></P>
+<P>There is only one step in the ATL COM AppWizard, and it is shown in Figure 21.2.
+The default choices--DLL control, no merging proxy/stub code, no MFC support, no
+MTS support--are the right ones for this project. The file extension will be DLL
+rather than OCX, as it was for MFC controls, but that's not an important difference.
+Click Finish.</P>
+<P><A HREF="javascript:popUp('21uvc02.gif')"><B>FIG. 21.2</B></A><B> </B><I>Create
+a DLL control.</I></P>
+<P>The New Project Information dialog box, shown in Figure 21.3, confirms the choices
+you have made. Click OK to create the project.</P>
+<P>
+<H2><A NAME="Heading3"></A>Using the Object Wizard</H2>
+<P>The ATL COM AppWizard created 13 files, but you don't have a skeleton control
+yet. First, you have to follow the instructions included in the Step 1 dialog box
+and insert an ATL object into the project.</P>
+<P>
+<H3><A NAME="Heading4"></A>Adding a Control to the Project</H3>
+<P>Choose Insert, New ATL Object from the menu bar. This opens the ATL Object Wizard,
+shown in Figure 21.4.</P>
+<P><A HREF="javascript:popUp('21uvc03.gif')"><B>FIG. 21.3</B></A><B> </B><I>Your
+ATL choices are summarized before you create the project.</I></P>
+<P><A HREF="javascript:popUp('21uvc04.gif')"><B>FIG. 21.4</B></A><B> </B><I>Add an
+ATL control to your project.</I></P>
+<P>You can add several kinds of ATL objects to your project, but at the moment you
+are interested only in controls, so select Controls in the list box on the left.
+The choices in the list box on the left include Full Control, Lite Control, and Property
+Page. If you know for certain that this control will be used only in Internet Explorer,
+perhaps as part of an intranet project, you could choose Lite Control and save a
+little space. This DieRoll control might end up in any browser, a Visual Basic application,
+or anywhere else for that matter, so a Full Control is the way to go. You will add
+a property page later in this chapter. Select Full Control and click Next.</P>
+<P>
+<H3><A NAME="Heading5"></A>Naming the Control</H3>
+<P>Now the ATL Object Wizard Properties dialog box appears. The first tab is the
+Names tab. Here you can customize all the names used for this control. Enter <B>DieRoll</B>
+for the Short Name of DieRoll, and the rest will default to names based on it, as
+shown in Figure 21.5. You could change these names if you want, but there is no need.
+Note that the Type, DieRoll Class, is the name that will appear in the Insert Object
+dialog box of most containers. Because the MFC version of DieRoll is probably already
+in your Registry, having a different name for this version is a good thing. On other
+projects, you might consider changing the type name.</P>
+<P><A HREF="javascript:popUp('21uvc05.gif')"><B>FIG. 21.5</B></A><B> </B><I>Set the
+names of the files and the control.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading6"></A>Setting Control Attributes</H3>
+<P>Click the Attributes tab. Leave the default values: Apartment Threading Model,
+Dual Interface, and Yes for Aggregation. Select the check boxes Support ISupportErrorInfo
+and Support Connection Points. Leave Free Threaded Marshaler deselected, as shown
+in Figure 21.6. Each of these choices is discussed in the paragraphs that follow.</P>
+<P><A HREF="javascript:popUp('21uvc06.gif')"><B>FIG. 21.6</B></A><B> </B><I>Set the
+COM properties of your control.</I></P>
+<P><B>Threading Models&#160;&#160;</B>Avoid selecting the Single Threading Model,
+even if your controls don't have any threading. To be sure that no two functions
+of such a control are running at the same time, all calls to methods of a single-threaded
+control must be marshalled through a proxy, which significantly slows execution.
+The Apartment setting is a better choice for new controls.</P>
+<P>The Apartment model refers to STA (Single-Threaded Apartment model). This means
+that access to any resources shared by instances of the control (globals and statics)
+is through serialization. Instance data--local automatic variables and objects dynamically
+allocated on the heap--doesn't need this protection. This makes STA controls faster
+than single-threaded controls. Internet Explorer exploits STA in controls it contains.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If the design for your control includes a lot of globals and statics,
+	it might be a great deal of work to use the Apartment model. This isn't a good reason
+	to write a single-threaded control; it's a good reason to redesign your control as
+	a more object-oriented system. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The Free Threading (Multithreaded Apartment or MTA) Model refers to controls that
+are threaded and that already include protection against thread collisions. Although
+writing a multithreaded control might seem like a great idea, using such a control
+in a nonthreaded or STA container will result in marshalling again, this time to
+protect the container against having two functions called at once. This, too, introduces
+inefficiencies. Also, you, the developer, will do a significant amount of extra work
+to create a free-threaded control, because you must add the thread collision protection.</P>
+<P>The Both option in the Threading Model column asks the wizard to make a control
+that can be STA or MTA, avoiding inefficiences when used in a container that is single-threaded
+or STA, and exploiting the power of MTA models when available. You will have to add
+the threading-protection work, just as when you write an MTA control.</P>
+<P>At the moment, controls for Internet Explorer should be STA. DCOM controls that
+might be accessed by several connections at once can benefit from being MTA.</P>
+<P><B>Dual and Custom Interfaces&#160;&#160;</B>COM objects communicate through <I>interfaces</I>,
+which are collections of function names that describe the possible behavior of a
+COM object. To use an interface, you obtain a pointer to it and then call a member
+function of the interface. All Automation servers and ActiveX controls have an IDispatch
+interface in addition to any other interfaces that might be specific to what the
+server or control is for. To call a method of a control, you can use the Invoke()
+method of the IDispatch interface, passing in the dispid of the method you want to
+invoke. (This technique was developed so that methods could be called from Visual
+Basic and other pointerless languages.)</P>
+<P>Simply put, a <I>dual-interface</I> control lets you call methods both ways: by
+using a member function of a custom interface or by using IDispatch. MFC controls
+use only IDispatch, but this is slower than using a custom interface. The Interface
+column on this dialog box lets you choose Dual or Custom: Custom leaves IDispatch
+out of the picture. Select Dual so that the control can be used from Visual Basic,
+if necessary.</P>
+<P><B>Aggregation&#160;&#160;</B>The third column, Aggregation, governs whether another
+COM class can use this COM class by containing a reference to an instance of it.
+Choosing Yes means that other COM objects can use this class, No means they can't,
+and Only means they must--this object can't stand alone.</P>
+<P><B>Other Control Settings&#160;&#160;</B>Selecting support for ISupportErrorInfo
+means that your control will be able to return richer error information to the container.
+Selecting support for Connection Points is vital for a control, like this one, that
+will fire events. Selecting Free-Threaded Marshaler isn't required for an STA control.</P>
+<P>Click the Miscellaneous tab and examine all the settings, which can be left at
+their default values (see Figure 21.7). The control should be Opaque with a Solid
+Background and should use a normalized DC, even though that's slightly less efficient,
+because your draw code will be much easier to write.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you'd like to see how a DC is normalized for an ATL control, remember
+	that the entire ATL source is available to you, just as the MFC source is. In Program
+	Files\Microsoft Visual Studio\VC98\ATL\ Include\\ATLCTL.CPP, you will find CComControlBase::OnDrawAdvanced(),
+	which normalizes a DC and calls OnDraw() for you. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><A HREF="javascript:popUp('21uvc07.gif')"><B>FIG. 21.7</B></A><B> </B><I>Leave
+the Miscellaneous properties at the defaults.</I><B></B></P>
+<H3><A NAME="Heading7"></A>Supporting Stock Properties</H3>
+<P>Click the Stock Properties tab to specify which stock properties the control will
+support. To add support for a stock property, select it in the Not Supported list
+box; then click the &gt; button, and it will be moved to the Supported list on the
+right. Add support for Background Color and Foreground Color, as shown in Figure
+21.8. If you plan to support a lot of properties, use the &gt;&gt; button to move
+them all to the supported list and then move back the ones you don't want to support.</P>
+<P><A HREF="javascript:popUp('21uvc08.gif')"><B>FIG. 21.8</B></A><B> </B><I>Support
+Background Color and Foreground Color.</I></P>
+<P>Click OK on the Object Wizard to complete the control creation. At this point,
+you can build the project if you want, though the control does nothing at the moment.</P>
+<P>
+<H2><A NAME="Heading8"></A>Adding Properties to the Control</H2>
+<P>The MFC versions of DieRoll featured three stock properties: BackColor, ForeColor,
+and ReadyState. The first two have been added already, but the ReadyState stock properties
+must be added by hand. Also, there are two custom properties, Number and Dots, and
+an asynchronous property, Image.</P>
+<P>
+<H3><A NAME="Heading9"></A>Code from the Object Wizard</H3>
+<P>A COM class that implements or uses an interface does so by inheriting from a
+class representing that interface. Listing 21.1 shows all the classes that CDieRoll
+inherits from.</P>
+<P>
+<H4>Listing 21.1&#160;&#160;Excerpt from DieRoll.h in the DieRollControl Project--Inheritance</H4>
+<PRE>class ATL_NO_VTABLE CDieRoll : 
+   public CComObjectRootEx&lt;CComSingleThreadModel&gt;,
+   public CStockPropImpl&lt;CDieRoll, IDieRoll, &amp;IID_IDieRoll, 
+     &#172;&amp;LIBID_DIEROLLCONTROLLib&gt;,
+   public CComControl&lt;CDieRoll&gt;,
+   public IPersistStreamInitImpl&lt;CDieRoll&gt;,
+   public IOleControlImpl&lt;CDieRoll&gt;,
+   public IOleObjectImpl&lt;CDieRoll&gt;,
+   public IOleInPlaceActiveObjectImpl&lt;CDieRoll&gt;,
+   public IViewObjectExImpl&lt;CDieRoll&gt;,
+   public IOleInPlaceObjectWindowlessImpl&lt;CDieRoll&gt;,
+   public ISupportErrorInfo,
+   public IConnectionPointContainerImpl&lt;CDieRoll&gt;,
+   public IPersistStorageImpl&lt;CDieRoll&gt;,
+   public ISpecifyPropertyPagesImpl&lt;CDieRoll&gt;,
+   public IQuickActivateImpl&lt;CDieRoll&gt;,
+   public IDataObjectImpl&lt;CDieRoll&gt;,
+   public IProvideClassInfo2Impl&lt;&amp;CLSID_DieRoll, 
+    &#172;&amp;DIID__IDieRollEvents, &amp;LIBID_DIEROLLCONTROLLib&gt;,
+   public IPropertyNotifySinkCP&lt;CDieRoll&gt;,
+</PRE>
+<PRE>   public CComCoClass&lt;CDieRoll, &amp;CLSID_DieRoll&gt;,
+</PRE>
+<P>Now you can see where the <I>T</I> in ATL comes in: All these classes are template
+classes. (If you aren't familiar with templates, read Chapter 26, &quot;Exceptions
+and Templates.&quot;) You add support for an interface to a control by adding another
+entry to this list of interface classes from which it inherits.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong>otice that some names follow the pattern IxxxImpl: That means that
+	this class implements the Ixxx interface. Classes inheriting from IxxxImpl inherit
+	code as well as function names. For example, CDieRoll inherits from ISupportErrorInfo,
+	not ISupportErrorInfoImpl&lt;CDieRoll&gt;, even though such a template does exist.
+	That is because the code in that template implementation class isn't appropriate
+	for an ATL control, so the control inherits only the names of the functions from
+	the original interface and provides code for them in the source file, as you will
+	shortly see.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Farther down the header file, you will find the COM map shown in Listing 21.2.</P>
+<P>
+<H4>Listing 21.2&#160;&#160;Excerpt from DieRollControl.h--COM Map</H4>
+<PRE>BEGIN_COM_MAP(CDieRoll)
+   COM_INTERFACE_ENTRY_IMPL(IConnectionPointContainer)
+   COM_INTERFACE_ENTRY(IDieRoll)
+   COM_INTERFACE_ENTRY(IDispatch)
+   COM_INTERFACE_ENTRY(IViewObjectEx)
+   COM_INTERFACE_ENTRY(IViewObject2)
+   COM_INTERFACE_ENTRY(IViewObject)
+   COM_INTERFACE_ENTRY(IOleInPlaceObjectWindowless)
+   COM_INTERFACE_ENTRY(IOleInPlaceObject)
+   COM_INTERFACE_ENTRY2(IOleWindow, IOleInPlaceObjectWindowless)
+   COM_INTERFACE_ENTRY(IOleInPlaceActiveObject)
+   COM_INTERFACE_ENTRY(IOleControl)
+   COM_INTERFACE_ENTRY(IOleObject)
+   COM_INTERFACE_ENTRY(IPersistStreamInit)
+   COM_INTERFACE_ENTRY2(IPersist, IPersistStreamInit)
+   COM_INTERFACE_ENTRY(ISupportErrorInfo)
+   COM_INTERFACE_ENTRY(IConnectionPointContainer)
+   COM_INTERFACE_ENTRY(ISpecifyPropertyPages)
+   COM_INTERFACE_ENTRY(IQuickActivate)
+   COM_INTERFACE_ENTRY(IPersistStorage)
+   COM_INTERFACE_ENTRY(IDataObject)
+   COM_INTERFACE_ENTRY(IProvideClassInfo)
+   COM_INTERFACE_ENTRY(IProvideClassInfo2)
+</PRE>
+<PRE> END_COM_MAP()
+</PRE>
+<P>This COM map is the connection between IUnknown::QueryInterface() and all the
+interfaces supported by the control. All COM objects must implement IUnknown, and
+QueryInterface() can be used to determine what other interfaces the control supports
+and obtain a pointer to them. The macros connect the Ixxx interfaces to the IxxxImpl
+classes from which CDieRoll inherits.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> IUnknown and QueryInterface are discussed in Chapter 13, &quot;ActiveX
+	Concepts,&quot; in the section titled &quot;The Component Object Model.&quot; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Looking back at the inheritance list for CDieRoll, most templates take only one
+parameter, the name of this class, and come from AppWizard. This entry came from
+ObjectWizard:</P>
+<P>
+<PRE>public CStockPropImpl&lt;CDieRoll, IDieRoll, &amp;IID_IDieRoll, 
+   &#172;&amp;LIBID_DIEROLLCONTROLLib&gt;,
+</PRE>
+<P>This line is how ObjectWizard arranged for support for stock properties. Notice
+that there is no indication which properties are supported. Farther down the header
+file, two member variables have been added to CDieRoll:</P>
+<P>
+<PRE>OLE_COLOR m_clrBackColor;
+OLE_COLOR m_clrForeColor; 
+</PRE>
+<P>The ObjectWizard also updated DieRollControl.idl, the interface definition file,
+to show these two stock properties, as shown in Listing 21.3. (Double-click on the
+interface, IDieRoll, in ClassView to edit the .IDL file.)</P>
+<P>
+<H4>Listing 21.3&#160;&#160;Excerpt from DieRollControl.idl--Stock Properties</H4>
+<PRE>    [
+        object,
+        uuid(2DE15F32-8A71-11D0-9B10-0080C81A397C),
+        dual,
+        helpstring(&quot;IDieRoll Interface&quot;),
+        pointer_default(unique)
+    ]
+    interface IDieRoll : IDispatch
+    {
+    [propput, id(DISPID_BACKCOLOR)]
+        HRESULT BackColor([in]OLE_COLOR clr);
+    [propget, id(DISPID_BACKCOLOR)]
+        HRESULT BackColor([out,retval]OLE_COLOR* pclr);
+    [propput, id(DISPID_FORECOLOR)]
+        HRESULT ForeColor([in]OLE_COLOR clr);
+    [propget, id(DISPID_FORECOLOR)]
+        HRESULT ForeColor([out,retval]OLE_COLOR* pclr);
+</PRE>
+<PRE>    };
+</PRE>
+<P>This class will provide all the support for the get and put functions and will
+notify the container when one of these properties changes.</P>
+<P>
+<H3><A NAME="Heading10"></A>Adding the ReadyState Stock Property</H3>
+<P>Although ReadyState wasn't on the stock property list in the ATL Object Wizard,
+it's supported by CStockPropImpl. You can add another stock property by editing the
+header and idl files. In the header file, immediately after the lines that declare
+m_clrBackColor and m_clrForeColor, declare another member variable:</P>
+<P>
+<PRE>long m_nReadyState;
+</PRE>
+<P>This property will be used in the same way as the ReadyState property in the MFC
+version of DieRoll: to implement Image as an asynchronous property. In DieRollControl.idl,
+add these lines to the IDispatch block, after the lines for BackColor and ForeColor:</P>
+<P>
+<PRE>[propget, id(DISPID_READYSTATE)]
+HRESULT ReadyState([out,retval]long* prs);
+</PRE>
+<P>You don't need to add a pair of lines to implement put for this property, because
+external objects can't update ReadyState. Save the header and idl files to update
+ClassView--if you don't, you won't be able to add more properties with ClassView.
+Expand CDieRoll and IDieRoll in ClassView to see that the member variable has been
+added to CDieRoll and a ReadyState() function has been added to IDieRoll.</P>
+<P>
+<H3><A NAME="Heading11"></A>Adding Custom Properties</H3>
+<P>To add custom properties, you will use an ATL tool similar to the MFC ClassWizard.
+Right-click on IDieRoll (the top-level one, not the one under CDieRoll) in ClassView
+to open the shortcut menu shown in Figure 21.9, and choose Add Property.</P>
+<P><A HREF="javascript:popUp('21uvc09.gif')"><B>FIG. 21.9</B></A><B> </B><I>ATL projects
+have a different ClassView shortcut menu than MFC projects.</I></P>
+<P>The Add Property to Interface dialog box, shown in Figure 21.10, appears. Choose
+<B>short</B> for the type and fill in <B>Number</B> for the name. Deselect Put Function
+because containers won't need to change the number showing on the die. Leave the
+rest of the settings unchanged and click OK to add the property.</P>
+<P><A HREF="javascript:popUp('21uvc10.gif')"><B>FIG. 21.10</B></A><B> </B><I>Add
+</I><B>Number</B><I> as a read-only property.</I></P>
+<P>Repeat this process for the BOOL Dots, which should have both get and put functions.
+(Leave the Put radio button at PropPut.) The ClassView now shows entries under both
+CDieRoll and IDieRoll related to these new properties. Try double-clicking the new
+entries. For example, double-clicking get_Dots() under the IDieRoll that is under
+CDieRoll opens the source (cpp) file scrolled to the get_Dots() function. Double-clicking
+Dots() under the top-level IDieRoll opens the idl file scrolled to the propget entry
+for Dots.</P>
+<P>Although a number of entries have been added to CDieRoll, no member variables
+have been added. Only you can add the member variables that correspond to the new
+properties. Although in many cases it's safe to assume that the new properties are
+simply member variables of the control class, they might not be. For example, Number
+might have been the dimension of some array kept within the class rather than a variable
+of its own.</P>
+<P>Add the following to the header file, after the declarations of m_clrBackColor,
+m_clrForeColor, and m_nReadyState:</P>
+<P>
+<PRE>short m_sNumber;
+BOOL m_bDots;
+</PRE>
+<P>In the idl file, the new propget and propput entries use hard-coded dispids of
+1 and 2, like this:</P>
+<P>
+<PRE>[propget, id(1), helpstring(&quot;property Number&quot;)] 
+    HRESULT Number([out, retval] short *pVal);
+[propget, id(2), helpstring(&quot;property Dots&quot;)] 
+    HRESULT Dots([out, retval] BOOL *pVal);
+[propput, id(2), helpstring(&quot;property Dots&quot;)] 
+    HRESULT Dots([in] BOOL newVal); 
+</PRE>
+<P>To make the code more readable, use an enum of dispids. Adding the declaration
+of the enum to the idl file will make it usable in both the idl and header file.
+Add these lines to the beginning of DieRollControl.idl:</P>
+<P>
+<PRE>     typedef enum propertydispids
+          {
+               dispidNumber = 1,
+               dispidDots = 2,
+          }PROPERTYDISPIDS;
+</PRE>
+<P>Now you can change the propget and propput lines:</P>
+<P>
+<PRE>[propget, id(<B>dispidNumber</B>), helpstring(&quot;property Number&quot;)] 
+    HRESULT Number([out, retval] short *pVal);
+[propget, id(<B>dispidDots</B>), helpstring(&quot;property Dots&quot;)] 
+    HRESULT Dots([out, retval] BOOL *pVal);
+[propput, id(<B>dispidDots</B>), helpstring(&quot;property Dots&quot;)] 
+    HRESULT Dots([in] BOOL newVal);
+</PRE>
+<P>The next step is to code the get and set functions to use the member variables.
+Listing 21.4 shows the completed functions. (If you can't see these in ClassView,
+expand the IDieRoll under CDieRoll.)</P>
+<P>
+<H4>Listing 21.4&#160;&#160;Excerpt from DieRoll.cpp--get and set Functions</H4>
+<PRE>STDMETHODIMP CDieRoll::get_Number(short * pVal)
+{
+     *pVal = m_sNumber;
+     return S_OK;
+}
+STDMETHODIMP CDieRoll::get_Dots(BOOL * pVal)
+{
+     *pVal = m_bDots;
+     return S_OK;
+}
+STDMETHODIMP CDieRoll::put_Dots(BOOL newVal)
+{
+     if (FireOnRequestEdit(dispidDots) == S_FALSE)
+     {
+          return S_FALSE;
+     }
+     m_bDots = newVal;
+     SetDirty(TRUE);
+     FireOnChanged(dispidDots);
+     FireViewChange();
+     return S_OK;
+</PRE>
+<PRE>}
+</PRE>
+<P>The code in the two get functions is simple and straightforward. The put_dots()
+code is more complex because it fires notifications. FireOnRequestEdit() notifies
+all the IPropertyNotifySink interfaces that this property is going to change. Any
+one of these interfaces can deny the request, and if one does, this function will
+return S_FALSE to forbid the change.</P>
+<P>Assuming the change is allowed, the member variable is changed, and the control
+is marked as modified (dirty) so that it will be saved. The call to FireOnChange()
+notifies the IPropertyNotifySink interfaces that this property has changed, and the
+call to FireViewChange() tells the container to redraw the control.</P>
+<P>
+<H3><A NAME="Heading12"></A>Initializing the Properties</H3>
+<P>Having added the code to get and set these properties, you should now change the
+CDieRoll constructor to initialize all the stock and custom properties, as shown
+in Listing 21.5. A stub for the constructor is in the header file for you to edit.</P>
+<P>
+<H4>Listing 21.5&#160;&#160;Excerpt from DieRoll.h--Constructor</H4>
+<PRE>    CDieRoll()
+    {
+        srand( (unsigned)time( NULL ) );
+        m_nReadyState = READYSTATE_COMPLETE;
+        m_clrBackColor = 0x80000000 | COLOR_WINDOW;
+        m_clrForeColor = 0x80000000 | COLOR_WINDOWTEXT;
+        m_sNumber = Roll();
+        m_bDots = TRUE;
+</PRE>
+<PRE>    }
+</PRE>
+<P>At the top of the header, add this line to bring in a declaration of the time()
+function:</P>
+<P>
+<PRE>#include &quot;time.h&quot;
+</PRE>
+<P>Just as you did in the MFC version of this control, you initialize m_sNumber to
+a random number between 1 and 6, returned by the Roll() function. Add this function
+to CDieRoll by right-clicking on the classname in ClassView and choosing Add Member
+Function from the shortcut menu. Roll() is protected takes no parameters and returns
+a short. The code for Roll() is in Listing 21.6 and is explained in Chapter 17.</P>
+<P>
+<H4>Listing 21.6&#160;&#160;CDieRoll::Roll()</H4>
+<PRE>short CDieRoll::Roll()
+{
+     double number = rand();
+     number /= RAND_MAX + 1;
+     number *= 6;
+     return (short)number + 1;
+</PRE>
+<PRE>}
+</PRE>
+<P>It's a good idea to build the project at this point to be sure you haven't made
+any typos or missed any steps.</P>
+<P>
+<H3><A NAME="Heading13"></A>Adding the Asynchronous Property</H3>
+<P>Just as in Chapter 20, the Image property represents a bitmap to be loaded asynchronously
+and used as a background image. Add the property to the interface just as <B>Number</B>
+and <B>Dots</B> were added. Use <B>BSTR</B> for the type and <B>Image</B> for the
+name. Update the enum in the idl file so that <B>dispidImage</B> is 3, and edit the
+<B>propget</B> and <B>propput</B> lines in the idl file to use the enum value:</P>
+<P>
+<PRE>[propget, id(dispidImage), helpstring(&quot;property Image&quot;)] 
+    HRESULT Image([out, retval] BSTR *pVal);
+[propput, id(dispidImage), helpstring(&quot;property Image&quot;)] 
+    HRESULT Image([in] BSTR newVal);
+</PRE>
+<P>Add a member variable, m_bstrImage, to the class after the five properties you
+have already added:</P>
+<P>
+<PRE>CComBSTR m_bstrImage;
+</PRE>
+<P>CComBSTR is an ATL wrapper class with useful member functions for manipulating
+a BSTR.</P>
+<P>A number of other member variables must be added to handle the bitmap and the
+asynchronous loading. Add these lines to DieRoll.h after the declaration of m_bstrImage:</P>
+<P>
+<PRE>HBITMAP hBitmap;
+BITMAPINFOHEADER bmih;
+char *lpvBits;
+BITMAPINFO *lpbmi;
+HGLOBAL hmem1;
+HGLOBAL hmem2;
+BOOL BitmapDataLoaded;
+char *m_Data;
+unsigned long m_DataLength;
+</PRE>
+<P>The first six of these new variables are used to draw the bitmap and won't be
+discussed. The last three combine to achieve the same behavior as the data path property
+used in the MFC version of this control.</P>
+<P>Add these three lines to the constructor:</P>
+<P>
+<PRE>m_Data = NULL;
+m_DataLength = 0;
+BitmapDataLoaded = FALSE;
+</PRE>
+<P>Add a destructor to CDieRoll (in the header file) and add the code in Listing
+21.7.</P>
+<P>
+<H4>Listing 21.7&#160;&#160;CDieRoll::~CDieRoll()</H4>
+<PRE>    ~CDieRoll()
+    {
+        if (BitmapDataLoaded)
+        {
+            GlobalUnlock(hmem1);
+            GlobalFree(hmem1);
+            GlobalUnlock(hmem2);
+            GlobalFree(hmem2);
+            BitmapDataLoaded = FALSE;
+        }
+        if (m_Data != NULL)
+        {
+            delete m_Data;
+        }
+</PRE>
+<PRE>    }
+</PRE>
+<P>The Image property has get and put functions. Code them as in Listing 21.8.</P>
+<P>
+<H4>Listing 21.8&#160;&#160;DieRoll.cpp--get_Image() and put_Image()</H4>
+<PRE>STDMETHODIMP CDieRoll::get_Image(BSTR * pVal)
+{
+    *pVal = m_bstrImage.Copy();
+    return S_OK;
+}
+STDMETHODIMP CDieRoll::put_Image(BSTR newVal)
+{
+    USES_CONVERSION;
+    if (FireOnRequestEdit(dispidImage) == S_FALSE)
+    {
+        return S_FALSE;
+    }
+// if there was an old bitmap or data, delete it
+    if (BitmapDataLoaded)
+    {
+        GlobalUnlock(hmem1);
+        GlobalFree(hmem1);
+        GlobalUnlock(hmem2);
+        GlobalFree(hmem2);
+        BitmapDataLoaded = FALSE;
+    }
+    if (m_Data != NULL)
+    {
+        delete m_Data; 
+    }
+    m_Data = NULL;
+    m_DataLength = 0;
+    m_bstrImage = newVal;
+    LPSTR string = W2A(m_bstrImage);
+    if (string != NULL &amp;&amp; strlen(string) &gt; 0)
+    {
+        // not a null string so try to load it
+        BOOL relativeURL = FALSE;
+        if (strchr(string, `:') == NULL)
+        {
+            relativeURL = TRUE;
+        }
+      m_nReadyState = READYSTATE_LOADING;
+        HRESULT ret = CBindStatusCallback&lt;CDieRoll&gt;::Download(this, 
+            OnData, m_bstrImage, m_spClientSite, relativeURL);
+   }
+    else
+    {
+        // was a null string so don't try to load it
+        m_nReadyState = READYSTATE_COMPLETE;
+        FireViewChange();
+   }
+    SetDirty(TRUE);
+    FireOnChanged(dispidImage);
+    return S_OK;
+}
+</PRE>
+<PRE></PRE>
+<P>As with Numbers and Dots, the get function is straightforward, and the put function
+is more complicated. The beginning and end of the put function are like put_Dots(),
+firing notifications to check whether the variable can be changed and then other
+notifications that it was changed. In between is the code unique to an asynchronous
+property.</P>
+<P>To start the download of the asynchronous property, this function will call CBindStatusCallback&lt;CDieRoll&gt;::Download(),
+but first it needs to determine whether the URL in m_bstrImage is a relative or absolute
+URL. Use the ATL macro W2A to convert the wide BSTR to an ordinary C string so that
+the C function strchr() can be used to search for a : character in the URL. An URL
+with no : in it is assumed to be a relative URL.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> A BSTR is a wide (double-byte) character on all 32-bit Windows platforms.
+	It is a narrow (single-byte) string on a PowerMac.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>In the MFC version of the DieRoll control with an asynchronous image property,
+whenever a block of data came through, the OnDataAvailable() function was called.
+The call to Download() arranges for a function called OnData() to be called when
+data arrives. You will write the OnData() function. Add it to the class with the
+other public functions and add the implementation shown in Listing 21.9 to DieRoll.cpp.</P>
+<P>
+<H4>Listing 21.9&#160;&#160;DieRoll.cpp--CDieRoll::OnData()</H4>
+<PRE>void CDieRoll::OnData(CBindStatusCallback&lt;CDieRoll&gt;* pbsc, 
+                      BYTE * pBytes, DWORD dwSize)
+{
+    char *newData = new char[m_DataLength + dwSize];
+    memcpy(newData, m_Data, m_DataLength);
+    memcpy(newData+m_DataLength, pBytes, dwSize);
+    m_DataLength += dwSize;
+    delete m_Data;
+    m_Data = newData;
+    if (ReadBitmap())
+    {
+        m_nReadyState = READYSTATE_COMPLETE;
+        FireViewChange();
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>Because there is no realloc() when using new, this function uses new to allocate
+enough chars to hold the data that has already been read (m_DataLength) and the new
+data that is coming in (dwSize); it then copies m_Data to this block, and the new
+data (pBytes) after m_Data. Then it attempts to convert into a bitmap the data that
+has been received so far. If this succeeds, the download must be complete, so the
+ready state notifications are sent, and the call to FireViewChange() sends a notification
+to the container to redraw the view. You can obtain the ReadBitmap() function from
+the Web site and add it to your project. It's much like the MFC version, but it doesn't
+use any MFC classes such as CFile. Add the function and its code to CDieRoll.</P>
+<P>Once again, build the control, just to be sure you haven't missed any steps or
+made any typos.</P>
+<P>
+<H2><A NAME="Heading14"></A>Drawing the Control</H2>
+<P>Now that all the properties have been added, you can code OnDraw(). Although the
+basic structure of this function is the same as in the MFC version of Chapter 20.
+A lot more work must be done because you can't rely on MFC to do some of it for you.
+A more detailed explanation of the OnDraw() design is in Chapter 20.</P>
+<P>The structure of OnDraw() is</P>
+<P>
+<PRE>HRESULT CDieRoll::OnDraw(ATL_DRAWINFO&amp; di)
+// if the bitmap is ready, draw it
+// else draw a plan background using BackColor
+// if !Dots draw a number in ForeColor
+// else draw the dots
+</PRE>
+<P>First, you need to test whether the bitmap is ready and to draw it, if possible.
+This code is in Listing 21.10: Add it to dieroll.cpp and remove the OnDraw()code
+left in dieroll.h by AppWizard. (Leave the declaration of OnDraw() in the header
+file.) Notice that if ReadyState is READYSTATE_COMPLETE, but the call to CreateDIBitmap()
+doesn't result in a valid bitmap handle, the bitmap member variables are cleared
+away to make subsequent calls to this function give up a little faster. This chapter
+doesn't discuss how to draw bitmaps.</P>
+<P>
+<H4>Listing 21.10&#160;&#160;CDieRoll::OnDraw()--Use the Bitmap</H4>
+<PRE>HRESULT CDieRoll::OnDraw(ATL_DRAWINFO&amp; di)
+{
+    int width = (di.prcBounds-&gt;right - di.prcBounds-&gt;left + 1);
+    int height = (di.prcBounds-&gt;bottom - di.prcBounds-&gt;top + 1); 
+    BOOL drawn = FALSE;
+    if (m_nReadyState == READYSTATE_COMPLETE)
+    {
+        if (BitmapDataLoaded)
+        {
+            hBitmap = ::CreateDIBitmap(di.hdcDraw, &amp;bmih, CBM_INIT, lpvBits, 
+                lpbmi, DIB_RGB_COLORS);
+            if (hBitmap)
+            {
+                HDC hmemdc;
+                hmemdc = ::CreateCompatibleDC(di.hdcDraw);
+                ::SelectObject(hmemdc, hBitmap);
+                DIBSECTION ds;
+                ::GetObject(hBitmap,sizeof(DIBSECTION),(LPSTR)&amp;ds);
+                ::StretchBlt(di.hdcDraw,
+                                di.prcBounds-&gt;left, // left
+                                di.prcBounds-&gt;top,  // top
+                                width, // target width
+                                height, // target height
+                                hmemdc,        // the image
+                                0,            //offset into image -x
+                                0,            //offset into image -y
+                                ds.dsBm.bmWidth, // width
+                                ds.dsBm.bmHeight, // height
+                                SRCCOPY);    //copy it over
+                drawn = TRUE;
+                ::DeleteObject(hBitmap);
+                hBitmap = NULL;
+                ::DeleteDC(hmemdc); 
+            }
+            else
+            {
+                GlobalUnlock(hmem1);
+                GlobalFree(hmem1);
+                GlobalUnlock(hmem2);
+                GlobalFree(hmem2);
+                BitmapDataLoaded = FALSE;
+            }
+        }
+    }
+return S_OK;
+</PRE>
+<PRE>}
+</PRE>
+<P>If the bitmap wasn't drawn because ReadyState is not READYSTATE_COMPLETE yet or
+there was a problem with the bitmap, OnDraw() draws a solid background by using the
+BackColor property, as shown in Listing 21.11. Add this code at the end of OnDraw(),
+before the return statement. The SDK calls are very similar to the MFC calls used
+in the MFC version of DieRoll--for example, ::OleTranslateColor() corresponds to
+TranslateColor().</P>
+<P>
+<H4>Listing 21.11&#160;&#160;CDieRoll::OnDraw()--Draw a Solid Background</H4>
+<PRE>    if (!drawn)
+    {
+        COLORREF back;
+        ::OleTranslateColor(m_clrBackColor, NULL, &amp;back);
+        HBRUSH backbrush = ::CreateSolidBrush(back);
+        ::FillRect(di.hdcDraw, (RECT *)di.prcBounds, backbrush);
+        ::DeleteObject(backbrush);
+</PRE>
+<PRE>    }
+</PRE>
+<P>With the background drawn, as a bitmap image or a solid color, OnDraw() must now
+tackle the foreground. Getting the foreground color is simple. Add these two lines
+at the end of OnDraw() before the return statement:</P>
+<P>
+<PRE>COLORREF fore;
+::OleTranslateColor(m_clrForeColor, NULL, &amp;fore);
+</PRE>
+<P>The project should build successfully at this point if you want to be sure you've
+entered all this code correctly.</P>
+<P>If Dots is FALSE, the die should be drawn with a number on it. Add the code in
+Listing 21.12 to OnDraw() before the return statement as usual. Again, the SDK functions
+do the same job as the similarly named MFC functions used in the MFC version of DieRoll.</P>
+<P>
+<H4>Listing 21.12&#160;&#160;CDieRoll::OnDraw()--Draw a Number</H4>
+<PRE>     if (!m_bDots)
+     {
+        _TCHAR val[20]; //character representation of the short value
+        _itot(m_sNumber, val, 10);
+            ::SetTextColor(di.hdcDraw, fore);
+        ::ExtTextOut(di.hdcDraw, 0, 0, ETO_OPAQUE, 
+            (RECT *)di.prcBounds, val, _tcslen(val), NULL );  
+</PRE>
+<PRE>     }
+</PRE>
+<P>The code that draws dots is in Listing 21.13. Add it to OnDraw() before the return
+statement to complete the function. This code is long but is explained in Chapter
+17. As in the rest of OnDraw(), MFC function calls have been replaced with SDK calls.</P>
+<P>
+<H4>Listing 21.13&#160;&#160;CDieRoll::OnDraw()--Draw Dots</H4>
+<PRE>     else
+     {
+         //dots are 4 units wide and high, one unit from the edge
+         int Xunit = width/16;
+         int Yunit = height/16;
+         int Xleft = width%16;
+         int Yleft = height%16;
+         // adjust top left by amount left over
+         int Top = di.prcBounds-&gt;top + Yleft/2;
+         int Left = di.prcBounds-&gt;left + Xleft/2; 
+         HBRUSH forebrush;
+         forebrush = ::CreateSolidBrush(fore);
+         HBRUSH savebrush = (HBRUSH)::SelectObject(di.hdcDraw, forebrush);
+         switch(m_sNumber)
+         {
+         case 1:
+             ::Ellipse(di.hdcDraw, Left+6*Xunit, Top+6*Yunit,
+                            Left+10*Xunit, Top + 10*Yunit); //center
+              break;
+         case 2:
+              ::Ellipse(di.hdcDraw, Left+Xunit, Top+Yunit,
+                            Left+5*Xunit, Top + 5*Yunit);   //upper left
+              ::Ellipse(di.hdcDraw, Left+11*Xunit, Top+11*Yunit,
+                            Left+15*Xunit, Top + 15*Yunit); //lower right
+              break;
+         case 3: 
+              ::Ellipse(di.hdcDraw, Left+Xunit, Top+Yunit,
+                            Left+5*Xunit, Top + 5*Yunit);   //upper left
+              ::Ellipse(di.hdcDraw, Left+6*Xunit, Top+6*Yunit,
+                            Left+10*Xunit, Top + 10*Yunit); //center
+              ::Ellipse(di.hdcDraw, Left+11*Xunit, Top+11*Yunit,
+                            Left+15*Xunit, Top + 15*Yunit); //lower right
+              break;
+         case 4:
+              ::Ellipse(di.hdcDraw, Left+Xunit, Top+Yunit,
+                            Left+5*Xunit, Top + 5*Yunit);   //upper left
+              ::Ellipse(di.hdcDraw, Left+11*Xunit, Top+Yunit,
+                            Left+15*Xunit, Top + 5*Yunit);  //upper right
+              ::Ellipse(di.hdcDraw, Left+Xunit, Top+11*Yunit,
+                            Left+5*Xunit, Top + 15*Yunit);  //lower left
+              ::Ellipse(di.hdcDraw, Left+11*Xunit, Top+11*Yunit,
+                            Left+15*Xunit, Top + 15*Yunit); //lower right
+              break;
+         case 5:
+              ::Ellipse(di.hdcDraw, Left+Xunit, Top+Yunit,
+                            Left+5*Xunit, Top + 5*Yunit);   //upper left
+              ::Ellipse(di.hdcDraw, Left+11*Xunit, Top+Yunit,
+                            Left+15*Xunit, Top + 5*Yunit);  //upper right
+              ::Ellipse(di.hdcDraw, Left+6*Xunit, Top+6*Yunit,
+                            Left+10*Xunit, Top + 10*Yunit); //center
+              ::Ellipse(di.hdcDraw, Left+Xunit, Top+11*Yunit,
+                            Left+5*Xunit, Top + 15*Yunit);  //lower left
+              ::Ellipse(di.hdcDraw, Left+11*Xunit, Top+11*Yunit,
+                            Left+15*Xunit, Top + 15*Yunit); //lower right
+              break;
+         case 6:
+               ::Ellipse(di.hdcDraw, Left+Xunit, Top+Yunit,
+                    Left+5*Xunit, Top + 5*Yunit);   //upper left
+               ::Ellipse(di.hdcDraw, Left+11*Xunit, Top+Yunit,
+                    Left+15*Xunit, Top + 5*Yunit);  //upper right
+               ::Ellipse(di.hdcDraw, Left+Xunit, Top+6*Yunit,
+                    Left+5*Xunit, Top + 10*Yunit);  //center left
+               ::Ellipse(di.hdcDraw, Left+11*Xunit, Top+6*Yunit,
+                      Left+15*Xunit, Top + 10*Yunit); //center right
+               ::Ellipse(di.hdcDraw, Left+Xunit, Top+11*Yunit,
+                    Left+5*Xunit, Top + 15*Yunit);  //lower left
+               ::Ellipse(di.hdcDraw, Left+11*Xunit, Top+11*Yunit,
+                    Left+15*Xunit, Top + 15*Yunit); //lower right
+               break;
+         }
+         ::SelectObject(di.hdcDraw, savebrush);
+         ::DeleteObject(forebrush);
+</PRE>
+<PRE>     }
+</PRE>
+<P>Again, build the project to be sure you haven't missed anything. If you look in
+your project folder now, you should see a file called DieRoll.htm (it doesn't show
+up in FileView). This HTML is generated for you to test your control. Try loading
+it into Internet Explorer now, and a die should display, as in Figure 21.11. It will
+not have an image background and it will not roll when you click it.</P>
+<P><A HREF="javascript:popUp('21uvc11.gif')"><B>FIG. 21.11</B></A><B> </B><I>Your
+control can draw itself in a browser.</I></P>
+<H2><I></I></H2>
+<H2><A NAME="Heading15"></A>Persistence and a Property Page</H2>
+<P>The properties have been added to the control and used in the drawing of the control.
+Now all that remains is to make the properties persistent and to add a property page.</P>
+<P>
+<H3><A NAME="Heading16"></A>Adding a Property Page</H3>
+<P>To add a property page to this control, follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Choose Insert, New ATL Object from the menu bar to open the ATL Object
+	Wizard.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Select Controls in the left pane and Property Page in the right pane;
+	then click Next.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>On the Names tab, enter <B>DieRollPPG</B> for the Short Name.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Click the Strings tab (the settings on the Attributes tab will not
+	be changed). Enter <B>General</B> for the Title and <B>DieRoll Property Page</B>
+	for the Doc String. Blank out the Helpfile Name.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Click OK to add the property page to the project.
+	<P>
+</DL>
+
+<P>Developer Studio will switch to ResourceView and open the dialog IDD_DIEROLLPPG.
+Add a check box with the resource ID IDC_DOTS and the caption Display Dot Pattern
+and an edit box with the resource ID <B>IDC_IMAGE</B> labelled Image URL, as shown
+in Figure 21.12.</P>
+<P>At the top of DieRollPPG.h, add this line:</P>
+<P>
+<PRE>#include &quot;DieRollControl.h&quot;
+</PRE>
+<P>You need to connect the controls on this property page to properties of the DieRoll
+control. The first step is to add three lines to the message map in DieRollPPG.h
+so that it resembles Listing 21.14.</P>
+<P><A HREF="javascript:popUp('21uvc11a.gif')"><B>FIG. 21.12</B></A><B> </B><I>Add
+two controls to the property page.</I></P>
+
+<P><I></I>
+<H4>Listing 21.14&#160;&#160;DieRollPPG.h--Message Map</H4>
+<PRE>BEGIN_MSG_MAP(CDieRollPPG)
+    MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+    COMMAND_HANDLER(IDC_DOTS, BN_CLICKED, OnDotsChanged)
+    COMMAND_HANDLER(IDC_IMAGE, EN_CHANGE, OnImageChanged)
+    CHAIN_MSG_MAP(IPropertyPageImpl&lt;CDieRollPPG&gt;)
+</PRE>
+<PRE>END_MSG_MAP()
+</PRE>
+<P>These new lines ensure that OnInitDialog() will be called when the dialog box
+is initialized and that OnDotsChanged() or OnImageChanged() will be called whenever
+Dots or Image are changed (the other properties don't have put methods and so can't
+be changed).</P>
+<P>Add the code in Listing 21.15 to the header file to declare and implement OnInitDialog().
+Put it after the constructor, so it will be public as well.</P>
+<P>
+<H4>Listing 21.15&#160;&#160;DieRollPPG.h--CDieRollPPG::OnInitDialog()</H4>
+<PRE>    LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, 
+                         BOOL &amp; bHandled)
+    {
+        USES_CONVERSION;
+        CComQIPtr&lt;IDieRoll, &amp;IID_IDieRoll&gt; pDieRoll(m_ppUnk[0]);
+        BOOL dots;
+        pDieRoll-&gt;get_Dots(&amp;dots);
+        ::SendDlgItemMessage(m_hWnd, IDC_DOTS, BM_SETCHECK, dots, 0L); 
+        BSTR image;
+        pDieRoll-&gt;get_Image(&amp;image);
+        LPTSTR image_URL = W2T(image);
+        SetDlgItemText(IDC_IMAGE, image_URL);
+        return TRUE;
+</PRE>
+<PRE>    }
+</PRE>
+<P>This code begins by declaring a pointer to an IDieRoll interface using the CComQIPtr
+template class and initializing it to the first element of the m_ppUnk array in this
+class, CDieRollPPG. (A property page can be associated with multiple controls.) The
+constructor for the CComQIPtr template class uses the QueryInterface() method of
+the IUnknown pointer that was passed in to the constructor to find a pointer to an
+IDieRoll interface. Now you can call member functions of this interface to access
+the properties of the DieRoll control.</P>
+<P>Finding the value of the Dots property of the CDieRoll object is simple enough:
+Call get_Dots(). To use that value to initialize the check box on the property page,
+send a message to the control using the SDK function ::SendDlgItemMessage(). The
+BM_SETCHECK parameter indicates that you are setting whether the box is checked (selected).
+Passing dots as the fourth parameter ensures that IDC_DOTS will be selected if dots
+is TRUE and deselected if dots is FALSE. Similarly, obtain the URL for the image
+with get_Image(), convert it from wide characters, and then use SetDlgItemText()
+to set the edit box contents to that URL.</P>
+<P>OnDotsChanged() and OnImageChanged() are simple: Add the code for them both, as
+presented in Listing 21.16, to the header file, after OnInitDialog().</P>
+<P>
+<H4>Listing 21.16&#160;&#160;DieRollPPG.h--The OnChanged Functions</H4>
+<PRE>    LRESULT OnDotsChanged(WORD wNotify, WORD wID, HWND hWnd, BOOL&amp; bHandled)
+    {
+        SetDirty(TRUE);
+        return FALSE;
+    }
+    LRESULT OnImageChanged(WORD wNotify, WORD wID, HWND hWnd, BOOL&amp; bHandled)
+    {
+        SetDirty(TRUE);
+        return FALSE;
+</PRE>
+<PRE>    }
+</PRE>
+<P>The calls to SetDirty() in these functions ensure that the Apply() function will
+be called when the user clicks OK on the property page.</P>
+<P>The ObjectWizard generated a simple Apply() function, but it doesn't affect the
+Dots or Number properties. Edit Apply() so that it resembles Listing 21.17.</P>
+<P>
+<H4>Listing 21.17&#160;&#160;DieRollPPG.h--CDieRollPPG::Apply()</H4>
+<PRE>    STDMETHOD(Apply)(void)
+    {
+        USES_CONVERSION;
+        BSTR image = NULL;
+        GetDlgItemText(IDC_IMAGE, image);
+        BOOL dots = (BOOL)::SendDlgItemMessage(m_hWnd, IDC_DOTS, 
+                BM_GETCHECK, 0, 0L); 
+        ATLTRACE(_T(&quot;CDieRollPPG::Apply\n&quot;));
+        for (UINT i = 0; i &lt; m_nObjects; i++)
+        {
+            CComQIPtr&lt;IDieRoll, &amp;IID_IDieRoll&gt; pDieRoll(m_ppUnk[i]); 
+            if FAILED(pDieRoll-&gt;put_Dots(dots))
+            {
+                CComPtr&lt;IErrorInfo&gt; pError;
+                CComBSTR            strError;
+                GetErrorInfo(0, &amp;pError);
+                pError-&gt;GetDescription(&amp;strError);
+                MessageBox(OLE2T(strError), _T(&quot;Error&quot;), MB_ICONEXCLAMATION);
+                return E_FAIL;
+            }
+            if FAILED(pDieRoll-&gt;put_Image(image))
+            {
+                CComPtr&lt;IErrorInfo&gt; pError;
+                CComBSTR            strError;
+                GetErrorInfo(0, &amp;pError);
+                pError-&gt;GetDescription(&amp;strError);
+                MessageBox(OLE2T(strError), _T(&quot;Error&quot;), MB_ICONEXCLAMATION);
+                return E_FAIL;
+            }
+        }
+        m_bDirty = FALSE;
+        return S_OK;
+</PRE>
+<PRE>    }
+</PRE>
+<P>Apply starts by getting dots and image from the dialog box. Notice in the call
+to ::SendDlgItemMessage() that the third parameter is BM_GETCHECK, so this call ascertains
+the selected state (TRUE or FALSE) of the check box. Then a call to ATLTRACE prints
+a trace message to aid debugging. Like the trace statements discussed in Chapter
+24, &quot;Improving Your Application's Performance,&quot; this statement disappears
+in a release build.</P>
+<P>The majority of Apply() is a for loop that is executed once for each control associated
+with this property page. It obtains an IDieRoll interface pointer, just as in OnInitDialog(),
+and tries calling the put_Dots() and put_Image() member functions of that interface.
+If either call fails, a message box informs the user of the problem. After the loop,
+the m_bDirty member variable can be set to FALSE.</P>
+<P>Build the project at this point to be sure you have no errors.</P>
+<P>
+<H3><A NAME="Heading17"></A>Connecting the Property Page to CDieRoll</H3>
+<P>The changes to CDieRollPPG are complete. You need to make some changes to CDieRoll
+to connect it to the property page class. Specifically, the property map needs some
+more entries. Add the first two entries for Dots and Image so that it looks like
+Listing 21.18.</P>
+<P>
+<H4>Listing 21.18&#160;&#160;DieRoll.h--Property Map</H4>
+<PRE>BEGIN_PROP_MAP(CDieRoll)
+   PROP_ENTRY( &quot;Dots&quot;, dispidDots, CLSID_DieRollPPG)
+   PROP_ENTRY( &quot;Image&quot;, dispidImage, CLSID_DieRollPPG)
+   PROP_DATA_ENTRY(&quot;_cx&quot;, m_sizeExtent.cx, VT_UI4)
+   PROP_DATA_ENTRY(&quot;_cy&quot;, m_sizeExtent.cy, VT_UI4)
+   PROP_ENTRY(&quot;BackColor&quot;, DISPID_BACKCOLOR, CLSID_StockColorPage)
+   PROP_ENTRY(&quot;ForeColor&quot;, DISPID_FORECOLOR, CLSID_StockColorPage)
+</PRE>
+<PRE>END_PROP_MAP()
+</PRE>
+<H3><A NAME="Heading18"></A>Persistence in a Property Bag</H3>
+<P>In a number of different ways, Internet Explorer can get property values out of
+some HTML and into a control wrapped in an &lt;OBJECT&gt; tag. With stream persistence,
+provided by default, you use a DATA attribute in the &lt;OBJECT&gt; tag. If you would
+like to use &lt;PARAM&gt; tags, which are far more readable, the control must support
+property bag persistence through the IPersistPropertyBag interface.</P>
+<P>Add another class to the list of base classes at the start of the CDieRoll class:</P>
+<P>
+<PRE>public IPersistPropertyBagImpl&lt;CDieRoll&gt;,
+</PRE>
+<P>Add this line to the COM map:</P>
+<P>
+<PRE>COM_INTERFACE_ENTRY(IPersistPropertyBag)
+</PRE>
+<P>Now you can use &lt;PARAM&gt; tags to set properties of the control.</P>
+<P>
+<H2><A NAME="Heading19"></A>Using the Control in Control Pad</H2>
+<P>You've added a lot of code to CDieRoll and CDieRollPPG, and it's time to build
+the control. After fixing any typos or minor errors, you can use the control.</P>
+<P>You are going to build the HTML to display this control in Microsoft's Control
+Pad. If you don't have Control Pad, it's downloadable free from <B>http://www.microsoft.com/workshop/
+author/cpad/download.htm</B>. If you have a copy of Control Pad from before January
+1997, find the latest one. If you use the old version, the init safe and script safe
+work you will do later in this chapter will appear to malfunction.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Control Pad used to serve two purposes: It simplified building &lt;OBJECT&gt;
+	tags for ActiveX controls and helped developers use the HTML Layout control. Now
+	that the functionality of the Layout control is in Internet Explorer 4.0, it's just
+	a handy way to make &lt;OBJECT&gt; tags.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>When you start Control pad, it makes an empty HTML document. With the cursor between
+&lt;BODY&gt; and &lt;/BODY&gt;, choose Edit, Insert ActiveX Control. The Insert ActiveX
+Control dialog appears: Choose DieRoll Class from the list (you might recall from
+Figure 21.5 that the type name for this control is DieRoll Class) and click OK. The
+control and a Properties dialog appear. Click on the Image property and enter the
+full path to the image file you want to use in the edit box at the top of the Properties
+dialog. (You can use any bmp file you have handy, including one you make yourself
+in the Paint program that comes with Windows, or get beans.bmp from the Web site.)
+Click Apply, and the control redraws with a background image, such as the jelly beans
+shown in Figure 21.13. Close the Properties dialog and the Edit ActiveX Control dialog,
+and you will see the HTML generated for you, including the &lt;PARAM&gt; tags that
+were added because Control Pad could determine that DieRoll supports the IPersistPropertyBag
+interface. Close Control Pad; you can save the HTML if you want.</P>
+<P><A HREF="javascript:popUp('21uvc12.gif')"><B>FIG. 21.13</B></A><B> </B><I>Inserting
+the control into Control Pad displays it for you.</I></P>
+<P>The control doesn't have its full functionality yet: It doesn't roll itself when
+you click it. The next section will add events.</P>
+<P>
+<H2><A NAME="Heading20"></A>Adding Events</H2>
+<P>Two events must be added: one when the user clicks on the control and one when
+the ready state changes. The Click event is discussed in Chapter 17 and the ReadyStateChanged
+event is discussed in Chapter 20.</P>
+<P>
+<H3><A NAME="Heading21"></A>Adding Methods to the Event Interface</H3>
+<P>In ClassView, right-click the _IDieRollEvents interface. Choose Add Method and
+fill in the Return Type as <B>void</B> and the Method Name as <B>Click</B>; leave
+the parameters blank. Figure 21.14 shows the completed dialog. Click OK to add the
+method.</P>
+<P><A HREF="javascript:popUp('21uvc13.gif')"><B>FIG. 21.14</B></A><B> </B><I>Add
+the Click method to the event interface.</I></P>
+<P>In the same way, add ReadyStateChange(), returning void and taking no parameters,
+to the event interface. The dispinterface section in the idl file should now look
+like this:</P>
+<P>
+<PRE>dispinterface _IDieRollEvents
+{
+   properties:
+   methods:
+   [id(DISPID_CLICK), helpstring(&quot;method Click&quot;)] void Click();
+   [id(DISPID_READYSTATECHANGE), 
+&#172;helpstring(&quot;method ReadyStateChange&quot;)] void ReadyStateChange();
+};
+</PRE>
+<P>If the dispids appear as 1 and 2 rather than DISPID_CLICK and DISPID_READYSTATECHANGE,
+edit them to match this code.</P>
+<P>
+<H3><A NAME="Heading22"></A>Implementing the IConnectionPoint Interface</H3>
+<P>To fire events, you implement the IConnectionPoint interface. The Connection Point
+Wizard will get you started, but first, save the idl file and build the project so
+that the typelib associated with the project is up-to-date.</P>
+<P>In ClassView, right-click CDieRoll and choose Implement Connection Point. Select
+_IDieRollEvents, as in Figure 21.15, and click OK to generate a <I>proxy class</I>
+for the connection point. This class will have methods you can call to fire an event.</P>
+<P><A HREF="javascript:popUp('21uvc14.gif')"><B>FIG. 21.15</B></A><B> </B><I>The
+Connection Point Wizard makes short work of adding events.</I></P>
+<P>Look for the new class, CProxy_IDieRollEvents, in ClassView. Expand it, and you
+will see it has two functions, Fire_Click() and Fire_ReadyStateChange().</P>
+<P>
+<H3><A NAME="Heading23"></A>Firing the Click Event</H3>
+<P>When the user clicks the control, it should fire a Click event. Right-click CDieRoll
+in ClassView and choose Add Windows Message Handler. Select WM_LBUTTONDOWN from the
+long list on the left and click Add Handler; then click OK. You will see a new entry
+in the message map:</P>
+<P>
+<PRE>MESSAGE_HANDLER(WM_LBUTTONDOWN, OnLButtonDown)
+</PRE>
+<P>Edit the member function OnLButtonDown() that has been added to CDieRoll, so that
+it looks like Listing 21.19.</P>
+<P>
+<H4>Listing 21.19&#160;&#160;CDieRoll::OnLButtonDown()</H4>
+<PRE>LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &amp; bHandled)
+{
+   m_sNumber = Roll();
+   FireOnChanged(dispidNumber);
+   Fire_Click();
+   FireViewChange();
+   return 0;
+</PRE>
+<PRE>}
+</PRE>
+<P>This code rolls the die, fires a notification that Number has changed, fires a
+Click event, and notifies the container that the control should be redrawn. Build
+the control again and load the dieroll.htm page that was generated for you into Internet
+Explorer. Click the die a few times and watch the displayed number change. Close
+Internet Explorer, or later you'll have trouble building the project because the
+DLL will be locked by Explorer.</P>
+<P>
+<H3><A NAME="Heading24"></A>Firing the ReadyStateChange Event</H3>
+<P>Now put_Image() and OnData() can fire events when the ready state changes. There
+are two ways to tell containers that ReadyState has changed: Fire_ReadyStateChange()
+for older containers and, for Internet Explorer 4.0 and above, a FireOnChanged()
+call exactly like the ones you've already coded for dispidImage and dispidDots.</P>
+<P>In ClassView, expand CDieRoll and then expand IDieRoll underneath it. Double-click
+put_Image() to edit it, and look for a line like this:</P>
+<P>
+<PRE>m_nReadyState = READYSTATE_LOADING;
+</PRE>
+<P>Add immediately after that line:</P>
+<P>
+<PRE>Fire_ReadyStateChange();
+FireOnChanged(DISPID_READYSTATE);
+</PRE>
+<P>Then, later in put_Image() find this line:</P>
+<P>
+<PRE>m_nReadyState = READYSTATE_COMPLETE;
+</PRE>
+<P>Add the same two lines after this line as well. In OnData(), find this line:</P>
+<P>
+<PRE>m_nReadyState = READYSTATE_COMPLETE;
+</PRE>
+<P>Add the same two lines immediately after it.</P>
+<P>Build the control again and insert it into a new page in Control Pad. Be sure
+to assign the Image property so that you can see what happens while the image loads.
+Click the die in the Edit ActiveX Control window, and it will roll a new number each
+time that you click. Save the HTML, load it into Explorer, and see if you can roll
+the die while the image loads. Click Refresh and you'll see that the image redraws
+itself even if you don't click anything. As another test, open the ActiveX Control
+Test container (available from the Tools menu in Developer Studio) and insert a DieRoll
+control; then use the event log to confirm that Click and ReadyStateChange events
+are being fired.</P>
+<P>Probably the easiest and most relevant way to test the control is in Internet
+Explorer 4. To do this, you specify Explorer as the executable for debug. First,
+you must turn off the Active Desktop if you have it installed, because under the
+Active Desktop, Explorer is always running.</P>
+<P>To remove the Active desktop, first close any applications you have open, because
+you're going to restart your system as part of the process. Choose Start, Settings,
+Control Panel and double-click Add/Remove Programs. On the Install/Uninstall tab,
+choose Microsoft Internet Explorer 4.0 and click Add/Remove. Choose the last radio
+button, which says Remove the Windows Desktop Update Component, But Keep the Internet
+Explorer 4.0 Web Browser. Click OK. Setup will adjust the Registry and restart your
+system.</P>
+<P>After the restart, open Developer Studio; load the DieRollControl project again;
+choose Project, Settings; and click the Debug tab. If Internet Explorer 4 is your
+default browser, click the arrow next to Executable for Debug Session and choose
+Default Web Browser. If it's not, enter <B>C:\Program</B> <B>Files\Internet Explorer\IEXPLORE.EXE</B>
+(or the path to Explorer on your system, if it's different) in the edit box. Under
+Program Arguments, enter the path to the HTML you developed with Control Pad to test
+the control. Click OK, and now whenever you choose Build, Start Debug, Go, or click
+the Go button on the toolbar, Explorer will be launched, and the page that holds
+the control will be loaded. Choose Debug, Stop Debugging, and Explorer will close.</P>
+<P>
+<H2><A NAME="Heading25"></A>Exposing the DoRoll() Function</H2>
+<P>The next stage in the development of this control is to expose a function that
+will enable the container to roll the die. One use for this is to arrange for the
+container to roll one die whenever the other is clicked. Right-click the IDieRoll
+interface in ClassView and choose Add Method. Enter <B>DoRoll</B> for Method Name
+and leave the Parameters section blank. Click OK.</P>
+<P>Functions have a dispid just as properties do. Add an entry to the enum of dispids
+in the idl file so that dispidDoRoll is 4. This ensures that if you add another property
+later, you won't collide with the default dispid of 1 for DoRoll(). When you added
+the function to the interface, a line was added to the .idl file after the get and
+put entries for the properties. Change it to use the new dispid so that it looks
+like this:</P>
+<P>
+<PRE>[id(dispidDoRoll), helpstring(&quot;method DoRoll&quot;)] HRESULT DoRoll();
+</PRE>
+<P>The code for DoRoll() is in Listing 21.20. Add it to the function stub that has
+been created in DieRoll.cpp.</P>
+<P>
+<H4>Listing 21.20&#160;&#160;CDieRoll::DoRoll()</H4>
+<PRE>STDMETHODIMP CDieRoll::DoRoll()
+{
+     m_sNumber = Roll();
+     FireOnChanged(dispidNumber);
+     FireViewChange();
+     return S_OK;
+</PRE>
+<PRE>} 
+</PRE>
+<P>This code is just like OnLButtonDown but doesn't fire a Click event. Build the
+control again.</P>
+<P>One way to test this method is with the Test Container. Open it by choosing Tools,
+ActiveX Control Test Container and choose Edit, Insert New Control. Find DieRoll
+Class in the list and double-click it to insert a dieroll; then choose Control, Invoke
+Methods. From the drop-down box at the top, choose DoRoll and then click Invoke a
+few times. Figure 21.16 shows the Invoke Methods dialog. In the background, Test
+Container is reporting that the Number property has changed.</P>
+<P><A HREF="javascript:popUp('21uvc15.gif')"><B>FIG. 21.16</B></A><B> </B><I>The
+Invoke Methods dialog box.</I></P>
+<P>
+<H2><A NAME="Heading26"></A>Registering as init Safe and script Safe</H2>
+<P>In Chapter 20 you added Registry entries to indicate that the control was safe
+to accept parameters in a Web page and to interact with a script. For an ATL control,
+you can achieve this by supporting the IObjectSafety interface. A container will
+query this interface to see whether the control is safe.</P>
+<P>Add the following line to the inheritance list for CDieRoll:</P>
+<P>
+<PRE>   public IObjectSafetyImpl&lt;CDieRoll, 
+INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA&gt;,
+,
+</PRE>
+<P>Add this line to the COM map in dieroll.h:</P>
+<P>
+<PRE>COM_INTERFACE_ENTRY(IObjectSafety)
+</PRE>
+<P>This will automatically make the control script and init safe.</P>
+<P>
+<H2><A NAME="Heading27"></A>Preparing the Control for Use in Design Mode</H2>
+<P>When a developer is building a form or dialog box in an application such as Visual
+Basic or Visual C++, a control palette makes it simple to identify the controls to
+be added. Building the icon used on that palette is the next step in completing this
+control.</P>
+<P>Switch to ResourceView, expand the resources, expand bitmaps, and double-click
+<B>IDB_DIEROLL</B> to edit it. Change it to the much simpler icon shown in Figure
+21.17.</P>
+<P><A HREF="javascript:popUp('21uvc16.gif')"><B>FIG. 21.17</B></A><B> </B><I>Draw
+an icon for the control.</I></P>
+<P>The Registry Script for this control refers to this icon by resource number. To
+discover what number has been assigned to IDB_DIEROLL, choose View, Resource Symbols
+and note the numeric value associated with IDB_DIEROLL. (On the machine where this
+sample was written, it's 202.) Open DieRoll.rgs (the script file) from FileView and
+look for this line:</P>
+<P>
+<PRE>ForceRemove `ToolboxBitmap32' = s `%MODULE%, 101'
+</PRE>
+<P>Change it to the following:</P>
+<P>
+<PRE>ForceRemove `ToolboxBitmap32' = s `%MODULE%, 202'
+</PRE>
+<P>Be sure to use your value rather than 202. Build the control again. To see the
+fruits of your labors, run the Control Pad again and choose File, New HTML Layout.
+Select the Additional tab on the Toolbox palette and then right-click on the page.
+From the shortcut menu that appears, choose Additional Controls. Find DieRoll Class
+on the list and select it; then click OK. The new icon appears on the Additional
+tab, as shown in Figure 21.18.</P>
+<P><A HREF="javascript:popUp('21uvc17.gif')"><B>FIG. 21.18</B></A><B> </B><I>Add
+the DieRoll class to the HTML Layout toolbox.</I></P>
+<P>
+<H2><A NAME="Heading28"></A>Minimizing Executable Size</H2>
+<P>Until now, you have been building debug versions of the control. Dieroll.dll is
+more than 420KB. Although that's much smaller than the 600KB of CAB file for the
+MFC DLLs that the MFC version of DieRoll might require, it's a lot larger than the
+30KB or so that the release version of dieroll.ocx takes up. With development complete,
+it's time to build a release version.</P>
+<P>Choose Build, Set Active Configuration to open the Set Active Project Configuration
+dialog shown in Figure 21.19. You will notice that there are twice as many release
+versions in an ATL project as in an MFC project. In addition to choosing whether
+you support Unicode, you must choose MinSize or MinDependency.</P>
+<P><A HREF="javascript:popUp('21uvc18.gif')"><B>FIG. 21.19</B></A><B> </B><I>Choose
+a build type from the Set Active Project Configuration dialog box.</I></P>
+<P>The minimum size release version makes the control as small as possible by linking
+dynamically to an ATL DLL and the ATL Registrar. The minimum dependencies version
+links to these statically, which makes the control larger but self-contained. If
+you choose minimum size, you will need to set up cab files for the control and the
+DLLs, as discussed in Chapter 20 for the MFC DLLs. At this early stage of ATL acceptance,
+it's probably better to choose minimum dependencies.</P>
+<P>If you choose minimum dependency and build, you will receive these error messages
+from the linker:</P>
+<P>
+<PRE>Linking...
+   Creating library ReleaseMinDependency/DieRollControl.lib and 
+   &#172;object ReleaseMinDependency/DieRollControl.exp
+LIBCMT.lib(crt0.obj) : error LNK2001: unresolved external symbol _main
+ReleaseMinDependency/DieRollControl.dll : 
+  &#172;fatal error LNK1120: 1 unresolved externals
+Error executing link.exe.
+DieRollControl.dll - 2 error(s), 0 warning(s)
+</PRE>
+<P>This error isn't due to any mistake on your part. By default, ATL release builds
+use a tiny version of the C runtime library (CRT) so that they will build as small
+a DLL as possible. This minimal CRT doesn't include the time(), rand(), and srand()
+functions used to roll the die. The linker finds these functions in the full-size
+CRT, but that library expects a main() function in your control. Because there isn't
+one, the link fails.</P>
+<P>This behavior is controlled with a linker setting. Choose Project, Settings. From
+the drop-down box at the upper left, choose Win32 Release MinDependency. Click the
+C/C++ tab on the right. Select Preprocessor from the Category drop-down box, click
+in the Preprocessor definitions box, and press the END key to move to the end of
+the box. Remove the _ATL_MIN_CRT flag, highlighted in Figure 21.20, and the comma
+immediately before it. Click OK, build the project again, and the linker errors disappear.</P>
+<P>If you comment out the calls to rand(), srand(), and time() so that the control
+no longer works, it will link with _ATL_MIN_CRT into a 57KB DLL. With _ATL_MIN_CRT
+removed, it is 86KB--a significant increase but still substantially smaller than
+the MFC control and its DLLs. A minimum size release build with _ATL_MIN_CRT removed
+is 75KB: The saving is hardly worth the trouble to package up the ATL DLLs. With
+rand(), srand(), and time() commented out, a minimum size release build with _ATL_MIN_CRT
+left in is only 46KB.</P>
+<P><A HREF="javascript:popUp('21uvc19.gif')"><B>FIG. 21.20</B></A><B> </B><I>Turn
+off the flag that links in only a tiny version of the C runtime library.</I></P>
+<P>Removing the _ATL_MIN_CRT flag increases the control's size by almost 30KB. Although
+there's no way to rewrite this control so that it doesn't need the rand(), srand(),
+and time() functions, you could write your own versions of them and include them
+in the project so that the control would still link with the _ATL_MIN_CRT flag. You
+can find algorithms for random number generators and their seed functions in books
+of algorithms. The SDK GetSystemTime() function can substitute for time(). If you
+were writing a control that would be used for the first time by many users in a time-sensitive
+application, this extra work might be worth it. Remember that the second time a user
+comes to a Web page with an ActiveX control, the control doesn't need to be downloaded
+again.</P>
+<P>
+<H2><A NAME="Heading29"></A>Using the Control in a Web Page</H2>
+<P>This control has a slightly different name and different CLSID than the MFC version
+built in Chapter 20. You can use them together in a single Web page to compare them.
+Listing 21.21 presents some HTML that puts the two controls in a table. (Use your
+own CLSID values when you create this page--you might want to use Control Pad as
+described earlier.) Figure 21.21 shows this page in Explorer.</P>
+<P>
+<H4>Listing 21.21&#160;&#160;dieroll.htm</H4>
+<PRE>&lt;/HEAD&gt;
+&lt;BODY&gt;
+&lt;TABLE CELLSPACING=15&gt;
+&lt;TR&gt;
+&lt;TD&gt;
+Here's the MFC die:&lt;BR&gt;
+&lt;OBJECT ID=&quot;MFCDie&quot; 
+ CLASSID=&quot;CLSID:46646B43-EA16-11CF-870C-00201801DDD6&quot;
+ WIDTH=&quot;200&quot; HEIGHT=&quot;200&quot;&gt;
+    &lt;PARAM NAME=&quot;ForeColor&quot; VALUE=&quot;0&quot;&gt; 
+    &lt;PARAM NAME=&quot;BackColor&quot; VALUE=&quot;16777215&quot;&gt; 
+    &lt;PARAM NAME=&quot;Image&quot; VALUE=&quot;beans.bmp&quot;&gt; 
+If you see this text, your browser doesn't support the OBJECT tag.
+&lt;/OBJECT&gt;
+&lt;/TD&gt;
+&lt;TD&gt;
+Here's the ATL die:&lt;BR&gt;
+&lt;OBJECT ID=&quot;ATLDie&quot; WIDTH=200 HEIGHT=200
+ CLASSID=&quot;CLSID:2DE15F35-8A71-11D0-9B10-0080C81A397C&quot;&gt;
+    &lt;PARAM NAME=&quot;Dots&quot; VALUE=&quot;1&quot;&gt;
+    &lt;PARAM NAME=&quot;Image&quot; VALUE=&quot;beans.bmp&quot;&gt;
+    &lt;PARAM NAME=&quot;Fore Color&quot; VALUE=&quot;2147483656&quot;&gt;
+    &lt;PARAM NAME=&quot;Back Color&quot; VALUE=&quot;2147483653&quot;&gt;
+&lt;/OBJECT&gt;
+&lt;/TD&gt;
+&lt;/TR&gt;
+&lt;/TABLE&gt;
+&lt;/BODY&gt;
+</PRE>
+<PRE>&lt;/HTML&gt;
+</PRE>
+<P><A HREF="javascript:popUp('21uvc20.gif')"><B>FIG. 21.21</B></A><B> </B><I>The
+ATL control can be used wherever the MFC control was used.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<BR>
+	<strong>TIP:</strong> You can edit HTML files in Developer Studio as easily as source files,
+	and with syntax coloring, too! Simply choose File, New and then select HTML Page
+	from the list on the File tab. When you have typed in the HTML, right-click in the
+	editor area and choose Preview to launch Explorer and load the page. 
+<HR>
+</P>
+
+</BLOCKQUOTE>
+
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch20/ch20.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch22/ch22.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

@@ -1,0 +1,950 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 19 -- Internet Programming with the WinInet Classes</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch18/ch18.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch20/ch20.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 19 -</H1>
+</CENTER>
+<CENTER>
+<H1>Internet Programming with the WinInet Classes</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Designing the Internet Query Application</A>
+	<LI><A HREF="#Heading2">Building the Query Dialog Box</A>
+	<LI><A HREF="#Heading3">Querying HTTP Sites</A>
+	<LI><A HREF="#Heading4">Querying FTP Sites</A>
+	<LI><A HREF="#Heading5">Querying Gopher Sites</A>
+	<LI><A HREF="#Heading6">Using Gopher to Send a Finger Query</A>
+	<LI><A HREF="#Heading7">Using Gopher to Send a Whois Query</A>
+	<LI><A HREF="#Heading8">Future Work</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Designing the Internet Query Application</H2>
+<P>Chapter 18, &quot;Sockets, MAPI, and the Internet,&quot; introduces the WinInet
+classes that you can use to build Internet client applications at a fairly high level.
+This chapter develops an Internet application that demonstrates a number of these
+classes. The application also serves a useful function: You can use it to learn more
+about the Internet presence of a company or organization. You don't need to learn
+about sockets or handle the details of Internet protocols to do this.</P>
+<P>Imagine that you have someone's email address (<B>kate@gregcons.com, </B>for example)
+and you'd like to know more about the domain (<B>gregcons.com </B>in this example).
+Perhaps you have a great idea for a domain name and want to know whether it's already
+taken. This application, Query, will try connecting to <B>gregcons.com</B> (or <B>greatidea.org</B>,
+or any other domain name that you specify) in a variety of ways and will report the
+results of those attempts to the user.</P>
+<P>This application will have a simple user interface. The only piece of information
+that the user needs to supply is the domain name to be queried, and there is no need
+to keep this information in a document. You might want a menu item called Query that
+brings up a dialog box in which to specify the site name, but a better approach is
+to use a dialog-based application and incorporate a Query button into the dialog
+box.</P>
+<P>A dialog-based application, as discussed in the section &quot;A Dialog-Based Application&quot;
+of Chapter 1, &quot;Building Your First Application,&quot; has no document and no
+menu. The application displays a dialog box at all times; closing the dialog box
+closes the application. You build the dialog box for this application like any other,
+with Developer Studio.</P>
+<P>To build this application's shell, choose File, New from within Developer Studio
+and then click the Project tab. Highlight MFC AppWizard(exe), name the application
+<B>Query</B>, and in Step 1 choose Dialog Based, as shown in Figure 19.1. Click Next
+to move to Step 2 of AppWizard.</P>
+<P><A HREF="javascript:popUp('19uvc01.gif')"><B>FIG. 19.1</B></A><B> </B><I>Choose
+a dialog-based application for Query.</I></P>
+<P>In Step 2 of AppWizard, request an About box, no context-sensitive Help, 3D controls,
+no automation or ActiveX control support, and no sockets support. (This application
+won't be calling socket functions directly.) Give the application a sensible title
+for the dialog box. The AppWizard choices are summarized, as shown in Figure 19.2.
+Click Next to move to Step 3 of AppWizard.</P>
+<P><A HREF="javascript:popUp('19uvc02.gif')"><B>FIG. 19.2</B></A><B> </B><I>This
+application doesn't need Help, automation, ActiveX controls, or sockets.</I></P>
+<P>The rest of the AppWizard process will be familiar by now: You want comments,
+you want to link to the MFC libraries as a shared DLL, and you don't need to change
+any of the classnames suggested by AppWizard. When the AppWizard process is completed,
+you're ready to build the heart of the Query application.</P>
+<P>
+<H2><A NAME="Heading2"></A>Building the Query Dialog Box</H2>
+<P>AppWizard produces an empty dialog box for you to start with, as shown in Figure
+19.3. To edit this dialog box, switch to the resource view, expand the Query Resources,
+expand the Dialogs section, and double-click the IDD_QUERY_DIALOG resource. The following
+steps will transform this dialog box into the interface for the Query application.</P>
+<P><A HREF="javascript:popUp('19uvc03.gif')"><B>FIG. 19.3</B></A><B> </B><I>AppWizard
+generates an empty dialog box for you.</I></P>
+<P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If working with dialog boxes is still new to you, be sure to read
+	Chapter 2, &quot;Dialogs and Controls.&quot; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Change the caption on the OK button to <B>Query</B>.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Change the caption on the Cancel button to <B>Close</B>.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Delete the TODO static text.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Grab a sizing handle on the right edge of the dialog box and stretch
+	it so that the dialog box is 300 pixels wide or more. (The size of the currently
+	selected item is in the lower-right corner of the screen.)
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>At the top of the dialog box, add an edit box with the resource ID
+	IDC_HOST. Stretch the edit box as wide as possible.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Add a static label next to the edit box. Set the text to Site name.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Grab a sizing handle along the bottom of the dialog box and stretch
+	it so that the dialog box is 150 pixels high, or more.
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>Add another edit box and resize it to fill as much of the bottom part
+	of the dialog box as possible.
+	<P>
+	<DT></DT>
+	<DD><B>9. </B>Give this edit box the resource ID IDC_OUT.
+	<P>
+	<DT></DT>
+	<DD><B>10. </B>Click the Styles tab on the Properties box and select the Multiline,
+	Horizontal Scroll, Vertical Scroll, Border, and Read-Only check boxes. Make sure
+	all the other check boxes are deselected.
+	<P>
+</DL>
+
+<P>The finished dialog box and the Style properties of the large edit box will resemble
+Figure 19.4.</P>
+<P><A HREF="javascript:popUp('19uvc04.gif')"><B>FIG. 19.4</B></A><B> </B><I>Build
+the Query user interface as a single dialog box.</I></P>
+<P>When the user clicks the Query button, this application should somehow query the
+site. The last step in the building of the interface is to connect the Query button
+to code with ClassWizard. Follow these steps to make that connection:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Choose View, Class Wizard to bring up ClassWizard.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>There are three possible classes that could catch the command generated
+	by the button click, but CQueryDlg is the logical choice because the host name will
+	be known by that class. Make sure that CQueryDlg is the class selected in the Class
+	Name drop-down list box.
+	<P>
+	<DT></DT>
+	<DD><B>3.</B> Highlight ID_OK (you did not change the resource ID of the OK button
+	when you changed the caption) in the left list box and BN_CLICKED in the right list
+	box.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Click Add Function to add a function that will be called when the Query
+	button is clicked.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>ClassWizard suggests the name OnOK; change it to <B>OnQuery</B>, as
+	shown in Figure 19.5, and then click OK.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('19uvc05.gif')"><B>FIG. 19.5</B></A><B> </B><I>Add a
+function to handle a click on the Query button, still with the ID IDOK.</I></P>
+<P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>6. </B>Click the Member Variables tab to prepare to connect the edit controls
+	on the dialog box to member variables of the dialog class.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Highlight IDC_HOST and click Add Variable. As shown in Figure 19.6,
+	you'll connect this control to a CString member variable of the dialog class m_host.
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>Connect IDC_OUT to m_out, also a CString.
+	<P>
+</DL>
+
+<P>Click OK to close ClassWizard. Now all that remains is to write CQueryDlg::OnQuery(),
+which will use the value in m_host to produce lines of output for m_out.</P>
+<P><A HREF="javascript:popUp('19uvc06.gif')"><B>FIG. 19.6</B></A><B> </B><I>Connect
+IDC_HOST to CQueryDlg::m_host.</I></P>
+<H2><A NAME="Heading3"></A>Querying HTTP Sites</H2>
+<P>The first kind of connection to try when investigating a domain's Internet presence
+is HTTP because so many sites have Web pages. The simplest way to make a connection
+using HTTP is to use the WinInet class CInternetSession and call its OpenURL() function.
+This will return a file, and you can display the first few lines of the file in m_out.
+First, add this line at the beginning of QueryDlg.cpp, after the include of stdafx.h:</P>
+<P>
+<PRE>#include &quot;afxinet.h&quot;
+</PRE>
+<P>This gives your code access to the WinInet classes. Because this application will
+try a number of URLs, add a function called TryURL() to CQueryDlg. It takes a CString
+parameter called URL and returns void. Right-click CQueryDlg in the ClassView and
+choose Add Member Function to add TryURL() as a protected member function. The new
+function, TryURL(), will be called from CQueryDlg::OnQuery(), as shown in Listing
+19.1. Edit OnQuery() to add this code.</P>
+<P>
+<H4>Listing 19.1&#160;&#160;QueryDlg.cpp--CQueryDlg::OnQuery()</H4>
+<PRE>void CQueryDlg::OnQuery() 
+{
+     const CString http = &quot;http://&quot;;
+     
+     UpdateData(TRUE);
+     m_out = &quot;&quot;;
+     UpdateData(FALSE);
+     TryURL(http + m_host);
+     TryURL(http + &quot;www.&quot; + m_host);
+</PRE>
+<PRE>}
+</PRE>
+<P>The call to UpdateData(TRUE) fills m_host with the value that the user typed.
+The call to UpdateData(FALSE) fills the IDC_OUT read-only edit box with the newly
+cleared m_out. Then come two calls to TryURL(). If, for example, the user typed<B>
+microsoft.com</B>, the first call would try <B>http://microsoft.com</B> and the second
+would try <B>http://www.microsoft.com</B>. TryURL() is shown in Listing 19.2.</P>
+<P>
+<H4>Listing 19.2&#160;&#160;QueryDlg.cpp--CQueryDlg::TryURL()</H4>
+<PRE>void CQueryDlg::TryURL(CString URL)
+{
+     CInternetSession session;
+     m_out += &quot;Trying &quot; + URL + &quot;\r\n&quot;;
+     UpdateData(FALSE);
+     CInternetFile* file = NULL;
+     try
+     {
+          //We know for sure this is an Internet file,
+          //so the cast is safe
+          file = (CInternetFile*) session.OpenURL(URL);
+     }
+     catch (CInternetException* pEx)
+     {
+          //if anything went wrong, just set file to NULL
+          file = NULL;
+          pEx-&gt;Delete();
+     }
+     if (file)
+     {
+          m_out += &quot;Connection established. \r\n&quot;;
+          CString line;
+          for (int i=0; i &lt; 20 &amp;&amp; file-&gt;ReadString(line); i++)
+          {
+               m_out += line + &quot;\r\n&quot;;
+          }
+          file-&gt;Close();
+          delete file;
+     }
+     else
+     {
+          m_out += &quot;No server found there. \r\n&quot;;
+     }
+     m_out += &quot;------------------------\r\n&quot;;
+     UpdateData(FALSE);
+</PRE>
+<PRE>}
+</PRE>
+<P>The remainder of this section presents this code again, a few lines at a time.
+First, establish an Internet session by constructing an instance of CInternetSession.
+There are a number of parameters to this constructor, but they all have default values
+that will be fine for this application. The parameters follow:</P>
+
+<UL>
+	<LI>LPCTSTR pstrAgent&#160;&#160;The name of your application. If NULL, it's filled
+	in for you, using the name that you gave to AppWizard.
+	<P>
+	<LI>DWORD dwContext&#160;&#160;The context identifier for the operation. For synchronous
+	sessions, this is not an important parameter.
+	<P>
+	<LI>DWORD dwAccessType&#160;&#160;The access type: INTERNET_OPEN_TYPE_PRECONFIG (default),
+	INTERNET_OPEN_TYPE_DIRECT, or INTERNET_OPEN_TYPE_PROXY.
+	<P>
+	<LI>LPCTSTR pstrProxyName&#160;&#160;The name of your proxy, if access is INTERNET_OPEN_TYPE_PROXY.
+	<P>
+	<LI>LPCTSTR pstrProxyBypass&#160;&#160;A list of addresses to be connected directly
+	rather than through the proxy server, if access is INTERNET_OPEN_TYPE_PROXY.
+	<P>
+	<LI>DWORD dwFlags&#160;&#160;Options that can be OR'ed together. The available options
+	are INTERNET_FLAG_DONT_CACHE, INTERNET_FLAG_ASYNC, and INTERNET_FLAG_OFFLINE.
+</UL>
+
+<P>dwAccessType<B> </B>defaults to using the value in the Registry. Obviously, an
+application that insists on direct Internet access or proxy Internet access is less
+useful than one that enables users to configure that information. Making users set
+their Internet access type outside this program might be confusing, though. To set
+your default Internet access, double-click the My Computer icon on your desktop,
+then on the Control Panel, and then on the Internet tool in the Control Panel. Choose
+the Connection tab (the version for Internet Explorer under Windows 95 is shown in
+Figure 19.7) and complete the dialog box as appropriate for your setup. If you are
+using NT or Windows 98, or if your browser version is different, you might see a
+slightly different dialog, but you should still be able to choose your connection
+type.</P>
+<P><A HREF="javascript:popUp('19uvc07.gif')"><B>FIG. 19.7</B></A><B> </B><I>Set your
+Internet connection settings once, and all applications can retrieve them from the
+Registry.</I></P>
+<P>
+
+<UL>
+	<LI>If you dial up to the Internet, select the Dial check box and fill in the parameters
+	in the top half of the page.
+	<P>
+	<LI>If you connect to the Internet through a proxy server, select the Proxy check
+	box and click the Settings button to identify your proxy addresses and ports.
+	<P>
+	<LI>If you are connected directly to the Internet, leave both check boxes unselected.
+</UL>
+
+<P>If you want to set up an <I>asynchronous</I> (nonblocking) session, for the reasons
+discussed in the &quot;Using Windows Sockets&quot; section of Chapter 18, your options
+in dwFlags must include INTERNET_FLAG_ASYNC. In addition, you must call the member
+function EnableStatusCallback() to set up the callback function. When a request is
+made through the session--such as the call to OpenURL() that occurs later in TryURL()--and
+the response will not be immediate, a nonblocking session returns a pseudo error
+code, ERROR_IO_PENDING. When the response is ready, these sessions automatically
+invoke the callback function.</P>
+<P>For this simple application, there is no need to allow the user to do other work
+or interact with the user interface while waiting for the session to respond, so
+the session is constructed as a blocking session and all the other default parameters
+are also used:</P>
+<P>
+<PRE>     CInternetSession session;
+</PRE>
+<P>Having constructed the session, TryURL() goes on to add a line to m_out that echoes
+the URL passed in as a parameter. The &quot;\r\n&quot; characters are <I>return</I>
+and <I>newline</I>, and they separate the lines added to m_out. UpdateData(FALSE)
+gets that onscreen:</P>
+<P>
+<PRE>     m_out += &quot;Trying &quot; + URL + &quot;\r\n&quot;;
+     UpdateData(FALSE);
+</PRE>
+<P>Next is a call to the session's OpenURL() member function. This function returns
+a pointer to one of several file types because the URL might have been to one of
+four protocols:</P>
+
+<UL>
+	<LI>file:// opens a file. The function constructs a CStdioFile and returns a pointer
+	to it.
+	<P>
+	<LI>ftp:// goes to an FTP site and returns a pointer to a CInternetFile object.
+	<P>
+	<LI>gopher:// goes to a Gopher site and returns a pointer to a CGopherFile object.
+	<P>
+	<LI>http:// goes to a World Wide Web site and returns a pointer to a CHttpFile object.
+</UL>
+
+<P>Because CGopherFile and CHttpFile both inherit from CInternetFile and because
+you can be sure that TryURL() will not be passed a file:// URL, it is safe to cast
+the returned pointer to a CInternetFile.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> There is some confusion in Microsoft's online documentation whenever
+	sample URLs are shown. A backslash (\) character will never appear in an URL. In
+	any Microsoft example that includes backslashes, use forward slashes (/) instead.
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>If the URL would not open, file will be NULL, or OpenURL()_ will throw an exception.
+(For background on exceptions, see Chapter 26, &quot;Exceptions and Templates.&quot;)
+Whereas in a normal application it would be a serious error if an URL didn't open,
+in this application you are making up URLs to see whether they work, and it's expected
+that some won't. As a result, you should catch these exceptions yourself and do just
+enough to prevent runtime errors. In this case, it's enough to make sure that file
+is NULL when an exception is thrown. To delete the exception and prevent memory leaks,
+call CException::Delete(), which safely deletes the exception. The block of code
+containing the call to OpenURL() is in Listing 19.3.</P>
+<P>
+<H4>Listing 19.3&#160;&#160;QueryDlg.cpp--CQueryDlg::TryURL()</H4>
+<PRE>     CInternetFile* file = NULL;
+     try
+     {
+          //We know for sure this is an Internet file,
+          //so the cast is safe
+          file = (CInternetFile*) session.OpenURL(URL);
+     }
+     catch (CInternetException* pEx)
+     {
+          //if anything went wrong, just set file to NULL
+          file = NULL;
+          pEx-&gt;Delete();
+</PRE>
+<PRE>     }
+</PRE>
+<P>If file is not NULL, this routine will display some of the Web page that was found.
+It first echoes another line to m_out. Then, in a for loop, the routine calls CInternetFile::ReadString()
+to fill the CString line with the characters in file up to the first \r\n, which
+are stripped off. This code simply tacks line (and another \r\n) onto m_out. If you
+would like to see more or less than the first 20 lines of the page, adjust the number
+in this for loop. When the first few lines have been read, TryURL() closes and deletes
+the file. That block of code is shown in Listing 19.4.</P>
+<P>
+<H4>Listing 19.4&#160;&#160;QueryDlg.cpp--CQueryDlg::TryURL()</H4>
+<PRE>     if (file)
+     {
+          m_out += &quot;Connection established. \r\n&quot;;
+          CString line;
+          for (int i=0; i &lt; 20 &amp;&amp; file-&gt;ReadString(line); i++)
+          {
+               m_out += line + &quot;\r\n&quot;;
+          }
+          file-&gt;Close();
+          delete file;
+</PRE>
+<PRE>     }
+</PRE>
+<P>If the file could not be opened, a message to that effect is added to m_out:</P>
+<P>
+<PRE>     else
+     {
+          m_out += &quot;No server found there. \r\n&quot;;
+     }
+</PRE>
+<P>Then, whether the file existed or not, a line of dashes is tacked on m_out to
+indicate the end of this attempt, and one last call to UpdateData(FALSE) puts the
+new m_out onscreen:</P>
+<P>
+<PRE>     m_out += &quot;------------------------\r\n&quot;;
+     UpdateData(FALSE);
+}
+</PRE>
+<P>You can now build and run this application. If you enter <B>microsoft.com</B>
+in the text box and click Query, you'll discover that there are Web pages at both
+<B>http://microsoft.com</B> and <B>http://www.microsoft.com</B>. Figure 19.8 shows
+the results of that query.</P>
+<P><A HREF="javascript:popUp('19uvc08.gif')"><B>FIG. 19.8</B></A><B> </B><I>Query
+can find Microsoft's Web sites.</I></P>
+<P>If Query doesn't find Web pages at either the domain name you provided or <B>www.</B>
+plus the domain name, it doesn't mean that the domain doesn't exist or even that
+the organization that owns the domain name doesn't have a Web page. It does make
+it less likely, however, that the organization both exists and has a Web page. If
+you see a stream of HTML, you know for certain that the organization exists and has
+a Web page. You might be able to read the HTML yourself, but even if you can't, you
+can now connect to the site with a Web browser such as Microsoft's Internet Explorer.</P>
+<P>
+<H2><A NAME="Heading4"></A>Querying FTP Sites</H2>
+<P>As part of a site name investigation, you should check whether there is an FTP
+site, too. Most FTP sites have names like <B>ftp.company.com</B>, though some older
+sites don't have names of that form. Checking for these sites isn't as simple as
+just calling TryURL() again because TryURL() assumes that the URL leads to a file,
+and URLs like <B>ftp.greatidea.org</B> lead to a list of files that cannot simply
+be opened and read. Rather than make TryURL() even more complicated, add a protected
+function to the class called TryFTPSite(CString host). (Right-click CQueryDlg in
+the ClassView and choose Add Member Function to add the function. It can return void.)</P>
+<P>TryFTPSite() has to establish a connection within the session, and if the connection
+is established, it has to get some information that can be added to m_out to show
+the user that the connection has been made. Getting a list of files is reasonably
+complex; because this is just an illustrative application, the simpler task of getting
+the name of the default FTP directory is the way to go. The code is in Listing 19.5.</P>
+<P>
+<H4>Listing 19.5&#160;&#160;QueryDlg.cpp--CQueryDlg::TryFTPSite()</H4>
+<PRE>void CQueryDlg::TryFTPSite(CString host)
+{
+     CInternetSession session;
+     m_out += &quot;Trying FTP site &quot; + host + &quot;\r\n&quot;;
+     UpdateData(FALSE);
+     CFtpConnection* connection = NULL;
+     try
+     {
+          connection = session.GetFtpConnection(host);
+     }
+     catch (CInternetException* pEx)
+     {
+          //if anything went wrong, just set connection to NULL
+          connection = NULL;
+          pEx-&gt;Delete();
+     }
+     if (connection)
+     {
+          m_out += &quot;Connection established. \r\n&quot;;
+          CString line;
+          connection-&gt;GetCurrentDirectory(line);
+          m_out += &quot;default directory is &quot; + line + &quot;\r\n&quot;;
+          connection-&gt;Close();
+          delete connection;
+     }
+     else
+     {
+          m_out += &quot;No server found there. \r\n&quot;;
+     }
+     m_out += &quot;------------------------\r\n&quot;;
+     UpdateData(FALSE);
+</PRE>
+<PRE>}
+</PRE>
+<P>This code is very much like TryURL(), except that rather than open a file with
+session.OpenURL(), it opens an FTP connection with session.GetFtpConnection(). Again,
+exceptions are caught and essentially ignored, with the routine just making sure
+that the connection pointer won't be used. The call to GetCurrentDirectory() returns
+the directory on the remote site in which sessions start. The rest of the routine
+is just like TryURL().</P>
+<P>Add two lines at the end of OnQuery() to call this new function:</P>
+<P>
+<PRE>     TryFTPSite(m_host);
+     TryFTPSite(&quot;ftp.&quot; + m_host);
+</PRE>
+<P>Build the application and try it: Figure 19.9 shows Query finding no FTP site
+at <B>microsoft.com</B> and finding one at <B>ftp.microsoft.com</B>. The delay before
+results start to appear might be a little disconcerting. You can correct this by
+using asynchronous sockets, or <I>threading,</I> so that early results can be added
+to the edit box while later results are still coming in over the wire. However, for
+a simple demonstration application like this, just wait patiently until the results
+appear. It might take several minutes, depending on network traffic between your
+site and Microsoft's, your line speed, and so on.</P>
+<P><A HREF="javascript:popUp('19uvc09.gif')"><B>FIG. 19.9</B></A><B> </B><I>Query
+finds one Microsoft FTP site.</I></P>
+<P>If Query doesn't find Web pages or FTP sites, perhaps this domain doesn't exist
+at all or doesn't have any Internet services other than email, but there are a few
+more investigative tricks available. The results of these investigations will definitely
+add to your knowledge of existing sites.</P>
+<P>
+<H2><A NAME="Heading5"></A>Querying Gopher Sites</H2>
+<P>As with FTP, TryURL() won't work when querying a Gopher site like <B>gopher.company.com</B>
+because this returns a list of filenames instead of a single file. The solution is
+to write a protected member function called TryGopherSite() that is almost identical
+to TryFTPSite(), except that it opens a CGopherConnection. Also, rather than echo
+a single line describing the default directory, it echoes a single line describing
+the Gopher locator associated with the site. Add TryGopherSite to CQueryDlg by right-clicking
+the classname in ClassView and choosing Add Member Function, as you did for TryFTPSite().
+The code for TryGopherSite() is in Listing 19.6.</P>
+<P>
+<H4>Listing 19.6&#160;&#160;QueryDlg.cpp--CQueryDlg::TryGopherSite()</H4>
+<PRE>void CQueryDlg::TryGopherSite(CString host)
+{
+     CInternetSession session;
+     m_out += &quot;Trying Gopher site &quot; + host + &quot;\r\n&quot;;
+     UpdateData(FALSE);
+     CGopherConnection* connection = NULL;
+     try
+     {
+          connection = session.GetGopherConnection(host);
+     }
+     catch (CInternetException* pEx)
+     {
+          //if anything went wrong, just set connection to NULL
+          connection = NULL;
+          pEx-&gt;Delete();
+     }
+     if (connection)
+     {
+          m_out += &quot;Connection established. \r\n&quot;;
+          CString line;
+          CGopherLocator locator = connection-&gt;CreateLocator(NULL, NULL, 
+              GOPHER_TYPE_DIRECTORY);
+          line = locator;
+          m_out += &quot;first locator is &quot; + line + &quot;\r\n&quot;;
+          connection-&gt;Close();
+          delete connection;
+     }
+     else
+     {
+          m_out += &quot;No server found there. \r\n&quot;;
+     }
+     m_out += &quot;------------------------\r\n&quot;;
+     UpdateData(FALSE);
+</PRE>
+<PRE>}
+</PRE>
+<P>The call to CreateLocator() takes three parameters. The first is the filename,
+which might include wild cards. NULL means any file. The second parameter is a selector
+that can be NULL. The third is one of the following types:</P>
+<P>GOPHER_TYPE_TEXT_FILE</P>
+<P>GOPHER_TYPE_DIRECTORY</P>
+<P>GOPHER_TYPE_CSO</P>
+<P>GOPHER_TYPE_ERROR</P>
+<P>GOPHER_TYPE_MAC_BINHEX</P>
+<P>GOPHER_TYPE_DOS_ARCHIVE</P>
+<P>GOPHER_TYPE_UNIX_UUENCODED</P>
+<P>GOPHER_TYPE_INDEX_SERVER</P>
+<P>GOPHER_TYPE_TELNET</P>
+<P>GOPHER_TYPE_BINARY</P>
+<P>GOPHER_TYPE_REDUNDANT</P>
+<P>GOPHER_TYPE_TN3270</P>
+<P>GOPHER_TYPE_GIF</P>
+<P>GOPHER_TYPE_IMAGE</P>
+<P>GOPHER_TYPE_BITMAP</P>
+<P>GOPHER_TYPE_MOVIE</P>
+<P>GOPHER_TYPE_SOUND</P>
+<P>GOPHER_TYPE_HTML</P>
+<P>GOPHER_TYPE_PDF</P>
+<P>GOPHER_TYPE_CALENDAR</P>
+<P>GOPHER_TYPE_INLINE</P>
+<P>GOPHER_TYPE_UNKNOWN</P>
+<P>GOPHER_TYPE_ASK</P>
+<P>GOPHER_TYPE_GOPHER_PLUS</P>
+<P>Normally, you don't build locators for files or directories; instead, you ask
+the server for them. The locator that will be returned from this call to CreateLocator()
+describes the locator associated with the site you are investigating.</P>
+<P>Add a pair of lines at the end of OnQuery() that call this new TryGopherSite()
+function:</P>
+<P>
+<PRE>     TryGopherSite(m_host);
+     TryGopherSite(&quot;gopher.&quot; + m_host);
+</PRE>
+<P>Build and run the program again. Again, you might have to wait several minutes
+for the results. Figure 19.10 shows that Query has found two Gopher sites for <B>harvard.edu</B>.
+In both cases, the locator describes the site itself. This is enough to prove that
+there is a Gopher site at <B>harvard.edu</B>, which is all that Query is supposed
+to do.</P>
+<P><A HREF="javascript:popUp('19uvc10.gif')"><B>FIG. 19.10</B></A><B> </B><I>Query
+finds two Harvard Gopher sites.</I></P>
+<P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Gopher is an older protocol that has been supplanted almost entirely
+	by the World Wide Web. As a general rule, if a site has a Gopher presence, it's been
+	on the Internet since before the World Wide Web existed (1989) or at least before
+	the huge upsurge in popularity began (1992). What's more, the site was probably large
+	enough in the early 1990s to have an administrator who would set up the Gopher menus
+	and text. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H2><A NAME="Heading6"></A>Using Gopher to Send a Finger Query</H2>
+<P>There is another protocol that can give you information about a site. It's one
+of the oldest protocols on the Internet, and it's called <I>Finger</I>. You can finger
+a single user or an entire site, and though many sites have disabled Finger, many
+more will provide you with useful information in response to a Finger request.</P>
+<P>There is no MFC class or API function with the word <I>finger</I> in its name,
+but that doesn't mean you can't use the classes already presented. This section relies
+on a trick--and on knowledge of the Finger and Gopher protocols. Although the WinInet
+classes are a boon to new Internet programmers who don't quite know how the Internet
+works, they also have a lot to offer to old-timers who know what's going on under
+the hood.</P>
+<P>As discussed in the &quot;Using Windows Sockets&quot; section of Chapter 18, all
+Internet transactions involve a host and a port. Well-known services use standard
+port numbers. For example, when you call CInternetSession::OpenURL() with an URL
+that begins with <B>http://</B>, the code behind the scenes connects to port 80 on
+the remote host. When you call GetFtpConnection(), the connection is made to port
+21 on the remote host. Gopher uses port 70. If you look at Figure 19.10, you'll see
+that the locator that describes the <B>gopher.harvard.edu</B> site includes a mention
+of port 70.</P>
+<P>The Gopher documentation makes this clear: If you build a locator with a host
+name, port 70, Gopher type 0 (GOPHER_TYPE_TEXT_FILE is defined to be 0), and a string
+with a filename, any Gopher client simply sends the string, whether it's a filename
+or not, to port 70. The Gopher server listening on that port responds by sending
+the file.</P>
+<P>Finger is a simple protocol, too. If you send a string to port 79 on a remote
+host, the Finger server that is listening there will react to the string by sending
+a Finger reply. If the string is only \r\n, the usual reply is a list of all the
+users on the host and some other information about them, such as their real names.
+(Many sites consider this an invasion of privacy or a security risk, and they disable
+Finger. Many other sites, though, deliberately make this same information available
+on their Web pages.)</P>
+<P>Putting this all together, if you build a Gopher locator using port 79--instead
+of the default 70--and an empty filename, you can do a Finger query using the MFC
+WinInet classes. First, add another function to CQueryDlg called TryFinger(), which
+takes a CString host and returns void. The code for this function is very much like
+TryGopherSite(), except that the connection is made to port 79:</P>
+<P>
+<PRE>          connection = session.GetGopherConnection(host,NULL,NULL,79);
+</PRE>
+<P>After the connection is made, a text file locator is created:</P>
+<P>
+<PRE>          CGopherLocator locator = connection-&gt;CreateLocator(NULL, NULL, 
+              GOPHER_TYPE_TEXT_FILE);
+</PRE>
+<P>This time, rather than simply cast the locator into a CString, use it to open
+a file:</P>
+<P>
+<PRE>          CGopherFile* file = connection-&gt;OpenFile(locator);
+</PRE>
+<P>Then echo the first 20 lines of this file, just as TryURL() echoed the first 20
+lines of the file returned by a Web server. The code for this is in Listing 19.7.</P>
+<P>
+<H4>Listing 19.7&#160;&#160;QueryDlg.cpp--CQueryDlg::TryFinger() Excerpt</H4>
+<PRE>          if (file)
+          {
+               CString line;
+               for (int i=0; i &lt; 20 &amp;&amp; file-&gt;ReadString(line); i++)
+               {
+                    m_out += line + &quot;\r\n&quot;;
+               }
+               file-&gt;Close();
+               delete file;
+</PRE>
+<PRE>          }
+</PRE>
+<P>Putting it all together, Listing 19.8 shows TryFinger().</P>
+<P>
+<H4>Listing 19.8&#160;&#160;QueryDlg.cpp--CQueryDlg::TryFinger()</H4>
+<PRE>void CQueryDlg::TryFinger(CString host)
+{
+     CInternetSession session;
+     m_out += &quot;Trying to Finger &quot; + host + &quot;\r\n&quot;;
+     UpdateData(FALSE);
+     CGopherConnection* connection = NULL;
+     try
+     {
+          connection = session.GetGopherConnection(host,NULL,NULL,79);
+     }
+     catch (CInternetException* pEx)
+     {
+          //if anything went wrong, just set connection to NULL
+          connection = NULL;
+          pEx-&gt;Delete();
+     }
+     if (connection)
+     {
+          m_out += &quot;Connection established. \r\n&quot;;
+          CGopherLocator locator = connection-&gt;CreateLocator(NULL, NULL, 
+                GOPHER_TYPE_TEXT_FILE);
+          CGopherFile* file = connection-&gt;OpenFile(locator);
+          if (file)
+          {
+               CString line;
+               for (int i=0; i &lt; 20 &amp;&amp; file-&gt;ReadString(line); i++)
+               {
+                    m_out += line + &quot;\r\n&quot;;
+               }
+               file-&gt;Close();
+               delete file;
+          }
+          connection-&gt;Close();
+          delete connection;
+     }
+     else
+     {
+          m_out += &quot;No server found there. \r\n&quot;;
+     }
+     m_out += &quot;------------------------\r\n&quot;;
+     UpdateData(FALSE);
+</PRE>
+<PRE>}
+</PRE>
+<P>Add a line at the end of OnQuery() that calls this new function:</P>
+<P>
+<PRE>     TryFinger(m_host);
+</PRE>
+<P>Now, build and run the application. Figure 19.11 shows the result of a query on
+the site <B>whitehouse.gov</B>, scrolled down to the Finger section.</P>
+<P><A HREF="javascript:popUp('19uvc11.gif')"><B>FIG. 19.11</B></A><B> </B><I>Query
+gets email addresses from the White House Finger server.</I></P>
+<P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> If the site you are investigating isn't running a Finger server,
+	the delay will be longer than usual and a message box will appear, telling you the
+	connection timed out. Click OK on the message box if it appears.[dagger]n 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H2><A NAME="Heading7"></A>Using Gopher to Send a Whois Query</H2>
+<P>One last protocol provides information about sites. It, too, is an old protocol
+not supported directly by the WinInet classes. It is called <I>Whois</I>, and it's
+a service offered by only a few servers on the whole Internet. The servers that offer
+this service are maintained by the organizations that register domain names. For
+example, domain names that end in <B>.com</B> are registered through an organization
+called InterNIC, and it runs a Whois server called <B>rs.internic.net</B> (the <I>rs</I>
+stands for Registration Services.) Like Finger, Whois responds to a string sent on
+its own port; the Whois port is 43. Unlike Finger, you don't send an empty string
+in the locator; you send the name of the host that you want to look up. You connect
+to <B>rs.internic.net</B> every time. (Dedicated Whois servers offer users a chance
+to change this, but in practice, no one ever does.)</P>
+<P>Add a function called TryWhois(); as usual, it takes a CString host and returns
+void. The code is in Listing 19.9.</P>
+<P>
+<H4>Listing 19.9&#160;&#160;QueryDlg.cpp--CQueryDlg::TryWhois()</H4>
+<PRE>void CQueryDlg::TryWhois(CString host)
+{
+     CInternetSession session;
+     m_out += &quot;Trying Whois for &quot; + host + &quot;\r\n&quot;;
+     UpdateData(FALSE);
+     CGopherConnection* connection = NULL;
+     try
+     {
+          connection = session.GetGopherConnection                   &#172;(&quot;rs.internic.net&quot;,NULL,NULL,43);
+     }
+     catch (CInternetException* pEx)
+     {
+          //if anything went wrong, just set connection to NULL
+          connection = NULL;
+          pEx-&gt;Delete();
+     }
+     if (connection)
+     {
+          m_out += &quot;Connection established. \r\n&quot;;
+          CGopherLocator locator = connection-&gt;CreateLocator(NULL, host, 
+               GOPHER_TYPE_TEXT_FILE);
+          CGopherFile* file = connection-&gt;OpenFile(locator);
+          if (file)
+          {
+               CString line;
+               for (int i=0; i &lt; 20 &amp;&amp; file-&gt;ReadString(line); i++)
+               {
+                    m_out += line + &quot;\r\n&quot;;
+               }
+               file-&gt;Close();
+               delete file;
+          }
+          connection-&gt;Close();
+          delete connection;
+     }
+     else
+     {
+          m_out += &quot;No server found there. \r\n&quot;;
+     }
+     m_out += &quot;------------------------\r\n&quot;;
+     UpdateData(FALSE);
+</PRE>
+<PRE>}
+</PRE>
+<P>Add a line at the end of OnQuery() to call it:</P>
+<P>
+<PRE>     TryWhois(m_host);
+</PRE>
+<P>Build and run the application one last time. Figure 19.12 shows the Whois part
+of the report for <B>mcp.com</B>--this is the domain for Macmillan Computer Publishing,
+Que's parent company.</P>
+<P><A HREF="javascript:popUp('19uvc12.gif')"><B>FIG. 19.12</B></A><B> </B><I>Query
+gets real-life addresses and names from the InterNIC Whois server.</I></P>
+<P>Adding code after the Finger portion of this application means that you can no
+longer ignore the times when the Finger code can't connect. When the call to OpenFile()
+in TryFinger() tries to open a file on a host that isn't running a Finger server,
+an exception is thrown. Control will not return to OnQuery(), and TryWhois() will
+never be called. To prevent this, you must wrap the call to OpenFile() in a try and
+catch block. Listing 19.10 shows the changes to make.</P>
+<P>
+<H4>Listing 19.10&#160;&#160;QueryDlg.cpp&#160;&#160;Changes to TryFinger()</H4>
+<PRE>//replace this line:
+          CGopherFile* file = connection-&gt;OpenFile(locator);
+//with these lines:
+          CGopherFile* file = NULL;
+          try
+          {
+               file = connection-&gt;OpenFile(locator);
+          }
+          catch (CInternetException* pEx)
+          {
+               //if anything went wrong, just set file to NULL
+               file = NULL;
+               pEx-&gt;Delete();
+</PRE>
+<PRE>          }
+</PRE>
+<P>Change TryFinger(), build Query again, and query a site that doesn't run a Finger
+server, such as <B>microsoft.com</B>. You will successfully reach the Whois portion
+of the application.</P>
+<P>
+<H2><A NAME="Heading8"></A>Future Work</H2>
+<P>The Query application built in this chapter does a lot, but it could do much more.
+There are email and news protocols that could be reached by stretching the WinInet
+classes a little more and using them to connect to the standard ports for these other
+services. You could also connect to some well-known Web search engines and submit
+queries by forming URLs according to the pattern used by those engines. In this way,
+you could automate the sort of poking around on the Internet that most of us do when
+we're curious about a domain name or an organization.</P>
+<P>If you'd like to learn more about Internet protocols, port numbers, and what's
+happening when a client connects to a server, you might want to read Que's <I>Building
+Internet Applications with Visual C++.</I> The book was written for Visual C++ 2.0,
+and though all the applications in the book compile and run under later versions
+of MFC, the applications would be much shorter and easier to write now. Still, the
+insight into the way the protocols work is valuable.</P>
+<P>The WinInet classes, too, can do much more than you've seen here. Query doesn't
+use them to retrieve real files over the Internet. Two of the WinInet sample applications
+included with Visual C++ 6.0 do a fine job of showing how to retrieve files:</P>
+
+<UL>
+	<LI>FTPTREE builds a tree list of the files and directories on an FTP site.
+	<P>
+	<LI>TEAR brings back a page of HTML from a Web site.
+</UL>
+
+<P>There are a lot more Microsoft announcements to come in the next few months. Keep
+an eye on the Web site <B>www.microsoft.com</B> for libraries and software development
+kits that will make Internet software development even easier and faster.</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch18/ch18.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch20/ch20.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

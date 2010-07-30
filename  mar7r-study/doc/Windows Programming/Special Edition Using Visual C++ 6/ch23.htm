@@ -1,0 +1,937 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 23 -- SQL and the Enterprise Edition</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch22/ch22.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch24/ch24.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 23 -</H1>
+</CENTER>
+<CENTER>
+<H1>SQL and the Enterprise Edition</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">What's in the Enterprise Edition?</A>
+	<LI><A HREF="#Heading2">Understanding SQL</A>
+	<LI><A HREF="#Heading3">Working with SQL Databases from C++</A>
+	<LI><A HREF="#Heading4">Exploring the Publishing Application</A>
+	<UL>
+		<LI><A HREF="#Heading5">Setting Up the Data Source</A>
+		<LI><A HREF="#Heading6">Building the Application Shell</A>
+		<LI><A HREF="#Heading7">Making a Data Connection</A>
+		<LI><A HREF="#Heading8">Working with Query Designer</A>
+		<LI><A HREF="#Heading9">Stored Procedures</A>
+		<LI><A HREF="#Heading10">Writing a New Stored Procedure</A>
+		<LI><A HREF="#Heading11">Connecting the Stored Procedure to C++ Code</A>
+	</UL>
+	<LI><A HREF="#Heading12">Working with Your Database</A>
+	<UL>
+		<LI><A HREF="#Heading13">Database Designer</A>
+		<LI><A HREF="#Heading14">Database Diagrams</A>
+	</UL>
+	<LI><A HREF="#Heading15">Understanding Microsoft Transaction Server</A>
+	<LI><A HREF="#Heading16">Using Visual SourceSafe</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>What's in the Enterprise Edition?</H2>
+<P>The Enterprise Edition of Visual C++ was developed for those of you who are integrating
+SQL databases and C++ programs, especially if you use stored procedures. It's sold
+as a separate edition of the product: You can buy a copy of the Enterprise Edition
+instead of the Professional Edition. If you already own a Professional or Subscription
+Edition, you can upgrade to the Enterprise Edition for a reduced price.</P>
+<P>The Enterprise Edition of Visual C++ includes several extra features within Visual
+Studio:</P>
+
+<UL>
+	<LI>SQL debugging
+	<P>
+	<LI>Extended Stored Procedure Wizard
+	<P>
+	<LI>OLE DB support for AS 400 access
+</UL>
+
+<P>Also, a number of separate development tools are included:</P>
+
+<UL>
+	<LI>Visual SourceSafe
+	<P>
+	<LI>SQL Server 6.5 (Developer Edition, SP 3)
+	<P>
+	<LI>Visual Modeler
+	<P>
+	<LI>Microsoft Transaction Server
+	<P>
+	<LI>Internet Information Server 4.0
+</UL>
+
+<P>If you do database programming, if you develop large projects and produce object
+model diagrams, and if you work in teams and need to prevent revision collision,
+you need the features of the Enterprise Edition.</P>
+<P>
+<H2><A NAME="Heading2"></A>Understanding SQL</H2>
+<P>Structured Query Language (SQL) is a way to access databases, interactively or
+in a program, that is designed to read as though it were English. Most SQL statements
+are <I>queries</I>--requests for information from one or more databases--but it's
+also possible to use SQL to add, delete, and change information. As mentioned in
+Chapter 22, &quot;Database Access,&quot; SQL is an enormous topic. This section reviews
+the most important SQL commands so that even if you haven't used it before, you can
+understand these examples and see how powerful these tools can be.</P>
+<P>SQL is used to access a relational database, which contains several tables. A
+table is made up of rows, and a row is made up of columns. Table 23.1 lists some
+names used in database research or in some other kinds of databases for tables, rows,
+and columns.</P>
+<P>
+<H4>Table 23.1&#160;&#160;Database Terminology</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>SQL</B></TD>
+		<TD ALIGN="LEFT"><B>Also Known As</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Table</TD>
+		<TD ALIGN="LEFT">Entity</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Row</TD>
+		<TD ALIGN="LEFT">Record, Tuple</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Column</TD>
+		<TD ALIGN="LEFT">Field, Attribute</TD>
+	</TR>
+</TABLE>
+</P>
+<P>Here's a sample SQL statement:</P>
+<P>
+<PRE>SELECT au_fname, au_lname FROM authors
+</PRE>
+<P>It produces a list of authors' first and last names from a table called authors.
+(This table is included in the sample pubs database that comes with SQL Server, which
+you will be using in this chapter.) Here's a far more complicated SQL statement:</P>
+<P>
+<PRE>SELECT item, SUM(amount) total, AVG(amount) average FROM ledger
+   WHERE action = `PAID'
+   GROUP BY item
+having AVG(amount) &gt; (SELECT avg(amount) FROM ledger
+                      WHERE action = `PAID')
+</PRE>
+<P>A SQL statement is put together from keywords, table names, and column names.
+The keywords include the following:</P>
+
+<UL>
+	<LI>SELECT returns the specific column of the database. Secondary keywords including
+	FROM, WHERE, LIKE, NULL, and ORDER BY restrict the search to certain records within
+	each table.
+	<P>
+	<LI>DELETE removes records. The secondary keyword WHERE specifies which records to
+	delete.
+	<P>
+	<LI>UPDATE changes the value of columns (specified with SET) in records specified
+	with WHERE. It can be combined with a SELECT statement.
+	<P>
+	<LI>INSERT inserts a new record into the database.
+	<P>
+	<LI>COMMIT saves any changes you have made to the database.
+	<P>
+	<LI>ROLLBACK undoes all your changes back to the most recent COMMIT.
+	<P>
+	<LI>EXEC calls a stored procedure.
+</UL>
+
+<P>Like C++, SQL supports two kinds of comments:</P>
+<P>
+<PRE>/* This comment has begin and end symbols */
+-- This is a from-here-to-end-of-line comment
+</PRE>
+<H2><A NAME="Heading3"></A>Working with SQL Databases from C++</H2>
+<P>As you saw in Chapter 22, &quot;Database Access,&quot; an ODBC program using CDatabase
+and CRecordset can already access a SQL Server database or any database that supports
+SQL queries. What's more, with the ExecuteSQL function of CDatabase, you can execute
+any line of SQL from within your program. Most of the time, the line of SQL that
+you execute is a <I>stored</I> <I>procedure</I>--a collection of SQL statements stored
+with the database and designed to be executed on-the-fly by the database server.</P>
+<P>There are lots of reasons not to hard-code your SQL into your C++ program. The
+three most compelling are</P>
+
+<UL>
+	<LI>Reuse
+	<P>
+	<LI>Skill separation
+	<P>
+	<LI>Maintainability
+</UL>
+
+<P>Many programmers accessing a SQL database from a C++ application are building
+on the work of other developers who have been building the database and its stored
+procedures for years. Copying those procedures into your code would be foolish indeed.
+Calling them from within your code lets you build slick user interfaces, simplify
+Internet access, or take advantage of the speed of C++, while retaining all the power
+of the stored procedures previously written.</P>
+<P>Highly skilled professionals are always in demand, and sometimes the demand exceeds
+the supply. Many companies find it hard to recruit solid C++ programmers and equally
+as hard to recruit experienced database administrators who can learn the structure
+of a database and write in SQL. Imagine how difficult it would be to find a single
+individual who can do both--almost as difficult as having two developers work on
+the parts of the program that called SQL from C++. A much better approach is to have
+the C++ programmer call well-documented SQL stored procedures and the SQL developer
+build those stored procedures and keep the database running smoothly.</P>
+<P>Separating the C++ and SQL parts of your application has another benefit: Changes
+to one might not affect the other. For example, a minor C++ change that doesn't involve
+the SQL will compile and link more quickly because the C++ part of the application
+is a little smaller without the SQL statements in it. Also, changes to the SQL stored
+procedure, if they don't involve the parameters to the function or the values it
+returns, will take effect without compiling and linking the C++ program.</P>
+<P>There is a downside, however. It can be very difficult to track down problems
+when you are unsure whether they are in the C++ or the SQL part of your program.
+When one developer is doing both parts, learning two different tools and switching
+between them makes the job harder than it would be in a single tool. Also, the tools
+available for working with SQL lack many features that Visual C++ has offered C++
+programmers.</P>
+<P>Now, with the Enterprise Edition of Visual C++, you can have the best of both
+worlds. You can separate your C++ and SQL for reuse and maintenance but use the editor,
+syntax coloring, and even the debugger from Visual C++ to work on your SQL stored
+procedures.</P>
+<P>
+<H2><A NAME="Heading4"></A>Exploring the Publishing Application</H2>
+<P>One sample database that comes with SQL Server is called <I>pubs</I>. It tracks
+the sales of books and the royalties paid to their authors. In this chapter you will
+write a new stored procedure and display the records returned by it in a simple record
+view dialog box. SQL Server should be up and running before you start to build the
+application.</P>
+<P>
+<H3><A NAME="Heading5"></A>Setting Up the Data Source</H3>
+<P>Before you create the project, you need to create a data source to which it will
+connect. On your real projects, this data source might already exist.</P>
+<P>Choose Start, Settings, Control Panel and then double-click ODBC. Select the User
+DSN tab, as in Figure 23.1, and click the Add button to add a new data source name
+(DSN).</P>
+<P><A HREF="javascript:popUp('23uvc01.gif')"><B>FIG. 23.1</B></A><B> </B><I>Add a
+user data source name.</I></P>
+<P>On the next dialog box, choose SQL Server, as in Figure 23.2, and click Finish.
+You're several steps away from finishing, no matter what the button says.</P>
+<P><A HREF="javascript:popUp('23uvc02.gif')"><B>FIG. 23.2</B></A><B> </B><I>Connect
+to a SQL Server.</I></P>
+<P>On the next dialog box, fill in a name and description for the data source. Then
+drop down the Server box; choose your server or type its name. Figure 23.3 shows
+the completed dialog box for a test system with only the sample databases installed.
+Click Next.</P>
+<P><A HREF="javascript:popUp('23uvc03.gif')"><B>FIG. 23.3</B></A><B> </B><I>Specify
+the server.</I></P>
+<P>You can choose to connect to the server by using NT authentication or SQL Server
+authentication. If you're not sure, talk to your system administrator. Because this
+sample was developed on a test machine, SQL Server authentication--with the default
+account of sa and no password--is acceptable. Figure 23.4 shows the completed dialog
+box. Click Next.</P>
+<P><A HREF="javascript:popUp('23uvc04.gif')"><B>FIG. 23.4</B></A><B> </B><I>Security
+can be lax on test machines but not in the real world.</I></P>
+<P>At this point, you can choose whether to connect this data source name to a single
+database on the server or to the server as a whole. If you want to associate this
+DSN with only one database, select the top check box and choose your database. If
+not, leave the top check box deselected. In either case, leave the rest of the dialog
+at the defaults, shown in Figure 23.5. Click Next.</P>
+<P><A HREF="javascript:popUp('23uvc05.gif')"><B>FIG. 23.5</B></A><B> </B><I>This
+DSN is connected to the entire server, not just one database.</I></P>
+<P>Accept the default on the next dialog box, shown in Figure 23.6, and click Next.</P>
+<P>Leave both check boxes deselected on the last dialog, shown in Figure 23.7. Click
+Finish, and the process really is over.</P>
+<P>Figure 23.8 shows the summary of settings from this connection process. It's a
+very good idea to test your connection before moving on.</P>
+<P><A HREF="javascript:popUp('23uvc06.gif')"><B>FIG. 23.6</B></A><B> </B><I>Character
+translations and regional settings need no special treatment in this example.</I></P>
+<P><A HREF="javascript:popUp('23uvc07.gif')"><B>FIG. 23.7</B></A><B> </B><I>There's
+no need to log slow queries or driver statistics in this example.</I></P>
+<P><A HREF="javascript:popUp('23uvc08.gif')"><B>FIG. 23.8</B></A><B> </B><I>Confirm
+your choices for the ODBC SQL connection.</I></P>
+<P>Click Test Data Source, and you should see something like Figure 23.9. If you
+don't, click Cancel to return to the final step of the process and click Back until
+you are back to the step you need to adjust. Then come forward again with Next.</P>
+<P><A HREF="javascript:popUp('23uvc09.gif')"><B>FIG. 23.9</B></A><B> </B><I>Make
+sure your DSN connects properly.</I></P>
+<P>When you have tested the connection successfully, click OK on the summary dialog
+and then OK on the ODBC Data Source Administrator. Close Control Panel.</P>
+<P>
+<H3><A NAME="Heading6"></A>Building the Application Shell</H3>
+<P>Open Developer Studio and choose File, New and then click the Projects tab. Select
+MFC AppWizard (exe) and name the project Publishing, as shown in Figure 23.10. Click
+OK to start the AppWizard process.</P>
+<P><A HREF="javascript:popUp('23uvc10.gif')"><B>FIG. 23.10</B></A><B> </B><I>Start
+AppWizard in the usual way.</I></P>
+<P>In Step 1 of AppWizard, choose an SDI application. Click Next to move to Step
+2 of AppWizard. As shown in Figure 23.11, select the Database View Without File Support
+option. Click Data Source to connect a data source to your application.</P>
+<P>Select the ODBC option and from the drop-down box next to it, select the DSN you
+just created, as shown in Figure 23.12. Leave the Recordset Type as Snapshot and
+click OK to specify the exact data source.</P>
+<P><A HREF="javascript:popUp('23uvc11.gif')"><B>FIG. 23.11</B></A><B> </B><I>This
+application needs database support but will not have a document.</I></P>
+<P><A HREF="javascript:popUp('23uvc12.gif')"><B>FIG. 23.12</B></A><B> </B><I>Your
+data source is an ODBC data source name.</I></P>
+<P>The SQL Server login dialog appears. Click the Options button to show the enlarged
+dialog of Figure 23.13. Choose pubs from the Database drop-down box and enter your
+login ID and password at the top of the dialog. Click OK.</P>
+<P><A HREF="javascript:popUp('23uvc13.gif')"><B>FIG. 23.13</B></A><B> </B><I>Connect
+to the sample pubs database.</I></P>
+<P>The Select Database Tables dialog, shown in Figure 23.14, appears. Click on dbo.authors,
+dbo.titleauthor, and dbo.titles. Click OK.</P>
+<P><A HREF="javascript:popUp('23uvc14.gif')"><B>FIG. 23.14</B></A><B> </B><I>Choose
+the authors, titles, and authortitle tables.</I></P>
+<P>You are back to Step 2 of AppWizard. Click Next to move to Step 3. Choose No Support
+for Compound Documents or ActiveX Controls and click Next to move to Step 4. Click
+Next to accept the Step 4 defaults and then Next again to accept the Step 5 defaults.
+On Step 6, click Finish. The New Project Information summary, shown in Figure 23.15,
+appears. Click OK to create the project.</P>
+<P><A HREF="javascript:popUp('23uvc15.gif')"><B>FIG. 23.15</B></A><B> </B><I>Confirm
+that your choices are correct before clicking OK.</I></P>
+<P>You have now completed a shell of an application that displays database values
+in a record view, much like the one discussed in Chapter 22. Nothing you have done
+so far has been specific to the Enterprise Edition. That is about to change.</P>
+<P>
+<H3><A NAME="Heading7"></A>Making a Data Connection</H3>
+<P>The database tables you specified are connected to your record set, but they aren't
+available for use with the SQL features of the Enterprise Edition. You need to make
+a data connection to connect the database to your application. Follow these steps
+to make the connection:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Choose Project, Add to Project, New.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Click the Projects tab.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>As shown in Figure 23.16, select a Database Project, name it <B>PubDB</B>,
+	and select the Add to Current Workspace radio button. Click OK.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('23uvc16.gif')"><B>FIG. 23.16</B></A><B> </B><I>Create
+a subproject within this project.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+	<P>
+	<DD><B>4. </B>The Select Data Source dialog appears. Click the Machine Data Source
+	tab, choose the DSN you created (shown in Figure 23.17), and click OK.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('23uvc17.gif')"><B>FIG. 23.17</B></A><B> </B><I>Connect
+to the local server.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+	<P>
+	<DD><B>5. </B>The SQL Server Login dialog appears. As before, specify your login
+	ID and password and make sure the pubs database is selected. Click OK to complete
+	the data connection.
+	<P>
+</DL>
+
+<P>In the Workspace pane on the left of the screen, a new tab has appeared. Figure
+23.18 shows the new DataView. Expand the Tables section and expand authors to show
+the columns within the table. Double-click the authors table, and you can see your
+data on the right in Figure 23.18.</P>
+<P>Also featured in Figure 23.18 is the Query toolbar, with the following buttons:</P>
+
+<UL>
+	<LI><I>Show Diagram Pane</I> toggles the Query Designer diagram pane (discussed in
+	the next section).
+	<P>
+	<LI><I>Show Grid Pane</I> toggles the Query Designer grid pane (discussed in the
+	next section).
+	<P>
+	<LI><I>Show SQL Pane</I> toggles the Query Designer SQL pane (discussed in the next
+	section).
+</UL>
+
+<P><A HREF="javascript:popUp('23uvc18.gif')"><B>FIG. 23.18</B></A><B> </B><I>The
+DataView shows you the database structure and can display your data in the working
+area.</I></P>
+
+<UL>
+	<LI><I>Show Results Pane</I> toggles the Query Designer results pane (discussed in
+	the next section).
+	<P>
+	<LI><I>Change Type</I> creates a SELECT, INSERT, UPDATE, or DELETE query in the four
+	panes of Query Designer.
+	<P>
+	<LI><I>Run</I> executes your SQL.
+	<P>
+	<LI><I>Verify SQL Syntax</I> checks the syntax of the SQL you have written.
+	<P>
+	<LI><I>Sort Ascending</I> displays records from the low value of a selected column
+	to high.
+	<P>
+	<LI><I>Sort Descending</I> displays records from the high value of a selected column
+	to low.
+	<P>
+	<LI><I>Remove Filter</I> shows all the records instead of only those that meet the
+	filter specifications.
+	<P>
+	<LI><I>Group By</I> adds a GROUP BY condition to the query being built.
+	<P>
+	<LI><I>Properties</I> displays information about a column or table.
+</UL>
+
+<H3><A NAME="Heading8"></A>Working with Query Designer</H3>
+<P>When you double-click a table name, such as authors, in the DataView to display
+all the columns and all the records, you are actually executing a simple SQL query,
+as follows:</P>
+<P>
+<PRE>SELECT authors.* FROM authors
+</PRE>
+<P>The results of this query appear in the results pane, which is the only one of
+the four Query Designer panes to be displayed, by default. This query was built for
+you by Query Designer and means <I>show all the columns and records of the</I> authors<I>
+table</I>. Figure 23.19 shows the four panes of Query Designer as they appear when
+you first make the data connection. To see all four panes, use the toolbar buttons
+to toggle them on. You can adjust the vertical size of each pane but not the horizontal.</P>
+<P>To change your query, deselect * (All Columns) in the diagram pane (at the top
+of Figure 23.19) and then select au_lname, au_fname, and phone. The values in the
+results pane become gray to remind you that these aren't the results of the query
+you are now building. As you make these selections in the diagram pane, the other
+panes update automatically, as shown in Figure 23.20.</P>
+<P><A HREF="javascript:popUp('23uvc19.gif')"><B>FIG. 23.19</B></A><B> </B><I>The
+DataView shows you the database structure and can display your data in the working
+area.</I></P>
+<P>Highlight phone in the diagram pane and click the Sort Ascending button on the
+Query toolbar. This will sort the results by phone number. Click the Run button on
+the Query toolbar to execute the SQL that has been built for you. Figure 23.21 shows
+what you should see, including the new values in the results pane.</P>
+<P>
+<H3><A NAME="Heading9"></A>Stored Procedures</H3>
+<P>The capability to create simple SQL queries quickly, even if your SQL skills aren't
+strong, is an amazing aspect of the Enterprise Edition. However, using stored procedures
+is where the real payoff of this software becomes apparent.</P>
+<P><A HREF="javascript:popUp('23uvc20.gif')"><B>FIG. 23.20</B></A><B> </B><I>You
+can build simple queries even if you don't know any SQL.</I></P>
+<P><A HREF="javascript:popUp('23uvc21.gif')"><B>FIG. 23.21</B></A><B> </B><I>Running
+your SQL queries is a matter of a single click.</I></P>
+<P>Collapse the tables section in the DataView and expand the Stored Procedures section.
+This shows all the stored procedures that are kept in the database and are available
+for you to use. Double-click reptq2 to display the procedure. One thing you probably
+notice immediately is the syntax coloring in the editor window. The colors used are</P>
+
+<UL>
+	<LI><I>Blue</I> for keywords such as PRINT and SELECT
+	<P>
+	<LI><I>Green</I> for both styles of comment
+	<P>
+	<LI><I>Black</I> for other kinds of text
+</UL>
+
+<P>To run a stored procedure, choose Tools, Run; or right-click the stored procedure
+name in DataView and choose Run; or right-click in the editor and choose Run. The
+results appear in the Results pane of the Output window--don't confuse this with
+the Results pane of Query Designer. Figure 23.22 shows the Output window stretched
+very large to show some results of reptq2.</P>
+<P><A HREF="javascript:popUp('23uvc22.gif')"><B>FIG. 23.22</B></A><B> </B><I>You
+can see the results of any stored procedure from within Developer Studio.</I></P>
+<P>Some stored procedures take parameters. For example, double-click reptq3; its
+code looks like this:</P>
+<P>
+<PRE>CREATE PROCEDURE reptq3 @lolimit money, @hilimit money,
+@type char(12)
+AS
+select pub_id, type, title_id, price
+from titles
+where price &gt;@lolimit AND price &lt;@hilimit AND type = @type 
+      OR type LIKE `%cook%'
+order by pub_id, type
+COMPUTE count(title_id) BY pub_id, type
+</PRE>
+<P>This stored procedure takes three parameters: lolimit, hilimit, and type. If you
+run it, the dialog box shown in Figure 23.23 appears: Enter parameter values and
+click OK to run the procedure. See the results in the Output window.</P>
+<P><A HREF="javascript:popUp('23uvc23.gif')"><B>FIG. 23.23</B></A><B> </B><I>Providing
+parameters to stored procedures is simple.</I></P>
+<P>It might be nice if the type parameter were a drop-down box, enabling you to see
+all the type values in the table before submitting the query rather than having to
+type business yourself. That sort of capability is exactly what you can build into
+a C++ program that uses SQL stored procedures. To see how, in the next section you
+will write a new stored procedure and call it from your C++ program.</P>
+<P>
+<H3><A NAME="Heading10"></A>Writing a New Stored Procedure</H3>
+<P>To create a new stored procedure, right-click Stored Procedures in DataView and
+choose New Stored Procedure. This code appears in the editor:</P>
+<P>
+<PRE>Create Procedure /*Procedure_Name*/
+As
+     return (0)
+</PRE>
+<P>Edit this code so that it looks like Listing 23.1. Save the stored procedure by
+choosing File, Save--there's no need to specify the name because it's in the first
+line. After the procedure has been saved, its name appears in the DataView.</P>
+<P>
+<H4>Listing 23.1&#160;&#160;author_ytd, the New Stored Procedure</H4>
+<PRE>CREATE PROCEDURE author_ytd @sales int
+AS
+SELECT authors.au_lname, authors.au_fname, titles.title, ytd_sales
+   FROM authors, titles, titleauthor
+   WHERE ytd_sales &gt; @sales 
+      AND authors.au_id = titleauthor.au_id 
+      AND titleauthor.title_id = titles.title_id
+</PRE>
+<PRE>ORDER BY ytd_sales DESC
+</PRE>
+<P>This SQL code gathers information from three tables, using the au_id and title_id
+columns to connect authors to titles. It takes one parameter, sales, which is an
+integer value. Run the procedure to see the results immediately. Listing 23.2 shows
+the results, using 4000 as the value for sales.</P>
+<P>
+<H4>Listing 23.2&#160;&#160;author_ytd results (@sales = 4000)</H4>
+<PRE>Running Stored Procedure dbo.author_ytd ( @sales = 4000 ).
+au_lname        au_fname  title                                     ytd_sales
+-------------- -------- -------------------------------------------- ------
+DeFrance        Michel    The Gourmet Microwave                        22246
+Ringer          Anne      The Gourmet Microwave                        22246
+Green           Marjorie  You Can Combat Computer Stress!              18722
+Blotchet-Halls  Reginald  Fifty Years in Buckingham Palace Kitchens    15096
+Carson          Cheryl    But Is It User Friendly?                      8780
+Green           Marjorie  The Busy Executive's Database Guide           4095
+Bennet          Abraham   The Busy Executive's Database Guide           4095
+Straight        Dean      Straight Talk About Computers                 4095
+Dull            Ann       Secrets of Silicon Valley                     4095
+Hunter          Sheryl    Secrets of Silicon Valley                     4095
+O'Leary         Michael   Sushi, Anyone?                                4095
+Gringlesby      Burt      Sushi, Anyone?                                4095
+Yokomoto        Akiko     Sushi, Anyone?                                4095
+White           Johnson   Prolonged Data Deprivation: Four Case Studies 4072
+ (14 row(s) affected)
+Finished running dbo.author_ytd. 
+</PRE>
+<PRE>RETURN_VALUE = 0
+</PRE>
+<H3><A NAME="Heading11"></A>Connecting the Stored Procedure to C++ Code</H3>
+<P>At the moment, you have an empty C++ application that uses a recordset and would
+display members of that recordset in a record view if you added fields to the dialog
+to do so. The recordset contains all the columns from the three tables (authors,
+titleauthor, and titles) that you specified during the AppWizard process. That's
+arranged by a function called CPublishingSet::GetDefaultSQL() that AppWizard wrote
+for you, shown in Listing 23.3.</P>
+<P>
+<H4>Listing 23.3&#160;&#160;CPublishingSet::GetDefaultSQL() from AppWizard</H4>
+<PRE>CString CPublishingSet::GetDefaultSQL()
+{
+     return _T(&quot;[dbo].[authors],[dbo].[titleauthor],[dbo].[titles]&quot;);
+</PRE>
+<PRE>}
+</PRE>
+<P>You're going to change this default SQL so that it calls your stored procedure,
+which is now part of the pubs database. First, choose Project, Set Active Project
+and select Publishing. Switch to ClassView in the Workspace pane, expand CPublishingSet,
+and double-click GetDefaultSQL() to edit it. Replace the code with that in Listing
+23.4.</P>
+<P>
+<H4>Listing 23.4&#160;&#160;CPublishingSet::GetDefaultSQL() to Call Your Stored Procedure</H4>
+<PRE>CString CPublishingSet::GetDefaultSQL()
+{
+     return _T(&quot;{CALL author_ytd(4000)}&quot;);
+</PRE>
+<PRE>}
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong>ormally you would not hard-code the parameter value like this. Adding
+	member variables to the class to hold parameters and passing them to the SQL is a
+	topic you can explore in the online help when you are more familiar with the Enterprise
+	Edition.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The records returned from this query will go into your recordset. The query returns
+four columns (au_lname, au_fname, title, and ytd_sales), but the recordset is expecting
+far more than that. You can use ClassWizard to edit your recordset definition. Follow
+these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Open ClassWizard by choosing View, ClassWizard.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Click the Member Variables tab. You should see something like Figure
+	23.24, showing all the member variables of the recordset connected to table columns.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('23uvc24.gif')"><B>FIG. 23.24</B></A><B> </B><I>ClassWizard
+manages your recordset definition.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+	<DD><B>3. </B>Highlight [address] and click Delete Variable.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>In the same way, delete all the variables except au_lname, au_fname,
+	title, and ytd_sales.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Click OK to close ClassWizard.
+	<P>
+</DL>
+
+<P>Your application can compile and run now, but until you edit the Record View dialog
+box, you won't be able to see the records and columns that are returned by another
+query. Editing the dialog box is covered in Chapter 22 and uses skills first demonstrated
+in Chapter 2, &quot;Dialogs and Controls,&quot; so the description here will be brief.</P>
+<P>Click the ResourceView tab, expand the resources, expand Dialogs, and double-click
+IDD_PUBLISHING_FORM. This dialog box was created for you by AppWizard but has no
+controls on it yet. Delete the static text reminding you to add controls, and add
+four edit boxes and their labels so that the dialog resembles Figure 23.25. Use sensible
+resource IDs for the edit boxes, not the defaults provided by Developer Studio. Name
+them IDC_QUERY_LNAME, IDC_QUERY_FNAME, IDC_QUERY_TITLE, and IDC_QUERY_YTDSALES.</P>
+<P><A HREF="javascript:popUp('23uvc25.gif')"><B>FIG.23.25</B></A><B> </B><I>Edit
+your Record View dialog box.</I></P>
+<P>There is one task left: Connect these fields to member variables. Here's how to
+make that connection:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Open ClassWizard while this dialog box has focus.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Click the Member Variables tab.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Select IDC_QUERY_FNAME and click Add Variable to open the Add Member
+	Variable dialog box.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>From the drop-down box labeled Member Variable Name, choose m_pSet-&gt;m_au_fname
+	and click OK.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>In the same way, connect IDC_QUERY_LNAME to m_pSet-&gt;m_au_lname,
+	IDC_QUERY_TITLE to m_pSet-&gt;m_title, and IDC_QUERY_YTDSALES to m_pSet-&gt;m_ytd_sales.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Figure 23.26 shows the ClassWizard dialog box when all four controls
+	have been connected. Click OK to close ClassWizard.
+	<P>
+</DL>
+
+<P>In ClassView, double-click the function DoFieldExchange() under CPublishingSet
+and look at the code that was generated for you. The order in which the variables
+appear in this code is important: It must match the order in which the fields are
+coming back from your stored procedure. Figure 23.27 shows DoFieldExchange() and
+the stored procedure together. Adjust the order of the fields in the SELECT statement,
+if required.</P>
+<P>Build your project and run it. You should see a record view like Figure 23.28
+(you might have to go through the SQL login procedure again first), and if you scroll
+through the record view with the arrow buttons, you should see every author from
+the report in Listing 23.2.</P>
+<P><A HREF="javascript:popUp('23uvc26.gif')"><B>FIG. 23.26</B></A><B> </B><I>Connect
+the record view controls to member variables of the recordset.</I></P>
+<P><A HREF="javascript:popUp('23uvc27.gif')"><B>FIG. 23.27</B></A><B> </B><I>Make
+sure that the fields are in the same order in DoFieldExchange() as in your stored
+procedure.</I></P>
+<P><A HREF="javascript:popUp('23uvc28.gif')"><B>FIG. 23.28</B></A><B> </B><I>Your
+application displays the results of the stored procedure's query.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Make sure you have saved the SQL stored procedure before you build.
+	Because the stored procedures are in a subproject of Publishing, building Publishing
+	will not trigger any saves in the subproject. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>This application doesn't do much at the moment: It calls a stored procedure and
+neatly presents the results. With a little imagination, you can probably see how
+your SQL-based C++ programs can wrap stored procedures in user-friendly interfaces
+and how easy it is to develop and maintain these stored procedures by using Developer
+Studio. You can even debug your SQL by using the Developer Studio debugger.</P>
+<P>
+<H2><A NAME="Heading12"></A>Working with Your Database</H2>
+<P>The DataView gives you full control over not only the contents of your SQL database
+but also its design. A raft of graphical tools makes it easy to see how the database
+works or to change any aspect of it.</P>
+<P>
+<H3><A NAME="Heading13"></A>Database Designer</H3>
+<P>Return to the DataView, right-click the authors table, and choose Design. With
+the Database Designer, shown in Figure 23.29, you can change the key column, adjust
+the width, apply constraints on valid values, and more.</P>
+<P><A HREF="javascript:popUp('23uvc29.gif')"><B>FIG. 23.29</B></A><B> </B><I>The
+Database Designer lets you change any aspect of your database's design.</I></P>
+<P>For example, to open the property sheet shown in Figure 23.30, click the Properties
+button at the far right of the Table toolbar while au_id is selected. The constraint
+shown here means that au_id must be a 9-digit number. Clicking the Relationship tab,
+shown in Figure 23.31, shows that au_id is used to connect the authors table to the
+titleauthor table.</P>
+<P><A HREF="javascript:popUp('23uvc30.gif')"><B>FIG. 23.30</B></A><B> </B><I>It's
+simple to specify column constraints.</I></P>
+<P><A HREF="javascript:popUp('23uvc31.gif')"><B>FIG. 23.31</B></A><B> </B><I>The
+Relationships tab makes it simple to see how tables are related.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading14"></A>Database Diagrams</H3>
+<P>One of the easiest ways to quickly present information to people is with a diagram.
+Figure 23.32 shows a diagram that explains the relationships between the three tables
+used throughout this chapter. To create the same diagram yourself, follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Right-click Database Diagrams in DataView and choose New Diagram.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Click authors and drag it into the working area.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Click titleauthor and drag it into the working area. Wait a moment
+	for a link between authors and titleauthor to appear.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Click titles and drag it into the working area. Wait for the link to
+	appear.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Rearrange the tables so that their keys are aligned as in Figure 23.32.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Drag the links up or down until they run from one key to another, as
+	they do in Figure 23.32.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('23uvc32.gif')"><B>FIG. 23.32</B></A><B> </B><I>A picture
+is worth a thousand words when it's time to explain your database design.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+</DL>
+
+<P>If you want, you can save this diagram in the database. Just click the Save button
+on the standard toolbar and provide a name. The diagrams will be available to any
+other developers who use the Enterprise Edition to access this database.</P>
+<P>If you're a database developer, you probably can't wait to open your own database
+in the Database Designer and set to work. Be sure to take advantage of the many features
+on the Database Diagram toolbar. For example, you can add a note or explanation with
+the New Text Annotation button; this note can be moved wherever you want. Four buttons
+grouped together control how much detail is shown for each table. The first, Column
+Properties, shows all the details that were in the table view. The second, Column
+Names, is the default in the diagram view. Keys shows only those columns that are
+keys, and Name Only shrinks the grid to a tiny column showing only the table's name.
+This is useful for diagrams representing the relationships of many tables or of tables
+from other projects.</P>
+<P>To change any design decision about these tables, open the shortcut menu and choose
+Column Properties; then edit these properties as you did in the Database Designer.
+How's that for an easy way to design and administer a SQL database?</P>
+<P>
+<H2><A NAME="Heading15"></A>Understanding Microsoft Transaction Server</H2>
+<P>Microsoft Transaction Server is a completely separate product that comes with
+the Enterprise Edition of Visual C++ but is not integrated with it. MTS enables you
+to use a collection of COM objects called <I>components</I> to securely execute distributed
+transactions within enterprise-scale database applications. Applications that use
+MTS can be written in any language that produces ActiveX applications, including
+Visual C++, Visual J++, and Visual Basic.</P>
+<P>To work with MTS, you must be comfortable doing under-the-hood ActiveX and COM
+programming, working directly with interfaces. If you've always relied on MFC to
+hide interfaces from you, you should probably read Chapter 21, &quot;The Active Template
+Library,&quot; to gain an introduction to the way that interfaces are used.</P>
+<P>Like ODBC, you can use MTS with almost any kind of database, including ordinary
+file systems. Certainly SQL databases work with MTS, but so do a huge variety of
+other resource managers. This enables you access to the power of MTS without having
+to change your database system at all.</P>
+<P>An MTS component is a COM object. It can do any specific task within your system,
+and often several components are involved in a given <I>transaction</I>. Components
+are gathered together into packages, which are installed as a unit onto your system.</P>
+<P>A <I>transaction</I> is a unit of work that should succeed or fail as a whole.
+For example, if a customer is transferring money from one bank account to another,
+the money should be withdrawn from one account and deposited to the other. It doesn't
+make sense for one step in this process to fail and the other to proceed to completion.
+This would either unfairly take money away from customers or unfairly give money
+to customers. Database programmers have long realized this and have developed ways
+of rolling back transactions that are partially completed when a step fails or of
+checking conditions to ensure that all the steps will succeed before starting. However,
+these techniques are much more difficult to implement in a large, distributed system--too
+difficult to implement by hand.</P>
+<P>For example, imagine that two systems are about to take money (say, $100) from
+a customer's bank account. The first checks the balance, and there is enough money.
+Both systems are connected through a network to the system that keeps the balance
+for that account. The first system asks for the balance and receives the reply: $150.
+Moments later, the second asks and is also told $150. The first confidently sends
+the request for $100 and succeeds; only a fraction of a second later, the second
+asks for $100 and fails. Any portions of a transaction involving this customer that
+were already completed by the second system will now have to be rolled back. A transactional
+system such as MTS makes this process much simpler for developers by providing system
+services to support these tasks.</P>
+<P>Sound good? Then install the product and get going in the online help. Two good
+sample systems are included: a simple banking application and a game. You can also
+check out Microsoft's Transaction Server Web site at <A target="_new" HREF="http://www.microsoft.com/transaction"><B>http://www.microsoft.com/transaction</B></A>.</P>
+<P>
+<H2><A NAME="Heading16"></A>Using Visual SourceSafe</H2>
+<P>If you work as part of a team of developers, a revision control system isn't a
+nicety--it's a necessity. For too many teams, the revision control system consists
+of sticking your head into the hall and telling your fellow programmers that you
+will be working on fooble.h and fooble.cpp for a while and to leave these alone.
+Perhaps it's more about demanding to know who saved his changes to fooble.h over
+your changes because you both had the file open at once, and somebody saved after
+you did. There is a better way.</P>
+<P>Revision control systems are not a new idea. They all implement these concepts:</P>
+
+<UL>
+	<LI><I>Check out a file</I>--By bringing a copy of a file to your desktop from a
+	central library or repository, you mark the file as unavailable to others who might
+	want to change it. (Some systems allow changes to source files by several developers
+	at once and can later merge the changes.)
+	<P>
+	<LI><I>Check in a file</I>--When your changes are complete, you return the file to
+	the library. You provide a brief description of what you've done, and the RCS automatically
+	adds your name, the date, and other files affected by this change.
+	<P>
+	<LI><I>Merge changes</I>--Some RCS systems can accept check-ins by different developers
+	on the same file and will make sure that both sets of changes appear in the central
+	file.
+	<P>
+	<LI><I>Change tracking</I>--Some RCS systems can reconstruct earlier versions of
+	a file by working backwards through a change log.
+	<P>
+	<LI><I>History</I>--The information added at check-in can form a nice summary of
+	what was done to each file, when, and why.
+</UL>
+
+<P>Microsoft's Visual SourceSafe is a good revision control system that many developers
+use to keep their code in order. What sets Visual SourceSafe apart from other RCS
+systems? It's project oriented, it hooks into Visual C++ (through the new SCCI interface,
+some other RCS systems can also hook in), and it comes with the Enterprise Edition
+of Visual C++.</P>
+<P>When you install Visual SourceSafe, choose a custom installation and select Enable
+SourceSafe Integration. Doing this adds a cascading menu to Developer Studio's Project
+menu, shown in Figure 23.33. To enable the items on the menu, you must add your project
+to source control by choosing Add to Source Control and logging into Visual SourceSafe.</P>
+<P><A HREF="javascript:popUp('23uvc33.gif')"><B>FIG. 23.33</B></A><B> </B><I>Installing
+Visual SourceSafe adds a cascading menu to the Project menu.</I></P>
+<P>The items on the menu are as follows:</P>
+
+<UL>
+	<LI><I>Get Latest Version</I>--For selected files, replace your copies with newer
+	copies from the library.
+	<P>
+	<LI><I>Check Out</I>--Start to work on a file.
+	<P>
+	<LI><I>Check In</I>--Finish working on a file and make your changed versions available
+	to everyone.
+	<P>
+	<LI><I>Undo Check Out</I>--Give back a file without making any changes or an entry
+	in the history.
+	<P>
+	<LI><I>Add to Source Control</I>--Enable source control for this project.
+	<P>
+	<LI><I>Remove from Source Control</I>--Disable source control for this project.
+	<P>
+	<LI><I>Show History</I>--Display the changes made to selected files.
+	<P>
+	<LI><I>Show Differences</I>--Display the differences between old and new files.
+	<P>
+	<LI><I>SourceSafe Properties</I>--See information that SourceSafe keeps about your
+	files.
+	<P>
+	<LI><I>Share from SourceSafe</I>--Allow other developers to work on selected files.
+	<P>
+	<LI><I>Refresh Status</I>--Update your display with status changes made by other
+	developers.
+	<P>
+	<LI><I>SourceSafe</I>--Run Visual SourceSafe to see reports and summaries.
+</UL>
+
+<P>You must have an account and password set up in Visual SourceSafe before you can
+put a project under source control and use these features. Run Visual SourceSafe
+from this menu to perform any administrative tasks that haven't already been taken
+care of for you.</P>
+<P>Unless you are the only developer who will work on your project, you simply must
+use a revision control system. Visual SourceSafe is good: It works from within Developer
+Studio, and if you have the Enterprise Edition of Visual C++, it's free. What more
+could you want? Install it, learn it, use it. You won't regret it.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Revision control systems work on Web pages, database contents, documentation,
+	bug lists, and spreadsheets as well as they do on code and program files. After you
+	get in the habit and see the benefits, you won't stop. 
+<HR>
+</P>
+
+</BLOCKQUOTE>
+
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch22/ch22.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch24/ch24.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> </P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

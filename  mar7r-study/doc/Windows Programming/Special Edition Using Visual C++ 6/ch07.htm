@@ -1,0 +1,1012 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 7 -- Persistence and File I/O</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch06/ch06.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch08/ch08.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 7 -</H1>
+</CENTER>
+<CENTER>
+<H1>Persistence and File I/O</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Understanding Objects and Persistence</A>
+	<LI><A HREF="#Heading2">Examining the File Demo Application</A>
+	<UL>
+		<LI><A HREF="#Heading3">A Review of Document Classes</A>
+		<LI><A HREF="#Heading4">Building the File Demo Application</A>
+	</UL>
+	<LI><A HREF="#Heading5">Creating a Persistent Class</A>
+	<UL>
+		<LI><A HREF="#Heading6">The File Demo 2 Application</A>
+		<LI><A HREF="#Heading7">Looking at the CMessages Class</A>
+		<LI><A HREF="#Heading8">Using the CMessages Class in the Program</A>
+	</UL>
+	<LI><A HREF="#Heading9">Reading and Writing Files Directly</A>
+	<UL>
+		<LI><A HREF="#Heading10">The CFile Class</A>
+	</UL>
+	<LI><A HREF="#Heading11">Creating Your Own CArchive Objects</A>
+	<LI><A HREF="#Heading12">Using the Registry</A>
+	<UL>
+		<LI><A HREF="#Heading13">How the Registry Is Set Up</A>
+		<LI><A HREF="#Heading14">The Predefined Keys</A>
+		<LI><A HREF="#Heading15">Using the Registry in an MFC Application</A>
+		<LI><A HREF="#Heading16">The Sample Applications Revisited</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Understanding Objects and Persistence</H2>
+<P>One of the most important things a program must do is save users' data after that
+data is changed in some way. Without the capability to save edited data, the work
+a user performs with an application exists only as long as the application is running,
+vanishing the instant the user exits the application. Not a good way to get work
+done! In many cases, especially when using AppWizard to create an application, Visual
+C++ provides much of the code necessary to save and load data. However, in some cases--most
+notably when you create your own object types--you have to do a little extra work
+to keep your users' files up to date.</P>
+<P>When you're writing an application, you deal with a lot of different object types.
+Some data objects might be simple types, such as integers and characters. Other objects
+might be instances of classes, such as strings from the CString class or even objects
+created from your own custom classes. When using objects in applications that must
+create, save, and load documents, you need a way to save and load the state of those
+objects so that you can re-create them exactly as users left them at the end of the
+last session.</P>
+<P>An object's capability to save and load its state is called <I>persistence</I>.
+Almost all MFC classes are persistent because they're derived directly or indirectly
+from MFC's CObject class, which provides the basic functionality for saving and loading
+an object's state. The following section reviews how MFC makes a document object
+persistent.</P>
+<P>
+<H2><A NAME="Heading2"></A>Examining the File Demo Application</H2>
+<P>When you use Visual C++'s AppWizard to create a program, you get an application
+that uses document and view classes to organize, edit, and display its data. As discussed
+in Chapter 4, &quot;Documents and Views,&quot; the document object, derived from
+the CDocument class, is responsible for holding the application's data during a session
+and for saving and loading the data so that the document persists from one session
+to another.</P>
+<P>In this chapter, you'll build the File Demo application, which demonstrates the
+basic techniques behind saving and loading data of an object derived from CDocument.
+File Demo's document is a single string containing a short message, which the view
+displays.</P>
+<P>Three menu items are relevant in the File Demo application. When the program first
+begins, the message is automatically set to the string Default Message. Users will
+change this message by choosing Edit, Change Message. The File, Save menu option
+saves the document, as you'd expect, and File, Open reloads it from disk.</P>
+<P>
+<H3><A NAME="Heading3"></A>A Review of Document Classes</H3>
+<P>Anyone who's written a program has experienced saving and opening files--object
+persistence from the user's point of view. In this chapter you'll learn how persistence
+works. Although you had some experience with document classes in Chapter 4, you'll
+now review the basic concepts with an eye toward extending those concepts to your
+own custom classes.</P>
+<P>When working with an application created by AppWizard, you must complete several
+steps to enable your document to save and load its state. Those steps are discussed
+in this section. The steps are as follows:</P>
+
+<DL>
+	<DD><B>1. </B>Define the member variables that will hold the document's data.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Initialize the member variables in the document class's OnNewDocument()
+	member function.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Display the current document in the view class's OnDraw() member function.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Provide member functions in the view class that enable users to edit
+	the document.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Add to the document class's Serialize() member function the code needed
+	to save and load the data that comprises the document.
+	<P>
+</DL>
+
+<P>When your application can handle multiple documents, you need to do a little extra
+work to be sure that you use, change, or save the correct document. Luckily, most
+of that work is taken care of by MFC and AppWizard.</P>
+<P>
+<H3><A NAME="Heading4"></A>Building the File Demo Application</H3>
+<P>To build the File Demo application, start by using AppWizard to create an SDI
+application. All the other AppWizard choices should be left at their default values,
+so you can speed things up by clicking Finish on Step 1 after selecting SDI and making
+sure that Document/View support is selected.</P>
+<P>Double-click CfileDemoDoc in ClassView to edit the header file for the document
+class. In the Attributes section add a CString member variable called m_message,
+so that the Attributes section looks like this:</P>
+<P>
+<PRE>// Attributes
+public:
+    CString m_message;
+</PRE>
+<P>In this case, the document's storage is nothing more than a single string object.
+Usually, your document's storage needs are much more complex. This single string,
+however, is enough to demonstrate the basics of a persistent document. It's very
+common for MFC programmers to use public variables in their documents, rather than
+a private variable with public access functions. It makes it a little simpler to
+write the code in the view class that will access the document variables. It will,
+however, make future enhancements a little more work. These tradeoffs are discussed
+in more detail in Appendix A, &quot;C++ Review and Object-Oriented Concepts.&quot;</P>
+<P>This string, like all the document's data, must be initialized. The OnNewDocument()
+member function is the place to do it. Expand CFileDemoDoc in ClassView and double-click
+OnNewDocument() to edit it. Add a line of code to initialize the string so that the
+function looks like Listing 7.1. You should remove the TODO comments because you've
+done what they were reminding you to do.</P>
+<P>
+<H4>Listing 7.1&#160;&#160;Initializing the Document's Data</H4>
+<PRE>BOOL CFileDemoDoc::OnNewDocument()
+{
+    if (!CDocument::OnNewDocument())
+        return FALSE;
+    m_message = &quot;Default Message&quot;;
+    return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>With the document class's m_message data member initialized, the application can
+display the data in the view window. You just need to edit the view class's OnDraw()
+function (see Listing 7.2). Expand CFileDemoView in ClassView and double-click OnDraw()
+to edit it. Again, you're just adding one line of code and removing the TODO comment.</P>
+<P>
+<H4>Listing 7.2&#160;&#160; Displaying the Document's Data</H4>
+<PRE>void CFileDemoView::OnDraw(CDC* pDC)
+{
+    CFileDoc* pDoc = GetDocument();
+    ASSERT_VALID(pDoc);
+    pDC-&gt;TextOut(20, 20, pDoc-&gt;m_message);
+</PRE>
+<PRE>}
+</PRE>
+<P>Getting information onscreen, using device contexts, and the TextOut() function
+are all discussed in Chapter 5, &quot;Drawing on the Screen.&quot;</P>
+<P>Build File Demo now, to make sure there are no typos, and run it. You should see
+Default Message appear onscreen.</P>
+<P>Now, you need to allow users to edit the application's document by changing the
+string. In theory, the application should display a dialog box to let the user enter
+any desired string at all. For our purposes, you're just going to have the Edit,
+Change Message menu option assign the string a different, hard-coded value. ShowString,
+the subject of Chapter 8, &quot;Building a Complete Application: ShowString,&quot;
+shows how to create a dialog box such as the one File Demo might use.</P>
+<P>Click the Resource tab to switch to ResourceView, expand the resources, expand
+Menus, and double-click IDR_MAINFRAME to edit it. Click once on the Edit item in
+the menu you are editing to drop it down. Click the blank item at the end of the
+list and type <B>Change &amp;Message</B>. This will add another item to the menu.</P>
+<P>Choose View, ClassWizard to make the connection between this menu item and your
+code. You should see ID_EDIT_CHANGEMESSAGE highlighted already; if not, click it
+in the box on the left to highlight it. Choose CFileDemoView from the drop-down box
+on the upper right. Click COMMAND in the lower-right box and then click the Add Function
+button. Accept the suggested name, OnEditChangemessage(), by clicking OK on the dialog
+that appears. Click Edit Code to open the new function in the editor and edit it
+to match Listing 7.3.</P>
+<P>
+<H4>Listing 7.3&#160;&#160;Changing the Document's Data</H4>
+<PRE>void CFileDemoView::OnEditChangemessage() 
+{
+   CTime now = CTime::GetCurrentTime();
+   CString changetime = now.Format(&quot;Changed at %B %d %H:%M:%S&quot;);
+   GetDocument()-&gt;m_message = changetime;
+   GetDocument()-&gt;SetModifiedFlag();
+   Invalidate();
+</PRE>
+<PRE>}
+</PRE>
+<P>This function, which responds to the application's Edit, Change Message command,
+builds a string from the current date and time and transfers it to the document's
+data member. (The CTime class and its Format() function are discussed in Appendix
+F, &quot;Useful Classes.&quot;) The call to the document class's SetModifiedFlag()
+function notifies the object that its contents have been changed. The application
+will warn about exiting with unsaved changes as long as you remember to call SetModifiedFlag()
+everywhere there might be a change to the data. Finally, this code forces a redraw
+of the screen by calling Invalidate(), as discussed in Chapter 4.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If m_message was a private member variable of the document class,
+	you could have a public SetMessage() function that called SetModifiedFlag() and be
+	guaranteed no programmer would ever forget to call it. That's one of the advantages
+	of writing truly object-oriented programs. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The document class's Serialize() function handles the saving and loading of the
+document's data. Listing 7.4 shows the empty shell of Serialize() generated by AppWizard.</P>
+<P>
+<H4>Listing 7.4&#160;&#160;FILEVIEW.CPP--The Document Class Serialize() Function</H4>
+<PRE>void CFileDoc::Serialize(CArchive&amp; ar)
+{
+    if (ar.IsStoring())
+    {
+        // TODO: add storing code here
+}
+    else
+    {
+        // TODO: add loading code here
+}
+</PRE>
+<PRE>}
+</PRE>
+<P>Because the CString class (of which m_message is an object) defines the &gt;&gt;
+and &lt;&lt; operators for transferring strings to and from an archive, it's a simple
+task to save and load the document class's data. Simply add this line where the comment
+reminds you to add storing code:</P>
+<P>
+<PRE>ar &lt;&lt; m_message;
+</PRE>
+<P>Add this similar line where the loading code belongs:</P>
+<P>
+<PRE>ar &gt;&gt; m_message;
+</PRE>
+<P>The &lt;&lt; operator sends the CString m_message to the archive; the &gt;&gt;
+operator fills m_message from the archive. As long as all the document's member variables
+are simple data types such as integers or characters, or MFC classes such as CString
+with these operators already defined, it's easy to save and load the data. The operators
+are defined for these simple data types:</P>
+
+<UL>
+	<LI>BYTE
+	<P>
+	<LI>WORD
+	<P>
+	<LI>int
+	<P>
+	<LI>LONG
+	<P>
+	<LI>DWORD
+	<P>
+	<LI>float
+	<P>
+	<LI>double
+</UL>
+
+<P>Build File Demo and run it. Choose Edit, Change Message, and you should see the
+new string onscreen, as shown in Figure 7.1. Choose File, Save and enter a filename
+you can remember. Now change the message again. Choose File, New and you'll be warned
+about saving your current changes first, as in Figure 7.2. Choose File, Open and
+browse to your file, or just find your filename towards the bottom of the File menu
+to re-open it, and you'll see that File Demo can indeed save and reload a string.</P>
+<P><A HREF="javascript:popUp('07uvc01.gif')"><B>FIG. 7.1</B></A><B> </B><I>File Demo
+changes the string on command.</I></P>
+<P><A HREF="javascript:popUp('07uvc02.gif')"><B>FIG. 7.2</B></A><B> </B><I>Your users
+will never lose unsaved data again.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<BR>
+	<strong>NOTE:[ENND] If you change the file, save it, change it again, and re-open it,
+	File Demo will not ask Revert to saved document? as some applications do. Instead,
+	it will bail out of the File Open process partway through and leave you with your
+	most recent changes. This behavior is built in to MFC. If the name of the file you
+	are opening matches the name of the file that is already open, you will not revert
+	to the saved document.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H2><A NAME="Heading5"></A>Creating a Persistent Class</H2>
+<P>What if you've created your own custom class for holding the elements of a document?
+How can you make an object of this class persistent? You find the answers to these
+questions in this section.</P>
+<P>Suppose that you now want to enhance the File Demo application so that it contains
+its data in a custom class called CMessages. The member variable is now called m_messages
+and is an instance of CMessages. This class holds three CString objects, each of
+which must be saved and loaded for the application to work correctly. One way to
+arrange this is to save and load each individual string, as shown in Listing 7.5.</P>
+<P>
+<H4>Listing 7.5&#160;&#160; One Possible Way to Save the New Class's Strings</H4>
+<PRE>void CFileDoc::Serialize(CArchive&amp; ar)
+{
+    if (ar.IsStoring())
+    {
+        ar &lt;&lt; m_messages.m_message1;
+        ar &lt;&lt; m_messages.m_message2;
+        ar &lt;&lt; m_messages.m_message3;
+    }
+    else
+    {
+        ar &gt;&gt; m_messages.m_message1;
+        ar &gt;&gt; m_messages.m_message2;
+        ar &gt;&gt; m_messages.m_message3;
+}
+</PRE>
+<PRE>}
+</PRE>
+<P>You can write the code in Listing 7.5 only if the three member variables of the
+CMessages class are public and if you know the implementation of the class itself.
+Later, if the class is changed in any way, this code also has to be changed. It's
+more object oriented to delegate the work of storing and loading to the CMessages
+class itself. This requires some preparation. The following basic steps create a
+class that can serialize its member variables:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Derive the class from CObject.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Place the DECLARE_SERIAL() macro in the class declaration.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Place the IMPLEMENT_SERIAL() macro in the class implementation.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Override the Serialize() function in the class.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Provide an empty, default constructor for the class.
+	<P>
+</DL>
+
+<P>In the following section, you build an application that creates persistent objects
+in just this way.</P>
+<P>
+<H3><A NAME="Heading6"></A>The File Demo 2 Application</H3>
+<P>The next sample application, File Demo 2, demonstrates the steps you take to create
+a class from which you can create persistent objects. It will have an Edit, Change
+Messages command that changes all three strings. Like File Demo, it will save and
+reload the document when the user chooses File, Save or File, Open.</P>
+<P>Build an SDI application called MultiString just as you built File Demo. Add a
+member variable to the document, as before, so that the Attributes section of MultiStringDoc.h
+reads</P>
+<P>
+<PRE>// Attributes
+public:
+    CMessages m_messages;
+</PRE>
+<P>The next step is to write the CMessages class.</P>
+<P>
+<H3><A NAME="Heading7"></A>Looking at the CMessages Class</H3>
+<P>Before you can understand how the document class manages to save and load its
+contents successfully, you have to understand how the CMessages class, of which the
+document class's m_messages data member is an object, works. As you work with this
+class, you will see how to implement the preceding five steps for creating a persistent
+class.</P>
+<P>To create the CMessages class, first choose Insert, New Class. Change the class
+type to generic class and name it <B>CMessages</B>. In the area at the bottom of
+the screen, enter <B>CObject</B> as the base class name and leave the As column set
+to public, as shown in Figure 7.3.</P>
+<P><A HREF="javascript:popUp('07uvc03.gif')"><B>FIG. 7.3</B></A><B> </B><I>Create
+a new class to hold the messages.</I></P>
+<P>This will create two files: messages.h for the header and messages.cpp for the
+code. It also adds some very simple code to these files for you. (You may get a warning
+about not being able to find the header file for CObject: just click OK and ignore
+it because CObject, like all MFC files, is available to you without including extra
+headers.)</P>
+<P>Switch back to Multistringdoc.h and add this line before the class definition:</P>
+<P>
+<PRE>#include &quot;Messages.h&quot;
+</PRE>
+<P>This will ensure the compiler knows about the CMessages class when it compiles
+the document class. You can build the project now if you want to be sure you haven't
+forgotten anything. Now switch back to Messages.h and add these lines:</P>
+<P>
+<PRE>    DECLARE_SERIAL(CMessages)
+protected:
+    CString m_message1;
+    CString m_message2;
+    CString m_message3;
+public:
+    void SetMessage(UINT msgNum, CString msg);
+    CString GetMessage(UINT msgNum);
+    void Serialize(CArchive&amp; ar);
+</PRE>
+<P>The DECLARE_SERIAL() macro provides the additional function and member variable
+declarations needed to implement object persistence.</P>
+<P>Next come the class's data members, which are three objects of the CString class.
+Notice that they are protected member variables. The public member functions are
+next. SetMessage(), whose arguments are the index of the string to set and the string's
+new value, changes a data member. GetMessage() is the complementary function, enabling
+a program to retrieve the current value of any of the strings. Its single argument
+is the number of the string to retrieve.</P>
+<P>Finally, the class overrides the Serialize() function, where all the data saving
+and loading takes place. The Serialize() function is the heart of a persistent object,
+with each persistent class implementing it in a different way. Listing 7.6 shows
+the code for each of these new member functions. Add it to messages.cpp.</P>
+<P>
+<H4>Listing 7.6&#160;&#160;MESSAGES.CPP--The CMessages Class Implementation File</H4>
+<PRE>void CMessages::SetMessage(UINT msgNum, CString msg)
+{
+     switch (msgNum)
+     {
+     case 1:
+          m_message1 = msg;
+          break;
+     case 2:
+        m_message2 = msg;
+          break;
+     case 3:
+        m_message3 = msg;
+          break;
+     }
+   SetModifiedFlag();
+}
+CString CMessages::GetMessage(UINT msgNum)
+{
+   switch (msgNum)
+   {
+      case 1:
+         return m_message1;
+      case 2:
+         return m_message2;
+      case 3:
+         return m_message3;
+      default:
+         return &quot;&quot;;
+   }
+}
+void CMessages::Serialize(CArchive&amp; ar)
+{
+    CObject::Serialize(ar);
+    if (ar.IsStoring())
+    {
+        ar &lt;&lt; m_message1 &lt;&lt; m_message2 &lt;&lt; m_message3;
+    }
+    else
+    {
+        ar &gt;&gt; m_message1 &gt;&gt; m_message2 &gt;&gt; m_message3;
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>There's nothing tricky about the SetMessage() and GetMessage() functions, which
+perform their assigned tasks precisely. The Serialize() function, however, may inspire
+a couple of questions. First, note that the first line of the body of the function
+calls the base class's Serialize() function. This is a standard practice for many
+functions that override functions of a base class. In this case, the call to CObject::Serialize()
+doesn't do much because the CObject class's Serialize() function is empty. Still,
+calling the base class's Serialize() function is a good habit to get into because
+you may not always be working with classes derived directly from CObject.</P>
+<P>After calling the base class's version of the function, Serialize() saves and
+loads its data in much the same way a document object does. Because the data members
+that must be serialized are CString objects, the program can use the &gt;&gt; and
+&lt;&lt; operators to write the strings to the disk.</P>
+<P>Towards the top of messages.cpp, after the include statements, add this line:</P>
+<P>
+<PRE>IMPLEMENT_SERIAL(CMessages, CObject, 0)
+</PRE>
+<P>The IMPLEMENT_SERIAL() macro is partner to the DECLARE_SERIAL() macro, providing
+implementation for the functions that give the class its persistent capabilities.
+The macro's three arguments are the name of the class, the name of the immediate
+base class, and a schema number, which is like a version number. In most cases, you
+use 0 or 1 for the schema number.</P>
+<P>
+<H3><A NAME="Heading8"></A>Using the CMessages Class in the Program</H3>
+<P>Now that CMessages is defined and implemented, member functions of the MultiString
+document and view classes can work with it. First, expand CMultiStringDoc and double-click
+OnNewDocument() to edit it. Add these lines in place of the TODO comments.</P>
+<P>
+<PRE>    m_messages.SetMessage(1, &quot;Default Message 1&quot;);
+    m_messages.SetMessage(2, &quot;Default Message 2&quot;);
+    m_messages.SetMessage(3, &quot;Default Message 3&quot;);
+</PRE>
+<P>Because the document class can't directly access the data object's protected data
+members, it initializes each string by calling the CMessages class's SetMessage()
+member function.</P>
+<P>Expand CMultiStringView and double-click OnDraw() to edit it. Here's how it should
+look when you're finished:</P>
+<P>
+<PRE>void CMultiStringView::OnDraw(CDC* pDC)
+{
+        CMultiStringDoc* pDoc = GetDocument();
+        ASSERT_VALID(pDoc);
+    pDC-&gt;TextOut(20, 20, pDoc-&gt;m_messages.GetMessage(1));
+    pDC-&gt;TextOut(20, 40, pDoc-&gt;m_messages.GetMessage(2));
+    pDC-&gt;TextOut(20, 60, pDoc-&gt;m_messages.GetMessage(3));
+}
+</PRE>
+<P>As you did for File Demo, add a &quot;Change Messages&quot; item to the Edit menu.
+Connect it to a view function called OnEditChangemessages. This function will change
+the data by calling the CMessages object's member functions, as in Listing 7.7. The
+view class's OnDraw() function also calls the GetMessage() member function to access
+the CMessages class's strings.</P>
+<P>
+<H4>Listing 7.7&#160;&#160;Editing the Data Strings</H4>
+<PRE>void CMultiStringView::OnEditChangemessages() 
+{
+   CMultiStringDoc* pDoc = GetDocument();
+   CTime now = CTime::GetCurrentTime();
+   CString changetime = now.Format(&quot;Changed at %B %d %H:%M:%S&quot;);
+   pDoc-&gt;m_messages.SetMessage(1, CString(&quot;String 1 &quot;) + changetime);
+   pDoc-&gt;m_messages.SetMessage(2, CString(&quot;String 2 &quot;) + changetime);
+   pDoc-&gt;m_messages.SetMessage(3, CString(&quot;String 3 &quot;) + changetime);
+   pDoc-&gt;SetModifiedFlag();
+   Invalidate();
+</PRE>
+<PRE>}
+</PRE>
+<P>All that remains is to write the document class's Serialize() function, where
+the m_messages data object is serialized out to disk. You just delegate the work
+to the data object's own Serialize() function, as in Listing 7.8.</P>
+<P>
+<H4>Listing 7.8&#160;&#160; Serializing the Data Object</H4>
+<PRE>void CMultiStringDoc::Serialize(CArchive&amp; ar)
+{
+    m_messages.Serialize(ar);
+        if (ar.IsStoring())
+        {
+        }
+        else
+        {
+        }
+</PRE>
+<PRE>}
+</PRE>
+<P>As you can see, after serializing the m_messages data object, not much is left
+to do in the document class's Serialize() function. Notice that the call to m_messages.Serialize()
+passes the archive object as its single parameter. Build MultiString now and test
+it as you tested File Demo. It should do everything you expect.</P>
+<P>
+<H2><A NAME="Heading9"></A>Reading and Writing Files Directly</H2>
+<P>Although using MFC's built-in serialization capabilities is a handy way to save
+and load data, sometimes you need more control over the file-handling process. For
+example, you might need to deal with your files nonsequentially, something the Serialize()
+function and its associated CArchive object can't handle because they do stream I/O.
+In this case, you can handle files almost exactly as they're handled by non-Windows
+programmers: creating, reading, and writing files directly. Even when you need to
+dig down to this level of file handling, MFC offers help. Specifically, you can use
+the CFile class and its derived classes to handle files directly.</P>
+<P>
+<H3><A NAME="Heading10"></A>The CFile Class</H3>
+<P>MFC's CFile class encapsulates all the functions you need to handle any type of
+file. Whether you want to perform common sequential data saving and loading or construct
+a random access file, the CFile class gets you there. Using the CFile class is a
+lot like handling files the old-fashioned C-style way, except that the class hides
+some of the busy-work details from you so that you can get the job done quickly and
+easily. For example, you can create a file for reading with only a single line of
+code. Table 7.1 shows the CFile class's member functions and their descriptions.</P>
+<P>
+<H4>Table 7.1&#160;&#160;Member Functions of the CFile Class</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Function</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile</TD>
+		<TD ALIGN="LEFT">Creates the CFile object. If passed a filename, it opens the file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Destructor</TD>
+		<TD ALIGN="LEFT">Cleans up a CFile object that's going out of scope. If the file is open, it closes
+			that file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Abort()</TD>
+		<TD ALIGN="LEFT">Immediately closes the file with no regard for errors.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Close()</TD>
+		<TD ALIGN="LEFT">Closes the file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Duplicate()</TD>
+		<TD ALIGN="LEFT">Creates a duplicate file object.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Flush()</TD>
+		<TD ALIGN="LEFT">Flushes data from the stream.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetFileName()</TD>
+		<TD ALIGN="LEFT">Gets the file's filename.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetFilePath()</TD>
+		<TD ALIGN="LEFT">Gets the file's full path.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetFileTitle()</TD>
+		<TD ALIGN="LEFT">Gets the file's title (the filename without the extension).</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetLength()</TD>
+		<TD ALIGN="LEFT">Gets the file's length.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetPosition()</TD>
+		<TD ALIGN="LEFT">Gets the current position within the file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetStatus()</TD>
+		<TD ALIGN="LEFT">Gets the file's status.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">LockRange()</TD>
+		<TD ALIGN="LEFT">Locks a portion of the file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Open()</TD>
+		<TD ALIGN="LEFT">Opens the file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Read()</TD>
+		<TD ALIGN="LEFT">Reads data from the file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Remove()</TD>
+		<TD ALIGN="LEFT">Deletes a file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Rename()</TD>
+		<TD ALIGN="LEFT">Renames the file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Seek()</TD>
+		<TD ALIGN="LEFT">Sets the position within the file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SeekToBegin()</TD>
+		<TD ALIGN="LEFT">Sets the position to the beginning of the file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SeekToEnd()</TD>
+		<TD ALIGN="LEFT">Sets the position to the end of the file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetFilePath()</TD>
+		<TD ALIGN="LEFT">Sets the file's path.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetLength()</TD>
+		<TD ALIGN="LEFT">Sets the file's length.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetStatus()</TD>
+		<TD ALIGN="LEFT">Sets the file's status.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">UnlockRange()</TD>
+		<TD ALIGN="LEFT">Unlocks a portion of the file.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Write()</TD>
+		<TD ALIGN="LEFT">Writes data to the file.</TD>
+	</TR>
+</TABLE>
+</P>
+<P>As you can see from Table 7.1, the CFile class offers plenty of file-handling
+power. This section demonstrates how to call a few of the CFile class's member functions.
+However, most of the other functions are just as easy to use.</P>
+<P>Here's a sample snippet of code that creates and opens a file, writes a string
+to it, and then gathers some information about the file:</P>
+<P>
+<PRE>    // Create the file.
+    CFile file(&quot;TESTFILE.TXT&quot;, CFile::modeCreate | CFile::modeWrite);
+    // Write data to the file.
+    CString message(&quot;Hello file!&quot;);
+    int length = message.GetLength();
+    file.Write((LPCTSTR)message, length);
+    // Obtain information about the file.
+    CString filePath = file.GetFilePath();
+    Int fileLength = file.GetLength();
+</PRE>
+<P>Notice that you don't have to explicitly open the file when you pass a filename
+to the constructor, whose arguments are the name of the file and the file access
+mode flags. You can use several flags at a time simply by ORing their values together,
+as in the little snippet above. These flags, which describe how to open the file
+and which specify the types of valid operations, are defined as part of the CFile
+class and are described in Table 7.2.</P>
+<P>
+<H4>Table 7.2&#160;&#160;The File Mode Flags</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Flag</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile::modeCreate</TD>
+		<TD ALIGN="LEFT">Creates a new file or truncates an existing file to length 0</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile::modeNoInherit</TD>
+		<TD ALIGN="LEFT">Disallows inheritance by a child process</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile::modeNoTruncate</TD>
+		<TD ALIGN="LEFT">When creating the file, doesn't truncate the file if it already exists</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile::modeRead</TD>
+		<TD ALIGN="LEFT">Allows read operations only</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile::modeReadWrite</TD>
+		<TD ALIGN="LEFT">Allows both read and write operations</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile::modeWrite</TD>
+		<TD ALIGN="LEFT">Allows write operations only</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile::shareCompat</TD>
+		<TD ALIGN="LEFT">Allows other processes to open the file</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile::shareDenyNone</TD>
+		<TD ALIGN="LEFT">Allows other processes read or write operations on the file</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile::shareDenyRead</TD>
+		<TD ALIGN="LEFT">Disallows read operations by other processes</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile::shareDenyWrite</TD>
+		<TD ALIGN="LEFT">Disallows write operations by other processes</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile::shareExclusive</TD>
+		<TD ALIGN="LEFT">Denies all access to other processes</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile::typeBinary</TD>
+		<TD ALIGN="LEFT">Sets binary mode for the file</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CFile::typeText</TD>
+		<TD ALIGN="LEFT">Sets text mode for the file</TD>
+	</TR>
+</TABLE>
+</P>
+<P>CFile::Write() takes a pointer to the buffer containing the data to write and
+the number of bytes to write. Notice the LPCTSTR casting operator in the call to
+Write(). This operator is defined by the CString class and extracts the string from
+the class.</P>
+<P>One other thing about the code snippet: There is no call to Close()--the CFile
+destructor closes the file automatically when file goes out of scope.</P>
+<P>Reading from a file isn't much different from writing to one:</P>
+<P>
+<PRE>    // Open the file.
+    CFile file(&quot;TESTFILE.TXT&quot;, CFile::modeRead);
+    // Read data from the file.
+    char s[81];
+    int bytesRead = file.Read(s, 80);
+    s[bytesRead] = 0;
+    CString message = s;
+</PRE>
+<P>This time the file is opened by the CFile::modeRead flag, which opens the file
+for read operations only, after which the code creates a character buffer and calls
+the file object's Read() member function to read data into the buffer. The Read()
+function's two arguments are the buffer's address and the number of bytes to read.
+The function returns the number of bytes actually read, which in this case is almost
+always less than the 80 requested. By using the number of bytes read, the program
+can add a 0 to the end of the character data, thus creating a standard C-style string
+that can be used to set a CString variable.</P>
+<P>The code snippets you've just seen use a hard-coded filename. To get filenames
+from your user with little effort, be sure to look up the MFC class CFileDialog in
+the online help. It's simple to use and adds a very nice touch to your programs.</P>
+<P>
+<H2><A NAME="Heading11"></A>Creating Your Own CArchive Objects</H2>
+<P>Although you can use CFile objects to read from and write to files, you can also
+go a step farther and create your own CArchive object and use it exactly as you use
+the CArchive object in the Serialize() function. This lets you take advantage of
+Serialize functions already written for other objects, passing them a reference to
+your own archive object.</P>
+<P>To create an archive, create a CFile object and pass it to the CArchive constructor.
+For example, if you plan to write out objects to a file through an archive, create
+the archive like this:</P>
+<P>
+<PRE>CFile file(&quot;FILENAME.EXT&quot;, CFile::modeWrite);
+CArchive ar(&amp;file, CArchive::store);
+</PRE>
+<P>After creating the archive object, you can use it just like the archive objects
+that MFC creates for you, for example, calling Serialize() yourself and passing the
+archive to it. Because you created the archive with the CArchive::store flag, any
+calls to IsStoring() return TRUE, and the code that dumps objects to the archive
+executes. When you're through with the archive object, you can close the archive
+and the file like this:</P>
+<P>
+<PRE>ar.Close();
+file.Close();
+</PRE>
+<P>If the objects go out of scope soon after you're finished with them, you can safely
+omit the calls to Close() because both CArchive and CFile have Close() calls in the
+destructor.</P>
+<P>
+<H2><A NAME="Heading12"></A>Using the Registry</H2>
+<P>In the early days of Windows programming, applications saved settings and options
+in initialization files, typically with the .INI extension. The days of huge WIN.INI
+files or myriad private .INI files are now gone--when an application wants to store
+information about itself, it does so by using a centralized system Registry. Although
+the Registry makes sharing information between processes easier, it can make things
+more confusing for programmers. In this section, you uncover some of the mysteries
+of the Registry and learn how to manage it in your applications.</P>
+<P>
+<H3><A NAME="Heading13"></A>How the Registry Is Set Up</H3>
+<P>Unlike .INI files, which are plain text files that can be edited with any text
+editor, the Registry contains binary and ASCII information that can be edited only
+by using the Registry Editor or special API function calls created specifically for
+managing the Registry. If you've ever used the Registry Editor to browse your system's
+Registry, you know that it contains a huge amount of information that's organized
+into a tree structure. Figure 7.4 shows how the Registry appears when you first run
+the Registry Editor. (On Windows 95, you can find the Registry Editor, REGEDIT.EXE,
+in your main Windows folder, or you can run it from the Start menu by choosing Run,
+typing <B>regedit</B>, and then clicking OK. Under Windows NT, it's REGEDT32.EXE.)</P>
+<P>The far left window lists the Registry's predefined keys. The plus marks next
+to the keys in the tree indicate that you can open the keys and view more detailed
+information associated with them. Keys can have subkeys, and subkeys themselves can
+have subkeys. Any key or subkey may or may not have a value associated with it. If
+you explore deep enough in the hierarchy, you see a list of values in the far right
+window. In Figure 7.5, you can see the values associated with the current user's
+screen appearance. To see these values yourself, browse from HKEY_CURRENT_USER to
+Control Panel to Appearance to Schemes, and you'll see the desktop schemes installed
+on your system.</P>
+<P><A HREF="javascript:popUp('07uvc04.gif')"><B>FIG. 7.4</B></A><B> </B><I>The Registry
+Editor displays the Registry.</I></P>
+<P><A HREF="javascript:popUp('07uvc05.gif')"><B>FIG. 7.5</B></A><B> </B><I>The Registry
+is structured as a tree containing a huge amount of information.</I></P>
+<P>
+<H3><BR>
+<B>The Predefined Keys</B></H3>
+<H3><A NAME="Heading14"></A>The Predefined Keys</H3>
+<P>To know where things are stored in the Registry, you need to know about the predefined
+keys and what they mean. From Figure 7.4, you can see that the six predefined keys
+are</P>
+
+<UL>
+	<LI>HKEY_CLASSES_ROOT
+	<P>
+	<LI>HKEY_CURRENT_USER
+	<P>
+	<LI>HKEY_LOCAL_MACHINE
+	<P>
+	<LI>HKEY_USERS
+	<P>
+	<LI>HKEY_CURRENT_CONFIG
+	<P>
+	<LI>HKEY_DYN_DATA
+</UL>
+
+<P>The HKEY_CLASSES_ROOT key holds document types and properties, as well as class
+information about the various applications installed on the machine. For example,
+if you explored this key on your system, you'd probably find an entry for the .DOC
+file extension, under which you'd find entries for the applications that can handle
+this type of document (see Figure 7.6).</P>
+<P><A HREF="javascript:popUp('07uvc06.gif')"><B>FIG. 7.6</B></A><B> </B><I>The HKEY_CLASSES_ROOT
+key holds document information.</I></P>
+<P>The HKEY_CURRENT_USER key contains all the system settings the current user has
+established, including color schemes, printers, and program groups. The HKEY_LOCAL_MACHINE
+key, on the other hand, contains status information about the computer, and the HKEY_USERS
+key organizes information about each user of the system, as well as the default configuration.
+Finally, the HKEY_CURRENT_CONFIG key holds information about the hardware configuration,
+and the HKEY_DYN_DATA key contains information about dynamic Registry data, which
+is data that changes frequently. (You may not always see this key on your system.)</P>
+<P>
+<H3><A NAME="Heading15"></A>Using the Registry in an MFC Application</H3>
+<P>Now that you know a little about the Registry, let me say that it would take an
+entire book to explain how to fully access and use it. As you may imagine, the Win32
+API features many functions for manipulating the Registry. If you're going to use
+those functions, you had better know what you're doing! Invalid Registry settings
+can crash your machine, make it unbootable, and perhaps force you to reinstall Windows
+to recover.</P>
+<P>However, you can easily use the Registry with your MFC applications to store information
+that the application needs from one session to another. To make this task as easy
+as possible, MFC provides the CWinApp class with the SetRegistryKey() member function,
+which creates (or opens) a key entry in the Registry for your application. All you
+have to do is supply a key name (usually a company name) for the function to use,
+like this:</P>
+<P>
+<PRE>SetRegistryKey(&quot;MyCoolCompany&quot;);
+</PRE>
+<P>You should call SetRegistryKey() in the application class's InitInstance() member
+function, which is called once at program startup.</P>
+<P>After you call SetRegistryKey(), your application can create the subkeys and values
+it needs by calling one of two functions. The WriteProfileString() function adds
+string values to the Registry, and the WriteProfileInt() function adds integer values
+to the Registry. To get values from the Registry, you can use the GetProfileString()
+and GetProfileInt() functions. (You also can use RegSetValueEx() and RegQueryValueEx()
+to set and retrieve Registry values.)</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> When they were first written, the WriteProfileString(), WriteProfileInt(),
+	GetProfileString(), and GetProfileInt() functions transferred information to and
+	from an .INI file. Used alone, they still do. But when you call SetRegistryKey()
+	first, MFC reroutes these profile functions to the Registry, making using the Registry
+	an almost painless process.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading16"></A>The Sample Applications Revisited</H3>
+<P>In this chapter, you've already built applications that used the Registry. Here's
+an excerpt from CMultiStringApp::InitInstance()--this code was generated by AppWizard
+and is also in CFileDemoApp::InitInstance().</P>
+<P>
+<PRE>// Change the registry key under which our settings are stored.
+// You should modify this string to be something appropriate
+// such as the name of your company or organization.
+SetRegistryKey(_T(&quot;Local AppWizard-Generated Applications&quot;));
+LoadStdProfileSettings();  // Load standard INI file options (including MRU)
+</PRE>
+<P>MRU stands for <I>Most Recently Used</I> and refers to the list of files that
+appears on the File menu after you open files with an application. Figure 7.7 shows
+the Registry Editor displaying the key that stores this information, HKEY_CURRENT_USER\Software\Local
+AppWizard-Generated Applications\MultiString\Recent File List. In the foreground,
+MultiString's File menu shows the single entry in the MRU list.</P>
+<P><A HREF="javascript:popUp('07uvc07.gif')"><B>FIG. 7.7</B></A><B> </B><I>The most
+recently used files list is stored in the Registry automatically.</I></P>
+<H1><I></I></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch06/ch06.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch08/ch08.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

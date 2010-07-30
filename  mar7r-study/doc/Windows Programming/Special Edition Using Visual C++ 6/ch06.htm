@@ -1,0 +1,717 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 6 -- Printing and Print Preview</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch05/ch05.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch07/ch07.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 6 -</H1>
+</CENTER>
+<CENTER>
+<H1>Printing and Print Preview</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Understanding Basic Printing and Print Preview with MFC</A>
+	<LI><A HREF="#Heading2">Scaling</A>
+	<LI><A HREF="#Heading3">Printing Multiple Pages</A>
+	<LI><A HREF="#Heading4">Setting the Origin</A>
+	<LI><A HREF="#Heading5">MFC and Printing</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Understanding Basic Printing and Print Preview with MFC</H2>
+<P>If you brought together 10 Windows programmers and asked them what part of creating
+Windows applications they thought was the hardest, probably at least half of them
+would choose printing documents. Although the device-independent nature of Windows
+makes it easier for users to get peripherals working properly, programmers must take
+up some of the slack by programming all devices in a general way. At one time, printing
+from a Windows application was a nightmare that only the most experienced programmers
+could handle. Now, however, thanks to application frameworks such as MFC, the job
+of printing documents from a Windows application is much simpler.</P>
+<P>MFC handles so much of the printing task for you that, when it comes to simple
+one-page documents, you have little to do on your own. To see what I mean, follow
+these steps to create a basic MFC application that supports printing and print preview:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Choose File, New; select the Projects tab and start a new AppWizard
+	project workspace called Print1 (see Figure 6.1).
+</DL>
+
+<P><A HREF="javascript:popUp('06uvc01.gif')"><B>FIG. 6.1</B></A><B> </B><I>Start
+an AppWizard project workspace called Print1.</I></P>
+
+<DL>
+	<DD><B>2. </B>Give the new project the following settings in the AppWizard dialog
+	boxes. The New Project Information dialog box should then look like Figure 6.2.
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<P>Step 1: Choose Single Document.</P>
+	<P>Step 2: Don't change the defaults presented by AppWizard.</P>
+	<P>Step 3: Don't change the defaults presented by AppWizard.</P>
+	<P>Step 4: Turn off all features except Printing and Print Preview.</P>
+	<P>Step 5: Don't change the defaults presented by AppWizard.</P>
+	<P>Step 6: Don't change the defaults presented by AppWizard.</P>
+
+</BLOCKQUOTE>
+
+<P><A HREF="javascript:popUp('06uvc02.gif')"><B>FIG. 6.2</B></A><B> </B><I>The New
+Project Information dialog box.</I></P>
+
+<DL>
+	<DD><B>3.</B> Expand the classes in ClassView, expand CPrint1View, double-click the
+	OnDraw() function, and add the following line of code to it, right after the comment
+	TODO: add draw code for native data here:
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>pDC-&gt;Rectangle(20, 20, 220, 220);</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+<P>You've seen the Rectangle() function twice already: in the Recs app of Chapter
+4, &quot;Documents and Views,&quot; and the Paint1 app of Chapter 5, &quot;Drawing
+on the Screen.&quot; Adding this function to the OnDraw() function of an MFC program's
+view class causes the program to draw a rectangle. This one is 200 pixels by 200
+pixels, located 20 pixels down from the top of the view and 20 pixels from the left
+edge.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you haven't read Chapter 5 and aren't comfortable with device contexts,
+	go back and read it now. Also, if you didn't read Chapter 4 and aren't comfortable
+	with the document/view paradigm, you should read it, too. In this chapter, you override
+	a number of virtual functions in your view class and work extensively with device
+	contexts. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Believe it or not, you've just created a fully print-capable application that
+can display its data (a rectangle) not only in its main window but also in a print
+preview window and on the printer. To run the Print1 application, first compile and
+link the source code by choosing Build, Build or by pressing F7. Then, choose Build,
+Execute to run the program. You will see the window shown in Figure 6.3. This window
+contains the application's output data, which is simply a rectangle. Next, choose
+File, Print Preview. You see the print preview window, which displays the document
+as it will appear if you print it (see Figure 6.4). Go ahead and print the document
+(choose File, Print). These commands have been implemented for you because you chose
+support for printing and print preview when you created this application with AppWizard.</P>
+<P><A HREF="javascript:popUp('06uvc03.gif')"><B>FIG. 6.3</B></A><B> </B><I>Print1
+displays a rectangle when you first run it.</I></P>
+<P><A HREF="javascript:popUp('06uvc04.gif')"><B>FIG. 6.4</B></A><B> </B><I>The Print1
+application automatically handles print previewing, thanks to the MFC AppWizard.</I></P>
+<H2><A NAME="Heading2"></A>Scaling</H2>
+<P>One thing you may notice about the printed document and the one displayed onscreen
+is that, although the screen version of the rectangle takes up a fairly large portion
+of the application's window, the printed version is tiny. That's because the pixels
+onscreen and the dots on your printer are different sizes. Although the rectangle
+is 200 dots square in both cases, the smaller printer dots yield a rectangle that
+appears smaller. This is how the default Windows MM_TEXT graphics mapping mode works.
+If you want to scale the printed image to a specific size, you might want to choose
+a different mapping mode. Table 6.1 lists the mapping modes from which you can choose.</P>
+<P>
+<H4>Table 6.1&#160;&#160;Mapping Modes</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Mode</B></TD>
+		<TD ALIGN="LEFT"><B>Unit</B></TD>
+		<TD ALIGN="LEFT"><B>X</B></TD>
+		<TD ALIGN="LEFT"><B>Y</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_HIENGLISH</TD>
+		<TD ALIGN="LEFT">0.001 inch</TD>
+		<TD ALIGN="LEFT">Increases right</TD>
+		<TD ALIGN="LEFT">Increases up</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_HIMETRIC</TD>
+		<TD ALIGN="LEFT">0.01 millimeter</TD>
+		<TD ALIGN="LEFT">Increases right</TD>
+		<TD ALIGN="LEFT">Increases up</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_ISOTROPIC</TD>
+		<TD ALIGN="LEFT">User-defined</TD>
+		<TD ALIGN="LEFT">User-defined</TD>
+		<TD ALIGN="LEFT">User-defined</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_LOENGLISH</TD>
+		<TD ALIGN="LEFT">0.01 inch</TD>
+		<TD ALIGN="LEFT">Increases right</TD>
+		<TD ALIGN="LEFT">Increases up</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_LOMETRIC</TD>
+		<TD ALIGN="LEFT">0.1 millimeter</TD>
+		<TD ALIGN="LEFT">Increases right</TD>
+		<TD ALIGN="LEFT">Increases up</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_TEXT</TD>
+		<TD ALIGN="LEFT">Device pixel</TD>
+		<TD ALIGN="LEFT">Increases right</TD>
+		<TD ALIGN="LEFT">Increases down</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">MM_TWIPS</TD>
+		<TD ALIGN="LEFT">1/1440 inch</TD>
+		<TD ALIGN="LEFT">Increases right</TD>
+		<TD ALIGN="LEFT">Increases up</TD>
+	</TR>
+</TABLE>
+</P>
+<P>Working with graphics in MM_TEXT mode causes problems when printers and screens
+can accommodate a different number of pixels per page. A better mapping mode for
+working with graphics is MM_LOENGLISH, which uses a hundredth of an inch, instead
+of a dot or pixel, as a unit of measure. To change the Print1 application so that
+it uses the MM_LOENGLISH mapping mode, replace the line you added to the OnDraw()
+function with the following two lines:</P>
+<P>
+<PRE>pDC-&gt;SetMapMode(MM_LOENGLISH);
+pDC-&gt;Rectangle(20, -20, 220, -220);
+</PRE>
+<P>The first line sets the mapping mode for the device context. The second line draws
+the rectangle by using the new coordinate system. Why the negative values? If you
+look at MM_LOENGLISH in Table 6.1, you see that although X coordinates increase to
+the right as you expect, Y coordinates increase upward rather than downward. Moreover,
+the default coordinates for the window are located in the lower-right quadrant of
+the Cartesian coordinate system, as shown in Figure 6.5. Figure 6.6 shows the print
+preview window when the application uses the MM_LOENGLISH mapping mode. When you
+print the document, the rectangle is exactly 2 inches square because a unit is now
+1/100 of an inch and the rectangle is 200 units square.</P>
+
+<P><A HREF="javascript:popUp('06uvc05.gif')"><B>FIG. 6.5</B></A><B> </B><I>The MM_LOENGLISH
+mapping mode's default coordinates derive from the Cartesian coordinate system.</I></P>
+
+<P><A HREF="javascript:popUp('06uvc06.gif')"><B>FIG. 6.6</B></A><B> </B><I>The rectangle
+to be printed matches the rectangle onscreen when you use MM_LOENGLISH as your mapping
+mode.</I></P>
+<H2><A NAME="Heading3"></A>Printing Multiple Pages</H2>
+<P>When your application's document is as simple as Print1's, adding printing and
+print previewing capabilities to the application is virtually automatic. This is
+because the document is only a single page and requires no pagination. No matter
+what you draw in the document window (except bitmaps), MFC handles all the printing
+tasks for you. Your view's OnDraw() function is used for drawing onscreen, printing
+to the printer, and drawing the print preview screen. Things become more complex,
+however, when you have larger documents that require pagination or some other special
+handling, such as the printing of headers and footers.</P>
+<P>To get an idea of the problems with which you're faced with a more complex document,
+modify Print1 so that it prints lots of rectangles--so many that they can't fit on
+a single page. This will give you an opportunity to deal with pagination. Just to
+make things more interesting, add a member variable to the document class to hold
+the number of rectangles to be drawn, and allow the users to increase or decrease
+the number of rectangles by left- or right-clicking. Follow these steps:</P>
+
+<DL>
+	<DD><B>1. </B>Expand CPrint1Doc in ClassView, right-click it, and choose Add Member
+	Variable from the shortcut menu. The variable type is int, the declaration is m_numRects,
+	and the access should be public. This variable will hold the number of rectangles
+	to display.
+	<P>
+	<DD><B>2. </B>Double-click the CPrint1Doc constructor and add this line to it:
+</DL>
+
+
+
+<BLOCKQUOTE>
+	<PRE>m_numRects = 5;</PRE>
+
+</BLOCKQUOTE>
+
+<PRE></PRE>
+
+<DL>
+	<DT></DT>
+	<DD>This line arranges to display five rectangles in a brand new document.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Use ClassWizard to catch mouse clicks (WM_LBUTTONDOWN messages) by
+	adding an OnLButtonDown() function to the view class (see Figure 6.7).
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Click the Edit Code button to edit the new OnLButtonDown() function.
+	It should resemble Listing 6.1. Now the number of rectangles to be displayed increases
+	each time users click the left mouse button.
+</DL>
+
+<P><A HREF="javascript:popUp('06uvc07.gif')"><B>FIG. 6.7</B></A><B> </B><I>Use ClassWizard
+to add the OnLButtonDown() function.</I></P>
+<P>
+<H4>Listing 6.1&#160;&#160;print1View.cpp --CPrint1View::OnLButtonDown()</H4>
+<PRE>void CPrint1View::OnLButtonDown(UINT nFlags, CPoint point)
+{
+     CPrint1Doc* pDoc = GetDocument();
+     ASSERT_VALID(pDoc);
+     pDoc-&gt;m_numRects++;
+     Invalidate();
+     CView::OnLButtonDown(nFlags, point);
+</PRE>
+<PRE>}
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>5. </B>Use ClassWizard to add the OnRButtonDown() function to the view class,
+	as shown in Figure 6.8.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('06uvc08.gif')"><B>FIG. 6.8</B></A><B> </B><I>Use ClassWizard
+to add the OnRButtonDown() function.</I></P>
+<P>
+
+<DL>
+	<DD><B>6. </B>Click the Edit Code button to edit the new OnRButtonDown() function.
+	It should resemble Listing 6.2. Now the number of rectangles to be displayed decreases
+	each time users right-click.
+	<P>
+</DL>
+
+<H4>Listing 6.2&#160;&#160;print1View.cpp --CPrint1View::OnRButtonDown()</H4>
+<PRE>void CPrint1View::OnRButtonDown(UINT nFlags, CPoint point)
+{
+     CPrint1Doc* pDoc = GetDocument();
+     ASSERT_VALID(pDoc);
+     if (pDoc-&gt;m_numRects &gt; 0)
+     {
+          pDoc-&gt;m_numRects--;
+          Invalidate();
+     }
+     CView::OnRButtonDown(nFlags, point);
+</PRE>
+<PRE>}
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>7. </B>Rewrite the view's OnDraw() to draw many rectangles (refer to Listing
+	6.3). Print1 now draws the selected number of rectangles one below the other, which
+	may cause the document to span multiple pages. It also displays the number of rectangles
+	that have been added to the document.
+	<P>
+</DL>
+
+<H4>Listing 6.3&#160;&#160;print1View.cpp --CPrint1View::OnDraw()</H4>
+<PRE>void CPrint1View::OnDraw(CDC* pDC)
+{
+    CPrint1Doc* pDoc = GetDocument();
+    ASSERT_VALID(pDoc);
+    // TODO: add draw code for native data here
+    pDC-&gt;SetMapMode(MM_LOENGLISH);
+    char s[10];
+    wsprintf(s, &quot;%d&quot;, pDoc-&gt;m_numRects);
+    pDC-&gt;TextOut(300, -100, s);
+    for (int x=0; x&lt;pDoc-&gt;m_numRects; ++x)
+    {
+        pDC-&gt;Rectangle(20, -(20+x*200),
+            200, -(200+x*200));
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>When you run the application now, you see the window shown in Figure 6.9. The
+window not only displays the rectangles but also displays the rectangle count so
+that you can see how many rectangles you've requested. When you choose File, Print
+Preview, you see the print preview window. Click the Two Page button to see the window
+shown in Figure 6.10. The five rectangles display properly on the first page, with
+the second page blank.</P>
+<P><A HREF="javascript:popUp('06uvc09.gif')"><B>FIG. 6.9</B></A><B> </B><I>Print1
+now displays multiple rectangles.</I></P>
+<P><A HREF="javascript:popUp('06uvc10.gif')"><B>FIG. 6.10</B></A><B> </B><I>Five
+rectangles are previewed properly; they will print on a single page.</I></P>
+<P>Now, go back to the application's main window and click inside it three times
+to add three more rectangles. Right-click to remove one. (The rectangle count displayed
+in the window should be seven.) After you add the rectangles, choose File, Print
+Preview again to see the two-page print preview window. Figure 6.11 shows what you
+see. The program hasn't a clue how to print or preview the additional page. The sixth
+rectangle runs off the bottom of the first page, but nothing appears on the second
+page.</P>
+<P>The first step is to tell MFC how many pages to print (or preview) by calling
+the SetMaxPage() function in the view class's OnBeginPrinting() function. AppWizard
+gives you a skeleton OnBeginPrinting() that does nothing. Modify it so that it resembles
+Listing 6.4.</P>
+<P><A HREF="javascript:popUp('06uvc11.gif')"><B>FIG. 6.11</B></A><B> </B><I>Seven
+rectangles do not yet appear correctly on multiple pages.</I></P>
+<P>
+<H4>Listing 6.4&#160;&#160;print1View.cpp --CPrint1View::OnBeginPrinting()</H4>
+<PRE>void CPrint1View::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
+{
+    CPrint1Doc* pDoc = GetDocument();
+    ASSERT_VALID(pDoc);
+     int pageHeight = pDC-&gt;GetDeviceCaps(VERTRES);
+     int logPixelsY = pDC-&gt;GetDeviceCaps(LOGPIXELSY);
+     int rectHeight = (int)(2.2 * logPixelsY);
+     int numPages = pDoc-&gt;m_numRects * rectHeight / pageHeight + 1;
+     pInfo-&gt;SetMaxPage(numPages);
+</PRE>
+<PRE>}
+</PRE>
+<P>OnBeginPrinting() takes two parameters: a pointer to the printer device context
+and a pointer to a CPrintInfo object. Because the default version of OnBeginPrinting()
+doesn't refer to these two pointers, the parameter names are commented out to avoid
+compilation warnings, like this:</P>
+<P>
+<PRE>void CPrint1View::OnBeginPrinting(CDC* /*pDC*/ , CPrintInfo* /*pInfo*/)
+</PRE>
+<P>However, to set the page count, you need to access both the CDC and CPrintInfo
+objects, so your first task is to uncomment the function's parameters.</P>
+<P>Now you need to get some information about the device context (which, in this
+case, is a printer device context). Specifically, you need to know the page height
+(in single dots) and the number of dots per inch. You obtain the page height with
+a call to GetDeviceCaps(), which gives you information about the capabilities of
+the device context. You ask for the vertical resolution (the number of printable
+dots from the top of the page to the bottom) by passing the constant VERTRES as the
+argument. Passing HORZRES gives you the horizontal resolution. There are 29 constants
+you can pass to GetDeviceCaps(), such as NUMFONTS for the number of fonts that are
+supported and DRIVERVERSION for the driver version number. For a complete list, consult
+the online Visual C++ documentation.</P>
+<P>Print1 uses the MM_LOENGLISH mapping mode for the device context, which means
+that the printer output uses units of 1/100 of an inch. To know how many rectangles
+will fit on a page, you have to know the height of a rectangle in dots so that you
+can divide dots per page by dots per rectangle to get rectangles per page. (You can
+see now why your application must know all about your document to calculate the page
+count.) You know that each rectangle is 2 inches high with 20/100 of an inch of space
+between each rectangle. The total distance from the start of one rectangle to the
+start of the next, then, is 2.2 inches. The call to GetDeviceCaps() with an argument
+of LOGPIXELSY gives the dots per inch of this printer; multiplying by 2.2 gives the
+dots per rectangle.</P>
+<P>You now have all the information to calculate the number of pages needed to fit
+the requested number of rectangles. You pass that number to SetMaxPage(), and the
+new OnBeginPrinting() function is complete.</P>
+<P>Again, build and run the program. Increase the number of rectangles to seven by
+clicking twice in the main window. Now choose File, Print Preview and look at the
+two-page print preview window (see Figure 6.12). Whoops! You obviously still have
+a problem somewhere. Although the application is previewing two pages, as it should
+with seven rectangles, it's printing exactly the same thing on both pages. Obviously,
+page two should take up where page one left off, rather than redisplay the same data
+from the beginning. There's still some work to do.</P>
+<P><A HREF="javascript:popUp('06uvc12.gif')"><B>FIG. 6.12</B></A><B> </B><I>The Print1
+application still doesn't display multiple pages correctly.</I></P>
+<P>
+<H2><A NAME="Heading4"></A>Setting the Origin</H2>
+<P>To get the second and subsequent pages to print properly, you have to change where
+MFC believes the top of the page to be. Currently, MFC just draws the pages exactly
+as you told it to do in CPrint1View::OnDraw(), which displays all seven rectangles
+from the top of the page to the bottom. To tell MFC where the new top of the page
+should be, you first need to override the view class's OnPrepareDC() function.</P>
+<P>Bring up ClassWizard and choose the Message Maps tab. Ensure that CPrintView is
+selected in the Class Name box, as shown in Figure 6.13. Click CPrintView in the
+Object IDs box and OnPrepareDC in the Messages box, and then click Add Function.
+Click the Edit Code button to edit the newly added function. Add the code shown in
+Listing 6.5.</P>
+<P><A HREF="javascript:popUp('06uvc13.gif')"><B>FIG. 6.13</B></A><B> </B><I>Use ClassWizard
+to override the OnPrepareDC() function.</I></P>
+<P>
+<H4>Listing 6.5&#160;&#160;print1View.cpp --CPrint1View::OnPrepareDC()</H4>
+<PRE>void CPrint1View::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
+</PRE>
+<PRE>{    if (pDC-&gt;IsPrinting())
+    {
+        int pageHeight = pDC-&gt;GetDeviceCaps(VERTRES);
+        int originY = pageHeight * (pInfo-&gt;m_nCurPage - 1);
+        pDC-&gt;SetViewportOrg(0, -originY);
+    }
+    CView::OnPrepareDC(pDC, pInfo);
+</PRE>
+<PRE>}
+</PRE>
+<P>The MFC framework calls OnPrepareDC() right before it displays data onscreen or
+before it prints the data to the printer. (One strength of the device context approach
+to screen display is that the same code can often be used for display and printing.)
+If the application is about to display data, you (probably) don't want to change
+the default processing performed by OnPrepareDC(). So, you must check whether the
+application is printing data by calling IsPrinting(), a member function of the device
+context class.</P>
+<P>If the application is printing, you must determine which part of the data belongs
+on the current page. You need the height in dots of a printed page, so you call GetDeviceCaps()
+again.</P>
+<P>Next, you must determine a new viewport origin (the position of the coordinates
+0,0) for the display. Changing the origin tells MFC where to begin displaying data.
+For page one, the origin is zero; for page two, it's moved down by the number of
+dots on a page. In general, the vertical component is the page size times the current
+page minus one. The page number is a member variable of the CPrintInfo class.</P>
+<P>After you calculate the new origin, you only need to give it to the device context
+by calling SetViewportOrg(). Your changes to OnPrepareDC() are complete.</P>
+<P>To see your changes in action, build and run your new version of Print1. When
+the program's main window appears, click twice in the window to add two rectangles
+to the display. (The displayed rectangle count should be seven.) Again, choose File,
+Print Preview and look at the two-page print preview window (see Figure 6.14). Now
+the program previews the document correctly. If you print the document, it will look
+the same in hard copy as it does in the preview.</P>
+<P><A HREF="javascript:popUp('06uvc14.gif')"><B>FIG. 6.14</B></A><B> </B><I>Print1
+finally previews and prints properly.</I></P>
+<P>
+<H2><A NAME="Heading5"></A>MFC and Printing</H2>
+<P>Now you've seen MFC's printing and print preview support in action. As you added
+more functionality to the Print1 application, you modified several member functions
+that were overridden in the view class, including OnDraw(), OnBeginPrinting(), and
+OnPrepareDC(). These functions are important to the printing and print preview processes.
+However, other functions also enable you to add even more printing power to your
+applications. Table 6.2 describes the functions important to the printing process.</P>
+<P>
+<H4>Table 6.2&#160;&#160;Printing Functions of a View Class</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Function</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">OnBeginPrinting()</TD>
+		<TD ALIGN="LEFT">Override this function to create resources, such as fonts, that you need for printing
+			the document. You also set the maximum page count here.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">OnDraw()</TD>
+		<TD ALIGN="LEFT">This function serves triple duty, displaying data in a frame window, a print preview
+			window, or on the printer, depending on the device context sent as the function's
+			parameter.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">OnEndPrinting()</TD>
+		<TD ALIGN="LEFT">Override this function to release resources created in OnBeginPrinting().</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">OnPrepareDC()</TD>
+		<TD ALIGN="LEFT">Override this function to modify the device context used to display or print the
+			document. You can, for example, handle pagination here.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">OnPreparePrinting()</TD>
+		<TD ALIGN="LEFT">Override this function to provide a maximum page count for the document. If you don't
+			set the page count here, you should set it in OnBeginPrinting().</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">OnPrint()</TD>
+		<TD ALIGN="LEFT">Override this function to provide additional printing services, such as printing
+			headers and footers, not provided in OnDraw().</TD>
+	</TR>
+</TABLE>
+</P>
+<P>To print a document, MFC calls the functions listed in Table 6.2 in a specific
+order. First it calls OnPreparePrinting(), which simply calls DoPreparePrinting(),
+as shown in Listing 6.6. DoPreparePrinting() is responsible for displaying the Print
+dialog box and creating the printer DC.</P>
+<P>
+<H4>Listing 6.6&#160;&#160;print1View.cpp --CPrint1View::OnPreparePrinting() as Generated
+by AppWizard</H4>
+<PRE>BOOL CPrint1View::OnPreparePrinting(CPrintInfo* pInfo)
+{
+     // default preparation
+     return DoPreparePrinting(pInfo);
+</PRE>
+<PRE>}
+</PRE>
+<P>As you can see, OnPreparePrinting() receives as a parameter a pointer to a CPrintInfo
+object. By using this object, you can obtain information about the print job as well
+as initialize attributes such as the maximum page number. Table 6.3 describes the
+most useful data and function members of the CPrintInfo class.</P>
+<P>
+<H4>Table 6.3&#160;&#160;Members of the CPrintInfo Class</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Member</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetMaxPage()</TD>
+		<TD ALIGN="LEFT">Sets the document's maximum page number.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetMinPage()</TD>
+		<TD ALIGN="LEFT">Sets the document's minimum page number.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetFromPage()</TD>
+		<TD ALIGN="LEFT">Gets the number of the first page that users selected for printing.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetMaxPage()</TD>
+		<TD ALIGN="LEFT">Gets the document's maximum page number, which may be changed in OnBeginPrinting().</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetMinPage()</TD>
+		<TD ALIGN="LEFT">Gets the document's minimum page number, which may be changed in OnBeginPrinting().</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetToPage()</TD>
+		<TD ALIGN="LEFT">Gets the number of the last page users selected for printing.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">m_bContinuePrinting</TD>
+		<TD ALIGN="LEFT">Controls the printing process. Setting the flag to FALSE ends the print job.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">m_bDirect</TD>
+		<TD ALIGN="LEFT">Indicates whether the document is being directly printed.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">m_bPreview</TD>
+		<TD ALIGN="LEFT">Indicates whether the document is in print preview.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">m_nCurPage</TD>
+		<TD ALIGN="LEFT">Holds the current number of the page being printed.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">m_nNumPreviewPages</TD>
+		<TD ALIGN="LEFT">Holds the number of pages (1 or 2) being displayed in print preview.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">m_pPD</TD>
+		<TD ALIGN="LEFT">Holds a pointer to the print job's CPrintDialog object.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">m_rectDraw</TD>
+		<TD ALIGN="LEFT">Holds a rectangle that defines the usable area for the current page.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">m_strPageDesc</TD>
+		<TD ALIGN="LEFT">Holds a page-number format string.</TD>
+	</TR>
+</TABLE>
+</P>
+<P>When the DoPreparePrinting() function displays the Print dialog box, users can
+set the value of many data members of the CPrintInfo class. Your program then can
+use or set any of these values. Usually, you'll at least call SetMaxPage(), which
+sets the document's maximum page number, before DoPreparePrinting() so that the maximum
+page number displays in the Print dialog box. If you can't determine the number of
+pages until you calculate a page length based on the selected printer, you have to
+wait until you have a printer DC for the printer.</P>
+<P>After OnPreparePrinting(), MFC calls OnBeginPrinting(), which is not only another
+place to set the maximum page count but also the place to create resources, such
+as fonts, that you need to complete the print job. OnPreparePrinting() receives as
+parameters a pointer to the printer DC and a pointer to the associated CPrintInfo
+object.</P>
+<P>Next, MFC calls OnPrepareDC() for the first page in the document. This is the
+beginning of a print loop that's executed once for each page in the document. OnPrepareDC()
+is the place to control what part of the whole document prints on the current page.
+As you saw previously, you handle this task by setting the document's viewport origin.</P>
+<P>After OnPrepareDC(), MFC calls OnPrint() to print the actual page. Normally, OnPrint()
+calls OnDraw() with the printer DC, which automatically directs OnDraw()'s output
+to the printer rather than onscreen. You can override OnPrint() to control how the
+document is printed. You can print headers and footers in OnPrint() and then call
+the base class's version (which in turn calls OnDraw()) to print the body of the
+document, as demonstrated in Listing 6.7. (The footer will appear below the body,
+even though PrintFooter() is called before OnPrint()--don't worry.) To prevent the
+base class version from overwriting your header and footer area, restrict the printable
+area by setting the m_rectDraw member of the CPrintInfo object to a rectangle that
+doesn't overlap the header or footer.</P>
+<P>
+<H4>Listing 6.7&#160;&#160;Possible OnPrint() with Headers and Footers</H4>
+<PRE>void CPrint1View::OnPrint(CDC* pDC, CPrintInfo* pInfo)
+{
+    // TODO: Add your specialized code here and/or call the base class
+    // Call local functions to print a header and footer.
+    PrintHeader();
+    PrintFooter();
+    CView::OnPrint(pDC, pInfo);
+</PRE>
+<PRE>}
+</PRE>
+<P>Alternatively, you can remove OnDraw() from the print loop entirely by doing your
+own printing in OnPrint() and not calling OnDraw() at all (see Listing 6.8).</P>
+<P>
+<H4>Listing 6.8&#160;&#160;Possible OnPrint() Without OnDraw()</H4>
+<PRE>void CPrint1View::OnPrint(CDC* pDC, CPrintInfo* pInfo)
+{
+    // TODO: Add your specialized code here and/or call the base class
+    // Call local functions to print a header and footer.
+    PrintHeader();
+    PrintFooter();
+    // Call a local function to print the body of the document.
+    PrintDocument();
+</PRE>
+<PRE>}
+</PRE>
+<P>As long as there are more pages to print, MFC continues to call OnPrepareDC()
+and OnPrint() for each page in the document. After the last page is printed, MFC
+calls OnEndPrinting(), where you can destroy any resources you created in OnBeginPrinting().
+Figure 6.15 summarizes the entire printing process.</P>
+<P><A HREF="javascript:popUp('06uvc15.gif')"><B>FIG. 6.15</B></A><B> </B><I>MFC calls
+various member functions during the printing process.</I></P>
+<H1><I></I></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch05/ch05.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch07/ch07.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

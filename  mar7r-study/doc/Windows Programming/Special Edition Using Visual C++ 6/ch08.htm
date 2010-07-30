@@ -1,0 +1,1063 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 8 -- Building a Complete Application: ShowString</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch07/ch07.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch09/ch09.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 8 -</H1>
+</CENTER>
+<CENTER>
+<H1>Building a Complete Application: ShowString</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Building an Application That Displays a String</A>
+	<UL>
+		<LI><A HREF="#Heading2">Creating an Empty Shell with AppWizard</A>
+		<LI><A HREF="#Heading3">Displaying a String</A>
+	</UL>
+	<LI><A HREF="#Heading4">Building the ShowString Menus</A>
+	<LI><A HREF="#Heading5">Building the ShowString Dialog Boxes</A>
+	<UL>
+		<LI><A HREF="#Heading6">ShowString's About Dialog Box</A>
+		<LI><A HREF="#Heading7">ShowString's Options Dialog Box</A>
+	</UL>
+	<LI><A HREF="#Heading8">Making the Menu Work</A>
+	<UL>
+		<LI><A HREF="#Heading9">The Dialog Box Class</A>
+		<LI><A HREF="#Heading10">Catching the Message</A>
+	</UL>
+	<LI><A HREF="#Heading11">Making the Dialog Box Work</A>
+	<LI><A HREF="#Heading12">Adding Appearance Options to the Options Dialog Box</A>
+	<UL>
+		<LI><A HREF="#Heading13">Changing the Options Dialog Box</A>
+		<LI><A HREF="#Heading14">Adding Member Variables to the Dialog Box Class</A>
+		<LI><A HREF="#Heading15">Adding Member Variables to the Document</A>
+		<LI><A HREF="#Heading16">Changing OnToolsOptions()</A>
+		<LI><A HREF="#Heading17">Changing OnDraw()</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Building an Application That Displays a String</H2>
+<P>In this chapter you pull together the concepts demonstrated in previous chapters
+to create an application that really does something. You add a menu, a menu item,
+a dialog box, and persistence to an application that draws output based on user settings.
+In subsequent chapters this application serves as a base for more advanced work.</P>
+<P>The sample application you will build is very much like the traditional &quot;Hello,
+world!&quot; of C programming. It simply displays a text string in the main window.
+The <I>document </I>(what you save in a file) contains the string and a few settings.
+There is a new menu item to bring up a dialog box to change the string and the settings,
+which control the string's appearance. This is a deliberately simple application
+so that the concepts of adding menu items and adding dialogs are not obscured by
+trying to understand the actual brains of the application. So, bring up Developer
+Studio and follow along.</P>
+<P>
+<H3><A NAME="Heading2"></A>Creating an Empty Shell with AppWizard</H3>
+<P>First, use AppWizard to create the starter application. (Chapter 1, &quot;Building
+Your First Windows Application,&quot; covers AppWizard and creating starter applications.)
+Choose File, New and the Project tab. Select an MFC AppWizard (exe) application,
+name the project ShowString so that your classnames will match those shown throughout
+this chapter, and click OK.</P>
+<P>In Step 1 of AppWizard, it doesn't matter much whether you choose SDI or MDI,
+but MDI will enable you to see for yourself how little effort is required to have
+multiple documents open at once. So, choose MDI. Choose U.S. English, and then click
+Next.</P>
+<P>The ShowString application needs no database support and no compound document
+support, so click Next on Step 2 and Step 3 without changing anything. In AppWizard's
+Step 4 dialog box, select a docking toolbar, initial status bar, printing and print
+preview, context-sensitive help, and 3D controls, and then click Next. Choose source
+file comments and shared DLL, and then click Next. The classnames and filenames are
+all fine, so click Finish. Figure 8.1 shows the final confirmation dialog box. Click
+OK.</P>
+<P><A HREF="javascript:popUp('08uvc01.gif')"><B>FIG. 8.1</B></A><B> </B><I>AppWizard
+summarizes the design choices for ShowString.</I></P>
+<P>
+<H3><A NAME="Heading3"></A>Displaying a String</H3>
+<P>The ShowString application displays a string that will be kept in the document.
+You need to add a member variable to the document class, CShowStringDoc, and add
+loading and saving code to the Serialize() function. You can initialize the string
+by adding code to OnNewDocument() for the document and, in order to actually display
+it, override OnDraw() for the view. Documents and views are introduced in Chapter
+4, &quot;Documents and Views.&quot;</P>
+<P><B>Member Variable and Serialization&#160;&#160;</B>Add a private variable to
+the document and a public function to get the value by adding these lines to ShowStringDoc.h:</P>
+<P>
+<PRE>private:
+    CString string;
+public:
+    CString GetString() {return string;}
+</PRE>
+<P>The inline function gives other parts of your application a copy of the string
+to use whenever necessary but makes it impossible for other parts to change the string.</P>
+<P>Next, change the skeleton CShowStringDoc::Serialize() function provided by AppWizard
+to look like Listing 8.1. (Expand CShowStringDoc in ClassView and double-click Serialize()
+to edit the code.) Because you used the MFC CString class, the archive has operators
+&lt;&lt; and &gt;&gt; already defined, so this is a simple function to write. It
+fills the archive from the string when you are saving the document and fills the
+string from the archive when you are loading the document from a file. Chapter 7,
+&quot;Persistence and File I/O,&quot; introduces serialization.</P>
+<P>
+<H4>Listing 8.1&#160;&#160;SHOWSTRINGDOC.CPP--CShowStringDoc::Serialize()</H4>
+<PRE>void CShowStringDoc::Serialize(CArchive&amp; ar)
+{
+    if (ar.IsStoring())
+    {
+        ar &lt;&lt; string;
+    }
+    else
+    {
+        ar &gt;&gt; string;
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P><B>Initializing the String&#160;&#160;</B>Whenever a new document is created,
+you want your application to initialize string to &quot;Hello, world!&quot;. A new
+document is created when the user chooses File, New. This message is caught by CShowStringApp
+(the message map is shown in Listing 8.2, you can see it yourself by scrolling toward
+the top of ShowString.cpp) and handled by CWinApp::OnFileNew(). (Message maps and
+message handlers are discussed in Chapter 3, &quot;Messages and Commands.&quot;)
+Starter applications generated by AppWizard call OnFileNew() to create a blank document
+when they run. OnFileNew() calls the document's OnNewDocument(), which actually initializes
+the member variables of the document.</P>
+<P>
+<H4>Listing 8.2&#160;&#160;SHOWSTRING.CPP--Message Map</H4>
+<PRE>BEGIN_MESSAGE_MAP(CShowStringApp, CWinApp)
+     //{{AFX_MSG_MAP(CShowStringApp)
+     ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+          // NOTE - The ClassWizard will add and remove mapping macros here.
+          //    DO NOT EDIT what you see in these blocks of generated code!
+     //}}AFX_MSG_MAP
+     // Standard file-based document commands
+     ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
+     ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
+     // Standard print setup command
+     ON_COMMAND(ID_FILE_PRINT_SETUP, CWinApp::OnFilePrintSetup)
+</PRE>
+<PRE>END_MESSAGE_MAP()
+</PRE>
+<P>AppWizard gives you the simple OnNewDocument() shown in Listing 8.3. To see yours
+in the editor, double-click OnNewDocument() in ClassView--you may have to expand
+CshowStringDoc first.</P>
+<P>
+<H4>Listing 8.3&#160;&#160;SHOWSTRINGDOC.CPP--CShowStringDoc::OnNewDocument()</H4>
+<PRE>BOOL CShowStringDoc::OnNewDocument()
+{
+    if (!CDocument::OnNewDocument())
+        return FALSE;
+    // TODO: add reinitialization code here
+    // (SDI documents will reuse this document)
+    return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>Take away the comments and add this line in their place:</P>
+<P>
+<PRE>string = &quot;Hello, world!&quot;;
+</PRE>
+<P>(What else could it say, after all?) Leave the call to CDocument::OnNewDocument()
+because that will handle all other work involved in making a new document.</P>
+<P><B>Getting the String Onscreen&#160;&#160;</B>As you learned in Chapter 5, &quot;Drawing
+on the Screen,&quot; a view's OnDraw() function is called whenever that view needs
+to be drawn, such as when your application is first started, resized, or restored
+or when a window that had been covering it is taken away. AppWizard has provided
+a skeleton, shown in Listing 8.4. To edit this function, expand CShowStringView in
+ClassView and then double-click OnDraw().</P>
+<P>
+<H4>Listing 8.4&#160;&#160;SHOWSTRINGVIEW.CPP--CShowStringView::OnDraw()</H4>
+<PRE>void CShowStringView::OnDraw(CDC* pDC)
+{
+    CShowStringDoc* pDoc = GetDocument();
+    ASSERT_VALID(pDoc);
+    // TODO: add draw code for native data here
+</PRE>
+<PRE>}
+</PRE>
+<P>OnDraw() takes a pointer to a device context, as discussed in Chapter 5. The device
+context class, CDC, has a member function called DrawText() that draws text onscreen.
+It is declared like this:</P>
+<P>
+<PRE>int DrawText( const CString&amp; <I>str</I>, LPRECT <I>lpRect</I>, UINT <I>nFormat</I> )
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B>See</B> &quot;Understanding Device Contexts,&quot; <A HREF="../ch05/ch05.htm"><B>ch.
+	5</B></A> 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The CString to be passed to this function is going to be the string from the document
+class, which can be accessed as pDoc-&gt;GetString(). The lpRect is the client rectangle
+of the view, returned by GetClientRect(). Finally, nFormat is the way the string
+should display; for example, DT_CENTER means that the text should be centered from
+left to right within the view. DT_VCENTER means that the text should be centered
+up and down, but this works only for single lines of text that are identified with
+DT_SINGLELINE. Multiple format flags can be combined with |, so DT_CENTER|DT_VCENTER|DT_SINGLELINE
+is the nFormat that you want. The drawing code to be added to CShowStringView::OnDraw()
+looks like this:</P>
+<P>
+<PRE>CRect rect;
+GetClientRect(&amp;rect);
+pDC-&gt;DrawText(pDoc-&gt;GetString(), &amp;rect, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+</PRE>
+<P>This sets up a CRect and passes its address to GetClientRect(), which sets the
+CRect to the client area of the view. DrawText() draws the document's string in the
+rectangle, centered vertically and horizontally.</P>
+<P>At this point, the application should display the string properly. Build and execute
+it, and you will see something like Figure 8.2. You have a lot of functionality--menus,
+toolbars, status bar, and so on--but nothing that any other Windows application doesn't
+have, yet. Starting with the next section, that changes.</P>
+<P><A HREF="javascript:popUp('08uvc02.gif')"><B>FIG. 8.2</B></A><B> </B><I>ShowString
+starts simply, with the usual greeting.</I></P>
+<P>
+<H2><A NAME="Heading4"></A>Building the ShowString Menus</H2>
+<P>AppWizard creates two menus for you, shown in the ResourceView window in Figure
+8.3. IDR_MAINFRAME is the menu shown when no file is open; IDR_SHOWSTTYPE is the
+menu shown when a ShowString document is open. Notice that IDR_MAINFRAME has no Window
+menus and that the File menu is much shorter than the one on the IDR_SHOWSTTYPE menu,
+with only New, Open, Print Setup, recent files, and Exit items.</P>
+<P><A HREF="javascript:popUp('08uvc03.gif')"><B>FIG. 8.3</B></A><B> </B><I>AppWizard
+creates two menus for ShowString.</I></P>
+<P>You are going to add a menu item to ShowString, so the first decision is where
+to add it. The user will be able to edit the string that displays and to set the
+string's format. You could add a Value item to the Edit menu that brings up a small
+dialog box for only the string and then create a Format menu with one item, Appearance,
+that brings up the dialog box to set the appearance. The choice you are going to
+see here, though, is to combine everything into one dialog box and then put it on
+a new Tools menu, under the Options item.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> You may have noticed already that more and more Windows applications
+	are standardizing Tools, Options as the place for miscellaneous settings.&#160; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Do you need to add the item to both menus? No. When there is no document open,
+there is nowhere to save the changes made with this dialog box. So only IDR_SHOWSTTYPE
+needs to have a menu added. Open the menu by double-clicking it in the ResourceView
+window. At the far right of the menu, after Help, is an empty menu. Click it and
+type <B>&amp;Tools</B>. The Properties dialog box appears; pin it to the background
+by clicking the pushpin. The Caption box contains &amp;Tools. The menu at the end
+becomes the Tools menu, with an empty item underneath it; another empty menu then
+appears to the right of the Tools menu, as shown in Figure 8.4.</P>
+<P><A HREF="javascript:popUp('08uvc04.gif')"><B>FIG. 8.4</B></A><B> </B><I>Adding
+the Tools menu is easy in the ResourceView window.</I></P>
+<P>Click the new Tools menu and drag it between the View and Window menus, corresponding
+to the position of Tools in products like Developer Studio and Microsoft Word. Next,
+click the empty sub-item. The Properties dialog box changes to show the blank properties
+of this item; change the caption to <B>&amp;Options</B> and enter a sensible prompt,
+as shown in Figure 8.5. The prompt will be shown on the status bar when the user
+pauses the mouse over the menu item or moves the highlight over it with the cursor.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> The <I>&amp;</I> in the Caption edit box precedes the letter that
+	serves as the mnemonic key for selecting that menu with the keyboard (for example,
+	Alt+T in the case of Tools). This letter appears underlined in the menu. There is
+	no further work required on your part. You can opt to select a different mnemonic
+	key by moving the <I>&amp;</I> so that it precedes a different letter in the menu
+	or menu item name (for example, T&amp;ools changes the key from <I>T</I> to <I>o</I>).
+	You should not use the same mnemonic letter for two menus or for two items on the
+	same menu. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>All menu items have a resource ID, and this resource ID is the way the menu items
+are connected to your code. Developer Studio will choose a good one for you, but
+it doesn't appear right away in the Properties dialog box. Click some other menu
+item, and then click Options again; you see that the resource ID is ID_TOOLS_OPTIONS.
+Alternatively, press Enter when you are finished, and the highlight moves down to
+the empty menu item below Options. Press the up-arrow cursor key to return the highlight
+to the Options item.</P>
+<P>If you'd like to provide an accelerator, like the Ctrl+C for Edit, Copy that the
+system provides, this is a good time to do it. Click the + next to Accelerator in
+the ResourceView window and then double-click IDR_MAINFRAME, the only Accelerator
+table in this application. At a glance, you can see what key combinations are already
+in use. Ctrl+O is already taken, but Ctrl+T is available. To connect Ctrl+T to Tools,
+Options, follow these steps:</P>
+<P><A HREF="javascript:popUp('08uvc05.gif')"><B>FIG. 8.5</B></A><B> </B><I>The menu
+command Tools, Options controls everything that ShowString does.</I></P>
+
+<DL>
+	<DD><B>1. </B>Click the empty line at the bottom of the Accelerator table. If you
+	have closed the Properties dialog box, bring it back by choosing View, Properties
+	and then pin it in place. (Alternatively, double-click the empty line to bring up
+	the Properties dialog box.)
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Click the drop-down list box labeled ID and choose ID_TOOLS_OPTIONS
+	from the list, which is in alphabetical order. (There are a lot of entries before
+	ID_TOOLS_OPTIONS; drag the elevator down to almost the bottom of the list or start
+	typing the resource ID--by the time you type <B>ID_TO</B>, the highlight will be
+	in the right place.)
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Type <B>T</B> in the Key box; then make sure that the Ctrl check box
+	is selected and that the Alt and Shift boxes are deselected. Alternatively, click
+	the Next Key Typed button and then type <B>Ctrl+T</B>, and the dialog box will be
+	filled in properly.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Click another line in the Accelerator table to commit the changes.
+</DL>
+
+<P>Figure 8.6 shows the Properties dialog box for this accelerator after again clicking
+the newly entered line.</P>
+
+<P>What happens when the user chooses this new menu item, Tools, Options? A dialog
+box displays. So, tempting as it may be to start connecting this menu to code, it
+makes more sense to build the dialog box first.</P>
+<P>
+<H2><A NAME="Heading5"></A>Building the ShowString Dialog Boxes</H2>
+<P>Chapter 2, &quot;Dialogs and Controls,&quot; introduces dialog boxes. This section
+builds on that background. ShowString is going to have two custom dialog boxes: one
+brought up by Tools, Options and also an About dialog box. An About dialog box has
+been provided by AppWizard, but it needs to be changed a little; you build the Options
+dialog box from scratch.</P>
+<P><A HREF="javascript:popUp('08uvc06.gif')"><B>FIG. 8.6</B></A><B> </B><I>Keyboard
+accelerators are connected to resource IDs.</I></P>
+<H3><I></I></H3>
+<H3><A NAME="Heading6"></A>ShowString's About Dialog Box</H3>
+<P>Figure 8.7 shows the About dialog box that AppWizard makes for you; it contains
+the application name and the current year. To view the About dialog box for ShowString,
+click the ResourceView tab in the project workspace window, expand the Dialogs list
+by clicking the + icon next to the word <I>Dialogs</I>, and then double-click IDD_ABOUTBOX
+to bring up the About dialog box resource.</P>
+<P><A HREF="javascript:popUp('08uvc07.gif')"><B>FIG. 8.7</B></A><B> </B><I>AppWizard
+makes an About dialog box for you.</I></P>
+<P>You might want to add a company name to your About dialog box. Here's how to add
+<B>Que Books</B>, as an example. Click the line of text that reads Copyright&#169;
+1998, and it will be surrounded by a selection box. Bring up the Properties dialog
+box, if it isn't up. Edit the caption to add <B>Que Books</B> at the end; the changes
+are reflected immediately in the dialog box.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If the rulers you see in Figure 8.7 don't appear when you open IDD_ABOUTBOX
+	in Developer Studio, you can turn them on by choosing Layout, Guide Settings and
+	then selecting the Rulers and Guides radio button in the top half of the Guide Settings
+	dialog box. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>I decided to add a text string to remind users what book this application is from.
+Here's how to do that:</P>
+
+<DL>
+	<DD><B>1. </B>Size the dialog box a little taller by clicking the whole dialog box
+	to select it, clicking the sizing square in the middle of the bottom border, and
+	dragging the bottom border down a little. (This visual editing is what gave Visual
+	C++ its name when it first came out.)
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>In the floating toolbar called Controls, click the button labeled <I>Aa</I>
+	to get a <I>static control,</I> which means a piece of text that the user cannot
+	change, perfect for labels like this. Click within the dialog box under the other
+	text to insert the static text there.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>In the Properties dialog box, change the caption from Static to <B>Using
+	Visual C++ 6</B>. The box automatically resizes to fit the text.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Hold down the Ctrl key and click the other two static text lines in
+	the dialog box. Choose Layout, Align Controls, Left, which aligns the edges of the
+	three selected controls. The one you select last stays still, and the others move
+	to align with it.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Choose Layout, Space Evenly, Down. These menu options can save you
+	a great deal of dragging, squinting at the screen, and then dragging again.
+	<P>
+</DL>
+
+<P>The About dialog box will resemble Figure 8.8.</P>
+<P><A HREF="javascript:popUp('08uvc08.gif')"><B>FIG. 8.8</B></A><B> </B><I>In a matter
+of minutes, you can customize your About dialog box.</I></P>
+<P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> All the Layout menu items are on the Dialog toolbar. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading7"></A>ShowString's Options Dialog Box</H3>
+<P>The Options dialog box is simple to build. First, make a new dialog box by choosing
+Insert, Resource and then double-clicking Dialog. An empty dialog box called Dialog1
+appears, with an OK button and a Cancel button, as shown in Figure 8.9.</P>
+<P><A HREF="javascript:popUp('08uvc09.gif')"><B>FIG. 8.9</B></A><B> </B><I>A new
+dialog box always has OK and Cancel buttons.</I></P>
+<P>Next, follow these steps to convert the empty dialog box into the Options dialog
+box:</P>
+
+<DL>
+	<DD><B>1. </B>Change the ID to <B>IDD_OPTIONS</B> and the caption to<B> Options</B>.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>In the floating toolbar called Controls, click the button labeled ab|
+	to get an edit box in which the user can enter the new value for the string. Click
+	inside the dialog box to place the control and then change the ID to <B>IDC_OPTIONS_STRING</B>.
+	(Control IDs should all start with IDC and then mention the name of their dialog
+	box and an identifier that is unique to that dialog box.)
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Drag the sizing squares to resize the edit box as wide as possible.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Add a static label above the edit box and change that caption to <B>String:</B>.
+</DL>
+
+<P>You will revisit this dialog box later, when adding the appearance capabilities,
+but for now it's ready to be connected. It will look like Figure 8.10.</P>
+<P><A HREF="javascript:popUp('08uvc10.gif')"><B>FIG. 8.10</B></A><B> </B><I>The Options
+dialog box is the place to change the string.</I></P>
+<P>
+<H2><A NAME="Heading8"></A>Making the Menu Work</H2>
+<P>When the user chooses Tools, Options, the Options dialog box should display. You
+use ClassWizard to arrange for one of your functions to be called when the item is
+chosen, and then you write the function, which creates an object of your dialog box
+class and then displays it.</P>
+<P>
+<H3><A NAME="Heading9"></A>The Dialog Box Class</H3>
+<P>ClassWizard makes the dialog box class for you. While the window displaying the
+IDD_OPTIONS dialog box has focus, choose View, ClassWizard. ClassWizard realizes
+there is not yet a class that corresponds to this dialog box and offers to create
+one, as shown in Figure 8.11.</P>
+<P><A HREF="javascript:popUp('08uvc11.gif')"><B>FIG. 8.11</B></A><B> </B><I>Create
+a C++ class to go with the new dialog box.</I></P>
+<P>Leave Create a New Class selected and then click OK. The New Class dialog box,
+shown in Figure 8.12, appears.</P>
+<P><A HREF="javascript:popUp('08uvc12.gif')"><B>FIG. 8.12</B></A><B> </B><I>The dialog
+box class inherits from CDialog.</I></P>
+<P>Fill in the dialog box as follows:</P>
+
+<DL>
+	<DD><B>1. </B>Choose a sensible name for the class, one that starts with C and contains
+	the word Dialog; this example uses COptionsDialog.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>The base class defaults to CDialog, which is perfect for this case.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Click OK to create the class.
+	<P>
+</DL>
+
+<P>The ClassWizard dialog box has been waiting behind these other dialog boxes, and
+now you use it. Click the Member Variables tab and connect IDC_OPTIONS_STRING to
+a CString called m_string, just as you connected controls to member variables of
+the dialog box class in Chapter 2. Click OK to close ClassWizard.</P>
+<P>Perhaps you're curious about what code was created for you when ClassWizard made
+the class. The header file is shown in Listing 8.5.</P>
+<P>
+<H4>Listing 8.5&#160;&#160;OPTIONSDIALOG.H--Header File for COptionsDialog</H4>
+<PRE>// OptionsDialog.h : header file
+//
+/////////////////////////////////////////////////////////////////////////////
+// COptionsDialog dialog
+class COptionsDialog : public CDialog
+{
+// Construction
+public:
+    COptionsDialog(CWnd* pParent = NULL);   // standard constructor
+// Dialog Data
+    //{{AFX_DATA(COptionsDialog)
+    enum { IDD = IDD_OPTIONS };
+    CString     m_string;
+    //}}AFX_DATA
+// Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(COptionsDialog)
+    protected:
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    //}}AFX_VIRTUAL
+// Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(COptionsDialog)
+        // NOTE: The ClassWizard will add member functions here
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
+</PRE>
+<PRE>};
+</PRE>
+<P>There are an awful lot of comments here to help ClassWizard find its way around
+in the file when the time comes to add more functionality, but there is only one
+member variable, m_string; one constructor; and one member function, DoDataExchange(),
+which gets the control value into the member variable, or vice versa. The source
+file isn't much longer; it's shown in Listing 8.6.</P>
+<P>
+<H4>Listing 8.6&#160;&#160;OPTIONSDIALOG.CPP--Implementation File for COptionsDialog</H4>
+<PRE>// OptionsDialog.cpp : implementation file
+//
+#include &quot;stdafx.h&quot;
+#include &quot;ShowString.h&quot;
+#include &quot;OptionsDialog.h&quot;
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+/////////////////////////////////////////////////////////////////////////////
+// COptionsDialog dialog
+COptionsDialog::COptionsDialog(CWnd* pParent /*=NULL*/)
+    : CDialog(COptionsDialog::IDD, pParent)
+{
+    //{{AFX_DATA_INIT(COptionsDialog)
+    m_string = _T(&quot;&quot;);
+    //}}AFX_DATA_INIT
+}
+void COptionsDialog::DoDataExchange(CDataExchange* pDX)
+{
+    CDialog::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(COptionsDialog)
+    DDX_Text(pDX, IDC_OPTIONS_STRING, m_string);
+    //}}AFX_DATA_MAP
+}
+BEGIN_MESSAGE_MAP(COptionsDialog, CDialog)
+    //{{AFX_MSG_MAP(COptionsDialog)
+        // NOTE: The ClassWizard will add message map macros here
+    //}}AFX_MSG_MAP
+</PRE>
+<PRE>END_MESSAGE_MAP()
+</PRE>
+<P>The constructor sets the string to an empty string; this code is surrounded by
+special ClassWizard comments that enable it to add other variables later. The DoDataExchange()
+function calls DDX_Text() to transfer data from the control with the resource ID
+IDC_OPTIONS_STRING to the member variable m_string, or vice versa. This code, too,
+is surrounded by ClassWizard comments. Finally, there is an empty message map because
+COptionsDialog doesn't catch any messages.</P>
+<P>
+<H3><A NAME="Heading10"></A>Catching the Message</H3>
+<P>The next step in building ShowString is to catch the command message sent when
+the user chooses Tools, Options. There are seven classes in ShowString: CAboutDlg,
+CChildFrame, CMainFrame, COptionsDialog, CShowStringApp, CShowStringDoc, and CShowStringView.
+Which one should catch the command? The string and the options will be saved in the
+document and displayed in the view, so one of those two classes should handle the
+changing of the string. The document owns the private variable and will not let the
+view change the string unless you implement a public function to set the string.
+So, it makes the most sense to have the document catch the message.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Often the hardest part of catching these messages is deciding which
+	class should catch them. The decision between View and Document is frequently a very
+	difficult one. If the message handler will need access to a private member of either
+	class, that's the class to catch the message.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>To catch the message, follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Open ClassWizard (if it isn't already open).
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Click the Message Maps tab.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Select CShowStringDoc from the Class Name drop-down list box.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Select ID_TOOLS_OPTIONS from the Object IDs list box on the left, and
+	select COMMAND from the Messages list box on the right.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Click Add Function to add a function to handle this command.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>The Add Member Function dialog box, shown in Figure 8.13, appears,
+	giving you an op-portunity to change the function name from the usual one. Do not
+	change it; just click OK.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('08uvc13.gif')"><B>FIG. 8.13</B></A><B> </B><I>ClassWizard
+suggests a good name for the message-catching function.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> You should almost never change the names that ClassWizard suggests
+	for message catchers. If you find that you have to (perhaps because the suggested
+	name is too long or conflicts with another function name in the same object), be
+	sure to choose a name that starts with <I>On</I>. Otherwise the next developer to
+	work on your project is going to have a very hard time finding the message handlers.
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Click Edit Code to close ClassWizard and edit the newly added function. What happened
+to CShowStringDoc when you arranged for the ID_TOOLS_OPTIONS message to be caught?
+The new message map in the header file is shown in Listing 8.7.</P>
+<P>
+<H4>Listing 8.7&#160;&#160;SHOWSTRINGDOC.H--Message Map for CShowStringDoc</H4>
+<PRE>// Generated message map functions
+protected:
+    //{{AFX_MSG(CShowStringDoc)
+    afx_msg void OnToolsOptions();
+    //}}AFX_MSG
+</PRE>
+<PRE>    DECLARE_MESSAGE_MAP()
+</PRE>
+<P>This is just declaring the function. In the source file, ClassWizard changed the
+message maps shown in Listing 8.8.</P>
+<P>
+<H4>Listing 8.8&#160;&#160;SHOWSTRINGDOC.CPP--Message Map for CShowStringDoc</H4>
+<PRE>BEGIN_MESSAGE_MAP(CShowStringDoc, CDocument)
+    //{{AFX_MSG_MAP(CShowStringDoc)
+    ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
+    //}}AFX_MSG_MAP
+</PRE>
+<PRE>END_MESSAGE_MAP()
+</PRE>
+<P>This arranges for OnToolsOptions() to be called when the command ID_TOOLS_OPTIONS
+is sent. ClassWizard also added a skeleton for OnToolsOptions():</P>
+<P>
+<PRE>void CShowStringDoc::OnToolsOptions() 
+{
+    // TODO: Add your command handler code here
+    
+}
+</PRE>
+<H2><A NAME="Heading11"></A>Making the Dialog Box Work</H2>
+<P>OnToolsOptions() should initialize and display the dialog box and then do something
+with the value that the user provided. (This process was first discussed in Chapter
+2. You have already connected the edit box to a member variable, m_string, of the
+dialog box class. You initialize this member variable before displaying the dialog
+box and use it afterwards.</P>
+<P>OnToolsOptions(), shown in Listing 8.9, displays the dialog box. Add this code
+to the empty function ClassWizard generated for you when you arranged to catch the
+message.</P>
+<P>
+<H4>Listing 8.9&#160;&#160;SHOWSTRINGDOC.CPP--OnToolsOptions()</H4>
+<PRE>void CShowStringDoc::OnToolsOptions() 
+{
+    COptionsDialog dlg;
+    dlg.m_string = string;
+    if (dlg.DoModal() == IDOK)
+    {
+        string = dlg.m_string;
+        SetModifiedFlag();
+        UpdateAllViews(NULL);
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>This code fills the member variable of the dialog box with the document's member
+variable (ClassWizard added m_string as a public member variable of COptionsDialog,
+so the document can change it) and then brings up the dialog box by calling DoModal().
+If the user clicks OK, the member variable of the document changes, the modified
+flag is set (so that the user is prompted to save the document on exit), and the
+view is asked to redraw itself with a call to UpdateAllViews(). For this to compile,
+of course, the compiler must know what a COptionsDialog is, so add this line at the
+beginning of ShowStringDoc.cpp:</P>
+<P>
+<PRE>#include &quot;OptionsDialog.h&quot;
+</PRE>
+<P>At this point, you can build the application and run it. Choose Tools, Options
+and change the string. Click OK and you see the new string in the view. Exit the
+application; you are asked whether to save the file. Save it, restart the application,
+and open the file again. The default &quot;Hello, world!&quot; document remains open,
+and the changed document is open with a different string. The application works,
+as you can see in Figure 8.14 (the windows are resized to let them both fit in the
+figure).</P>
+<P><A HREF="javascript:popUp('08uvc14.gif')"><B>FIG. 8.14</B></A><B> </B><I>ShowString
+can change the string, save it to a file, and reload it.</I></P>
+<H2><I></I></H2>
+<H2><A NAME="Heading12"></A>Adding Appearance Options to the Options Dialog Box</H2>
+<P>ShowString doesn't have much to do, just demonstrate menus and dialog boxes. However,
+the only dialog box control that ShowString uses is an edit box. In this section,
+you add a set of radio buttons and check boxes to change the way the string is drawn
+in the view.</P>
+<P>
+<H3><A NAME="Heading13"></A>Changing the Options Dialog Box</H3>
+<P>It is quite simple to incorporate a full-fledged Font dialog box into an application,
+but the example in this section is going to do something much simpler. A group of
+radio buttons will give the user a choice of several colors. One check box will enable
+the user to specify that the text should be centered horizontally, and another that
+the text be centered vertically. Because these are check boxes, the text can be either,
+neither, or both.</P>
+<P>Open the IDD_OPTIONS dialog box by double-clicking it in the ResourceView window,
+and then add the radio buttons by following these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Stretch the dialog box taller to make room for the new controls.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Click the radio button in the Controls floating toolbar, and then click
+	the Options dialog box to drop the control.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Choose View, Properties and then pin the Properties dialog box in place.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Change the resource ID of the first radio button to <B>IDC_OPTIONS_BLACK</B>,
+	and change the caption to <B>&amp;Black</B>.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Select the Group box to indicate that this is the first of a group
+	of radio buttons.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Add another radio button with resource ID<B> IDC_OPTIONS_RED</B> and
+	<B>&amp;Red</B> as the caption. Do not select the Group box because the Red radio
+	button doesn't start a new group but is part of the group that started with the Black
+	radio button.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Add a third radio button with resource ID <B>IDC_OPTIONS_GREEN</B>
+	and <B>&amp;Green</B> as the caption. Again, do not select Group.
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>Drag the three radio buttons into a horizontal arrangement, and select
+	all three by clicking on one and then holding Ctrl while clicking the other two.
+	<P>
+	<DT></DT>
+	<DD><B>9. </B>Choose Layout, Align Controls, Bottom (to even them up).
+	<P>
+	<DT></DT>
+	<DD><B>10. </B>Choose Layout, Space Evenly, Across to space the controls across the
+	dialog box.
+	<P>
+</DL>
+
+<P>Next, add the check boxes by following these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Click the check box in the Controls floating toolbar and then click
+	the Options dialog box, dropping a check box onto it.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Change the resource ID of this check box to <B>IDC_OPTIONS_HORIZCENTER</B>
+	and the caption to <B>Center &amp;Horizontally</B>.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Select the Group box to indicate the start of a new group after the
+	radio buttons.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Drop another check box onto the dialog box as in step 1 and give it
+	the resource ID <B>IDC_OPTIONS_VERTCENTER</B> and the caption <B>Center &amp;Vertically</B>.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Arrange the check boxes under the radio buttons.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Click the Group box on the Controls floating toolbar, and then click
+	and drag a group box around the radio buttons. Change the caption to <B>Text Color</B>.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Move the OK and Cancel buttons down to the bottom of the dialog box.
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>Select each horizontal group of controls and use Layout, Center in
+	Dialog, Horizontal to make things neater.
+	<P>
+	<DT></DT>
+	<DD><B>9. </B>Choose Edit, Select All, and then drag all the controls up toward the
+	top of the dialog box. Shrink the dialog box to fit around the new controls. It should
+	now resemble Figure 8.15.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('08uvc15.gif')"><B>FIG. 8.15</B></A><B> </B><I>The Options
+dialog box for ShowString has been expanded.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you don't recognize the icons on the Controls toolbar, use the
+	ToolTips<I>.</I> If you hold the cursor over any of the toolbar buttons, a tip pops
+	up after a few seconds, telling you what control the button represents. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Finally, set the tab order by choosing Layout, Tab Order and then clicking the
+controls, in this order:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>IDC_OPTIONS_STRING
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>IDC_OPTIONS_BLACK
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>IDC_OPTIONS_RED
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>IDC_OPTIONS_GREEN
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>IDC_OPTIONS_HORIZCENTER
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>IDC_OPTIONS_VERTCENTER
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>IDOK
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>IDCANCEL
+	<P>
+</DL>
+
+<P>Then click away from the dialog box to leave the two static text controls as positions
+9 and 10.</P>
+<P>
+<H3><A NAME="Heading14"></A>Adding Member Variables to the Dialog Box Class</H3>
+<P>Having added controls to the dialog box, you need to add corresponding member
+variables to the COptionsDialog class. Bring up ClassWizard, select the Member Variable
+tab, and add member variables for each control. Figure 8.16 shows the summary of
+the member variables created. The check boxes are connected to BOOL variables; these
+member variables are TRUE if the box is selected and FALSE if it isn't. The radio
+buttons are handled differently. Only the first--the one with the Group box selected
+in its Properties dialog box--is connected to a member variable. That integer is
+a zero-based index that indicates which button is selected. In other words, when
+the Black button is selected, m_color is 0; when Red is selected, m color is 1; and
+when Green is selected, m_color is 2.</P>
+<P><A HREF="javascript:popUp('08uvc16.gif')"><B>FIG. 8.16</B></A><B> </B><I>Member
+variables in the dialog box class are connected to individual controls or the group
+of radio buttons.</I></P>
+<P>
+<H3><A NAME="Heading15"></A>Adding Member Variables to the Document</H3>
+<P>The variables to be added to the document are the same ones that were added to
+the dialog box. You add them to the CShowStringDoc class definition in the header
+file, to OnNewDocument(), and to Serialize(). Add the lines in Listing 8.10 at the
+top of the CShowStringDoc definition in ShowStringDoc.h, replacing the previous definition
+of string and GetString(). Make sure that the variables are private and the functions
+are public.</P>
+<P>
+<H4>Listing 8.10&#160;&#160;SHOWSTRINGDOC.H--CShowStringDoc Member Variables</H4>
+<PRE>private:
+    CString string;
+    int    color;
+    BOOL horizcenter;
+    BOOL vertcenter;
+public:
+    CString GetString() {return string;}
+    int    GetColor() {return color;}
+    BOOL GetHorizcenter() {return horizcenter;}
+</PRE>
+<PRE>    BOOL GetVertcenter() {return vertcenter;}
+</PRE>
+<P>As with string, these are private variables with public get functions but no set
+functions. All these options should be serialized; the new Serialize() is shown in
+Listing 8.11. Change your copy by double-clicking the function name in ClassView
+and adding the new code.</P>
+<P>
+<H4>Listing 8.11&#160;&#160;SHOWSTRINGDOC.CPP--Serialize()</H4>
+<PRE>void CShowStringDoc::Serialize(CArchive&amp; ar)
+{
+    if (ar.IsStoring())
+    {
+        ar &lt;&lt; string;
+        ar &lt;&lt; color;
+        ar &lt;&lt; horizcenter;
+        ar &lt;&lt; vertcenter;
+    }
+    else
+    {
+        ar &gt;&gt; string;
+        ar &gt;&gt; color;
+        ar &gt;&gt; horizcenter;
+        ar &gt;&gt; vertcenter;
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>Finally, you need to initialize these variables in OnNewDocument(). What are good
+defaults for these new member variables? Black text, centered in both directions,
+was the old behavior, and it makes sense to use it as the default. The new OnNewDocument()
+is shown in Listing 8.12.</P>
+<P>
+<H4>Listing 8.12&#160;&#160;SHOWSTRINGDOC.CPP--OnNewDocument()</H4>
+<PRE>BOOL CShowStringDoc::OnNewDocument()
+{
+    if (!CDocument::OnNewDocument())
+        return FALSE;
+    string = &quot;Hello, world!&quot;;
+    color = 0;     //black
+    horizcenter = TRUE;
+    vertcenter = TRUE;
+    return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>Of course, at the moment, users cannot change these member variables from the
+defaults. To allow the user to change the variables, you have to change the function
+that handles the dialog box.</P>
+<P>
+<H3><A NAME="Heading16"></A>Changing OnToolsOptions()</H3>
+<P>The OnToolsOptions() function sets the values of the dialog box member variables
+from the document member variables and then displays the dialog box. If the user
+clicks OK, the document member variables are set from the dialog box member variables
+and the view is redrawn. Having just added three member variables to the dialog box
+and the document, you have three lines to add before the dialog box displays and
+then three more to add in the block that's called after OK is clicked. The new OnToolsOptions()
+is shown in Listing 8.13.</P>
+<P>
+<H4>Listing 8.13&#160;&#160;SHOWSTRINGDOC.CPP--OnToolsOptions()</H4>
+<PRE>void CShowStringDoc::OnToolsOptions() 
+{
+    COptionsDialog dlg;
+    dlg.m_string = string;
+    dlg.m_color = color;
+    dlg.m_horizcenter = horizcenter;
+    dlg.m_vertcenter = vertcenter;
+    
+    if (dlg.DoModal() == IDOK)
+    {
+        string = dlg.m_string;
+        color = dlg.m_color;
+        horizcenter = dlg.m_horizcenter;
+        vertcenter = dlg.m_vertcenter;
+        SetModifiedFlag();
+        UpdateAllViews(NULL);
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>What happens when the user opens the dialog box and changes the value of a control,
+say, by deselecting Center Horizontally? The framework--through Dialog Data Exchange
+(DDX), as set up by ClassWizard--changes the value of COptionsDialog::m_horizcenter
+to FALSE. This code in OnToolsOptions() changes the value of CShowStringDoc::horizcenter
+to FALSE. When the user saves the document, Serialize() saves horizcenter. This is
+all good, but none of this code actually changes the way the view is drawn. That
+involves OnDraw().</P>
+<P>
+<H3><A NAME="Heading17"></A>Changing OnDraw()</H3>
+<P>The single call to DrawText() in OnDraw() becomes a little more complex now. The
+document member variables are used to set the view's appearance. Edit OnDraw() by
+expanding CShowStringView in the ClassView and double-clicking OnDraw().</P>
+<P>The color is set with CDC::SetTextColor() before the call to DrawText(). You should
+always save the old text color and restore it when you are finished. The parameter
+to SetTextColor() is a COLORREF, and you can directly specify combinations of red,
+green, and blue as hex numbers in the form 0x00bbggrr, so that, for example, 0x000000FF
+is bright red. Most people prefer to use the RGB macro, which takes hex numbers from
+0x0 to 0xFF, specifying the amount of each color; bright red is RGB(FF,0,0), for
+instance. Add the lines shown in Listing 8.14 before the call to DrawText() to set
+up everything.</P>
+<P>
+<H4>Listing 8.14&#160;&#160;SHOWSTRINGDOC.CPP--OnDraw() Additions Before DrawText()
+Call</H4>
+<PRE>    COLORREF oldcolor;
+    switch (pDoc-&gt;GetColor())
+    {
+    case 0:
+        oldcolor = pDC-&gt;SetTextColor(RGB(0,0,0)); //black
+        break;
+    case 1:
+        oldcolor = pDC-&gt;SetTextColor(RGB(0xFF,0,0)); //red
+        break;
+    case 2:
+        oldcolor = pDC-&gt;SetTextColor(RGB(0,0xFF,0)); //green
+        break;
+</PRE>
+<PRE>    }
+</PRE>
+<P>Add this line after the call to DrawText():</P>
+<P>
+<PRE>pDC-&gt;SetTextColor(oldcolor);
+</PRE>
+<P>There are two approaches to setting the centering flags. The brute-force way is
+to list the four possibilities (neither, horizontal, vertical, and both) and have
+a different DrawText() statement for each. If you were to add other settings, this
+would quickly become unworkable. It's better to set up an integer to hold the DrawText()
+flags and OR in each flag, if appropriate. Add the lines shown in Listing 8.15 before
+the call to DrawText().</P>
+<P>
+<H4>Listing 8.15&#160;&#160;SHOWSTRINGDOC.CPP--OnDraw() Additions After DrawText()
+Call</H4>
+<PRE>    int DTflags = 0;
+    if (

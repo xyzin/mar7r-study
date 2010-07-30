@@ -1,0 +1,362 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 25 -- Achieving Reuse with the Gallery and Your Own AppWizards</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch24/ch24.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch26/ch26.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 25 -</H1>
+
+<H1>Achieving Reuse with the Gallery and Your Own AppWizards</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Reviewing the Benefits of Writing Reusable Code</A>
+	<LI><A HREF="#Heading2">Using Component Gallery</A>
+	<UL>
+		<LI><A HREF="#Heading3">Adding a Component to the Gallery</A>
+		<LI><A HREF="#Heading4">Using Gallery Components in Your Projects</A>
+		<LI><A HREF="#Heading5">Exploring the Gallery</A>
+	</UL>
+	<LI><A HREF="#Heading6">Introducing Custom AppWizards</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>In these days of complex programs, <I>reusability</I> has become more than a buzzword.
+It's become a survival technique for programmers who find themselves with the awesome
+task of creating hundreds of thousands of lines of working source code in a minimum
+amount of time. Visual C++ is packed with ways to let you reuse the work of programmers
+who have gone before you, such as AppWizard, ClassWizard, and of course the Microsoft
+Foundation Classes. The tools discussed in this chapter enable you to contribute
+code to the future, ready to be reused quickly and easily by some future coworker--or
+better yet, by you.</P>
+<P>
+<H2><A NAME="Heading1"></A>Reviewing the Benefits of Writing Reusable Code</H2>
+<P>If you have a job to do, it's easy to see how reusing someone else's code, dialog
+boxes, or design simplifies your work and lets you finish faster. As long as you
+can trust the provider of the material you reuse, the more you can reuse, the better.
+As a result, there's a market for reusable bits and pieces of programs.</P>
+<P>In fact, there are two markets: one formal one, with vendors selling project parts
+such as controls or templates, and another informal one within many large companies,
+with departments developing reusable parts for brownie points or bragging rights,
+or other intangibles. Some companies even have a reuse budget to which you can charge
+the time you spend making parts of your project reusable, or they award reuse credits
+if someone else in the company reuses one of your parts. If yours doesn't, maybe
+it should: Reuse can save as much as 60% of your software budget, but only if someone
+is noble or charitable enough to develop with reuse in mind or if company policy
+inspires everyone to develop with reuse in mind.</P>
+<P>Most newcomers to reuse think only of reusing code, but there are other parts
+of a project that can save you far more time than you can save with code reuse only.
+These include the following:</P>
+<P>
+
+<UL>
+	<LI><I>Design</I>. The Document/View paradigm, first discussed in Chapter 4, &quot;Documents
+	and Views,&quot; is a classic example of a design decision that is reused in project
+	after project.
+	<P>
+	<LI><I>Interface Resources.</I> You can reuse controls, icons, menus, toolbars, or
+	entire dialog boxes and reduce training time for your users as well as development
+	time for your programmers.
+	<P>
+	<LI><I>Project Settings.</I> Whether it's an obscure linker setting or the perfect
+	arrangement of toolbars, your working environment must be right for you, and getting
+	it right is faster on every project you do because you reuse the decisions you made
+	the last time.
+	<P>
+	<LI><I>Documentation.</I> As you read in Chapter 11, &quot;Help,&quot; help text
+	for standard commands like File, Open is generated for you by AppWizard. You can
+	reuse your own help text from project to project and save even more time.
+</UL>
+
+<H2><A NAME="Heading2"></A>Using Component Gallery</H2>
+<P>Component Gallery is one way that Developer Studio helps support reuse. Component
+Gallery gives you instant access to everything from reusable classes and OLE controls
+to wizards. You can even create your own components and add them to Component Gallery.
+In fact, in its default installation, Developer Studio automatically adds a category
+to Component Gallery for new AppWizard applications that you create.</P>
+<P>
+<H3><A NAME="Heading3"></A>Adding a Component to the Gallery</H3>
+<P>Suppose you have a dialog box that you use frequently in projects. You can create
+this dialog box once, add it to Component Gallery, and then merge it into new projects
+whenever you need it. To see how this works, follow these steps:</P>
+<P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Start a new Custom AppWizard project workspace called App1. (Click
+	Finish on Step 1 to use all the default AppWizard settings; then click OK to create
+	the project.)
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Add a new dialog box to the project by choosing Insert, Resource and
+	double-clicking Dialog.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Using the techniques first presented in Chapter 2, &quot;Dialogs and
+	Controls,&quot; build the dialog-box resource shown in Figure 25.1, giving the dialog
+	box the resource ID IDD_NAMEDLG.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('25uvc01.gif')"><B>FIG. 25.1</B></A><B> </B><I>Build
+a dialog box to add to Component Gallery.</I></P>
+
+<P><I></I>
+
+<DL>
+	<DD><B>4. </B>While the dialog box has focus, bring up ClassWizard and agree to create
+	a new class. Call the new class <B>CNameDlg</B>.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Close ClassWizard.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Right-click CNameDlg in ClassView and choose Add To Gallery from the
+	shortcut menu.
+	<P>
+</DL>
+
+<P>Although nothing appears to happen, the class CNameDlg and the associated resource
+have been added to the Gallery. Minimize Developer Studio and browse your hard drive,
+starting at My Computer, until you display C:\Program Files\Microsoft VisualStudio\Common\
+MSDev98\Gallery (if you installed Visual C++ in another directory, look in that directory
+for the MSDev98 folder and continue down from there). As you can see in Figure 25.2,
+there is now an App1 folder in the Gallery.</P>
+<P><A HREF="javascript:popUp('25uvc02.gif')"><B>FIG. 25.2</B></A><B> </B><I>The Gallery
+uses your project name as the folder name when you add a class.</I></P>
+
+<P>Double-click the App1 folder and you'll see it contains one file, Name Dlg.ogx,
+as shown in Figure 25.3. The .ogx extension signifies a Gallery component.</P>
+<P><A HREF="javascript:popUp('25uvc03.gif')"><B>FIG. 25.3</B></A><B> </B><I>The filename
+for your Gallery component is based on the classname.</I></P>
+
+<P><I></I>
+<H3><A NAME="Heading4"></A>Using Gallery Components in Your Projects</H3>
+<P>Now that you've added the resource and associated class to the Gallery, a logical
+next step is to make another project that will use them. Create a MFC AppWizard (exe)
+application, called App2, with AppWizard. Again, click Finish on Step 1 to accept
+all the defaults and then OK to create the project.</P>
+<P>Click the ClassView tab and expand the App2 classes. There are six: CAboutDlg,
+CApp2App, CApp2Doc, CApp2View, CChildFrame, and CMainFrame.</P>
+<P>Choose Project, Add To Project, and Components and Controls. The Gallery dialog
+box, shown in Figure 25.4, appears.</P>
+<P><A HREF="javascript:popUp('25uvc04.gif')"><B>FIG. 25.4</B></A><B> </B><I>Gallery
+components are arranged in folders.</I></P>
+
+<P>Double-click App1 and you'll see Name Dlg.ogx again. Double-click it. When prompted,
+confirm that you want to insert this component in your project. Click Close to close
+the Gallery.</P>
+<P>Look at ClassView again. CNameDlg has been added. Check FileView and you'll see
+that NameDlg.cpp and NameDlg.h have been added to the project. Switch to ResourceView
+to confirm that the dialog box IDD_NAMEDLG has been added. You can use this resource
+in App2 in just the way you used it in App1.</P>
+<P>
+<H3><A NAME="Heading5"></A>Exploring the Gallery</H3>
+<P>You can use Component Gallery to manage many other component types, including
+those that you might get from a friend or buy from a third-party supplier. Component
+Gallery can add, delete, import, and edit components in a variety of ways, depending
+on the type of component with which you're working. Take some time to experiment
+with Component Gallery, and you'll soon see how easy it is to use.</P>
+<P>Figure 25.5 shows the contents of the Registered ActiveX Controls folder, reached
+by choosing Project, Add to Project, Components and Controls. Both the ATL and MFC
+versions of the Dieroll control are here: DieRoll Class was built in Chapter 21,
+&quot;The Active Template Library,&quot; and Dieroll Control was built in Chapter
+17, &quot;Building an ActiveX Control.&quot; Before this shot was taken, DBGrid Control
+was highlighted and the More Info button was clicked. Components can be bundled with
+a Help file that is reached from the More Info button.</P>
+<P>
+<H2><A NAME="Heading6"></A>Introducing Custom AppWizards</H2>
+<P>AppWizard is a sensational tool for starting projects effortlessly. However, because
+of its general nature, AppWizard makes many assumptions about the way you want a
+new project created. Sometimes you may need a special type of AppWizard project that
+isn't supported by the default AppWizard. If this special project is a one-time deal,
+you'll probably just create the project by hand. However, if you need to use this
+custom project type again and again, you might want to consider creating a custom
+AppWizard.</P>
+<P><A HREF="javascript:popUp('25uvc05.gif')"><B>FIG. 25.5</B></A><B> </B><I>All ActiveX
+controls are available through the Gallery.</I></P>
+
+<P>You can create a custom AppWizard in three ways: using the existing AppWizard
+steps as a starting point, using an existing project as a starting point, or starting
+completely from scratch. However, no matter what method you choose, creating a custom
+AppWizard can be a complicated task, requiring that you understand and be able to
+write script files by using the macros and commands that Visual C++ provides for
+this purpose.</P>
+<P>The following tackles the very simplest case first, creating an AppWizard to reproduce
+an existing project with a different name. Follow these steps:</P>
+<P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Create a project in the usual way. Call it <B>Original</B> and click
+	Finish on Step 1 to accept all the AppWizard defaults.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Edit the About box to resemble Figure 25.6.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('25uvc06.gif')"><B>FIG. 25.6</B></A><B> </B><I>Customize
+your About box.</I></P>
+
+<P><I></I>
+
+<DL>
+	<DD><B>3. </B>Choose File, New and click the Projects tab. Select Custom AppWizard
+	and enter <B>OrigWiz</B>, as shown in Figure 25.7. Click OK.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>The first of two custom AppWizard dialog boxes appears, as shown in
+	Figure 25.8. Select An Existing Project to base your wizard on the project you created
+	in steps 1 and 2. Do not edit the wizard's name. Click Next.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('24uvc07.gif')"><B>FIG. 25.7</B></A><B> </B><I>Create
+a custom AppWizard.</I></P>
+
+<P><A HREF="javascript:popUp('24uvc08.gif')"><B>FIG. 25.8</B></A><B> </B><I>Base
+your wizard on an existing project.</I></P>
+
+<P><I></I>
+
+<DL>
+	<DD><B>5. </B>The second custom AppWizard dialog box appears. Browse to the project
+	file for the Original project, Original.dsp. Click Finish.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>The New Project Information dialog box, shown in Figure 25.9, confirms
+	your choices. Click OK.
+	<P>
+</DL>
+
+<P>You are now working on the OrigWiz project, and in many cases you would add code
+at this point. Because this is an example, just build the project immediately.</P>
+<P>To use your custom AppWizard, choose File, New again and click the Projects tab.
+As shown in Figure 25.10, OrigWizard has been added to the list of choices on the
+left. Select it and enter <B>App3</B> for the name of the project. Click OK.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> When you compile the custom AppWizard, Developer Studio creates the
+	final files and stores them in your C:\Program Files\Microsoft Visual Studio\Common\MSDev98\
+	Template directory. The next time you choose to start a new project workspace, your
+	custom AppWizard will be listed in the project types. To remove the custom AppWizard,
+	delete the wizard's .awx and .pdb files from your C:\Program Files\Microsoft Visual
+	Studio\Common\MSDev98\Template directory.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><A HREF="javascript:popUp('24uvc09.gif')"><B>FIG. 25.9</B></A><B> </B><I>Your
+custom AppWizard creates copies of the Original project with different names.</I></P>
+
+<P><A HREF="javascript:popUp('24uvc10.gif')"><B>FIG. 25.10</B></A><B> </B><I>Your
+custom AppWizard has been added to the list of AppWizards.</I></P>
+
+<P>Figure 25.11 shows one of the tasks that you normally complete before you build
+the AppWizard: generating the text for the New Project Information dialog box. Click
+OK.</P>
+<P>Look at the classnames and the code--App3 looks like any of the projects created
+in this chapter that accept all the AppWizard defaults, but you didn't have to go
+through any dialog steps. Switch to ResourceView and edit IDD_ABOUTBOX. As Figure
+25.12 shows, it contains the extra text (based on Original 1.0) that you added, but
+the application name on the top line of the box has been correctly changed to App3.
+This is one smart wizard.</P>
+<P>When you build a wizard from an existing project, all the classes, resources,
+and code that you added will be incorporated in the new projects you generate with
+the wizard. It's a great time-saver.</P>
+<P><A HREF="javascript:popUp('24uvc11.gif')"><B>FIG. 25.11</B></A><B> </B><I>You
+have to write the text for the New Project Information dialog box.</I></P>
+
+<P><A HREF="javascript:popUp('24uvc12.gif')"><B>FIG. 25.12</B></A><B> </B><I>AppWizard
+copied your custom About box to the new project.</I></P>
+
+<P>You can also build custom AppWizards that present dialog boxes for you to fill
+out. Before you do that, you should be comfortable writing wizards that are not AppWizards,
+like the ones discussed in Chapter 12, &quot;Property Pages and Sheets.&quot; You
+should also have generated lots of different types of applications so that you have
+a feel for the sort of work AppWizard does. When you're ready, check the section
+in the online help titled &quot;Creating Custom AppWizards.&quot;</P>
+
+<P>This whole book demonstrates the value of using other people's designs, classes,
+code, controls, dialog boxes, and other project parts. This chapter shows two simple
+ways to arrange for other people (or you, in the future) to reuse your code, which
+benefits your customers or employer by saving significant development time. Your
+job will be more enjoyable when repetitive tasks, such as building a dialog box and
+associating it with a class, are taken care of, freeing you to do the fun stuff.</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch24/ch24.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch26/ch26.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+<BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

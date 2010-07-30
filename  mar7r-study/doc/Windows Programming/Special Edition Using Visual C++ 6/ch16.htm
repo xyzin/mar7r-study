@@ -1,0 +1,846 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 16 -- Building an Automation Server</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch15/ch15.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch17/ch17.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 16 -</H1>
+</CENTER>
+<CENTER>
+<H1>Building an Automation Server</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Designing ShowString Again</A>
+	<UL>
+		<LI><A HREF="#Heading2">AppWizard's Automation Boilerplate</A>
+		<LI><A HREF="#Heading3">Properties to Expose</A>
+		<LI><A HREF="#Heading4">The OnDraw() Function</A>
+		<LI><A HREF="#Heading5">Showing the Window</A>
+	</UL>
+	<LI><A HREF="#Heading6">Building a Controller Application in Visual Basic</A>
+	<LI><A HREF="#Heading7">Type Libraries and ActiveX Internals</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Designing ShowString Again</H2>
+<P>Automation, formerly called OLE Automation and then ActiveX Automation, is about
+writing code that other programs can call. Other programs call your code directly,
+not in the insulated manner of a DLL. The jargon is that your code exposes <I>methods</I>
+(functions) and <I>properties</I> (variables) to other applications. The good part
+is that if your application is an Automation server, you don't have to create a macro
+language for your application; you only have to make hooks for a more universal macro
+language, Visual Basic for Applications, to grab on to.</P>
+<P>All Microsoft Office applications are Automation servers, so you may have seen
+for yourself what a nice feature it is for a program to expose its methods and properties
+in this way. What's more, Developer Studio itself is an Automation server, easy to
+control with VBScript.</P>
+<P>If you've been building the sample applications throughout this book, you can
+probably design ShowString in your sleep by now, but it's time to do it once again.
+This time, ShowString won't have a Tools, Options menu; instead, other programs will
+directly set the string and other display options. The member variables in the document
+will be the same, and the code in OnDraw() will be the same as in all the other implementations
+of ShowString.</P>
+<P>
+<H3><A NAME="Heading2"></A>AppWizard's Automation Boilerplate</H3>
+<P>To build the Automation server version of ShowString, first use AppWizard to create
+an empty shell in a different directory from your other versions of ShowString. Make
+almost exactly the same AppWizard choices as before: Call it ShowString and then
+choose an MDI application and no database support. In AppWizard's Step 3, choose
+No Compound Document Support (the None radio buttons at the top of the dialog box)
+but turn on support for Automation. Continue through the AppWizard process, selecting
+a docking toolbar, status bar, printing and print preview, context-sensitive help,
+and 3D controls. Finally, select source file comments and a shared DLL.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Even though the technology is now called ActiveX, and ActiveX Automation
+	is starting to be known simply as Automation, the AppWizard dialog boxes refer to
+	Compound Document Support. As well, many of the classes used throughout this chapter
+	have Ole in their names, and comments refer to OLE. Although Microsoft has changed
+	the name of the technology, it hasn't propagated that change throughout Visual C++
+	yet. You'll have to live with these contradictions until the next release of Visual
+	C++. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>There are just a few differences in this application from the do-nothing application
+without Automation support, primarily in the application object and the document.</P>
+<P><B><I>CShowStringApp&#160;&#160;</I></B>The application object, CShowStringApp,
+has a number of changes. In the source file, just before InitInstance(), the code
+shown in Listing 16.1 has been added:</P>
+<P>
+<H4>Listing 16.1&#160;&#160;ShowString.cpp--CLSID</H4>
+<PRE>// This identifier was generated to be statistically unique for your app.
+// You may change it if you prefer to choose a specific identifier.
+// {61C76C05-70EA-11D0-9AFF-0080C81A397C}
+static const CLSID clsid =
+{ 0x61c76c05, 0x70ea, 0x11d0, { 0x9a, 0xff, 0x0, 0x80, 0xc8,
+</PRE>
+<PRE>    0x1a, 0x39, 0x7c } };
+</PRE>
+<P>The numbers will be different in your code. This class ID identifies your Automation
+application.</P>
+<P>CShowStringApp::InitInstance() has several changes. The lines of code in Listing
+16.2 initialize the ActiveX (OLE) libraries.</P>
+<P>
+<H4>Listing 16.2&#160;&#160;ShowString.cpp--Initializing Libraries</H4>
+<PRE>// Initialize OLE libraries
+if (!AfxOleInit())
+{
+     AfxMessageBox(IDP_OLE_INIT_FAILED);
+     return FALSE;
+</PRE>
+<PRE>}
+</PRE>
+<P>As with the server application of Chapter 15, &quot;Building an ActiveX Server
+Application,&quot; InitInstance() goes on to connect the document template to the
+COleTemplateServer after the document template is initialized:</P>
+<P>
+<PRE>m_server.ConnectTemplate(clsid, pDocTemplate, FALSE);
+</PRE>
+<P>Then InitInstance() checks whether the server is being launched as an Automation
+server or to edit an embedded object. If so, there's no need to display the main
+window, so the function returns early, as shown in Listing 16.3.</P>
+<P>
+<H4>Listing 16.3&#160;&#160;ShowString.cpp--How the App Was Launched</H4>
+<PRE>// Check to see if launched as OLE server
+if (cmdInfo.m_bRunEmbedded || cmdInfo.m_bRunAutomated)
+{
+     // Application was run with /Embedding or /Automation.  Don't show the
+     //  main window in this case.
+     return TRUE;
+}
+// When a server application is launched stand-alone, it is a good idea
+//  to update the system registry in case it has been damaged.
+m_server.UpdateRegistry(OAT_DISPATCH_OBJECT);
+</PRE>
+<PRE>COleObjectFactory::UpdateRegistryAll();
+</PRE>
+<P>If ShowString is being run as a standalone application, the code in Listing 16.3
+updates the Registry as discussed in Chapter 15.</P>
+<P><B><I>CShowStringDoc&#160;&#160;</I></B>The document class, CShowStringDoc, still
+inherits from CDocument rather than from any OLE document class, but that's where
+the similarities to the old non-OLE CShowStringDoc end. The first block of new code
+in ShowStringDoc.cpp is right after the message map (see Listing 16.4).</P>
+<P>
+<H4>Listing 16.4&#160;&#160;ShowStringDoc.cpp--Dispatch Map</H4>
+<PRE>BEGIN_DISPATCH_MAP(CShowStringDoc, CDocument)
+     //{{AFX_DISPATCH_MAP(CShowStringDoc)
+          // NOTE - the ClassWizard will add and remove mapping macros here.
+          //      DO NOT EDIT what you see in these blocks of generated code!
+     //}}AFX_DISPATCH_MAP
+</PRE>
+<PRE>END_DISPATCH_MAP()
+</PRE>
+<P>This is an empty dispatch map. A <I>dispatch map </I>is like a message map in
+that it maps events in the real world into function calls within this C++ class.
+When you expose methods and properties of this document with ClassWizard, the dispatch
+map will be updated.</P>
+<P>After the dispatch map is another unique identifier, the IID (interface identifier).
+As Listing 16.5 shows, the IID is added as a static member, like the CLSID.</P>
+<P>
+<H4>Listing 16.5&#160;&#160;ShowStringDoc.cpp--IID</H4>
+<PRE>// Note: we add support for IID_IShowString to support typesafe binding
+//  from VBA.  This IID must match the GUID that is attached to the
+//  dispinterface in the .ODL file.
+// {61C76C07-70EA-11D0-9AFF-0080C81A397C}
+static const IID IID_IShowString =
+{ 0x61c76c07, 0x70ea, 0x11d0, { 0x9a, 0xff, 0x0, 0x80,
+</PRE>
+<PRE>    0xc8, 0x1a, 0x39, 0x7c } };
+</PRE>
+<P>Then the interface map looks like this:</P>
+<P>
+<PRE>BEGIN_INTERFACE_MAP(CShowStringDoc, CDocument)
+     INTERFACE_PART(CShowStringDoc, IID_IShowSt, Dispatch)
+END_INTERFACE_MAP()
+</PRE>
+<P>An <I>interface map </I>hides COM functions such as QueryInterface() from you,
+the programmer, and, like a message map, enables you to think at a more abstract
+level. ShowString won't have multiple entries in the interface map, but many applications
+do. ClassWizard manages entries in the interface map for you.</P>
+<P>The document constructor has some setting up to do. The AppWizard code is in Listing
+16.6.</P>
+<P>
+<H4>Listing 16.6&#160;&#160;ShowStringDoc.cpp--Constructor</H4>
+<PRE>CShowStringDoc::CShowStringDoc()
+{
+     // TODO: add one-time construction code here
+     EnableAutomation();
+     AfxOleLockApp();
+</PRE>
+<PRE>}
+</PRE>
+<P>EnableAutomation() does just what its name suggests--enables Automation for this
+document. AfxOleLockApp() is used to ensure that an application isn't closed while
+one of its documents is still in use elsewhere. Imagine that a user has two applications
+open that use ShowString objects. When the first application is closed, ShowString
+shouldn't be closed because it's needed by the other application. ActiveX technology
+implements this by keeping a count, within the framework, of the number of active
+objects. AfxOleLockApp() increases this count. If it's nonzero when users finish
+using a server application, the application is hidden but not actually closed.</P>
+<P>It shouldn't be surprising, then, to see the destructor for ShowString's document:</P>
+<P>
+<PRE>CShowStringDoc::~CShowStringDoc()
+{
+     AfxOleUnlockApp();
+}
+</PRE>
+<P>AfxOleUnlockApp() decreases the count of active objects so that eventually ShowString
+can be closed.</P>
+<P>
+<H3><A NAME="Heading3"></A>Properties to Expose</H3>
+<P>At this point, you have an Automation server that doesn't expose any methods or
+properties. Also, the four member variables of the document that have been in all
+the previous versions of ShowString haven't been added to this version. These member
+variables are</P>
+
+<UL>
+	<LI>string--The string to be shown
+	<P>
+	<LI>color--0 for black, 1 for red, and 2 for green
+	<P>
+	<LI>horizcenter--TRUE if the string should be centered horizontally
+	<P>
+	<LI>vertcenter--TRUE if the string should be centered vertically
+</UL>
+
+<P>These variables will be added as Automation properties, so you won't type their
+names into the class definition for CShowStringDoc. Bring up ClassWizard by clicking
+its toolbar button or choosing View, ClassWizard. Click the Automation tab (see Figure
+16.1) to add properties and methods. Make sure that CShowStringDoc is selected in
+the Class Name box.</P>
+<P>The first step in restoring the old ShowString functionality is to add member
+variables to the document class that will be exposed as properties of the Automation
+server. There are two ways to expose properties: as a variable and with functions.
+Exposing a property as a variable is like declaring a public member variable of a
+C++ class; other applications can look at the value of the property and change it
+directly. A notification function within your server is called when the variable
+is changed from the outside. Exposing with Get and Set functions is like implementing
+a private member variable with public access functions. Other applications appear
+to access the variable directly, but the framework arranges for a call to your functions
+to Get and Set the property. Your Get may make sure that the object is in a valid
+state (for example, that a sorted list is now sorted or that a total has been calculated)
+before returning the property value. Your Set function may do error checking (validation)
+or may calculate other variables that depend on the property that the outside application
+is changing. To make a property read-only, you add it as a Get/Set function property
+and then don't implement a Set function.</P>
+<P><A HREF="javascript:popUp('16uvc01.gif')"><B>FIG. 16.1</B></A><B> </B><I>ClassWizard's
+Automation page handles most of the work of building an Automation server.</I></P>
+<P>For the purposes of this chapter, you'll add the two centering flags to the CShowStringDoc
+class with Get and Set functions and add the string and color properties as direct-access
+properties. To do so, follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Make sure that CShowStringDoc is the selected class, and then click
+	the Add Property button to bring up the Add Property dialog box.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Type <B>String</B> in the External Name box. ClassWizard types along
+	with you, filling in the Variable Name and Notification Function boxes for you.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Choose CString from the drop-down list box for Type. The dialog box
+	should resemble Figure 16.2.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Click OK, click Add Property again, and then add Color as a direct-access
+	property (see Figure 16.3). Use short as the data type.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Click OK, click Add Property again, and then add HorizCenter.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Choose BOOL for the type and then select the Get/Set Methods radio
+	button. The Variable Name and Notification Function boxes are replaced by Get Function
+	and Set Function, already filled in, as shown in Figure 16.4. (If the type changes
+	from BOOL, choose BOOL again.) Click OK.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Add VertCenter in the same way that you added HorizCenter.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('16uvc02.gif')"><B>FIG. 16.2</B></A><B> </B><I>Add String
+as a direct-access property.</I></P>
+<P><A HREF="javascript:popUp('16uvc03.gif')"><B>FIG. 16.3</B></A><B> </B><I>Add Color
+as a direct-access property.</I></P>
+<P><A HREF="javascript:popUp('16uvc04.gif')"><B>FIG. 16.4</B></A><B> </B><I>Add HorizCenter
+as a Get/Set method property.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<BR>
+	<strong>CAUTION:</strong><B> </B>After you click OK to add a property, you can't change
+	the type, external name, or other properties of the property. You have to delete
+	it and then add one that has the new type, or external name, or whatever. Always
+	look over the Add Property dialog box before clicking OK. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Figure 16.5 shows the ClassWizard summary of exposed properties and methods. The
+details of each property are shown in the Implementation box below the list of properties.
+In Figure 16.5, VertCenter is highlighted, and the Implementation box reminds you
+that VertCenter has a Get function and a Set function, showing their declarations.
+Click OK to close ClassWizard.</P>
+<P><A HREF="javascript:popUp('16uvc05.gif')"><B>FIG. 16.5</B></A><B> </B><I>ClassWizard
+provides a summary of the properties you've added.</I></P>
+<P>It should come as no surprise that as a result of these additions, ClassWizard
+has changed the header and source files for CShowStringDoc. Listing 16.7 shows the
+new dispatch map in the header file.</P>
+<P>
+<H4>Listing 16.7&#160;&#160;ShowStringDoc.h--Dispatch Map</H4>
+<PRE>//{{AFX_DISPATCH(CShowStringDoc)
+CString m_string;
+afx_msg void OnStringChanged();
+short m_color;
+afx_msg void OnColorChanged();
+afx_msg BOOL GetHorizCenter();
+afx_msg void SetHorizCenter(BOOL bNewValue);
+afx_msg BOOL GetVertCenter();
+afx_msg void SetVertCenter(BOOL bNewValue);
+//}}AFX_DISPATCH
+</PRE>
+<PRE>DECLARE_DISPATCH_MAP()
+</PRE>
+<P>Two new member variables have been added: m_string and m_color.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> It's natural to wonder whether these are actually public member variables;
+	they aren't. Just above this dispatch map is this line:</P>
+	<PRE>DECLARE_MESSAGE_MAP()</PRE>
+	<P>That macro, when it expands, declares a number of protected variables. Because
+	these declarations are immediately afterward, they are protected member variables
+	and protected functions. They're accessed in just the same way that protected message-catching
+	functions are--they're called by a member function hidden in the class that directs
+	traffic by using these maps. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>A block of code has been added in the source file, but it's boring, as you can
+see by looking at Listing 16.8.</P>
+<P>
+<H4>Listing 16.8&#160;&#160;ShowStringDoc.cpp--Notification, Get, and Set Functions</H4>
+<PRE>/////////////////////////////////////////////////////////
+// CShowStringDoc commands
+void CShowStringDoc::OnColorChanged()
+{
+     // TODO: Add notification handler code
+}
+void CShowStringDoc::OnStringChanged()
+{
+     // TODO: Add notification handler code
+}
+BOOL CShowStringDoc::GetHorizCenter()
+{
+     // TODO: Add your property handler here
+     return TRUE;
+}
+void CShowStringDoc::SetHorizCenter(BOOL bNewValue)
+{
+     // TODO: Add your property handler here
+}
+BOOL CShowStringDoc::GetVertCenter()
+{
+     // TODO: Add your property handler here
+     return TRUE;
+}
+void CShowStringDoc::SetVertCenter(BOOL bNewValue)
+{
+     // TODO: Add your property handler here
+</PRE>
+<PRE>}
+</PRE>
+<P>The class still doesn't have member variables for the centering flags. (You might
+have decided to implement these in some other way than as two simple variables, so
+ClassWizard doesn't even try to guess what to add.) Add them by hand to the header
+file, ShowStringDoc.h, as private member variables:</P>
+<P>
+<PRE>// Attributes
+private:
+     BOOL m_horizcenter;
+     BOOL m_vertcenter;
+</PRE>
+<P>Now you can write their Get and Set functions; Listing 16.9 shows the code.</P>
+<P>
+<H4>Listing 16.9&#160;&#160;ShowStringDoc.cpp--Get and Set Functions for the Centering
+<BR>
+Flags</H4>
+<PRE>BOOL CShowStringDoc::GetHorizCenter()
+{
+     return m_horizcenter;
+}
+void CShowStringDoc::SetHorizCenter(BOOL bNewValue)
+{
+     m_horizcenter = bNewValue;
+}
+BOOL CShowStringDoc::GetVertCenter()
+{
+     return m_vertcenter;
+}
+void CShowStringDoc::SetVertCenter(BOOL bNewValue)
+{
+     m_vertcenter = bNewValue;
+</PRE>
+<PRE>}
+</PRE>
+<H3><A NAME="Heading4"></A>The OnDraw() Function</H3>
+<P>Restoring the member variables takes you halfway to the old functionality of ShowString.
+Changing the view's OnDraw() function will take you most of the rest of the way.</P>
+<P>To write a version of OnDraw() that shows a string properly, you have a fair amount
+of background work to do. Luckily, you can open an old version of ShowString from
+your own work in Chapter 8, &quot;Building a Complete Application: ShowString,&quot;
+and paste in the following bits of code. (If any of this code is unfamiliar to you,
+Chapter 8 explains it fully.) First, CShowStringDoc::OnNewDocument() in Listing 16.10
+should initialize the member variables.</P>
+<P>
+<H4>Listing 16.10&#160;&#160;ShowStringDoc.cpp--CShowStringDoc::OnNewDocument()</H4>
+<PRE>BOOL CShowStringDoc::OnNewDocument()
+{
+     if (!CDocument::OnNewDocument())
+          return FALSE;
+     m_string = &quot;Hello, world!&quot;;
+     m_color = 0;     //black
+     m_horizcenter = TRUE;
+     m_vertcenter = TRUE;
+     return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>Next, edit the document's Serialize function. Listing 16.11 shows the new code.</P>
+<P>
+<H4>Listing 16.11&#160;&#160;ShowStringDoc.cpp--CShowStringDoc::Serialize()</H4>
+<PRE>void CShowStringDoc::Serialize(CArchive&amp; ar)
+{
+     if (ar.IsStoring())
+     {
+          ar &lt;&lt; m_string;
+          ar &lt;&lt; m_color;
+          ar &lt;&lt; m_horizcenter;
+          ar &lt;&lt; m_vertcenter;
+     }
+     else
+     {
+          ar &gt;&gt; m_string;
+          ar &gt;&gt; m_color;
+          ar &gt;&gt; m_horizcenter;
+          ar &gt;&gt; m_vertcenter;
+     }
+</PRE>
+<PRE>}
+</PRE>
+<P>Finally, the view's OnDraw() function in Listing 16.12 actually shows the string.</P>
+<P>
+<H4>Listing 16.12&#160;&#160;ShowStringView.cpp--CShowStringView::OnDraw()</H4>
+<PRE>void CShowStringView::OnDraw(CDC* pDC)
+{
+     CShowStringDoc* pDoc = GetDocument();
+     ASSERT_VALID(pDoc);
+     COLORREF oldcolor;
+     switch (pDoc-&gt;GetColor())
+     {
+     case 0:
+          oldcolor = pDC-&gt;SetTextColor(RGB(0,0,0)); //black
+          break;
+     case 1:
+          oldcolor = pDC-&gt;SetTextColor(RGB(0xFF,0,0)); //red
+          break;
+     case 2:
+          oldcolor = pDC-&gt;SetTextColor(RGB(0,0xFF,0)); //green
+          break;
+     }
+     int DTflags = 0;
+     if (pDoc-&gt;GetHorizcenter())
+     {
+          DTflags |= DT_CENTER;
+     }
+     if (pDoc-&gt;GetVertcenter())
+     {
+          DTflags |= (DT_VCENTER|DT_SINGLELINE);
+     }
+     CRect rect;
+     GetClientRect(&amp;rect);
+     pDC-&gt;DrawText(pDoc-&gt;GetString(), &amp;rect, DTflags);
+     pDC-&gt;SetTextColor(oldcolor);
+</PRE>
+<PRE>}
+</PRE>
+<P>When you added m_string, m_color, m_horizcenter, and m_vertcenter to the document
+with ClassWizard, they were added as protected member variables. This view code needs
+access to them. As you can see, the view calls public functions to get to these member
+variables of the document.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> You could have chosen instead to make the view a friend to the document
+	so that it could access the member variables directly, but that would give view functions
+	the capability to use and change all private and protected member variables of the
+	document. This more limited access is more appropriate and better preserves encapsulation.
+	Encapsulation and other object-oriented concepts are discussed in Appendix A, &quot;
+	C++ Review and Object-Oriented Concepts.&quot; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Several functions already in the document class access these variables, but they're
+protected functions for use by ActiveX. The four public functions you'll add won't
+be able to use those names, because they're taken, and will have to have not-so-good
+names. Add them inline, as shown in Listing 16.13, to ShowStringDoc.h.</P>
+<P>
+<H4>Listing 16.13&#160;&#160;ShowStringDoc.h--Public Access Functions</H4>
+<PRE>public:
+     CString GetDocString() {return m_string;}
+     int     GetDocColor() {return m_color;}
+     BOOL GetHorizcenter() {return m_horizcenter;}
+</PRE>
+<PRE>     BOOL GetVertcenter() {return m_vertcenter;}
+</PRE>
+<P>In CShowStringView::OnDraw(), change the code that calls GetColor() to call GetDocColor()
+and then change the code that calls GetString() to call GetDocString(). Build the
+project to check for any typing mistakes or forgotten changes. Although it may be
+tempting to run ShowString now, it won't do what you expect until you make a few
+more changes.</P>
+<P>
+<H3><A NAME="Heading5"></A>Showing the Window</H3>
+<P>By default, Automation servers don't have a main window. Remember the little snippet
+from CShowStringApp::InitInstance() in Listing 16.14.</P>
+<P>
+<H4>Listing 16.14&#160;&#160;ShowString.cpp--How the App Was Launched</H4>
+<PRE>// Check to see if launched as OLE server
+if (cmdInfo.m_bRunEmbedded || cmdInfo.m_bRunAutomated)
+{
+     // Application was run with /Embedding or /Automation.  Don't show the
+     //  main window in this case.
+     return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>This code returns before showing the main window. Although you could remove this
+test so that ShowString always shows its window, it's more common to add a ShowWindow()
+method for the controller application to call. You'll also need to add a RefreshWindow()
+method that updates the view after a variable is changed; ClassWizard makes it simple
+to add these functions. Bring up ClassWizard, click the Automation tab, make sure
+that CShowStringDoc is still the selected class, and then click Add Method. Fill
+in the External name as <B>ShowWindow</B>. ClassWizard fills in the internal name
+for you, and there's no need to change it. Choose void from the Return Type drop-down
+list box. Figure 16.6 shows the dialog box after it's filled in.</P>
+<P><A HREF="javascript:popUp('16uvc06.gif')"><B>FIG. 16.6</B></A><B> </B><I>ClassWizard
+makes it simple to add a ShowWindow() method.</I></P>
+<P>Click OK the dialog box, and ShowWindow() appears in the middle of the list of
+properties, which turns out to be a list of properties and methods in alphabetical
+order. The <I>C</I> next to the properties reminds you that these properties are
+custom properties. The <I>M </I>next to the methods reminds you that these are methods.
+With ShowWindow() highlighted, click Edit Code and then type the function, as shown
+in Listing 16.15.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B>See</B> &quot;Displaying the Current Value,&quot; <A HREF="../ch17/ch17.htm"><B>ch.
+	17</B></A> 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H4>Listing 16.15&#160;&#160;ShowStringDoc.cpp--CShowStringDoc::ShowWindow()</H4>
+<PRE>void CShowStringDoc::ShowWindow()
+{
+    POSITION pos = GetFirstViewPosition();
+    CView* pView = GetNextView(pos);
+    if (pView != NULL)
+    {
+        CFrameWnd* pFrameWnd = pView-&gt;GetParentFrame();
+        pFrameWnd-&gt;ActivateFrame(SW_SHOW);
+        pFrameWnd = pFrameWnd-&gt;GetParentFrame();
+        if (pFrameWnd != NULL)
+            pFrameWnd-&gt;ActivateFrame(SW_SHOW);
+    }
+</PRE>
+<PRE>}
+</PRE>
+<P>This code activates the view and asks for it to be shown. Bring up ClassWizard
+again, click Add Method, and add RefreshWindow(), returning void. Click OK and then
+Edit Code. The code for RefreshWindow(), shown in Listing 16.16, is even simpler.</P>
+<P>
+<H4>Listing 16.16&#160;&#160;ShowStringDoc.cpp--CShowStringDoc::RefreshWindow()</H4>
+<PRE>void CShowStringDoc::RefreshWindow()
+{
+     UpdateAllViews(NULL);
+     SetModifiedFlag();
+</PRE>
+<PRE>}
+</PRE>
+<P>This arranges for the view (now that it's active) and its parent frame to be redrawn.
+Because a change to the document is almost certainly the reason for the redraw, this
+is a handy place to put the call to SetModifiedFlag(); however, if you prefer, you
+can put it in each Set function and the notification functions for the direct-access
+properties. You'll add a call to RefreshWindow() to each of those functions now--for
+example, SetHorizCenter():</P>
+<P>
+<PRE>void CShowStringDoc::SetHorizCenter(BOOL bNewValue)
+{
+     m_horizcenter = bNewValue;
+     RefreshWindow();
+}
+</PRE>
+<P>And OnColorChanged() looks like this:</P>
+<P>
+<PRE>void CShowStringDoc::OnColorChanged()
+{
+     RefreshWindow();
+}
+</PRE>
+<P>Add the same RefreshWindow() call to SetVertCenter() and OnStringChanged(). Now
+you're ready to build and test. Build the project and correct any typing errors.
+Run ShowString as a standalone application to register it and to test your drawing
+code. You can't change the string, color, or centering as you could with older versions
+of ShowString because this version doesn't implement the Tools, Options menu item
+and its dialog box. The controller application will do that for this version.</P>
+<P>
+<H2><A NAME="Heading6"></A>Building a Controller Application in Visual Basic</H2>
+<P>This chapter has mentioned a controller application several times, and you may
+have wondered where it will come from. You'll put it together in Visual Basic. Figure
+16.7 shows the Visual Basic interface.</P>
+<P><A HREF="javascript:popUp('16uvc07.gif')"><B>FIG. 16.7</B></A><B> </B><I>Visual
+Basic makes Automation controller applications very quickly.</I></P>
+<P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If you don't have Visual Basic but Visual C++ version 4.x or earlier,
+	you can use DispTest, a watered-down version of Visual Basic that once came with
+	Visual C++. It was never added to the Start menu, but you can run DISPTEST.EXE from
+	the C:\MSDEV\BIN folder or from your old Visual C++ CD-ROM's \MSDEV\BIN folder. If
+	you've written VBA macros in Excel and have a copy of Excel, you can use that, too.
+	For testing OLE Automation servers, it doesn't matter which you choose. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>To build a controller application for the ShowString Automation server, start
+by running Visual Basic. Create and empty project by choosing File, New, and double-clicking
+Standard EXE. In the window at the upper-right labeled Project1, click the View Code
+button. Choose Form from the left drop-down list box in the new window that appears;
+the Form_Load() subroutine is displayed. Enter the code in Listing 16.17 into that
+subroutine.</P>
+<P>
+<H4>Listing 16.17&#160;&#160;Form1.frm--Visual Basic Code</H4>
+<PRE>Private Sub Form_Load ()
+   Set ShowTest = CreateObject(&quot;ShowString.Document&quot;)
+   ShowTest.ShowWindow
+   ShowTest.HorizCenter = False
+   ShowTest.Color =
+   ShowTest.String = &quot;Hello from VB&quot;
+   Set ShowTest = Nothing
+</PRE>
+<PRE>End Sub
+</PRE>
+<P>Choose (General) from the left drop-down list box and then enter this line of
+code:</P>
+<P>
+<PRE>Dim ShowTest As Object
+</PRE>
+<P>For those of you who don't read Visual Basic, this code will be easier to understand
+if you execute it one line at a time. Choose Debug, Step Into to execute the first
+line of code. Then repeatedly press F8 to move through the routine. (Wait after each
+press until the cursor is back to normal.) The line in the general code sets up an
+object called ShowTest. When the form is loaded (which is whenever you run this little
+program), an instance of the ShowString object is created. The next line calls the
+ShowWindow method to display the main window onscreen. Whenever the debugger pauses,
+the line of code that will run next is highlighted in yellow. Also notice that there
+is an arrow beside the highlighted line to further mark it. You will see something
+like Figure 16.8 with the default ShowString behavior.</P>
+<P><A HREF="javascript:popUp('16uvc08.gif')"><B>FIG. 16.8</B></A><B> </B><I>The ShowWindow
+method displays the main ShowString window.</I></P>
+<P>Press F8 again to run the line that turns off horizontal centering. Notice that
+you don't call the function SetHorizCenter. You exposed HorizCenter as a property
+of the OLE Automation server, and from Visual Basic you access it as a property.
+The difference is that the C++ framework code calls SetHorizCenter to make the change,
+rather than just make the change and then call a notification function to tell you
+that it was changed. After this line executes, your screen will resemble Figure 16.9
+because the SetHorizCenter method calls RefreshWindow() to immediately redraw the
+screen.</P>
+<P><A HREF="javascript:popUp('16uvc09.gif')"><B>FIG. 16.9</B></A><B> </B><I>The Visual
+Basic program has turned off centering.</I></P>
+<P>As you continue through this program, pressing F8 to move a step at a time, the
+string will turn red and then change to Hello from<I> </I>VB. Notice that the change
+to these directly exposed properties looks no different than the change to the Get/Set
+method property, HorizCenter. When the program finishes, the window goes away. You've
+successfully controlled your Automation server from Visual Basic.</P>
+<P>
+<H2><A NAME="Heading7"></A>Type Libraries and ActiveX Internals</H2>
+<P>Many programmers are intimidated by ActiveX, and the last thing they want is to
+know what's happening under the hood. There's nothing wrong with that attitude at
+all. It's quite object-oriented, really, to trust the already written ActiveX framework
+to handle the black magic of translating ShowTest.HorizCenter = False into a call
+to CShowStringDoc::SetHorizCenter(). If you want to know how that &quot;magic&quot;
+happens or what to do if it doesn't, you need to add one more piece to the puzzle.
+You've already seen the dispatch map for ShowString, but you haven't seen the <I>type
+library</I>. It's not meant for humans to read, but it is for ActiveX and the Registry.
+It's generated for you as part of a normal build from your Object Definition Language
+(ODL) file. This file was generated by AppWizard and is maintained by ClassWizard.</P>
+<P>Perhaps you've noticed, as you built this application, a new entry in the ClassView
+pane. Figure 16.10 shows this entry expanded--it contains all the properties and
+methods exposed in the IShowString interface of your Automation server. If you right-click
+IShowString in this list, you can use the shortcut menu to add methods or properties.
+If you double-click any properties or methods, the .ODL file is opened for you to
+view. Listing 16.18 shows ShowString.odl.</P>
+<P><A HREF="javascript:popUp('16uvc10.gif')"><B>FIG. 16.10</B></A><B> </B><I>Automation
+servers have an entry in the ClassView for each of their interfaces.</I></P>
+<P>
+<H4>Listing 16.18&#160;&#160;ShowString.odl--ShowString Type Library</H4>
+<PRE>// ShowString.odl : type library source for ShowString.exe
+// This file will be processed by the MIDL compiler to produce the
+// type library (ShowString.tlb).
+[ uuid(61C76C06-70EA-11D0-9AFF-0080C81A397C), version(1.0) ]
+library ShowString
+{
+     importlib(&quot;stdole32.tlb&quot;);
+     //  Primary dispatch interface for CShowStringDoc
+     [ uuid(61C76C07-70EA-11D0-9AFF-0080C81A397C) ]
+     dispinterface IShowString
+     {
+          properties:
+               // NOTE - ClassWizard will maintain property information here.
+               //    Use extreme caution when editing this section.
+               //{{AFX_ODL_PROP(CShowStringDoc)
+               [id(1)] BSTR String;
+               [id(2)] short Color;
+               [id(3)] boolean HorizCenter;
+               [id(4)] boolean VertCenter;
+               //}}AFX_ODL_PROP
+          methods:
+               // NOTE - ClassWizard will maintain method information here.
+               //    Use extreme caution when editing this section.
+               //{{AFX_ODL_METHOD(CShowStringDoc)
+               [id(5)] void ShowWindow();
+               [id(6)] void RefreshWindow();
+               //}}AFX_ODL_METHOD
+     };
+     //  Class information for CShowStringDoc
+     [ uuid(61C76C05-70EA-11D0-9AFF-0080C81A397C) ]
+     coclass Document
+     {
+          [default] dispinterface IShowString;
+     };
+     //{{AFX_APPEND_ODL}}
+     //}}AFX_APPEND_ODL}}
+</PRE>
+<PRE>};
+</PRE>
+<P>This explains why Visual Basic just thought of all four properties as properties;
+that's how they're listed in this .ODL file. The two methods are here, too, in the
+methods section. You passed &quot;ShowString.Document&quot; to CreateObject() because
+there is a coclass Document section here. It points to a dispatch interface (dispinterface)
+called IShowString. Here's the interface map from ShowStringDoc.cpp:</P>
+<P>
+<PRE>BEGIN_INTERFACE_MAP(CShowStringDoc, CDocument)
+     INTERFACE_PART(CShowStringDoc, IID_IShowString, Dispatch)
+END_INTERFACE_MAP()
+</PRE>
+<P>A call to CreateObject(&quot;ShowString.Document&quot;) leads to the coclass section
+of the .ODL file, which points to IShowString. The interface map points from IShowString
+to CShowStringDoc, which has a dispatch map that connects the properties and methods
+in the outside world to C++ code. You can see that editing any of these sections
+by hand could have disastrous results. Trust the wizards to do this for you.</P>
+<P>In this chapter, you built an Automation server and controlled it from Visual
+Basic. Automation servers are far more powerful than older ways of application interaction,
+but your server doesn't have any user interaction. If the Visual Basic program wanted
+to enable users to choose the color, that would have to be built into the Visual
+Basic program. The next logical step is to allow the little embedded object to react
+to user events such as clicks and drags and to report to the controller program what
+has happened. That's what ActiveX controls do, as you'll see in the next chapter.</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch15/ch15.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch17/ch17.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

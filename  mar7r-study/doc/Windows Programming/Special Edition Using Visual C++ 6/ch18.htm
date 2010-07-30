@@ -1,0 +1,809 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 18 -- Sockets, MAPI, and the Internet</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch17/ch17.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch19/ch19.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 18 -</H1>
+</CENTER>
+<CENTER>
+<H1>Sockets, MAPI, and the Internet</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Using Windows Sockets</A>
+	<UL>
+		<LI><A HREF="#Heading2">Winsock in MFC</A>
+	</UL>
+	<LI><A HREF="#Heading3">Using the Messaging API (MAPI)</A>
+	<UL>
+		<LI><A HREF="#Heading4">What Is MAPI?</A>
+		<LI><A HREF="#Heading5">Win95 Logo Requirements</A>
+		<LI><A HREF="#Heading6">Advanced Use of MAPI</A>
+	</UL>
+	<LI><A HREF="#Heading7">Using the WinInet Classes</A>
+	<LI><A HREF="#Heading8">Using Internet Server API (ISAPI) Classes</A>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Using Windows Sockets</H2>
+<P>There are a number of ways your applications can communicate with other applications
+through a network like the Internet. This chapter introduces you to the concepts
+involved with these programming techniques. Subsequent chapters cover some of these
+concepts in more detail.</P>
+<P>Before the Windows operating system even existed, the Internet existed. As it
+grew, it became the largest TCP/IP network in the world. The early sites were UNIX
+machines, and a set of conventions called Berkeley sockets became the standard for
+TCP/IP communication between UNIX machines on the Internet. Other operating systems
+implemented TCP/IP communications, too, which contributed immensely to the Internet's
+growth. On those operating systems, things were becoming messy, with a wide variety
+of proprietary implementations of TCP/IP. Then a group of more than 20 vendors banded
+together to create the Winsock specification.</P>
+<P>The Winsock specification defines the interface to a DLL, typically called WINSOCK.DLL
+or WSOCK32.DLL. Vendors write the code for the functions themselves. Applications
+can call the functions, confident that each function's name, parameter meaning, and
+final behavior are the same no matter which DLL is installed on the machine. For
+example, the DLLs included with Windows 95 and Windows NT are not the same at all,
+but a 32-bit Winsock application can run unchanged on a Windows 95 or Windows NT
+machine, calling the Winsock functions in the appropriate DLL.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Winsock isn't confined to TCP/IP communication. IPX/SPX support is
+	the second protocol supported, and there will be others. For more information, check
+	the Winsock specification itself. The Stardust Labs Winsock Resource Page at <A target="_new" HREF="http://www.stardust.com/wsresource/"><B>http://www.stardust.com/wsresource/</B></A>
+	is a great starting point.&#160;n 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>An important concept in sockets programming is a socket's port. Every Internet
+site has a numeric address called an <I>IP address,</I> typically written as four
+numbers separated by dots: <B>198.53.145.3</B>, for example. Programs running on
+that machine are all willing to talk, by using sockets, to other machines. If a request
+arrives at <B>198.53.145.3</B>, which program should handle it?</P>
+<P>Requests arrive at the machine, carrying a <I>port number--</I>a number from 1,024
+and up that indicates which program the request is intended for. Some port numbers
+are reserved for standard use; for example, Web servers traditionally use port 80
+to listen for Web document requests from client programs like Netscape Navigator.</P>
+<P>Most socket work is <I>connection-based</I>: Two programs form a connection with
+a socket at each end and then send and receive data along the connection. Some applications
+prefer to send the data without a connection, but there is no guarantee that this
+data will arrive. The classic example is a time server that regularly sends out the
+current time to every machine near it without waiting until it is asked. The delay
+in establishing a connection might make the time sent through the connection outdated,
+so it makes sense in this case to use a connectionless approach.</P>
+<P>
+<H3><A NAME="Heading2"></A>Winsock in MFC</H3>
+<P>At first, sockets programming in Visual C++ meant making API calls into the DLL.
+Many developers built socket classes to encapsulate these calls. Visual C++ 2.1 introduced
+two new classes: CAsyncSocket and CSocket (which inherits from CAsyncSocket). These
+classes handle the API calls for you, including the startup and cleanup calls that
+would otherwise be easy to forget.</P>
+<P>Windows programming is <I>asynchronous</I>: lots of different things happen at
+the same time. In older versions of Windows, if one part of an application was stuck
+in a loop or otherwise hung up, the entire application--and sometimes the entire
+operating system--would stick or hang with it. This is obviously something to avoid
+at all costs. Yet a socket call, perhaps a call to read some information through
+a TCP/IP connection to another site on the Internet, might take a long time to complete.
+(A function that is waiting to send or receive information on a socket is said to
+be <I>blocking</I>.) There are three ways around this problem:</P>
+
+<UL>
+	<LI>Put the function that might block in a thread of its own. The thread will block,
+	but the rest of the application will carry on.
+	<P>
+	<LI>Have the function return immediately after making the request, and have another
+	function check regularly (<I>poll</I> the socket) to see whether the request has
+	completed.
+	<P>
+	<LI>Have the function return immediately, and send a Windows message when the request
+	has completed.
+</UL>
+
+<P>The first option was not available until recently, and the second is inefficient
+under Windows. Most Winsock programming adopts the third option. The class CAsyncSocket
+implements this approach. For example, to send a string across a connected socket
+to another Internet site, you call that socket's Send() function. Send() doesn't
+necessarily send any data at all; it tries to, but if the socket isn't ready and
+waiting, Send() just returns. When the socket is ready, a message is sent to the
+socket window, which catches it and sends the data across. This is called <I>asynchronous
+Winsock programming.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Winsock programming isn't a simple topic; entire books have been
+	written on it. If you decide that this low-level sockets programming is the way to
+	go, building standard programs is a good way to learn the process.&#160;n 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><B><I>CAsyncSocket</I>&#160;&#160;</B>The CAsyncSocket class is a wrapper class
+for the asynchronous Winsock calls. It has a number of useful functions that facilitate
+using the Winsock API. Table 18.1 lists the CAsyncSocket member functions and responsibilities.</P>
+<P>
+<H4>Table 18.1&#160;&#160;CAsyncSocket Member Functions</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Method Name</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Accept</TD>
+		<TD ALIGN="LEFT">Handles an incoming connection on a listening socket, filling a new socket with the
+			address information.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">AsyncSelect</TD>
+		<TD ALIGN="LEFT">Requests that a Windows message be sent when a socket is ready.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Attach</TD>
+		<TD ALIGN="LEFT">Attaches a socket handle to a CAsyncSocket instance so that it can form a connection
+			to another machine.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Bind</TD>
+		<TD ALIGN="LEFT">Associates an address with a socket.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Close</TD>
+		<TD ALIGN="LEFT">Closes the socket.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Connect</TD>
+		<TD ALIGN="LEFT">Connects the socket to a remote address and port.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Create</TD>
+		<TD ALIGN="LEFT">Completes the initialization process begun by the constructor.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Detach</TD>
+		<TD ALIGN="LEFT">Detaches a previously attached socket handle.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">FromHandle</TD>
+		<TD ALIGN="LEFT">Returns a pointer to the CAsyncSocket attached to the handle it was passed.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetLastErro</TD>
+		<TD ALIGN="LEFT">Returns the error code of the socket. After an operation fails, call GetLastError
+			to find out why.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetPeerName</TD>
+		<TD ALIGN="LEFT">Finds the IP address and port number of the remote socket that the calling object
+			socket is connected to, or fills a socket address structure with that information.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetSockName</TD>
+		<TD ALIGN="LEFT">Returns the IP address and port number of this socket, or fills a socket address
+			structure with that information.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">GetSockOpt</TD>
+		<TD ALIGN="LEFT">Returns the currently set socket options.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">IOCtl</TD>
+		<TD ALIGN="LEFT">Sets the socket mode most commonly to blocking or non-blocking.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Listen</TD>
+		<TD ALIGN="LEFT">Instructs a socket to watch for incoming connections.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">OnAccept</TD>
+		<TD ALIGN="LEFT">Handles the Windows message generated when a socket has an incoming connection to
+			accept (often overridden by derived classes).</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">OnClose</TD>
+		<TD ALIGN="LEFT">Handles the Windows message generated when a socket closes (often overridden by derived
+			classes).</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">OnConnect</TD>
+		<TD ALIGN="LEFT">Handles the Windows message generated when a socket becomes connected or a connection
+			attempt ends in failure (often overridden by derived classes).</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">OnOutOfBandData</TD>
+		<TD ALIGN="LEFT">Handles the Windows message generated when a socket has urgent, out-of-band data
+			ready to read.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">OnReceive</TD>
+		<TD ALIGN="LEFT">Handles the Windows message generated when a socket has data that can be read with
+			Receive() (often overridden by derived classes).</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">OnSend</TD>
+		<TD ALIGN="LEFT">Handles the Windows message generated when a socket is ready to accept data that
+			can be sent with Send() (often overridden by derived classes).</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Receive</TD>
+		<TD ALIGN="LEFT">Reads data from the remote socket to which this socket is connected.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ReceiveFrom</TD>
+		<TD ALIGN="LEFT">Reads a datagram from a connectionless remote socket.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Send</TD>
+		<TD ALIGN="LEFT">Sends data to the remote socket to which this socket is connected.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SendTo</TD>
+		<TD ALIGN="LEFT">Sends a datagram without a connection.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">SetSockOpt</TD>
+		<TD ALIGN="LEFT">Sets socket options.</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">ShutDown</TD>
+		<TD ALIGN="LEFT">Keeps the socket open but prevents any further Send() or</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Receive() calls.</TD>
+		<TD ALIGN="LEFT"></TD>
+	</TR>
+</TABLE>
+</P>
+<P>If you use the CAsyncSocket class, you'll have to fill the socket address structures
+yourself, and many developers would rather delegate a lot of this work. In that case,
+CSocket is a better socket class.</P>
+<P><B><I>CSocket</I>&#160;&#160;</B>CSocket inherits from CAsyncSocket and has all
+the functions listed for CAsyncSocket. Table 18.2 describes the new methods added
+and the virtual methods overridden in the derived CSocket class.</P>
+<P>
+<H4>Table 18.2&#160;&#160;CSocket Methods</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT"><B>Method Name</B></TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Attach</TD>
+		<TD ALIGN="LEFT">Attaches a socket handle to a CAsyncSocket instance so that it can form a connection
+			to another machine</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">Create</TD>
+		<TD ALIGN="LEFT">Completes the initialization after the constructor constructs a blank socket</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">FromHandle</TD>
+		<TD ALIGN="LEFT">Returns a pointer to the CSocket attached to the handle it was passed</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">IsBlocking</TD>
+		<TD ALIGN="LEFT">Returns TRUE if the socket is blocking at the moment, waiting for something to happen</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">CancelBlockingCal</TD>
+		<TD ALIGN="LEFT">Cancels whatever request had left the socket blocking</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">OnMessagePending</TD>
+		<TD ALIGN="LEFT">Handles the Windows messages generated for other parts of your application while
+			the socket is blocking (often overridden by derived classes)</TD>
+	</TR>
+</TABLE>
+</P>
+<P>In many cases, socket programming is no longer necessary because the WinInet classes,
+ISAPI programming, and ActiveX controls for Web pages are bringing more and more
+power to Internet programmers. If you would like to explore a sample socket program,
+try Chatter and ChatSrvr, provided by Visual C++. Search either name in the online
+help to find the files.</P>
+<P>Each session of Chatter emulates a user server. The ChatSrvr program is the server,
+acting as traffic manager among several clients. Each Chatter can send messages to
+the ChatSrvr by typing in some text, and the ChatSrvr sends the message to everyone
+logged on to the session. Several traffic channels are managed at once.</P>
+<P>If you've worked with sockets before, this short overview may be all you need
+to get started. If not, you may not need to learn them. If you plan to write a client/server
+application that runs over the Internet and doesn't use the existing standard applications
+like mail or the Web, then learning sockets is probably in your future. But, if you
+want to use email, the Web, FTP, and other popular Internet information sources,
+you don't have to do it by writing socket programs at all. You may be able to use
+MAPI, the WinInet classes, or ISAPI to achieve the results you are looking for.</P>
+<P>
+<H2><A NAME="Heading3"></A>Using the Messaging API (MAPI)</H2>
+<P>The most popular networking feature in most offices is electronic mail. You could
+add code to your application to generate the right commands over a socket to transmit
+a mail message, but it's simpler to build on the work of others.</P>
+<P>
+<H3><A NAME="Heading4"></A>What Is MAPI?</H3>
+<P>MAPI is a way of pulling together applications that need to send and receive messages
+(<I>messaging applications</I>) with applications that know how to send and receive
+messages (<I>messaging services</I> and <I>service providers</I>), in order to decrease
+the work load of all the developers involved. Figure 18.1 shows the scope of MAPI.
+Note that the word <I>messaging</I> covers far more than just electronic mail: A
+MAPI service can send a fax or voice-mail message instead of an electronic mail message.
+If your application uses MAPI, the messaging services, such as email clients that
+the user has installed, will carry out the work of sending the messages that your
+application generates.</P>
+<P>The extent to which an application uses messaging varies widely:</P>
+
+<UL>
+	<LI>Some applications can send a message, but sending messages isn't really what
+	the application is about. For example, a word processor is fundamentally about entering
+	and formatting text and then printing or saving that text. If the word processor
+	can also send the text in a message, fine, but that's incidental. Applications like
+	this are said to be <I>messaging-aware</I> and typically use just the tip of the
+	MAPI functionality.
+	<P>
+	<LI>Some applications are useful without being able to send messages, but they are
+	far more useful in an environment where messages can be sent. For example, a personal
+	scheduler program can manage one person's To Do list whether messaging is enabled
+	or not. If it is enabled, a number of work group and client-contact features--such
+	as sending email to confirm an appointment--become available. Applications like this
+	are said to be <I>messaging-enabled</I> and use some, but not all, of the MAPI features.
+	<P>
+	<LI>Finally, some applications are all about messaging. Without messaging, these
+	applications are useless. They are said to be <I>messaging-based,</I> and they use
+	all of MAPI's functionality.
+</UL>
+
+<P><A HREF="javascript:popUp('18uvc01.gif')"><B>FIG. 18.1</B></A><B> </B><I>The Messaging
+API includes applications that need messaging and those that provide it.</I></P>
+<H3><A NAME="Heading5"></A>Win95 Logo Requirements</H3>
+<P>The number-one reason for a developer to make an application messaging aware is
+to meet the requirements of the Windows 95 Logo program. To qualify for the logo,
+an application must have a Send item on the File menu that uses MAPI to send the
+document. (Exceptions are granted to applications without documents.)</P>
+<P>To add this feature to your applications, it's best to think of it before you
+create the empty shell with AppWizard. If you are planning ahead, here is a list
+of all the work you have to do to meet this part of the logo requirement:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>In Step 4 of AppWizard, select the MAPI (Messaging API) check box.
+	<P>
+</DL>
+
+<P>That's it! The menu item is added, and message maps and functions are generated
+to catch the menu item and call functions that use your Serialize() function to send
+the document through MAPI. Figure 18.2 shows an application called MAPIDemo that
+is just an AppWizard empty shell.</P>
+<P>No additional code was added to this application, beyond the code generated by
+AppWizard, and the Send item is on the File menu, as you can see. If you choose this
+menu item, your MAPI mail client is launched to send the message. Figures 18.2 and
+18.3 were captured on a machine with Microsoft Exchange installed as an Internet
+mail client (Inbox), and so it is Microsoft Exchange that is launched, as shown in
+Figure 18.3. The message contains the current document, and it is up to you to fill
+in the recipient, the subject, and any text you want to send with the document.</P>
+
+<P><A HREF="javascript:popUp('18uvc02.gif')"><B>FIG. 18.2</B></A><B> </B><I>AppWizard
+adds the Send item to the File menu, as well as the code that handles the item.</I></P>
+
+<P><A HREF="javascript:popUp('18uvc03.gif')"><B>FIG. 18.3</B></A><B> </B><I>Microsoft
+Mail is launched so that the user can fill in the rest of the email message around
+the document that is being sent.</I></P>
+<P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> If the Send item doesn't appear on your menu, make sure that you have
+	a MAPI client installed. Microsoft Exchange is an easy-to-get MAPI client. The OnUpdateFileSendMail()
+	function removes the menu item Send from the menu if no MAPI client is registered
+	on your computer. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>If you didn't request MAPI support from AppWizard when you built your application,
+here are the steps to manually add the Send item:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Add the Send item to the File menu. Use a resource ID of <B>ID_FILE_SEND_MAIL</B>.
+	The prompt will be supplied for you.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Add these two lines to the document's message map, outside the //AFX
+	comments:
+	<P>
+</DL>
+
+<PRE>ON_COMMAND(ID_FILE_SEND_MAIL, OnFileSendMail)
+ON_UPDATE_COMMAND_UI(ID_FILE_SEND_MAIL, OnUpdateFileSendMail)
+</PRE>
+<P>Adding the mail support to your application manually isn't much harder than asking
+AppWizard to do it.</P>
+<P>
+<H3><A NAME="Heading6"></A>Advanced Use of MAPI</H3>
+<P>If you want more from MAPI than just meeting the logo requirements, things do
+become harder. There are four kinds of MAPI client interfaces:</P>
+
+<UL>
+	<LI><I>Simple MAPI,</I> an older API not recommended for use in new applications
+	<P>
+	<LI><I>Common Messaging Calls (CMC),</I> a simple API for messaging-aware and messaging-enabled
+	applications
+	<P>
+	<LI><I>Extended MAPI,</I> a full-featured API for messaging-based applications
+	<P>
+	<LI><I>Active Messaging,</I> an API with somewhat fewer features than Extended MAPI
+	but ideal for use with Visual C++
+</UL>
+
+<P><B>Common Messaging Calls&#160;&#160;</B>There are only ten functions in the CMC
+API. That makes it easy to learn, yet they pack enough punch to get the job done:</P>
+
+<UL>
+	<LI>cmc_logon() connects to a mail server and identifies the user.
+	<P>
+	<LI>cmc_logoff() disconnects from a mail server.
+	<P>
+	<LI>cmc_send() sends a message.
+	<P>
+	<LI>cmc_send_documents() sends one or more files.
+	<P>
+	<LI>cmc_list() lists the messages in the user's mailbox.
+	<P>
+	<LI>cmc_read() reads a message from the user's mailbox.
+	<P>
+	<LI>cmc_act_on() saves or deletes a message.
+	<P>
+	<LI>cmc_look_up() resolves names and addresses.
+	<P>
+	<LI>cmc_query_configuration() reports what mail server is being used.
+	<P>
+	<LI>cmc_free() frees any memory allocated by other functions.
+</UL>
+
+<P>The header file XCMC.H declares a number of structures used to hold the information
+passed to these functions. For example, recipient information is kept in this structure:</P>
+<P>
+<PRE>/*RECIPIENT*/
+typedef struct {
+    CMC_string              name;
+    CMC_enum                name_type;
+    CMC_string              address;
+    CMC_enum                role;
+    CMC_flags               recip_flags;
+    CMC_extension FAR       *recip_extensions;
+} CMC_recipient;
+</PRE>
+<P>You could fill this structure with the name and address of the recipient of a
+mail message by using a standard dialog box or by hard-coding the entries, like this:</P>
+<P>
+<PRE>CMC_recipient recipient = {
+    &quot;Kate Gregory&quot;,
+    CMC_TYPE_INDIVIDUAL,
+    &quot;SMTP:kate@gregcons.com&quot;,
+    CMC_ROLE_TO,
+    CMC_RECIP_LAST_ELEMENT,
+    NULL };
+</PRE>
+<P>The type, role, and flags use one of these predefined values:</P>
+<P>
+<H4>Listing 18.1&#160;&#160;(Excerpt from \MSDev\Include\XCMC.H) Command Definitions</H4>
+<PRE>/* NAME TYPES */
+#define CMC_TYPE_UNKNOWN                    ((CMC_enum) 0)
+#define CMC_TYPE_INDIVIDUAL                 ((CMC_enum) 1)
+#define CMC_TYPE_GROUP                      ((CMC_enum) 2)
+/* ROLES */
+#define CMC_ROLE_TO                         ((CMC_enum) 0)
+#define CMC_ROLE_CC                         ((CMC_enum) 1)
+#define CMC_ROLE_BCC                        ((CMC_enum) 2)
+#define CMC_ROLE_ORIGINATOR                 ((CMC_enum) 3)
+#define CMC_ROLE_AUTHORIZING_USER           ((CMC_enum) 4)
+/* RECIPIENT FLAGS */
+#define CMC_RECIP_IGNORE                    ((CMC_flags) 1)
+#define CMC_RECIP_LIST_TRUNCATED            ((CMC_flags) 2)
+</PRE>
+<PRE>#define CMC_RECIP_LAST_ELEMENT              ((CMC_flags) 0x80000000)
+</PRE>
+<P>There is a message structure you could fill in the same way or by presenting the
+user with a dialog box to enter the message details. This structure includes a pointer
+to the recipient structure you have already filled. Your program then calls cmc_logon(),
+cmc_send(), and cmc_logoff() to complete the process.</P>
+<P><B>Extended MAPI&#160;&#160;</B>Extended MAPI is based on COM, the Component Object
+Model. Messages, recipients, and many other entities are defined as objects rather
+than as C structures. There are far more object types in Extended MAPI than there
+are structure types in CMC. Access to these objects is through OLE (ActiveX) interfaces.
+The objects expose properties, methods, and events. These concepts are discussed
+in Part IV, Chapter 13, &quot;ActiveX Concepts.&quot;</P>
+<P><B>Active Messaging&#160;&#160;</B>If you understand Automation (described in
+Chapter 16, &quot;Building an Automation Server&quot;), you will easily understand
+Active Messaging. Your application must be an Automation client, however, and building
+such a client is beyond the scope of this chapter. Various ways to use Active Messaging
+are in Visual Basic programming and VBA scripts for programs such as Excel. Your
+program would set up objects and then set their exposed properties (for example,
+the subject line of a message object) and invoke their exposed methods (for example,
+the Send() method of a message object).</P>
+<P>The objects used in Active Messaging include the following:</P>
+
+<UL>
+	<LI>Session
+	<P>
+	<LI>Message
+	<P>
+	<LI>Recipient
+	<P>
+	<LI>Attachment
+</UL>
+
+<P>Active messaging is part of the Collaboration Data Objects (CDO) library. A detailed
+reference of these objects, as well as their properties and methods, can be found
+in MSDN under Platform SDK, Database and Messaging Services, Collaboration Data Objects,
+CDO Library, and Reference. You'll find three articles on using Active Messaging,
+and sample applications, under Technical Articles, Database and Messaging Services,
+Microsoft Exchange Server.</P>
+<P>
+<H2><A NAME="Heading7"></A>Using the WinInet Classes</H2>
+<P>MFC 4.2 introduced a number of new classes that eliminate the need to learn socket
+programming when your applications require access to standard Internet client services.
+Figure 18.4 shows the way these classes relate to each other. Collectively known
+as the WinInet classes, they are the following:</P>
+
+<UL>
+	<LI>CInternetSession
+	<P>
+	<LI>CInternetConnection
+	<P>
+	<LI>CInternetFile
+	<P>
+	<LI>HttpConnection
+	<P>
+	<LI>CHttpFile
+	<P>
+	<LI>CGopherFile
+	<P>
+	<LI>CFtpConnection
+	<P>
+	<LI>CGopherConnection
+	<P>
+	<LI>CFileFind
+	<P>
+	<LI>CFtpFileFind
+	<P>
+	<LI>CGopherFileFind
+	<P>
+	<LI>CGopherLocator
+	<P>
+	<LI>CInternetException
+</UL>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> These classes help you write Internet <I>client</I> applications,
+	with which users interact directly. If you want to write <I>server</I> applications,
+	which interact with client applications, you'll be interested in ISAPI, discussed
+	in the next section. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>First, your program establishes a session by creating a CInternetSession. Then,
+if you have a uniform resource locator (URL) to a Gopher, FTP, or Web (HTTP) resource,
+you can call that session's OpenURL() function to retrieve the resource as a read-only
+CInternetFile. Your application can read the file, using CStdioFile functions, and
+manipulate that data in whatever way you need.</P>
+<P><A HREF="javascript:popUp('18uvc04.gif')"><B>FIG. 18.4</B></A><B> </B><I>The WinInet
+classes make writing Internet client programs easier.</I></P>
+<P>If you don't have an URL or don't want to retrieve a read-only file, you proceed
+differently after establishing the session. Make a connection with a specific protocol
+by calling the session's GetFtpConnection(), GetGopherConnection(), or GetHttpConnection()
+functions, which return the appropriate connection object. You then call the connection's
+OpenFile() function. CFtpConnection::OpenFile() returns a CInternetFile; CGopherConnection::OpenFile()
+returns a CGopherFile; and CHttpConnection::OpenFile() returns a CHttpFile. The CFileFind
+class and its derived classes help you find the file you want to open.</P>
+<P>Chapter 19, &quot;Internet Programming with the WinInet Classes,&quot; works through
+a sample client program using WinInet classes to establish an Internet session and
+retrieve information.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Though email is a standard Internet application, you'll notice that
+	the WinInet classes don't have any email functionality. That's because email is handled
+	by MAPI. There is no support for Usenet news either, in the WinInet classes or elsewhere.
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H2><A NAME="Heading8"></A>Using Internet Server API (ISAPI) Classes</H2>
+<P>ISAPI is used to enhance and extend the capabilities of your HTTP (World Wide
+Web) server. ISAPI developers produce <I>extensions</I> and <I>filters</I>. Extensions
+are DLLs invoked by a user from a Web page in much the same way as CGI (common gateway
+interface) applications are invoked from a Web page. Filters are DLLs that run with
+the server and examine or change the data going to and from the server. For example,
+a filter might redirect requests for one file to a new location.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> For the ISAPI extensions and filters that you write to be useful,
+	your Web pages must be kept on a server that is running an ISAPI-compliant server
+	such as the Microsoft IIS Server. You must have permission to install DLLs onto the
+	server, and for an ISAPI filter, you must be able to change the Registry on the server.
+	If your Web pages are kept on a machine administered by your Internet service provider
+	(ISP), you will probably not be able to use ISAPI to bring more power to your Web
+	pages. You may choose to move your pages to a dedicated server (a powerful Intel
+	machine running Windows NT Server 4.0 and Microsoft IIS is a good combination) so
+	that you can use ISAPI, but this will involve considerable expense. Make sure that
+	you understand the constraints of your current Web server before embarking on a project
+	with ISAPI.<BR>
+	</P>
+
+	<P>One of the major advantages of ActiveX controls for the Internet (discussed in
+	Chapter 20, &quot;Building an Internet ActiveX Control&quot;) is that you don't need
+	access to the server in order to implement them.&#160;n 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The five MFC ISAPI classes form a wrapper for the API to make it easier to use:</P>
+
+<UL>
+	<LI>CHttpServer
+	<P>
+	<LI>CHttpFilter
+	<P>
+	<LI>CHttpServerContext
+	<P>
+	<LI>CHttpFilterContext
+	<P>
+	<LI>CHtmlStream
+</UL>
+
+<P>Your application will have a server or a filter class (or both) that inherits
+from CHttpServer or CHttpFilter. These are rather like the classes in a normal application
+that inherit from CWinApp. There is only one instance of the class in each DLL, and
+each interaction of the server with a client takes place through its own instance
+of the appropriate context class. (A DLL may contain both a server and a filter but,
+at most, one of each.) CHtmlStream is a helper class that describes a stream of HTML
+to be sent by a server to a client.</P>
+<P>The ISAPI Extension Wizard is an AppWizard that simplifies creating extensions
+and filters. To use this wizard, choose File, New (as always) and then the Project
+tab. Scroll down the list on the left and select ISAPI Extension Wizard (as shown
+in Figure 18.5). Fill in the project name and folder, and click OK.</P>
+<P>Creating a server extension is a one-step process. That step, which is also the
+first step for a filter, is shown in Figure 18.6. The names and descriptions for
+the filter and extension are based on the project name that you chose.</P>
+<P>If you choose to create a filter, the Next button is enabled and you can move
+to the second step for filters, shown in Figure 18.7. This list of parameters gives
+you an idea of the power of an ISAPI filter. You can monitor all incoming and outgoing
+requests and raw data, authenticate users, log traffic, and more.</P>
+<P><A HREF="javascript:popUp('18uvc05.gif')"><B>FIG. 18.5</B></A><B> </B><I>The ISAPI
+Extension Wizard is another kind of AppWizard.</I></P>
+<P><A HREF="javascript:popUp('18uvc06.gif')"><B>FIG. 18.6</B></A><B> </B><I>The first
+step in the ISAPI Extension Wizard process is to name the components of the DLL that
+you are creating.</I></P>
+<P><A HREF="javascript:popUp('18uvc07.gif')"><B>FIG. 18.7</B></A><B> </B><I>The second
+step in the ISAPI Extension Wizard process is to set filter parameters.</I></P>
+<P>AppWizard shows you a final confirmation screen, like the one in Figure 18.8,
+before creating the files. When you create a server and a filter at the same time,
+11 files are created for you, including source and headers for the class that inherits
+from CHttpServer and the class that inherits from CHttpFilter.</P>
+<P><A HREF="javascript:popUp('18uvc08.gif')"><B>FIG. 18.8</B></A><B> </B><I>The ISAPI
+Extension Wizard process summarizes the files that will be created.</I></P>
+<P>Writing a filter from this shell is quite simple. You have been provided with
+a stub function to react to each event for which notification was requested. For
+example, the filter class has a function called OnEndOfNetSession(), which is called
+when a client's session with this server is ending. You add code to this function
+to log, monitor, or otherwise react to this event. When the filter is complete, you
+edit the Registry by hand so that the server will run your DLL.</P>
+<P>To write an extension, add one or more functions to your DLL. Each function will
+be passed a CHttpContext pointer, which can be used to gather information such as
+the user's IP address. If the function is invoked from an HTML form, additional parameters
+such as values of other fields on the form will also be passed to the function.</P>
+<P>The details of what the function does depend on your application. If you are implementing
+an online ordering system, the functions involved will be lengthy and complex. Other
+extensions will be simpler.</P>
+<P>When the function is complete, place the DLL in the executable folder for the
+server--usually the folder where CGI programs are kept--and adjust your Web pages
+so that they include links to your DLL, like this:</P>
+<P>
+<PRE>Now you can &lt;A HREF=http://www.company.com/exec/orders.dll&gt;
+place an order&lt;/A&gt; online!
+</PRE>
+<P>For more information on ISAPI programming, be sure to read Que's <I>Special Edition
+Using ISAPI</I>. You will discover how ISAPI applications can make your Web site
+dynamic and interactive, learn how to write filters and extensions, and cover advanced
+topics including debugging ISAPI applications and writing multithreaded applications.</P>
+<P>Adding the Internet to your applications is an exciting trend. It's going to make
+lots of work for programmers and create some powerful products that simplify the
+working life of anyone with an Internet connection. Just a year ago, writing Internet
+applications meant getting your fingernails dirty with sockets programming, memorizing
+TCP/IP ports, and reading RFCs. The new WinInet and ISAPI classes, as well as improvements
+to the old MAPI support, mean that today you can add amazing power to your application
+with just a few lines of code or by selecting a box on an AppWizard dialog box.&#160;l</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch17/ch17.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch19/ch19.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

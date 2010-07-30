@@ -1,0 +1,1139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 15 -- Building an ActiveX Server Application</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch14/ch14.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch16/ch16.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 15 -</H1>
+
+<H1>Building an ActiveX Server Application</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Adding Server Capabilities to ShowString</A>
+	<UL>
+		<LI><A HREF="#Heading2">AppWizard's Server Boilerplate</A>
+		<LI><A HREF="#Heading3">Showing a String Again</A>
+	</UL>
+	<LI><A HREF="#Heading4">Applications That Are Both Container and Server</A>
+	<UL>
+		<LI><A HREF="#Heading5">Building Another Version of ShowString</A>
+		<LI><A HREF="#Heading6">Nesting and Recursion Issues</A>
+	</UL>
+	<LI><A HREF="#Heading7">Active Documents</A>
+	<UL>
+		<LI><A HREF="#Heading8">What Active Documents Do</A>
+		<LI><A HREF="#Heading9">Making ShowString an Active Document Server</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<P>Just as AppWizard builds ActiveX containers, it also builds ActiveX servers. However,
+unlike containers, the AppWizard code is complete, so there isn't much work to do
+for improving the AppWizard code. This chapter builds a version of ShowString that
+is only a server and discusses how to build another version that is both a container
+and a server. You also learn about ActiveX documents and how they can be used in
+other applications.</P>
+<P>
+<H2><A NAME="Heading1"></A>Adding Server Capabilities to ShowString</H2>
+<P>Like Chapter 14, &quot;Building an ActiveX Container Application,&quot; this chapter
+starts by building an ordinary server application with AppWizard and then adds the
+functionality that makes it ShowString. This is far quicker than adding ActiveX functionality
+to ShowString because ShowString doesn't have much code and can be written quickly.</P>
+<P>
+<H3><A NAME="Heading2"></A>AppWizard's Server Boilerplate</H3>
+<P>Build the new ShowString in a different directory, making almost exactly the same
+AppWizard choices as when you built versions of ShowString in Chapter 8, &quot;Building
+a Complete Application: ShowString,&quot; and Chapter 14. Call it ShowString, and
+choose an MDI application with no database support. In AppWizard's Step 3, select
+full server as your compound document support. This enables the check box for ActiveX
+document support. Leave this deselected for now. Later in this chapter you see the
+consequences of selecting this option. Continue the AppWizard process, selecting
+a docking toolbar, initial status bar, printing and print preview, context sensitive
+Help, and 3D controls. Finally, select source file comments and a shared DLL. Finish
+AppWizard and, if you want, build the project.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE::</strong> Even though the technology is now called ActiveX, the AppWizard
+	dialog boxes refer to compound document support. Many of the class names that are
+	used throughout this chapter have Ole in their names as well. Although Microsoft
+	has changed the name of the technology, it has not propagated that change throughout
+	Visual C++ yet. You will have to live with these contradictions for awhile.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>There are many differences between the application you have just generated and
+a do-nothing application without ActiveX server support. These differences are explained
+in the next few sections.</P>
+<P><B>Menus&#160;&#160;</B>There are two new menus in an ActiveX server application.
+The first, called IDR_SHOWSTTYPE_SRVR_IP, is shown in Figure 15.1. When an item is
+being edited in place, the container in-place menu (called IDR_SHOWSTTYPE_CNTR_IP
+in the container version of ShoeString) is combined with the server in-place menu,
+IDR_SHOWSTTYPE_SRVR_IP, to build the in-place menu as shown in Figure 15.2. The double
+separators in each partial menu show where the menus are joined.</P>
+<P><A HREF="javascript:popUp('15uvc01.gif')"><B>FIG. 15.1</B></A><B> </B><I>AppWizard
+adds another menu for editing in place.</I></P>
+
+<P><A HREF="javascript:popUp('15uvc50.gif')"><B>FIG. 15.2</B></A><B> </B><I>The container
+and server in-place menus are interlaced during in-place editing.</I></P>
+
+<P>The second new menu is IDR_SHOWSTTYPE_SRVR_EMB, used when an embedded item is
+being edited in a separate window. Figure 15.3 shows this new menu next to the more
+familiar IDR_SHOWSTTYPE menu, which is used when ShowString is acting not as a server
+but as an ordinary application. The File menus have different items: IDR_SHOWSTTYPE_SRVR_EMB
+has Update in place of Save, and Save Copy As in place of Save As. This is because
+the item the user is working on in the separate window is not a document of its own,
+but is embedded in another document. File, Update updates the embedded item; File,
+Save Copy As doesn't save the whole document, just a copy of this embedded portion.</P>
+<P><A HREF="javascript:popUp('15uvc02.gif')"><B>FIG. 15.3</B></A><B> </B><I>The embedded
+menu has different items under File than the usual menu.</I></P>
+
+<P><B><I>CShowStringApp</I>&#160;&#160;</B>Another member variable has been added
+to this class. It is declared in ShowString.h as:</P>
+<P>
+<PRE>COleTemplateServer m_server;
+</PRE>
+<P>COleTemplateServer handles the majority of the work involved in connecting documents
+to code, as you will see.</P>
+<P>The following line is added at the top of ShowString.cpp:</P>
+<P>
+<PRE>#include &quot;IpFrame.h&quot;
+</PRE>
+<P>This sets up the class CInPlaceFrame, discussed later in this chapter. Just before
+InitInstance(), the lines shown in Listing 15.1 are added.</P>
+<P>
+<H4>Listing 15.1&#160;&#160;Excerpt from ShowString.cpp--CLSID</H4>
+<PRE>// This identifier was generated to be statistically unique for
+// your app. You may change it if you prefer to choose a specific
+// identifier.
+// {0B1DEE40-C373-11CF-870C-00201801DDD6}
+static const CLSID clsid =
+{ 0xb1dee40, 0xc373, 0x11cf,
+</PRE>
+<PRE>     { 0x87, 0xc, 0x0, 0x20, 0x18, 0x1, 0xdd, 0xd6 } };
+</PRE>
+<P>The numbers will be different in your code. This Class ID identifies your server
+application and document type. Applications that support several kinds of documents
+(for example, text and graphics) use a different CLSID for each type of document.</P>
+<P>As it did for the OLE container version of ShowString, CShowStringApp::InitInstance()
+has several changes from the non-ActiveX ShowString you developed in Chapter 8. The
+code in Listing 15.2 initializes the ActiveX (OLE) libraries.</P>
+<P>
+<H4>Listing 15.2&#160;&#160;Excerpt from ShowString.cpp--Initializing Libraries</H4>
+<PRE>     // Initialize OLE libraries
+     if (!AfxOleInit())
+     {
+          AfxMessageBox(IDP_OLE_INIT_FAILED);
+          return FALSE;
+</PRE>
+<PRE>     }
+</PRE>
+<P>While still in CShowStringApp::InitInstance(), after the CMultiDocTemplate is
+initialized but before the call to AddDocTemplate(), the following line is added
+to register the menu used for in-place editing and for separate-window editing:</P>
+<P>
+<PRE>pDocTemplate-&gt;SetServerInfo(
+          IDR_SHOWSTTYPE_SRVR_EMB, IDR_SHOWSTTYPE_SRVR_IP,
+          RUNTIME_CLASS(CInPlaceFrame));
+</PRE>
+<P>A change that was not in the container version is connecting the template for
+the document to the class ID, like this:</P>
+<P>
+<PRE>// Connect the COleTemplateServer to the document template.
+     //  The COleTemplateServer creates new documents on behalf
+     //  of requesting OLE containers by using information
+     //  specified in the document template.
+     m_server.ConnectTemplate(clsid, pDocTemplate, FALSE);
+</PRE>
+<P>Now when a user chooses Create New when inserting an object, the document used
+for that creation will be available.</P>
+<P>When a server application is launched to edit an item in place or in a separate
+window, the system DLLs add /Embedding to the invoking command line. But if the application
+is already running, and it is an MDI application, a new copy is not launched. Instead,
+a new MDI window is opened in that application. That particular piece of magic is
+accomplished with one function call, as shown in Listing 15.3.</P>
+<P>
+<H4>Listing 15.3&#160;&#160;Excerpt from ShowString.cpp--Registering Running MDI
+Apps</H4>
+<PRE>     // Register all OLE server factories as running.  This enables the
+     //  OLE libraries to create objects from other applications.
+     COleTemplateServer::RegisterAll();
+     // Note: MDI applications register all server objects without regard
+</PRE>
+<PRE>     //  to the /Embedding or /Automation on the command line.
+</PRE>
+<P>After parsing the command line, the AppWizard boilerplate code checks to see if
+this application is being launched as an embedded (or automation) application. If
+so, there is no need to continue with the initialization, so this function returns,
+as shown in Listing 15.4.</P>
+<P>
+<H4>Listing 15.4&#160;&#160;Excerpt from ShowString.cpp--Checking How the App was
+Launched</H4>
+<PRE>     // Check to see if launched as OLE server
+     if (cmdInfo.m_bRunEmbedded || cmdInfo.m_bRunAutomated)
+     {
+          // Application was run with /Embedding or /Automation.
+          // Don't show the main window in this case.
+          return TRUE;
+</PRE>
+<PRE>     }
+</PRE>
+<P>If the application is being run standalone, execution continues with a registration
+update:</P>
+<P>
+<PRE>// When a server application is launched standalone, it is a good idea
+     //  to update the system Registry in case it has been damaged.
+     m_server.UpdateRegistry(OAT_INPLACE_SERVER);
+</PRE>
+<P>ActiveX information is stored in the Registry. (The Registry is discussed in Chapter
+7, &quot;Persistence and File I/O.&quot;) When a user chooses Insert, Object or Edit,
+Insert Object, the Registry provides the list of object types that can be inserted.
+Before ShowString can appear in such a list, it must be registered. Many developers
+add code to their install programs to register their server applications, and MFC
+takes this one step further, registering the application every time it is run. If
+the application files are moved or changed, the registration is automatically updated
+the next time the application is run standalone.</P>
+<P><B><I>CShowStringDoc</I>&#160;&#160;</B>The document class, CShowStringDoc, now
+inherits from COleServerDoc rather than CDocument. As well, the following line is
+added at the top of ShowStringdoc.cpp:</P>
+<P>
+<PRE>#include &quot;SrvrItem.h&quot;
+</PRE>
+<P>This header file describes the server item class, CShowStringSrvrItem, discussed
+in the CShowStringSrvrItem subsection of this section. The constructor, CShowStringDoc::CShowStringDoc(),
+has the following line added:</P>
+<P>
+<PRE>     EnableCompoundFile();
+</PRE>
+<P>This turns on the use of compound files.</P>
+<P>There is a new public function inlined in the header file so that other functions
+can access the server item:</P>
+<P>
+<PRE>CShowStringSrvrItem* GetEmbeddedItem()
+          { return (CShowStringSrvrItem*)COleServerDoc::GetEmbeddedItem(); }
+</PRE>
+<P>This calls the base class GetEmbeddedItem(), which in turn calls the virtual function
+OnGetEmbeddedItem(). That function must be overridden in the ShowString document
+class as shown in Listing 15.5.</P>
+<P>
+<H4>Listing 15.5&#160;&#160;ShowStringDoc.cpp--CShowStringDoc::OnGetEmbeddedItem()</H4>
+<PRE>COleServerItem* CShowStringDoc::OnGetEmbeddedItem()
+{
+     // OnGetEmbeddedItem is called by the framework to get the 
+     // COleServerItem that is associated with the document.  
+     // It is only called when necessary.
+     CShowStringSrvrItem* pItem = new CShowStringSrvrItem(this);
+     ASSERT_VALID(pItem);
+     return pItem;
+</PRE>
+<PRE>}
+</PRE>
+<P>This makes a new server item from this document and returns a pointer to it.</P>
+<P><B><I>CShowStringView</I>&#160;&#160;</B>The view class has a new entry in the
+message map:</P>
+<P>
+<PRE>     ON_COMMAND(ID_CANCEL_EDIT_SRVR, OnCancelEditSrvr)
+</PRE>
+<P>This catches ID_CANCEL_EDIT_SRVR, and the cancellation of editing is in place.
+An accelerator has already been added to connect this message to Esc. The function
+that catches it looks like this:</P>
+<P>
+<PRE>void CShowStringView::OnCancelEditSrvr()
+{
+     GetDocument()-&gt;OnDeactivateUI(FALSE);
+}
+</PRE>
+<P>This function simply deactivates the item. There are no other view changes--server
+views are so much simpler than container views.</P>
+<P><B><I>CShowStringSrvrItem</I>&#160;&#160;</B>The server item class is a completely
+new addition to ShowString. It provides an interface between the container application
+that launches ShowString to and opens a ShowString document. It describes an entire
+ShowString document that is embedded into another document, or a portion of a ShowString
+document that is linked to part of a container document. It has no member variables
+other than those inherited from the base class, COleServerItem. It has overrides
+for eight functions. They are as follows:</P>
+<P>
+
+<UL>
+	<LI>A constructor
+	<P>
+	<LI>A destructor
+	<P>
+	<LI>GetDocument()
+	<P>
+	<LI>AssertValid()
+	<P>
+	<LI>Dump()
+	<P>
+	<LI>Serialize()
+	<P>
+	<LI>OnDraw()
+	<P>
+	<LI>OnGetExtent()
+</UL>
+
+<P>The constructor simply passes the document pointer along to the base class. The
+destructor does nothing. GetDocument() is an inline function that calls the base
+class function with the same name and casts the result. AssertValid() and Dump()
+are debug functions that simply call the base class functions. Serialize() actually
+does some work, as shown in Listing 15.6.</P>
+<P>
+<H4>Listing 15.6&#160;&#160;SrvrItem.cpp--CShowStringSrvrItem::Serialize()</H4>
+<PRE>void CShowStringSrvrItem::Serialize(CArchive&amp; ar)
+{
+     // CShowStringSrvrItem::Serialize will be called by the framework if
+     //  the item is copied to the clipboard.  This can happen automatically
+     //  through the OLE callback OnGetClipboardData.  A good default for
+     //  the embedded item is simply to delegate to the document's Serialize
+     //  function.  If you support links, then you will want to serialize
+     //  just a portion of the document.
+     if (!IsLinkedItem())
+     {
+          CShowStringDoc* pDoc = GetDocument();
+          ASSERT_VALID(pDoc);
+          pDoc-&gt;Serialize(ar);
+</PRE>
+<PRE>     }
+</PRE>
+<P>There is no need to duplicate effort here. If the item is embedded, it is an entire
+document, and that document has a perfectly good Serialize() that can handle the
+work. AppWizard doesn't provide boilerplate to handle serializing a linked item because
+it is application-specific. You would save just enough information to describe what
+part of the document has been linked in, for example, cells A3 to D27 in a spreadsheet.
+This doesn't make sense for ShowString, so don't add any code to Serialize().</P>
+<P>You may feel that OnDraw() is out of place here. It is normally thought of as
+a view function. But this OnDraw() draws a depiction of the server item when it is
+inactive. It should look very much like the view when it is active, and it makes
+sense to share the work between CShowStringView::OnDraw() and CShowStringSrvrItem::OnDraw().
+The boilerplate that AppWizard provides is in Listing 15.7.</P>
+<P>
+<H4>Listing 15.7&#160;&#160;SrvrItem.cpp--CShowStringSrvrItem::OnDraw()</H4>
+<PRE>BOOL CShowStringSrvrItem::OnDraw(CDC* pDC, CSize&amp; rSize)
+{
+     CShowStringDoc* pDoc = GetDocument();
+     ASSERT_VALID(pDoc);
+     // TODO: set mapping mode and extent
+     //  (The extent is usually the same as the size returned from OnGetExtent)
+     pDC-&gt;SetMapMode(MM_ANISOTROPIC);
+     pDC-&gt;SetWindowOrg(0,0);
+     pDC-&gt;SetWindowExt(3000, 3000);
+     // TODO: add drawing code here.  Optionally, fill in the HIMETRIC extent.
+     //  All drawing takes place in the metafile device context (pDC).
+     return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>This will change a great deal, but it's worth noting now that unlike CShowStringView::OnDraw(),
+this function takes two parameters. The second is the size in which the inactive
+depiction is to be drawn. The extent, as mentioned in the boilerplate comments, typically
+comes from OnGetExtent(), which is shown in Listing 15.8.</P>
+<P>
+<H4>Listing 15.8&#160;&#160;SrvrItem.cpp--CShowStringSrvrItem:: OnGetExtent()</H4>
+<PRE>BOOL CShowStringSrvrItem::OnGetExtent(DVASPECT dwDrawAspect, CSize&amp; rSize)
+{
+     // Most applications, like this one, only handle drawing the content
+     //  aspect of the item.  If you wish to support other aspects, such
+     //  as DVASPECT_THUMBNAIL (by overriding OnDrawEx), then this
+     //  implementation of OnGetExtent should be modified to handle the
+     //  additional aspect(s).
+     if (dwDrawAspect != DVASPECT_CONTENT)
+          return COleServerItem::OnGetExtent(dwDrawAspect, rSize);
+     // CShowStringSrvrItem::OnGetExtent is called to get the extent in
+     //  HIMETRIC units of the entire item.  The default implementation
+     //  here simply returns a hard-coded number of units.
+     CShowStringDoc* pDoc = GetDocument();
+     ASSERT_VALID(pDoc);
+     // TODO: replace this arbitrary size
+     rSize = CSize(3000, 3000);   // 3000 x 3000 HIMETRIC units
+     return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>You will replace this with real code very shortly.</P>
+<P><B><I>CInPlaceFrame</I>&#160;&#160;</B>The in-place frame class, which inherits
+from COleIPFrameWnd, handles the frame around the server item and the toolbars, status
+bars, and dialog-box bars, collectively known as <I>control bars</I>, that it displays.
+It has the following three protected member variables:</P>
+<P>
+<PRE>     CToolBar    m_wndToolBar;
+     COleResizeBar   m_wndResizeBar;
+     COleDropTarget m_dropTarget;
+</PRE>
+<P>The CToolBar class is discussed in Chapter 9, &quot;Status Bars and Toolbars.&quot;
+COleDropTarget is discussed in the drag and drop section of Chapter 14. COleResizeBar
+looks just like a CRectTracker, which was used extensively in Chapter 14, but allows
+the resizing of a server item rather than a container item.</P>
+<P>The following are the seven member functions of CInPlaceFrame:</P>
+<P>
+
+<UL>
+	<LI>A constructor
+	<P>
+	<LI>A destructor
+	<P>
+	<LI>AssertValid()
+	<P>
+	<LI>Dump()
+	<P>
+	<LI>OnCreate()
+	<P>
+	<LI>OnCreateControlBars()
+	<P>
+	<LI>PreCreateWindow()
+</UL>
+
+<P>The constructor and destructor do nothing. AssertValid() and Dump() are debug
+functions that simply call the base class functions. OnCreate() actually has code,
+shown in Listing 15.9.</P>
+<P>
+<H4>Listing 15.9&#160;&#160;IPFrame.cpp--CInPlaceFrame::OnCreate()</H4>
+<PRE>int CInPlaceFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+     if (COleIPFrameWnd::OnCreate(lpCreateStruct) == -1)
+          return -1;
+     // CResizeBar implements in-place resizing.
+     if (!m_wndResizeBar.Create(this))
+     {
+          TRACE0(&quot;Failed to create resize bar\n&quot;);
+          return -1;      // fail to create
+     }
+     // By default, it is a good idea to register a drop-target that does
+     //  nothing with your frame window.  This prevents drops from
+     //  &quot;falling through&quot; to a container that supports drag-drop.
+     m_dropTarget.Register(this);
+     return 0;
+</PRE>
+<PRE>}
+</PRE>
+<P>This function catches the WM_CREATE message that is sent when an in-place frame
+is created and drawn onscreen. It calls the base class function and then creates
+the resize bar. Finally, it registers a drop target so that if anything is dropped
+over this in-place frame, it is dropped on this server rather than the underlying
+container.</P>
+<P>When a server document is activated in place, COleServerDoc::ActivateInPlace()
+calls CInPlaceFrame::OnCreateControlBars(), which is shown in Listing 15.10.</P>
+<P>
+<H4>Listing 15.10&#160;&#160;IPFrame.cpp--CInPlaceFrame::OnCreateControlBars()</H4>
+<PRE>BOOL CInPlaceFrame::OnCreateControlBars(CFrameWnd* pWndFrame, 
+                                        CFrameWnd* pWndDoc)
+{
+     // Set owner to this window, so messages are delivered to correct app
+     m_wndToolBar.SetOwner(this);
+     // Create toolbar on client's frame window
+     if (!m_wndToolBar.Create(pWndFrame) || 
+          !m_wndToolBar.LoadToolBar(IDR_SHOWSTTYPE_SRVR_IP))
+     {
+          TRACE0(&quot;Failed to create toolbar\n&quot;);
+          return FALSE;
+     }
+     // TODO: Remove this if you don't want tool tips or a resizeable toolbar
+     m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() |
+          CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+     // TODO: Delete these three lines if you don't want the toolbar to
+     //  be dockable
+     m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
+     pWndFrame-&gt;EnableDocking(CBRS_ALIGN_ANY);
+     pWndFrame-&gt;DockControlBar(&amp;m_wndToolBar);
+     return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>This function creates a docking, resizable toolbar with ToolTips, docked against
+the edge of the main frame window for the application.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIPP:</strong> If you are developing an MDI application and prefer the toolbar against
+	the document frame, use pWndDoc instead of PWndFrame, in the call to m_wndToolBar.Create()
+	but be sure to check that it is not NULL.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The last function in CInPlaceFrame is PreCreateWindow(). At the moment, it just
+calls the base class, as shown in Listing 15.11.</P>
+<P>
+<H4>Listing 15.11&#160;&#160;IPFrame.cpp--CInPlaceFrame::PreCreateWindow()</H4>
+<PRE>BOOL CInPlaceFrame::PreCreateWindow(CREATESTRUCT&amp; cs)
+{
+     // TODO: Modify the Window class or styles here by modifying
+     //  the CREATESTRUCT cs
+     return COleIPFrameWnd::PreCreateWindow(cs);
+</PRE>
+<PRE>}
+</PRE>
+<P>This function is called before OnCreate() and sets up the styles for the frame
+window through a CREATESTRUCT.</P>
+<P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>CAUTION:</strong><B> </B>Modifying these styles is not for the faint of heart. The
+	Microsoft documentation recommends reading the source code for all the classes in
+	the hierarchy of your CInPlaceFrame (Cwnd, CFrameWnd, COleIPFrameWnd) to see what
+	CREATESTRUCT elements are already set before making any changes. For this sample
+	application, don't change the CREATESTRUCT.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><B>Shortcomings of This Server&#160;&#160;</B>Apart from the fact that the starter
+application from AppWizard doesn't show a string, what's missing from this server?
+The OnDraw() and GetExtent()TODOs are the only significant tasks left for you by
+AppWizard. Try building ShowString, and then run it once standalone just to register
+it.</P>
+<P>Figure 15.4 shows the Object dialog box in Microsoft Word, reached by choosing
+Insert, Object. ShowString appears in this list as ShowSt Document--not surprising
+considering the menu name was IDR_SHOWSTTYPE. Developer Studio calls this document
+a ShowSt document. This setting could have been overriden in AppWizard by choosing
+the Advanced button in Step 4 of AppWizard. Figure 15.5 shows this dialog box and
+the long and short names of the file type.</P>
+<P><A HREF="javascript:popUp('15uvc04.gif')"><B>FIG. 15.4</B></A><B> </B><I>The ShowString
+document type, called ShowSt document, now appears in the Object dialog box when
+inserting a new object into a Word document.</I></P>
+
+<P><A HREF="javascript:popUp('15uvc05.gif')"><B>FIG. 15.5</B></A><B> </B><I>The Advanced
+Options dialog box of Step 4 in AppWizard provides an opportunity to change the name
+of the file type.</I></P>
+
+<P>So, the file type names used by the Registry have been set incorrectly for this
+project. The next few pages take you on a tour of the way file type names are stored
+and show you how difficult they are to change.</P>
+<P>The file type name has been stored in the string table. It is the caption of the
+IDR_SHOWSTTYPE resource, and AppWizard has set it to:</P>
+<P>
+<PRE>\nShowSt\nShowSt\n\n\nShowString.Document\nShowSt Document
+</PRE>
+<P>To look at this string, choose String Table from the Resource View, open the only
+string table there, click IDR_SHOWSTTYPE once to highlight it, and choose View, Properties
+(or double-click the string). This string is saved in the document template when
+a new one is constructed in CShowStringApp::InitInstance(), like this:</P>
+<P>
+<H4>Listing 15.12&#160;&#160; ShowString.cpp--Excerpt from ShowStringApp::InitInstance()</H4>
+<PRE>     pDocTemplate = new CMultiDocTemplate(
+          IDR_SHOWSTTYPE,
+          RUNTIME_CLASS(CShowStringDoc),
+          RUNTIME_CLASS(CChildFrame), // custom MDI child frame
+</PRE>
+<PRE>          RUNTIME_CLASS(CShowStringView));
+</PRE>
+<P>The caption of the menu resource holds seven strings, and each is used by a different
+part of the framework. They are separated by the newline character \n. The seven
+strings, their purposes, and the values provided by AppWizard for ShowString are
+as follows:</P>
+<P>
+
+<UL>
+	<LI><B>Window Title--</B>Used by SDI apps in the title bar. For ShowString: not provided.
+	<P>
+	<LI><B>Document Name--</B>Used as the root for default document names. For ShowString:
+	ShowSt, so that new documents will be ShowSt1, ShowSt2, and so on.
+	<P>
+	<LI><B>File New Name--</B>Prompt in the File New dialog box for file type. (For example,
+	in Developer Studio there are eight file types, including Text File and Project Workspace.)
+	For ShowString: ShowSt.
+	<P>
+	<LI><B>Filter Name--</B>An entry for the drop-down box Files of Type in the File
+	Open dialog box. For ShowString: not provided.
+	<P>
+	<LI><B>Filter Extension--</B>The extension that matches the filter name. For ShowString:
+	not provided.
+	<P>
+	<LI><B>Registry File Type ID--</B>A short string to be stored in the Registry. For
+	ShowString: ShowString.Document.
+	<P>
+	<LI><B>Registry File Type Name--</B>A longer string that shows in dialog boxes involving
+	the Registry. For ShowString: ShowSt Document.
+</UL>
+
+<P>Look again at Figure 15.5 and you can see where these values came from. Try changing
+the last entry. In the Properties dialog box, change the caption so that the last
+element of the string is ShowString Document and press Enter. Build the project.
+Run it once and exit. In the output section of Developer Studio, you see these messages:</P>
+<P>
+<PRE>Warning: Leaving value `ShowSt Document' for key `ShowString.Document'
+ in registry
+ intended value was `ShowString Document'.
+Warning: Leaving value `ShowSt Document' for key
+ `CLSID\{0B1DEE40-C373-11CF-870C-00201801DDD6}' in registry
+ intended value was `ShowString Document'.
+</PRE>
+<P>This means that the call to UpdateRegistry() did not change these two keys. There
+is a way to provide parameters to UpdateRegistry() to insist that the keys be updated,
+but it's even more complicated than the route you will follow. Because no code has
+been changed from that provided by AppWizard, it's much quicker to delete the ShowString
+directory and create it again, this time setting the long file type to ShowString
+Document.</P>
+<P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>CAUTTION:</strong><B> </B>Always test AppWizard-generated code before you add changes
+	of your own. Until you are familiar with every default you are accepting, it is worth
+	a few moments to see what you have before moving on. Rerunning AppWizard is easy,
+	but if you've made several hours worth of changes and then decide to rerun it, it's
+	not such a simple task.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Close Visual Studio, delete the ShowString folder entirely, and generate a new
+application with AppWizard as before. This time, in Step 4, click the Advanced button
+and change the file type names as shown in Figure 15.6. After you click Finish, AppWizard
+asks whether you wish to reuse the existing CLSID, as shown in Figure 15.7. Click
+Yes and then OK to create the project. This makes a new showstring.reg file for you
+with the correct Registry values.</P>
+<P><A HREF="javascript:popUp('15uvc06.gif')"><B>FIG. 15.6</B></A><B> </B><I>The Advanced
+Options dialog box of Step 4 of AppWizard is the place to improve the file type names.</I></P>
+
+<P><A HREF="javascript:popUp('15uvc07.gif')"><B>FIG. 15.7</B></A><B> </B><I>AppWizard
+makes sure that you don't accidentally reuse a CLSID.</I></P>
+
+<P>This changes the string table as well as the showstring.reg file, so you might
+be tempted to build and run the application to make this fix complete. It's true,
+when you run the application, it will update the Registry for you, using the values
+from the new string table. Alas, the registration update will fail yet again. If
+you were to try it, these messages would appear in the output window:</P>
+<P>
+<PRE>Warning: Leaving value `ShowSt Document' for key
+ `ShowString.Document' in registry
+ intended value was `ShowString Document'.
+Warning: Leaving value `ShowSt Document' for key
+ `CLSID\{0B1DEE40-C373-11CF-870C-00201801DDD6}' in registry
+ intended value was `ShowString Document'.
+Warning: Leaving value `ShowSt' for key
+ `CLSID\{0B1DEE40-C373-11CF-870C-00201801DDD6}\AuxUserType\2'
+ in registry
+ intended value was `ShowString'.
+</PRE>
+<P>So, how do you get out of this mess? You have to edit the Registry. If that doesn't
+sound intimidating, it should. Messing with the Registry can leave your system unusable.
+But you are not going to go in by hand and change keys; instead, you are going to
+use the Registry file that AppWizard generated for you. Here's what to do:</P>
+<P>
+
+<DL>
+	<DD><B>1. </B>Choose Start, Run.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Type <B>regedit</B> and press Enter.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Choose Registry, Import Registry File from the Registry Editor menu.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Using the Import Registry File dialog box, move through your folders
+	until you reach the one where the replacement ShowString server was just generated
+	by AppWizard, as shown in Figure 15.8. Click Open.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>A success message is shown. Click OK.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Close the Registry Editor.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('15uvc08.gif')"><B>FIG. 15.8</B></A><B> </B><I>Registry
+files generated by AppWizard have the extension .reg.</I></P>
+
+<P><I><BR>
+</I>Now if you run ShowString again, those error messages don't appear. Run Word
+again and choose Insert, Object. The Object dialog box now has a more meaningful
+ShowString entry, as shown in Figure 15.9.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> There are three morals to this side trip. The first is that you should
+	think really carefully before clicking Finish on the AppWizard dialog box. The second
+	is that you cannot ignore the Registry if you are an ActiveX programmer. The third
+	is that anything can be changed if you have the nerve for it.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Click OK on the Object dialog box to insert a ShowString object into the Word
+document. You can immediately edit it in place, as shown in Figure 15.10. You can
+see that the combined server and container in-place menus are being used. There's
+not much you can do to the embedded object at this point because the ShowString code
+that actually shows a string has not been added. Press Esc to finish editing in place,
+and the menus return to the usual Word menus, as shown in Figure 15.11.</P>
+<P><A HREF="javascript:popUp('15uvc09.gif')"><B>FIG. 15.9</B></A><B> </B><I>The updated
+long file type name appears in the Object dialog box of other applications.</I></P>
+
+<P><A HREF="javascript:popUp('15uvc10.gif')"><B>FIG. 15.10</B></A><B> </B><I>While
+editing in place, the in-place menus replace the Word menus.</I></P>
+
+<P><A HREF="javascript:popUp('15uvc11.gif')"><B>FIG. 15.11</B></A><B> </B><I>When
+the object is inactive, Word reminds the user of the object type.</I></P>
+
+<P>Although this server doesn't do anything, it is a perfectly good server. You can
+resize and move the embedded item while it is active or inactive, and everything
+operates exactly as you expect. All that remains is to restore the ShowString functionality.</P>
+<P>
+<H3><A NAME="Heading3"></A>Showing a String Again</H3>
+<P>As you did in Chapter 14, it is time to add the ShowString functionality to this
+version of the program. If you went through this process before, it will be even
+quicker this time. Remember to open the ShowString files from Chapter 8, so that
+you can copy code and resources from the functional ShowString to the do-nothing
+ActiveX server you have just created and explored. (If you didn't code along in Chapter
+8, you can get the completed code on the Web at <A target="_new" HREF="http://www.mcp.com/info"><B>www.mcp.com/info</B></A>
+or <A target="_new" HREF="http://www.gregcons.com/uvc6.htm"><B>www.gregcons.com/uvc6.htm</B></A>.)
+Here's what to do:</P>
+<P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>In ShowStringDoc.h, add the private member variables and public Get
+	functions to the class.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>In CShowStringDoc::Serialize(), paste in the code that saves or restores
+	these member variables.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>In CShowStringDoc::OnNewDocument(), paste in the code that initializes
+	the member variables. Change the default values of horizcenter and vertcenter to
+	FALSE. You'll see why towards the end of the chapter.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Copy the entire Tools menu from the old ShowString to the new server
+	ShowString. Choose File, Open to open the old ShowString.rc, open the IDR_SHOWSTTYPE
+	menu, click the Tools menu, and choose Edit, Copy. Open the new ShowString's IDR_SHOWSTTYPE
+	menu, click the Window menu, and choose Edit, Paste.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Paste the Tools menu into the IDR_SHOWSTTYPE_SRVR_IP (before the separator
+	bars) and IDR_SHOWSTTYPE_SRVR_EMB menus in the same way.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Add the accelerator Ctrl+T for ID_TOOLS_OPTIONS as described in Chapter
+	8. Add it to all three accelerators.
+	<P>
+	<DT></DT>
+	<DD><B>7. </B>Delete the IDD_ABOUTBOX dialog box from the new ShowString. Copy IDD_ABOUTBOX
+	and IDD_OPTIONS from the old ShowString to the new.
+	<P>
+	<DT></DT>
+	<DD><B>8. </B>While IDD_OPTIONS has focus, choose View, ClassWizard. Create the COptionsDialog
+	class as in the original ShowString.
+	<P>
+	<DT></DT>
+	<DD><B>9. </B>Use ClassWizard to arrange for CShowStringDoc to catch the ID_TOOLS_OPTIONS
+	command.
+	<P>
+	<DT></DT>
+	<DD><B>10. </B>In ShowStringDoc.cpp, replace the ClassWizard version of CShowStringDoc::OnToolsOptions()
+	with the one that puts up the dialog box.
+	<P>
+	<DT></DT>
+	<DD><B>11. </B>In ShowStringDoc.cpp, add <B>#include &quot;OptionsDialog.h&quot;</B>
+	after the #include statements already present.
+	<P>
+	<DT></DT>
+	<DD><B>12. </B>Use ClassWizard to connect the dialog box controls to COptionsDialog
+	member variables as before. Connect IDC_OPTIONS_BLACK to m_color, IDC_OPTIONS_HORIZCENTER
+	to m_horizcenter, IDC_OPTIONS_STRING to m_string, and IDC_OPTIONS_VERTCENTER to m_vertcenter.
+	<P>
+</DL>
+
+<P>To confirm you've made all the changes correctly, build the project--there should
+be no errors.</P>
+<P>You haven't restored CShowStringView::OnDraw() yet because there are actually
+going to be two OnDraw() functions. The first is in the view class, shown in Listing
+15.13. It draws the string when ShowString is running standalone and when the user
+is editing in place, and it's the same as in the old version of ShowString. Just
+copy it into the new one.</P>
+<P>
+<H4>Listing 15.13&#160;&#160;ShowStringView.cpp--CShowStringView::OnDraw()</H4>
+<PRE>void CShowStringView::OnDraw(CDC* pDC)
+{
+     CShowStringDoc* pDoc = GetDocument();
+     ASSERT_VALID(pDoc);
+     COLORREF oldcolor;
+     switch (pDoc-&gt;GetColor())
+     {
+     case 0:
+          oldcolor = pDC-&gt;SetTextColor(RGB(0,0,0)); //black
+          break;
+     case 1:
+          oldcolor = pDC-&gt;SetTextColor(RGB(0xFF,0,0)); //red
+          break;
+     case 2:
+          oldcolor = pDC-&gt;SetTextColor(RGB(0,0xFF,0)); //green
+          break;
+     }
+     int DTflags = 0;
+     if (pDoc-&gt;GetHorizcenter())
+     {
+          DTflags |= DT_CENTER;
+     }
+     if (pDoc-&gt;GetVertcenter())
+     {
+          DTflags |= (DT_VCENTER|DT_SINGLELINE);
+     }
+     CRect rect;
+     GetClientRect(&amp;rect);
+     pDC-&gt;DrawText(pDoc-&gt;GetString(), &amp;rect, DTflags);
+     pDC-&gt;SetTextColor(oldcolor);
+</PRE>
+<PRE>}
+</PRE>
+<P>When the embedded ShowString item is inactive, CShowStringSrvrItem::OnDraw() draws
+it. The code in here should be very similar to the view's OnDraw, but because it
+is a member of CShowStringSrvrItem rather than CShowStringView, it doesn't have access
+to the same member variables. So although there is still a GetDocument() function
+you can call, GetClientRect doesn't work. It's a member of the view class but not
+of the server item class. You use a few CDC member functions instead. It's a nice
+touch to draw the item slightly differently to help remind the user that it is not
+active, as shown in Listing 15.14. You can paste in the drawing code from the view's
+OnDraw(), but change the colors slightly to give the user a reminder.</P>
+<P>
+<H4>Listing 15.14&#160;&#160;SrvrItem.cpp--CShowStringSrvrItem::OnDraw()</H4>
+<PRE>BOOL CShowStringSrvrItem::OnDraw(CDC* pDC, CSize&amp; rSize)
+{
+     CShowStringDoc* pDoc = GetDocument();
+     ASSERT_VALID(pDoc);
+     // TODO: set mapping mode and extent
+     //  (The extent is usually the same as the size returned from OnGetExtent)
+     pDC-&gt;SetMapMode(MM_ANISOTROPIC);
+     pDC-&gt;SetWindowOrg(0,0);
+     pDC-&gt;SetWindowExt(3000, 3000);
+     COLORREF oldcolor;
+     switch (pDoc-&gt;GetColor())
+     {
+     case 0:
+          oldcolor = pDC-&gt;SetTextColor(RGB(0x80,0x80,0x80)); //gray
+          break;
+     case 1:
+          oldcolor = pDC-&gt;SetTextColor(RGB(0xB0,0,0)); // dull red
+          break;
+     case 2:
+          oldcolor = pDC-&gt;SetTextColor(RGB(0,0xB0,0)); // dull green
+          break;
+     }
+     int DTflags = 0;
+     if (pDoc-&gt;GetHorizcenter())
+     {
+          DTflags |= DT_CENTER;
+     }
+     if (pDoc-&gt;GetVertcenter())
+     {
+          DTflags |= (DT_VCENTER|DT_SINGLELINE);
+     }
+     CRect rect;
+     rect.TopLeft() = pDC-&gt;GetWindowOrg();
+     rect.BottomRight() = rect.TopLeft() + pDC-&gt;GetWindowExt();
+     pDC-&gt;DrawText(pDoc-&gt;GetString(), &amp;rect, DTflags);
+     pDC-&gt;SetTextColor(oldcolor);
+     return TRUE;
+</PRE>
+<PRE>}
+</PRE>
+<P>The function starts with the boilerplate from AppWizard. With an application that
+doesn't just draw itself in whatever space is provided, you would want to add code
+to determine the extent rather than just using (3000,3000). (You'd want to add the
+code to OnGetExtent(), too.) But hardcoding the numbers works for this simple example.</P>
+<P>Build the application, fix any typos or other simple errors, and then start Word
+and insert a ShowString document into your worksheet. ShowString should run as before,
+with Hello, world! in the center of the view. Convince yourself that the Options
+dialog box still works and that you have restored all the old functionality. Be sure
+to change at least one thing: the string, the color, or the centering. Then, press
+Esc to finish editing in place. Oops! It still draws the old Hello, world! in gray
+in the top left of the server area. Why?</P>
+<P>Remember that in CShowStringDoc::OnToolsOptions(), after the user clicks OK, you
+tell the document that it has been changed and arrange to have the view redrawn:</P>
+<P>
+<PRE>     SetModifiedFlag();
+     UpdateAllViews(NULL);
+</PRE>
+<P>You need to add another line there to make sure that any containers that are containing
+this document are also notified:</P>
+<P>
+<PRE>     NotifyChanged();
+</PRE>
+<P>Now build it again and insert a different ShowString object into a Word document.
+This time the changes are reflected in the inactive server display as well. Figure
+15.12 shows a ShowString item being edited in place, and Figure 15.13 shows the same
+item inactive.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> If you turn on either centering option, the string will not appear
+	when the item is inactive. It seems that DrawText is centering the string within
+	a much larger rectangle than the one you pass to it. Simpler CDC functions, such
+	as DrawEllipse, don't have this problem. It might be wise to avoid centering text
+	with DrawText() if your inactive appearance is important.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P><A HREF="javascript:popUp('15uvc12.gif')"><B>FIG. 15.12</B></A><B> </B><I>This
+ShowString item is being edited in place.</I></P>
+
+<P><A HREF="javascript:popUp('15uvc13.gif')"><B>FIG. 15.13</B></A><B> </B><I>This
+ShowString item is inactive.</I></P>
+
+<P>Good old ShowString has been through a lot. It's time for one more transformation.</P>
+<P>
+<H2><A NAME="Heading4"></A>Applications That Are Both Container and Server</H2>
+<P>As you might expect, adding container features to this version of ShowString is
+as difficult as adding them to the ordinary ShowString of the previous chapter. If
+you add these features, you gain an application that can tap the full power of ActiveX
+to bring extraordinary power to your work and your documents.</P>
+<P>
+<H3><A NAME="Heading5"></A>Building Another Version of ShowString</H3>
+<P>The way to get a ShowString that is both a container and a server is to follow
+these steps:</P>
+<P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Build a new ShowString with AppWizard that is a container and a full
+	server. Run AppWizard as usual but in a different directory than the one where you
+	created the server-only ShowString. Be sure to select the Both Container And Server
+	radio button in Step 3. In Step 4, click the Advanced button and change the filename
+	types as you did earlier in this chapter. Finally, when asked whether you want to
+	use the same CLSID, click No. This is a different application.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Make the container changes from the preceding chapter. When adding
+	the Tools, Options menu item and accelerator, add it to the main menu, the server
+	in-place menu, and the server-embedded menu.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Make the server changes from this chapter.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Add the ShowString functionality.
+	<P>
+</DL>
+
+<P>This section does not present the process of building a container and server application
+in detail; that is covered in the &quot;Adding Server Capabilities to ShowString&quot;
+section of this chapter and all of Chapter 14. Rather, the focus here is on the consequences
+of building such an application.</P>
+<P>
+<H3><A NAME="Heading6"></A>Nesting and Recursion Issues</H3>
+<P>After an application is both a server (meaning its documents can be embedded in
+other applications) and a container, it is possible to create nested documents. For
+example, Microsoft Word is both container and server. An Excel spreadsheet might
+contain a Word document, which in turn contains a bitmap, as shown in Figure 15.14.</P>
+<P>Within Excel, you can double-click the Word document to edit it in place, as shown
+in Figure 15.15, but you cannot go on to double-click the bitmap and edit it in place,
+too. You can edit it in a window of its own, as shown in Figure 15.16. It is a limitation
+of ActiveX that you cannot nest in-place editing sessions indefinitely.</P>
+<P>
+<H2><A NAME="Heading7"></A>Active Documents</H2>
+<P>The final, important recent addition to ActiveX is Active Documents, formerly
+known as ActiveX Document Objects. An ordinary ActiveX server takes over the menus
+and interface of a container application when the document is being edited in place
+but does so in cooperation with the container application. An Active Document server
+takes over far more dramatically, as you will shortly see.</P>
+<P><A HREF="javascript:popUp('15uvc14.gif')"><B>FIG. 15.14</B></A><B> </B><I>This
+Excel spreadsheet contains a Word document that contains a bitmap.</I></P>
+
+<P><A HREF="javascript:popUp('15uvc15.gif')"><B>FIG. 15.15</B></A><B> </B><I>This
+Word document is being edited in place.</I></P>
+
+<P><A HREF="javascript:popUp('15uvc16.gif')"><B>FIG. 15.16</B></A><B> </B><I>This
+bitmap is nested within a Word document within an Excel spreadsheet, and so cannot
+be edited in place. Instead, it is edited in a separate window.</I><B></B></P>
+<H3><A NAME="Heading8"></A>What Active Documents Do</H3>
+<P>The first application to demonstrate the use of Active Documents is the Microsoft
+Office Binder, shown in Figure 15.17. To the user, it appears that this application
+can open any Office document. In reality, the documents are opened with their own
+server applications while the frame around them and the list of other documents remain
+intact. Microsoft Internet Explorer (version 3.0 and later) is also an Active Document
+container--Figure 15.18 shows a Word document open in Explorer. Notice the menus
+are mostly Word menus, but the Explorer toolbar can still be used. For example, clicking
+the Back button closes this Word document and opens the document that was loaded
+previously.</P>
+<P>To users, this is a complete transition to a document-centered approach. No matter
+what application the user is working with, any kind of document can be opened and
+edited, using the code written to work with that document but the interface that
+the user has learned for his or her own application.</P>
+<P>
+<H3><A NAME="Heading9"></A>Making ShowString an Active Document Server</H3>
+<P>Making yet another version of ShowString, this one as an Active Document server,
+is pretty simple. Follow the instructions from the &quot;AppWizard's Server Boilerplate&quot;
+section at the beginning of this chapter, with two exceptions: in AppWizard's Step
+3, select Active Document Server and in AppWizard's Step 4, click the Advanced button.
+Fix the file type names and fill in the file extension as <B>.SST</B>, as shown in
+Figure 15.19. This helps Active Document containers determine what application to
+launch when you open a ShowString file.</P>
+<P><A HREF="javascript:popUp('15uvc17.gif')"><B>FIG. 15.17</B></A><B> </B><I>The
+Microsoft Office Binder makes it simple to pull Office documents together.</I></P>
+
+<P><A HREF="javascript:popUp('15uvc18.gif')"><B>FIG. 15.18</B></A><B> </B><I>Microsoft
+Internet Explorer is also a container for Active Documents.</I></P>
+
+<P><A HREF="javascript:popUp('15uvc19.gif')"><B>FIG. 15.19</B></A><B> </B><I>The
+Advanced Options dialog box of AppWizard's Step 4 is where you specify the extension
+for ShowString files.</I></P>
+
+<P><B>Document Extension Boilerplate&#160;&#160;</B>Any one of the versions of ShowString
+built up to this point could have had a document extension specified. AppWizard adds
+these lines to CShowStringApp::InitInstance() when you specify a document extension
+for an Active Document server application:</P>
+<P>
+<PRE>     // Enable drag/drop open
+     m_pMainWnd-&gt;DragAcceptFiles();
+     // Enable DDE Execute open
+     EnableShellOpen();
+     RegisterShellFileTypes(TRUE);
+</PRE>
+<P>It is the call to RegisterShellFileTypes() that matters here, though the drag
+and drop is a nice touch. You're able to drag files from your desktop or a folder
+onto the ShowString icon or an open copy of ShowString, and the file opens in ShowString.</P>
+<P><B>Active Document Server Boilerplate&#160;&#160;</B>Selecting Active Document
+support makes remarkably little difference to the code generated by AppWizard. In
+CShowStringApp::InitInstance(), the versions of ShowString that were not Active Document
+servers had this call to update the Registry:</P>
+<P>
+<PRE>     m_server.UpdateRegistry(OAT_INPLACE_SERVER);
+</PRE>
+<P>The Active Document version of ShowString has this line:</P>
+<P>
+<PRE>     m_server.UpdateRegistry(OAT_DOC_OBJECT_SERVER);
+</PRE>
+<P>In both cases, m_server is a CShowStringSrvrItem, but now the Active Document
+server version has a server item that inherits from CDocObjectServerItem. This causes
+a number of little changes throughout the source and includes files for CShowStringSrvrItem,
+where base class functions are called. Similarly, the in-place frame object, CInPlaceFrame,
+now inherits from COleDocIPFrameWnd.</P>
+<P><B>Showing Off the Newest ShowString&#160;&#160;</B>Restore the ShowString functionality
+once again as described in the section &quot;Showing a String Again,&quot; earlier
+in this chapter. Also copy the OnDraw() code from an old version of ShowString to
+CshowStringDoc::OnDraw(). Build the application, run it once to register it, and
+then run Microsoft Binder (if you have Office installed). Choose Section Add to bring
+up the Add Section dialog box shown in Figure 15.20. On the General tab, highlight
+ShowString Document and click OK.</P>
+<P><A HREF="javascript:popUp('15uvc20.gif')"><B>FIG. 15.20</B></A><B> </B><I>Not
+many applications on the market are Active Document servers, but you can write one
+in minutes.</I></P>
+
+<P>The menus include ShowString's Tools menu, as before. Choose Tools, Options and
+change something--for example, in Figure 15.21, the string has been changed to &quot;Hello
+from the Binder&quot; and the horizontal centering has been turned on. You have access
+to all of ShowString's functionality, although it doesn't look as though you are
+running ShowString.</P>
+<P>Now run ShowString alone and save a document by choosing File, Save. You don't
+need to enter an extension: The extension .SST is used automatically. Open an Explorer
+window and explore until you reach the file you saved. Bring up Internet Explorer
+4.0 and drag the file you saved onto Internet Explorer.</P>
+<P>Your ShowString document opens in Explorer, as you can see in Figure 15.22. The
+toolbar is clearly the Explorer toolbar, but the menu has the Tools item, and you
+can change the string, centering, and color as before. If you use the Back button
+on the Explorer toolbar, you reload the document you had open. If you change the
+ShowString document before clicking Back, you'll even be prompted to save your changes!
+Microsoft plans to integrate the desktop in the next generation of Windows with the
+Internet Explorer interface. What you see here is a sneak preview of how that will
+work.</P>
+<P><A HREF="javascript:popUp('15uvc21.gif')"><B>FIG. 15.21</B></A><B> </B><I>All
+of ShowString's functionality is available from within the Binder.</I></P>
+
+<P><A HREF="javascript:popUp('15uvc22.gif')"><B>FIG. 15.22</B></A><B> </B><I>Internet
+Explorer appears to be able to read and write ShowString files now.</I></P>
+
+<P>You can also arrange for your applications to be Active Document containers. Perhaps
+you noticed the check box on AppWizard's Step 3 where you could ask AppWizard to
+turn on this feature. It's not much harder to do than serving Active Documents, so
+you can explore it on your own. If you would like your users to be able to open Word
+files, Excel spreadsheets, or other Active Documents from within your application,
+be sure to look into this feature.</P>
+
+<P>Eventually Windows will look very much like Internet Explorer; Active Documents
+will make that possible.</P>
+<H1></H1>
+<CENTER>
+<P>
+<HR>
+<A HREF="../ch14/ch14.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch16/ch16.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> <BR>
+<BR>
+</P>
+
+<P>&#169; <A HREF="../copy.htm">Copyright</A>, Macmillan Computer Publishing. All
+rights reserved.
+</CENTER>
+
+
+</BODY>
+
+</HTML>

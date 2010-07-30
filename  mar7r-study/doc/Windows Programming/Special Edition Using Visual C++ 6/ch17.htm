@@ -1,0 +1,1496 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+
+function popUp(pPage) {
+ var fullURL = document.location;
+ var textURL = fullURL.toString();
+ var URLlen = textURL.length;
+ var lenMinusPage = textURL.lastIndexOf("/");
+ lenMinusPage += 1;
+ var fullPath = textURL.substring(0,lenMinusPage);
+ popUpWin = window.open('','popWin','resizable=yes,scrollbars=no,width=525,height=394');
+ figDoc= popUpWin.document;
+ zhtm= '<HTML><HEAD><TITLE>' + pPage + '</TITLE>';
+ zhtm += '<link rel="stylesheet" href="/includes/stylesheets/ebooks.css"></head>';
+ zhtm += '<BODY bgcolor="#FFFFFF">';
+ zhtm += '<IMG SRC="' + fullPath + pPage + '">';
+ zhtm += '<P><B>' + pPage + '</B>';
+ zhtm += '</BODY></HTML>';
+ window.popUpWin.document.write(zhtm);
+ window.popUpWin.document.close();
+ // Johnny Jackson 4/28/98
+ }
+
+//-->
+                                                                
+</SCRIPT>
+<link rel="stylesheet" href="/includes/stylesheets/ebooks.css">
+
+	
+	<TITLE>Special Edition Using Visual C++ 6 -- Ch 17 -- Building an ActiveX Control</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1><IMG SRC="../button/que.gif" WIDTH="171" HEIGHT="66" ALIGN="BOTTOM" BORDER="0"><BR>
+Special Edition Using Visual C++ 6</H1>
+</CENTER>
+<CENTER>
+<P><A HREF="../ch16/ch16.htm"><IMG SRC="../button/previous.gif" WIDTH="128" HEIGHT="28"
+ALIGN="BOTTOM" ALT="Previous chapter" BORDER="0"></A><A HREF="../ch18/ch18.htm"><IMG
+SRC="../button/next.gif" WIDTH="128" HEIGHT="28" ALIGN="BOTTOM" ALT="Next chapter"
+BORDER="0"></A><A HREF="../index.htm"><IMG SRC="../button/contents.gif" WIDTH="128"
+HEIGHT="28" ALIGN="BOTTOM" ALT="Contents" BORDER="0"></A> 
+<HR>
+
+</CENTER>
+<CENTER>
+<H1>- 17 -</H1>
+</CENTER>
+<CENTER>
+<H1>Building an ActiveX Control</H1>
+</CENTER>
+
+<UL>
+	<LI><A HREF="#Heading1">Creating a Rolling-Die Control</A>
+	<UL>
+		<LI><A HREF="#Heading2">Building the Control Shell</A>
+		<LI><A HREF="#Heading3">AppWizard's Code</A>
+		<LI><A HREF="#Heading4">Designing the Control</A>
+	</UL>
+	<LI><A HREF="#Heading5">Displaying the Current Value</A>
+	<UL>
+		<LI><A HREF="#Heading6">Adding a Property</A>
+		<LI><A HREF="#Heading7">Writing the Drawing Code</A>
+	</UL>
+	<LI><A HREF="#Heading8">Reacting to a Mouse Click and Rolling the Die</A>
+	<UL>
+		<LI><A HREF="#Heading9">Notifying the Container</A>
+		<LI><A HREF="#Heading10">Rolling the Die</A>
+	</UL>
+	<LI><A HREF="#Heading11">Creating a Better User Interface</A>
+	<UL>
+		<LI><A HREF="#Heading12">A Bitmap Icon</A>
+		<LI><A HREF="#Heading13">Displaying Dots</A>
+	</UL>
+	<LI><A HREF="#Heading14">Generating Property Sheets</A>
+	<UL>
+		<LI><A HREF="#Heading15">Digits Versus Dots</A>
+		<LI><A HREF="#Heading16">User-Selected Colors</A>
+	</UL>
+	<LI><A HREF="#Heading17">Rolling on Demand</A>
+	<LI><A HREF="#Heading18">Future Improvements</A>
+	<UL>
+		<LI><A HREF="#Heading19">Enable and Disable Rolling</A>
+		<LI><A HREF="#Heading20">Dice with Unusual Numbers of Sides</A>
+		<LI><A HREF="#Heading21">Arrays of Dice</A>
+	</UL>
+</UL>
+
+<P>
+<HR SIZE="4">
+
+<CENTER>
+<H1></H1>
+</CENTER>
+<H2><A NAME="Heading1"></A>Creating a Rolling-Die Control</H2>
+<P>ActiveX controls replace OLE controls, though the change affects the name more
+than anything else. (Much of the Microsoft documentation still refers to OLE controls.)
+The exciting behavior of these controls is powered by COM (the Component Object Model),
+which also powers OLE. This chapter draws, in part, on the work of the previous chapters.
+An ActiveX control is similar to an Automation server, but an ActiveX control also
+exposes events, and those enable the control to direct the container's behavior.</P>
+<P>ActiveX controls take the place that VBX controls held in 16-bit Windows programming,
+enabling programmers to extend the control set provided by the compiler. The original
+purpose of VBX controls was to enable programmers to provide their users with unusual
+interface controls. Controls that look like gas gauges or volume knobs became easy
+to develop. Almost immediately, however, VBX programmers moved beyond simple controls
+to modules that involved significant amounts of calculation and processing. In the
+same way, many ActiveX controls are far more than just controls--they are components
+that can be used to build powerful applications quickly and easily.</P>
+<P>The sample application for this chapter is a <I>die,</I> one of a pair of dice.
+Imagine a picture of a cubic die with the familiar pattern of dots indicating the
+current value, between 1 and 6. When the user clicks the picture, a new, randomly
+chosen number is shown. You might use one or more dice in any game program.</P>
+<P>
+<H3><A NAME="Heading2"></A>Building the Control Shell</H3>
+<P>The process of building this die control starts, as always, with AppWizard. Begin
+Developer Studio and then choose File, New. Click the Projects tab and then click
+MFC ActiveX ControlWizard, which is in the list at the left of the dialog box; fill
+in a project name at the top, choose an appropriate folder for the project files,
+and click OK. Figure 17.1 shows the completed dialog box, with the project name <I>Dieroll</I>.</P>
+<P><A HREF="javascript:popUp('17uvc01.gif')"><B>FIG. 17.1</B></A><B> </B><I>AppWizard
+makes creating an ActiveX control simple.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> Even though the technology is now called ActiveX, many classnames
+	used throughout this chapter have Ole in their names, and comments refer to OLE.
+	Though Microsoft has changed the technology's name, it has not yet propagated that
+	change throughout Visual C++. You will have to live with these contradictions until
+	the next release of Visual C++.
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>There are two steps in the ActiveX control wizard. Fill out the first dialog box
+as shown in Figure 17.2: You want one control, no runtime licensing, source-file
+comments, and no Help files. After you have completed the dialog box, click Next.</P>
+<P><A HREF="javascript:popUp('17uvc02.gif')"><B>FIG. 17.2</B></A><B> </B><I>AppWizard's
+first step sets your control's basic parameters.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<B>Runtime Licensing</B> </P>
+
+	<P>Many developers produce controls as a salable product. Other programmers buy the
+	rights to use such controls in their programs. Imagine that a developer, Alice, produces
+	a fantastic die control and sells it to Bob, who incorporates it into the best backgammon
+	game ever. Carol buys the backgammon game and loves the die control, and she decides
+	that it would be perfect for a children's board game she is planning. Because the
+	DIEROLL.OCX file is in the backgammon package, there is nothing (other than ethics)
+	to stop her from doing this.<BR>
+	</P>
+
+	<P>Runtime licensing is simple: There is a second file, DIEROLL.LIC, that contains
+	the licensing information. Without that file, a control can't be embedded into a
+	form or program, though a program into which the control is already embedded will
+	work perfectly. Alice ships both DIEROLL.OCX and DIEROLL.LIC to Bob, but their licensing
+	agreement states that only DIEROLL.OCX goes out with the backgammon game. Now Carol
+	can admire DIEROLL.OCX, and it will work perfectly in the backgammon game, but if
+	she wants to include it in the game she builds, she'll have to buy a license from
+	Alice. </P>
+
+	<P>You arrange for runtime licensing with AppWizard when you first build the control.
+	If you decide, after the control is already built, that you should have asked for
+	runtime licensing after all, build a new control with licensing and copy your changes
+	into that control. 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The second and final AppWizard step enables you to set the new control's features.
+Make sure that Activates When Visible, Available in &quot;Insert Object&quot; Dialog,
+and Has an &quot;About Box&quot; are selected, as shown in Figure 17.3, and then
+click Finish. AppWizard summarizes your settings in a final dialog box. Click OK,
+and AppWizard creates 19 files for you and adds them to a project to make them easy
+to work with. These files are ready to compile, but they don't do anything at the
+moment. You have an empty shell; it's up to you to fill it.</P>
+<P><A HREF="javascript:popUp('17uvc03.gif')"><B>FIG. 17.3</B></A><B> </B><I>AppWizard's
+second step governs your control's appearance and behavior.</I></P>
+<H3><B></B></H3>
+
+<H3><A NAME="Heading3"></A>AppWizard's Code</H3>
+<P>Nineteen files sound like a lot, but they aren't. There are only three classes:
+CDierollApp, CDierollCtrl, and CDierollPropPage. They take up six files; the other
+13 are the project file, make file, resource file, ClassWizard database, ODL file,
+and so on.</P>
+<P><B><I>CDierollApp&#160;&#160;</I></B>CDierollApp is a very small class. It inherits
+from COleControlModule and provides overrides of InitInstance() and ExitInstance()
+that do nothing but call the base-class versions of these functions. This is where
+you find _tlid, the external globally unique ID for your control, and some version
+numbers that make delivering upgrades of your control simpler. The lines in Dieroll.cpp
+that set up these identifiers are the following:</P>
+<P>
+<PRE>const GUID CDECL BASED_CODE _tlid =
+         { 0x914b21a5, 0x7946, 0x11d0, { 0x9b, 0x1, 0, 0x80, 
+          0xc8, 0x1a, 0x39, 0x7c } };
+const WORD _wVerMajor = 1;
+const WORD _wVerMinor = 0;
+</PRE>
+<P><B><I>CDierollCtrl&#160;&#160;</I></B>The CDierollCtrl class inherits from COleControl,
+and it has a constructor and destructor, plus overrides for these four functions:</P>
+
+<UL>
+	<LI>OnDraw() draws the control.
+	<P>
+	<LI>DoPropExchange() implements persistence and initialization.
+	<P>
+	<LI>OnResetState() causes the control to be reinitialized.
+	<P>
+	<LI>AboutBox() displays the About box for the control.
+</UL>
+
+<P>None of the code for these functions is particularly interesting. However, some
+of the maps that have been added to this class are of interest. There is an empty
+message map, ready to accept new entries, and an empty dispatch map, ready for the
+properties and methods that you choose to expose.</P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>TIP:</strong> Message maps are explained in the &quot;Message Maps&quot; section
+	of Chapter 3, &quot;Messages and Commands.&quot; Dispatch maps are discussed in the
+	&quot;AppWizard's Automation Boilerplate&quot; section in Chapter 16, &quot;Building
+	an Automation Server.&quot; 
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Below the empty message and dispatch maps comes a new map: the event map. Listing
+17.1 shows the event map in the header file, and the source file event map is shown
+in Listing 17.2.</P>
+<P>
+<H4>Listing 17.1&#160;&#160;Excerpt from DierollCtl.h--Event Map</H4>
+<PRE>// Event maps
+     //{{AFX_EVENT(CDierollCtrl)
+          // NOTE - ClassWizard will add and remove member functions here.
+          //    DO NOT EDIT what you see in these blocks of generated code !
+     //}}AFX_EVENT
+</PRE>
+<PRE>     DECLARE_EVENT_MAP()
+</PRE>
+<H4>Listing 17.2&#160;&#160;Excerpt from DierollCtl.cpp--Event Map</H4>
+<PRE>BEGIN_EVENT_MAP(CDierollCtrl, COleControl)
+     //{{AFX_EVENT_MAP(CDierollCtrl)
+     // NOTE - ClassWizard will add and remove event map entries
+     //    DO NOT EDIT what you see in these blocks of generated code !
+     //}}AFX_EVENT_MAP
+</PRE>
+<PRE>END_EVENT_MAP()
+</PRE>
+<P><I>Event maps,</I> like message maps and dispatch maps<I>,</I> link real-world
+happenings to your code. <I>Message</I> <I>maps</I> catch things the user does, such
+as choosing a menu item or clicking a button. They also catch messages sent from
+one part of an application to another. <I>Dispatch</I> <I>maps</I> direct requests
+to access properties or invoke methods of an Automation server or ActiveX control.
+Event maps direct notifications from an ActiveX control to the application that contains
+the control (and are discussed in more detail later in this chapter).</P>
+<P>There's one more piece of code worth noting in DierollCtl.cpp. It appears in Listing
+17.3.</P>
+<P>
+<H4>Listing 17.3&#160;&#160;Excerpt from DierollCtl.cpp--Property Pages</H4>
+<PRE>/////////////////////////////////////////////////////////////////////////////
+// Property pages
+// TODO: Add more property pages as needed.  Remember to increase the count!
+BEGIN_PROPPAGEIDS(CDierollCtrl, 1)
+     PROPPAGEID(CDierollPropPage::guid)
+</PRE>
+<PRE>END_PROPPAGEIDS(CDierollCtrl)
+</PRE>
+<P>The code in Listing 17.3 is part of the mechanism that implements powerful and
+intuitive property pages in your controls. That mechanism is discussed later in this
+chapter.</P>
+<P><B><I>CDierollPropPage&#160;&#160;</I></B>The entire CDierollPropPage class is
+the domain of ClassWizard. Like any class with a dialog box in it, it has significant
+data exchange components. The constructor will initialize the dialog box fields using
+code added by ClassWizard. Listing 17.4 shows this code.</P>
+<P>
+<H4>Listing 17.4&#160;&#160;DierollPpg.cpp--CDierollPropPage::CDierollPropPage()</H4>
+<PRE>CDierollPropPage::CDierollPropPage() :
+     COlePropertyPage(IDD, IDS_DIEROLL_PPG_CAPTION)
+{
+     //{{AFX_DATA_INIT(CDierollPropPage)
+     // NOTE: ClassWizard will add member initialization here
+     //    DO NOT EDIT what you see in these blocks of generated code !
+     //}}AFX_DATA_INIT
+</PRE>
+<PRE>}
+</PRE>
+<P>The DoDataExchange() function moderates the data exchange between CDierollPropPage,
+which represents the dialog box that is the property page, and the actual boxes on
+the user's screen. It, too, will have code added by ClassWizard--Listing 17.5 shows
+the empty map AppWizard made.</P>
+<P>
+<H4>Listing 17.5&#160;&#160;DierollPpg.cpp--CDierollPropPage::DoDataExchange()</H4>
+<PRE>void CDierollPropPage::DoDataExchange(CDataExchange* pDX)
+{
+     //{{AFX_DATA_MAP(CDierollPropPage)
+     // NOTE: ClassWizard will add DDP, DDX, and DDV calls here
+     //    DO NOT EDIT what you see in these blocks of generated code !
+     //}}AFX_DATA_MAP
+     DDP_PostProcessing(pDX);
+</PRE>
+<PRE>}
+</PRE>
+<P>There is, not surprisingly, a message map for CDierollPropPage, and some registration
+code (shown in Listing 17.6), that enables the ActiveX framework to call this code
+when a user edits the control's properties.</P>
+<P>
+<H4>Listing 17.6&#160;&#160;DierollPpg.cpp--CDierollPropPageFactory::UpdateRegistry()</H4>
+<PRE>/////////////////////////////////////////////////////////////////////////////
+// Initialize class factory and guid
+IMPLEMENT_OLECREATE_EX(CDierollPropPage, &quot;DIEROLL.DierollPropPage.1&quot;,
+     0x914b21a8, 0x7946, 0x11d0, 0x9b, 0x1, 0, 0x80, 0xc8, 0x1a, 0x39, 0x7c)
+/////////////////////////////////////////////////////////////////////////////
+// CDierollPropPage::CDierollPropPageFactory::UpdateRegistry -
+// Adds or removes system registry entries for CDierollPropPage
+BOOL CDierollPropPage::CDierollPropPageFactory::UpdateRegistry(BOOL bRegister)
+{
+     if (bRegister)
+          return AfxOleRegisterPropertyPageClass(AfxGetInstanceHandle(),
+               m_clsid, IDS_DIEROLL_PPG);
+     else
+          return AfxOleUnregisterClass(m_clsid, NULL);
+</PRE>
+<PRE>}
+</PRE>
+<H3><A NAME="Heading4"></A>Designing the Control</H3>
+<P>Typically, a control has <I>internal data</I> (properties) and shows them in some
+way to the user. The user provides input to the control to change its internal data
+and perhaps the way the control looks. Some controls present data to the user from
+other sources, such as databases or remote files. The only internal data that makes
+sense for the die-roll control, other than some appearance settings that are covered
+later, is a single integer between 1 and 6 that represents the current number showing
+in the die. Eventually, the control will show a dot pattern like a real-world die,
+but the first implementation of OnDraw() will simply display the digit. Another simplification
+is to hard-code the digit to a single value while coding the basic structure; add
+the code to roll the die later, while dealing with input from the user.</P>
+<P>
+<H2><A NAME="Heading5"></A>Displaying the Current Value</H2>
+<P>Before the value can be displayed, the control must have a value. That involves
+adding a property to the control and then writing the drawing code.</P>
+<P>
+<H3><A NAME="Heading6"></A>Adding a Property</H3>
+<P>ActiveX controls have four types of properties:</P>
+
+<UL>
+	<LI><I>Stock.</I> These are standard properties supplied to every control, such as
+	font or color. The developer must activate stock properties, but there is little
+	or no coding involved.
+	<P>
+	<LI><I>Ambient.</I> These are properties of the environment that surrounds the control--properties
+	of the container into which it has been placed. These can't be changed, but the control
+	can use them to adjust its own properties. For example, it can set the control's
+	background color to match the container's background color.
+	<P>
+	<LI><I>Extended.</I> These are properties that the container handles, usually involving
+	size and placement onscreen.
+	<P>
+	<LI><I>Custom.</I> These are properties added by the control developer.
+</UL>
+
+<P>To add the value to the die-roll control, use ClassWizard to add a custom property
+called Number. Follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Choose View, ClassWizard, and then click the Automation tab.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Make sure that the Project drop-down list box at the upper-left of
+	the dialog box is set to Dieroll (unless you chose a different name when building
+	the control with AppWizard) and that the Class Name drop-down list box on the right
+	has the classname CDieRollCtrl.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Click the Add Property button and fill in the dialog box as shown in
+	Figure 17.4.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Type <B>Number</B> into the External Name combo box and notice how
+	ClassWizard fills in suggested values for the Variable Name and Notification Function
+	boxes.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Select short for the type.
+	<P>
+	<DT></DT>
+	<DD><B>6. </B>Click OK to close the Add Property dialog box and OK to close ClassWizard.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('17uvc04.gif')"><B>FIG. 17.4</B></A><B> </B><I>ClassWizard
+simplifies the process of adding a custom property to your die-rolling control.</I></P>
+
+<P>Before you can write code to display the value of the Number property, the property
+must have a value to display. Control properties are initialized in DoPropExchange().
+This method actually implements <I>persistence</I>; that is, it enables the control
+to be saved as part of a document and read back in when the document is opened. Whenever
+a new control is created, the properties can't be read from a file, so they are set
+to the default values provided in this method. Controls don't have a Serialize()
+method.</P>
+<P>AppWizard generated a skeleton DoPropExchange() method; this code is in Listing
+17.7.</P>
+<P>
+<H4>Listing 17.7&#160;&#160;DierollCtl.cpp--CDierollCtrl::DoPropExchange()</H4>
+<PRE>void CDierollCtrl::DoPropExchange(CPropExchange* pPX)
+{
+     ExchangeVersion(pPX, MAKELONG(_wVerMinor, _wVerMajor));
+     COleControl::DoPropExchange(pPX);
+     // TODO: Call PX_ functions for each persistent custom property.
+</PRE>
+<PRE>}
+</PRE>
+<P>Notice the use of the version numbers to ensure that a file holding the values
+was saved by the same version of the control. Take away the TODO comment that AppWizard
+left for you, and add this line:</P>
+<P>
+<PRE>       PX_Short( pPX, &quot;Number&quot;,  m_number, (short)3 );
+</PRE>
+<P>PX_Short() is one of many property-exchange functions that you can call--one for
+each property type that is supported. The parameters you supply are as follows:</P>
+
+<UL>
+	<LI>The pointer that was passed to DoPropExchange()
+	<P>
+	<LI>The external name of the property as you typed it on the ClassWizard Add Property
+	dialog box
+	<P>
+	<LI>The member variable name of the property as you typed it on the ClassWizard Add
+	Property dialog box
+	<P>
+	<LI>The default value for the property (later, you can replace this hard-coded 3
+	with a random value)
+</UL>
+
+<P>The following are the PX functions:</P>
+<P>PX_Blob() (for binary large object [BLOB] types)</P>
+<P>PX_Bool()</P>
+<P>PX_Color() (OLE_COLOR)</P>
+<P>PX_Currency()</P>
+<P>PX_DATAPATH (CDataPathProperty)</P>
+<P>PX_Double()</P>
+<P>PX_Float()</P>
+<P>PX_Font()</P>
+<P>PX_IUnknown() (for LPUNKNOWN types, COM interface pointer)</P>
+<P>PX_Long()</P>
+<P>PX_Picture()</P>
+<P>PX_Short()</P>
+<P>PX_String()</P>
+<P>PX_ULong()</P>
+<P>PX_UShort()</P>
+<P>PX_VBXFontConvert()</P>
+<P>Filling in the property's default value is simple for some properties but not
+for others. For example, you set colors with the RGB() macro, which takes values
+for red, green, and blue from 0 to 255 and returns a COLORREF. Say that you had a
+property with the external name EdgeColor and the internal name m_edgecolor and you
+wanted the property to default to gray. You would code that like the following:</P>
+<P>
+<PRE>PX_Short( pPX, &quot;EdgeColor&quot;, m_edgecolor, RGB(128,128,128) );
+</PRE>
+<P>Controls with font properties should, by default, set the font to whatever the
+container is using. To get this font, call the COleControl method AmbientFont().</P>
+<P>
+<H3><A NAME="Heading7"></A>Writing the Drawing Code</H3>
+<P>The code to display the number belongs in the OnDraw() method of the control class,
+CDierollCtrl. (Controls don't have documents or views.) This function is called automatically
+whenever Windows needs to repaint the part of the screen that includes the control.
+AppWizard generated a skeleton of this method, too, shown in Listing 17.8.</P>
+<P>
+<H4>Listing 17.8&#160;&#160;DierollCtl.cpp--CDierollCtrl::OnDraw()</H4>
+<PRE>void CDierollCtrl::OnDraw(CDC* pdc, const CRect&amp; rcBounds, 
+      const CRect&amp; rcInvalid)
+{
+    // TODO: Replace the following code with your own drawing code.
+    pdc-&gt;FillRect(rcBounds, 
+             CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
+    pdc-&gt;Ellipse(rcBounds);
+</PRE>
+<PRE>}
+</PRE>
+<P>As discussed in the &quot;Scrolling Windows&quot; section of Chapter 5, &quot;Drawing
+on the Screen,&quot; the framework passes the function a device context to draw in,
+a CRect describing the space occupied by your control, and another CRect describing
+the space that has been invalidated. The code in Listing 17.8 draws a white rectangle
+throughout rcBounds and then draws an ellipse inside that rectangle, using the default
+foreground color. You can keep the white rectangle for now, but rather than draw
+an ellipse on it, draw a character that corresponds to the value in Number. To do
+that, replace the last line in the skeletal OnDraw() with these lines:</P>
+<P>
+<PRE>    CString val; //character representation of the short value
+    val.Format(&quot;%i&quot;,m_number);
+    pdc-&gt;ExtTextOut( 0, 0, ETO_OPAQUE, rcBounds, val, NULL );
+</PRE>
+<P>These code lines convert the short value in m_number (which you associated with
+the Number property on the Add Property dialog box) to a CString variable called
+val, using the new CString::Format() function (which eliminates one of the last uses
+of sprintf() in C++ programming). The ExtTextOut() function draws a piece of text--the
+character in val--within the rcBounds rectangle. As the die-roll control is written
+now, that number will always be 3.</P>
+<P>You can build and test the control right now if you would like to see how little
+effort it takes to make a control that does something. Unlike the other ActiveX applications,
+a control isn't run as a standalone application in order to register it. Build the
+project and fix any typing mistakes. Choose Tools, ActiveX Control Test Container
+to bring up the control test container, shown in Figure 17.5.</P>
+<P><A HREF="javascript:popUp('17uvc05.gif')"><B>FIG. 17.5</B></A><B> </B><I>The ActiveX
+control test container is the ideal place to test your control.</I></P>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> If the Tools menu in Developer Studio doesn't include an ActiveX
+	Control Test Container item, you can add it to the menu by following these steps:<BR>
+	<B></B></P>
+
+	<P><B>1. </B>Choose Tools, Customize.<BR>
+	<B></B></P>
+
+	<P><B>2. </B>Click the Tools tab.<BR>
+	<B></B></P>
+
+	<P><B>3. </B>Look at the list of tools and make sure that ActiveX Control Test Container
+	isn't there.<BR>
+	<B></B></P>
+
+	<P><B>4. </B>Go to the bottom of the list and double-click the empty entry.<BR>
+	<B></B></P>
+
+	<P><B>5. </B>Type <B>Activ&amp;eX Control Test Container</B> in the entry and press
+	Enter.<BR>
+	<B></B></P>
+
+	<P><B>6. </B>Click the ... button to the right of the Command box and browse to your
+	Visual C++ CD, or to the hard drive on which you installed Visual C++, and to the
+	BIN folder beneath the Developer Studio folder. Highlight tstcon32.exe and click
+	OK to finish browsing. On many systems the full path will be C:\Program Files\Microsoft
+	Visual Studio\Common\Tools\TSTCON32.EXE. Your system may be different.<BR>
+	<B></B></P>
+
+	<P><B>7. </B>Click the rightward-pointing arrow beside the Initial Directory box
+	and choose Target Directory from the list that appears.<BR>
+	<B></B></P>
+
+	<P><B>8. </B>Make sure that the three check boxes across the bottom of the directory
+	are not selected.<BR>
+	<B></B></P>
+
+	<P><B>9. </B>Click the Close button.<BR>
+	If you haven't built a release version and your target is a release version, or if
+	you have not built a debug version and your target is a debug version, you will receive
+	an error message when you choose Tools, ActiveX Control Test Container. Simply build
+	the control and you will be able to choose the menu item.<BR>
+	After you have installed the test container under the tools menu, you will not need
+	to do so again. By bringing up the test container from within Developer Studio like
+	this, you make it simpler to load your die-roll control into the test container.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>Within the test container, choose Edit, Insert New Control and then choose Dieroll
+Control from the displayed list. As Figure 17.6 shows, the control appears as a white
+rectangle displaying a small number 3. You can move and resize this control within
+the container, but that little 3 stays doggedly in the upper-left corner. The next
+step is to make that number change when a user clicks the die.</P>
+<P>
+<H2><A NAME="Heading8"></A>Reacting to a Mouse Click and Rolling the Die</H2>
+<P>There are actually two things that you want your control to do when the user clicks
+the mouse on the control: to inform the container that the control has been clicked
+and to roll the die and display the new internal value.</P>
+<P><A HREF="javascript:popUp('17uvc06.gif')"><B>FIG. 17.6</B></A><B> </B><I>By adding
+one property and changing two functions, you have transformed the empty shell into
+a control that displays a 3.</I></P>
+<H3><B></B></H3>
+
+<H3><A NAME="Heading9"></A>Notifying the Container</H3>
+<P>Let's first tackle using an <I>event</I> to notify a container. Events are how
+controls notify the container of a user action. Just as there are stock properties,
+there are stock events. These events are already coded for you:</P>
+
+<UL>
+	<LI>Click is coded to indicate to the container that the user clicked.
+	<P>
+	<LI>DblClick is coded to indicate to the container that the user double-clicked.
+	<P>
+	<LI>Error is coded to indicate an error that can't be handled by firing any other
+	event.
+	<P>
+	<LI>KeyDown is coded to indicate to the container that a key has gone down.
+	<P>
+	<LI>KeyPress is coded to indicate to the container that a complete keypress (down
+	and then up) has occurred.
+	<P>
+	<LI>KeyUp is coded to indicate to the container that a key has gone up.
+	<P>
+	<LI>MouseDown is coded to indicate to the container that the mouse button has gone
+	down.
+	<P>
+	<LI>MouseMove is coded to indicate to the container that the mouse has moved over
+	the control.
+	<P>
+	<LI>MouseUp is coded to indicate to the container that the mouse button has gone
+	up.
+</UL>
+
+<P>The best way to tell the container that the user has clicked over the control
+is to fire a Click stock event. The first thing to do is to add it to the control
+with ClassWizard. Follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Bring up ClassWizard by choosing View, ClassWizard, and click the ActiveX
+	Events tab. Make sure that the selected class is CDierollCtrl.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Click the Add Event button and fill in the Add Event dialog box, as
+	shown in Figure 17.7.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>The external name is Click; choose it from the drop-down list box and
+	notice how the internal name is filled in as FireClick.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Click OK to add the event, and your work is done. Close ClassWizard.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('17uvc07.gif')"><B>FIG. 17.7</B></A><B> </B><I>ClassWizard
+helps you add events to your control.</I></P>
+
+<P>You may notice the ClassView pane has a new addition: two icons resembling handles.
+Click the + next to _DDierollEvents to see that Click is now listed as an event for
+this application, as shown in Figure 17.8.</P>
+<P><A HREF="javascript:popUp('17uvc08.gif')"><B>FIG. 17.8</B></A><B> </B><I>ClassView
+displays events as well as classes.</I></P>
+
+<P>Now when the user clicks the control, the container class will be notified. If
+you are writing a backgammon game, for example, the container can respond to the
+click by using the new value on the die to evaluate possible moves or do some other
+backgammon-specific task.</P>
+<P>The second part of reacting to clicks involves actually rolling the die and redisplaying
+it. Not surprisingly, ClassWizard helps implement this. When the user clicks over
+your control, you catch it with a message map entry, just as with an ordinary application.
+Bring up ClassWizard and follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Select the Message Maps tab this time and make sure that your control
+	class, CDierollCtrl, is selected in the Class Name combo box.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Scroll through the Messages list box until you find the WM_LBUTTONDOWN
+	message, which Windows generates whenever the left mouse button is clicked over your
+	control.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Click Add Function to add a function that will be called automatically
+	whenever this message is generated--in other words, whenever the user clicks your
+	control. This function must always be named OnLButtonDown(), so ClassWizard doesn't
+	give you a dialog box asking you to confirm the name.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>ClassWizard has made a skeleton version of OnLButtonDown() for you;
+	click the Edit Code button to close ClassWizard, and look at the new OnLButtonDown()
+	code. Here's the skeleton:
+	<P>
+</DL>
+
+<PRE>void CDierollCtrl::OnLButtonDown(UINT nFlags, CPoint point)
+{
+     // TODO: Add your message handler code here and/or call default
+    
+     COleControl::OnLButtonDown(nFlags, point);
+}
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>5. </B>Replace the TODO comment with a call to a new function, Roll(), that
+	you will write in the next section. This function will return a random number between
+	1 and 6.
+	<P>
+</DL>
+
+<PRE>     m_number = Roll();
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>6. </B>To force a redraw, next add this line:
+	<P>
+</DL>
+
+<PRE>     InvalidateControl();
+</PRE>
+
+<DL>
+	<DT></DT>
+	<DD><B>7. </B>Leave the call to COleControl::OnLButtonDown() at the end of the function;
+	it handles the rest of the work involved in processing the mouse click.
+	<P>
+</DL>
+
+<H3><A NAME="Heading10"></A>Rolling the Die</H3>
+<P>To add Roll() to CDierollCtrl, right-click on CDierollCtrl in the ClassView pane
+and then choose Add Member Function from the shortcut menu that appears. As shown
+in Figure 17.9, Roll() will be a public function that takes no parameters and returns
+a short.</P>
+<P><A HREF="javascript:popUp('17uvc09.gif')"><B>FIG. 17.9</B></A><B> </B><I>Use the
+Add Member Function dialog box to speed routine tasks.</I></P>
+
+<P>What should Roll() do? It should calculate a random value between 1 and 6. The
+C++ function that returns a random number is rand(), which returns an integer between
+0 and RAND_MAX. Dividing by RAND_MAX + 1 gives a positive number that is always less
+than 1, and multiplying by 6 gives a positive number that is less than 6. The integer
+part of the number will be between 0 and 5, in other words. Adding 1 produces the
+result that you want: a number between 1 and 6. Listing 17.9 shows this code.</P>
+<P>
+<H4>Listing 17.9&#160;&#160;DierollCtl.cpp--CDierollCtrl::Roll()</H4>
+<PRE>short CDierollCtrl::Roll(void)
+{
+     double number = rand();
+     number /= RAND_MAX + 1;
+     number *= 6;
+     return (short)number + 1;
+</PRE>
+<PRE>}
+</PRE>
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> If RAND_MAX + 1 isn't a multiple of 6, this code will roll low numbers
+	slightly more often than high ones. A typical value for RAND_MAX is 32,767, which
+	means that 1 and 2 will, on the average, come up 5,462 times in 32,767 rolls. However,
+	3 through 6 will, on the average, come up 5,461 times. You're neglecting this inaccuracy.<BR>
+	</P>
+
+	<P>Some die-rolling programs use the modulo function instead of this approach, but
+	it is far less accurate. The lowest digits in the random number are least likely
+	to be accurate. The algorithm used here produces a much more random die roll.&#160;n
+	
+<HR>
+
+
+</BLOCKQUOTE>
+
+<P>The random number generator must be seeded before it is used, and it's traditional
+(and practical) to use the current time as a seed value. In DoPropExchange(), add
+the following line before the call to PX_Short():</P>
+<P>
+<PRE>      srand( (unsigned)time( NULL ) );
+</PRE>
+<P>Rather than hard-code the start value to 3, call Roll() to determine a random
+value. Change the call to PX_Short() so that it reads as follows:</P>
+<P>
+<PRE>PX_Short( pPX, &quot;Number&quot;, m_number, Roll());
+</PRE>
+<P>Make sure the test container is not still open, build the control, and then test
+it again in the test container. As you click the control, the displayed number should
+change with each click. Play around with it a little: Do you ever see a number less
+than 1 or more than 6? Any surprises at all?</P>
+<P>
+<H2><A NAME="Heading11"></A>Creating a Better User Interface</H2>
+<P>Now that the basic functionality of the die-roll control is in place, it's time
+to neaten it a little. It needs an icon, and it needs to display dots instead of
+a single digit.</P>
+<P>
+<H3><A NAME="Heading12"></A>A Bitmap Icon</H3>
+<P>Because some die-roll control users might want to add this control to the Control
+Palette in Visual Basic or Visual C++, you should have an icon to represent it. AppWizard
+has already created one, but it is simply an MFC logo that doesn't represent your
+control in particular. You can create a more specialized one with Developer Studio.
+Click the ResourceView tab of the Project Workspace window, click the + next to Bitmap,
+and double-click IDB_DIEROLL. You can now edit the bitmap 1 pixel at a time. Figure
+17.10 shows an icon appropriate for a die. From now on, when you load the die-roll
+control into the test container, you will see your icon on the toolbar.</P>
+<P>
+<H3><A NAME="Heading13"></A>Displaying Dots</H3>
+<P>The next step in building this die-roll control is to make the control look like
+a die. A nice 3D effect with parts of some of the other sides showing is beyond the
+reach of an illustrative chapter like this one, but you can at least display a dot
+pattern.</P>
+<P><A HREF="javascript:popUp('17uvc10.gif')"><B>FIG. 17.10</B></A><B> </B><I>The
+ResourceView of Visual C++ enables you to build your own icon to be added to the
+Control Palette in Visual Basic.</I></P>
+
+<P>The first step is to set up a switch statement in OnDraw(). Comment out the three
+drawing lines and then add the switch statement so that OnDraw() looks like Listing
+17.10.</P>
+<P>
+<H4>Listing 17.10&#160;&#160;DierollCtl.cpp--CDierollCtrl::OnDraw()</H4>
+<PRE>void CDierollCtrl::OnDraw(
+               CDC* pdc, const CRect&amp; rcBounds, const CRect&amp; rcInvalid)
+{
+     pdc-&gt;FillRect(rcBounds,
+         CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
+//   CString val; //character representation of the short value
+//   val.Format(&quot;%i&quot;,m_number);
+//   pdc-&gt;ExtTextOut( 0, 0, ETO_OPAQUE, rcBounds, val, NULL );
+     switch(m_number)
+     {
+     case 1:
+          break;
+     case 2:
+          break;
+     case 3:
+          break;
+     case 4:
+          break;
+     case 5:
+          break;
+     case 6:
+          break;
+     }
+</PRE>
+<PRE>}
+</PRE>
+<P>Now all that remains is adding code to the case 1: block that draws one dot, to
+the case 2: block that draws two dots, and so on. If you happen to have a real die
+handy, take a close look at it. The width of each dot is about one quarter of the
+width of the whole die's face. Dots near the edge are about one-sixteenth of the
+die's width from the edge. All the other rolls except 6 are contained within the
+layout for 5, anyway; for example, the single dot for 1 is in the same place as the
+central dot for 5.</P>
+<P>The second parameter of OnDraw(), rcBounds, is a CRect that describes the rectangle
+occupied by the control. It has member variables and functions that return the control's
+upper-left coordinates, width, and height. The default code generated by AppWizard
+called CDC::Ellipse() to draw an ellipse within that rectangle. Your code will call
+Ellipse(), too, passing a small rectangle within the larger rectangle of the control.
+Your code will be easier to read (and will execute slightly faster) if you work in
+units that are one-sixteenth of the total width or height. Each dot will be four
+units wide or high. Add the following code before the switch statement:</P>
+<P>
+<PRE>     int Xunit = rcBounds.Width()/16;
+     int Yunit = rcBounds.Height()/16;
+     int Top = rcBounds.top;
+     int Left = rcBounds.left;
+</PRE>
+<P>Before drawing a shape by calling Ellipse(), you need to select a tool with which
+to draw. Because your circles should be filled in, they should be drawn with a brush.
+This code creates a brush and tells the device context pdc to use it, while saving
+a pointer to the old brush so that it can be restored later:</P>
+<P>
+<PRE>     CBrush Black;
+     Black.CreateSolidBrush(RGB(0x00,0x00,0x00)); //solid black brush
+     CBrush* savebrush = pdc-&gt;SelectObject(&amp;Black);
+</PRE>
+<P>After the switch statement, add this line to restore the old brush:</P>
+<P>
+<PRE>     pdc-&gt;SelectObject(savebrush);
+</PRE>
+<P>Now you're ready to add lines to those case blocks to draw some dots. For example,
+rolls of 2, 3, 4, 5, or 6 all need a dot in the upper-left corner. This dot will
+be in a rectangular box that starts one unit to the right and down from the upper-left
+corner and extends five units right and down. The call to Ellipse looks like this:</P>
+<P>
+<PRE>          pdc-&gt;Ellipse(Left+Xunit, Top+Yunit,
+                            Left+5*Xunit, Top + 5*Yunit);
+</PRE>
+<P>The coordinates for the other dots are determined similarly. The switch statement
+ends up as show in Listing 17.11.</P>
+<P>
+<H4>Listing 17.11&#160;&#160;DierollCtl.cpp--CDierollCtrl::OnDraw()</H4>
+<PRE>switch(m_number)
+     {
+     case 1:
+          pdc-&gt;Ellipse(Left+6*Xunit, Top+6*Yunit,
+                        Left+10*Xunit, Top + 10*Yunit); //center
+          break;
+     case 2:
+          pdc-&gt;Ellipse(Left+Xunit, Top+Yunit,
+                        Left+5*Xunit, Top + 5*Yunit);   //upper left
+          pdc-&gt;Ellipse(Left+11*Xunit, Top+11*Yunit,
+                        Left+15*Xunit, Top + 15*Yunit); //lower right
+          break;
+     case 3:
+          pdc-&gt;Ellipse(Left+Xunit, Top+Yunit,
+                        Left+5*Xunit, Top + 5*Yunit);   //upper left
+          pdc-&gt;Ellipse(Left+6*Xunit, Top+6*Yunit,
+                        Left+10*Xunit, Top + 10*Yunit); //center
+          pdc-&gt;Ellipse(Left+11*Xunit, Top+11*Yunit,
+                        Left+15*Xunit, Top + 15*Yunit); //lower right
+          break;
+     case 4:
+          pdc-&gt;Ellipse(Left+Xunit, Top+Yunit,
+                        Left+5*Xunit, Top + 5*Yunit);   //upper left
+          pdc-&gt;Ellipse(Left+11*Xunit, Top+Yunit,
+                        Left+15*Xunit, Top + 5*Yunit);  //upper right
+          pdc-&gt;Ellipse(Left+Xunit, Top+11*Yunit,
+                        Left+5*Xunit, Top + 15*Yunit);  //lower left
+          pdc-&gt;Ellipse(Left+11*Xunit, Top+11*Yunit,
+                        Left+15*Xunit, Top + 15*Yunit); //lower right
+          break;
+     case 5:
+          pdc-&gt;Ellipse(Left+Xunit, Top+Yunit,
+                        Left+5*Xunit, Top + 5*Yunit);   //upper left
+          pdc-&gt;Ellipse(Left+11*Xunit, Top+Yunit,
+                        Left+15*Xunit, Top + 5*Yunit);  //upper right
+          pdc-&gt;Ellipse(Left+6*Xunit, Top+6*Yunit,
+                        Left+10*Xunit, Top + 10*Yunit); //center
+          pdc-&gt;Ellipse(Left+Xunit, Top+11*Yunit,
+                        Left+5*Xunit, Top + 15*Yunit);  //lower left
+          pdc-&gt;Ellipse(Left+11*Xunit, Top+11*Yunit,
+                        Left+15*Xunit, Top + 15*Yunit); //lower right
+          break;
+       case 6:
+               pdc-&gt;Ellipse(Left+Xunit, Top+Yunit,
+                Left+5*Xunit, Top + 5*Yunit);   //upper left
+               pdc-&gt;Ellipse(Left+11*Xunit, Top+Yunit,
+                Left+15*Xunit, Top + 5*Yunit);  //upper right
+               pdc-&gt;Ellipse(Left+Xunit, Top+6*Yunit,
+                Left+5*Xunit, Top + 10*Yunit);  //center left
+               pdc-&gt;Ellipse(Left+11*Xunit, Top+6*Yunit,
+                  Left+15*Xunit, Top + 10*Yunit); //center right
+               pdc-&gt;Ellipse(Left+Xunit, Top+11*Yunit,
+                Left+5*Xunit, Top + 15*Yunit);  //lower left
+               pdc-&gt;Ellipse(Left+11*Xunit, Top+11*Yunit,
+                Left+15*Xunit, Top + 15*Yunit); //lower right
+               break;
+</PRE>
+<PRE>     }
+</PRE>
+<P>Build the OCX again and try it out in the test container. You will see something
+similar to Figure 17.11, which actually looks like a die!</P>
+<P><A HREF="javascript:popUp('17uvc11.gif')"><B>FIG. 17.11</B></A><B> </B><I>Your
+rolling-die control now looks like a die.</I></P>
+
+<P>If you're sharp-eyed or if you stretch the die very small, you might notice that
+the pattern of dots is just slightly off-center. That's because the control's height
+and width are not always an exact multiple of 16. For example, if Width() returned
+31, Xunit would be 1, and all the dots would be arranged between positions 0 and
+16, leaving a wide blank band at the far right of the control. Luckily, the width
+is typically far more than 31 pixels, and so the asymmetry is less noticeable.</P>
+<P>To fix this, center the dots in the control. Find the lines that calculate Xunit
+and Yunit, and then add the new lines from the code fragment in Listing 17.12.</P>
+<P>
+<H4>Listing 17.12&#160;&#160;DierollCtl.cpp--Adjusting Xunit and Yunit</H4>
+<PRE>//dots are 4 units wide and high, one unit from the edge
+int Xunit = rcBounds.Width()/16;
+int Yunit = rcBounds.Height()/16;
+int Xleft = rcBounds.Width()%16;
+int Yleft = rcBounds.Height()%16;
+// adjust top left by amount left over
+int Top = rcBounds.top + Yleft/2;
+</PRE>
+<PRE>int Left = rcBounds.left + Xleft/2; 
+</PRE>
+<P>Xleft and Yleft are the leftovers in the X and Y direction. By moving Top and
+Left over by half the leftover, you center the dots in the control without having
+to change any other code.</P>
+<P>
+<H2><A NAME="Heading14"></A>Generating Property Sheets</H2>
+<P>ActiveX controls have property sheets that enable the user to set properties without
+any change to the container application. (Property sheets and pages are discussed
+in Chapter 12, &quot;Property Pages and Sheets.&quot;) You set these up as dialog
+boxes, taking advantage of prewritten pages for font, color, and other common properties.
+For this control, the obvious properties to add are the following:</P>
+
+<UL>
+	<LI>A flag to indicate whether the value should be displayed as a digit or a dot
+	pattern
+	<P>
+	<LI>Foreground color
+	<P>
+	<LI>Background color
+</UL>
+
+
+
+<BLOCKQUOTE>
+	<P>
+<HR>
+<strong>NOTE:</strong> It's easy to become confused about what exactly a property page is.
+	Is each one of the tabs on a dialog box a separate page, or is the whole collection
+	of tabs a page? Each tab is called a <I>page</I> and the collection of tabs is called
+	a <I>sheet.</I> You set up each page as a dialog box and use ClassWizard to connect
+	the values on that dialog box to member variables.&#160;
+<HR>
+
+
+</BLOCKQUOTE>
+
+<H3><A NAME="Heading15"></A>Digits Versus Dots</H3>
+<P>It's a simple enough matter to allow the user to choose whether to display the
+current value as a digit or a dot pattern. Simply add a property that indicates this
+preference and then use the property in OnDraw(). The user can set the property,
+using the property page.</P>
+<P>First, add the property using ClassWizard. Here's how: Bring up ClassWizard and
+select the Automation tab. Make sure that the CDierollCtrl class is selected and
+then click Add Property. On the Add Property dialog box, provide the external name
+Dots and the internal name m_dots. The type should be BOOL because Dots can be either
+TRUE or FALSE. Implement this new property as a member variable (direct-access) property.
+Click OK to complete the Add Property dialog box and click OK to close ClassWizard.
+The member variable is added to the class, the dispatch map is updated, and a stub
+is added for the notification function, OnDotsChanged().</P>
+<P>To initialize Dots and arrange for it to be saved with a document, add the following
+line to DoPropExchange() after the call to PX_Short():</P>
+<P>
+<PRE>      PX_Bool( pPX, &quot;Dots&quot;, m_dots, TRUE);
+</PRE>
+<P>Initializing the Dots property to TRUE ensures that the control's default behavior
+is to display the dot pattern.</P>
+<P>In OnDraw(), uncomment those lines that displayed the digit. Wrap an if around
+them so that the digit is displayed if m_dots is FALSE and dots are displayed if
+it is TRUE. The code looks like Listing 17.13.</P>
+<P>
+<H4>Listing 17.13&#160;&#160;DierollCtl.cpp--CDierollCtrl::OnDraw()</H4>
+<PRE>void CDierollCtrl::OnDraw(
+               CDC* pdc, const CRect&amp; rcBounds, const CRect&amp; rcInvalid)
+{
+     pdc-&gt;FillRect(rcBounds, 
+         CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
+     if (!m_dots)
+     {
+        CString val; //character representation of the short value
+        val.Format(&quot;%i&quot;,m_number);
+        pdc-&gt;ExtTextOut( 0, 0, ETO_OPAQUE, rcBounds, val, NULL );
+     }
+     else
+     {
+       //dots are 4 units wide and high, one unit from the edge
+         int Xunit = rcBounds.Width()/16;
+         int Yunit = rcBounds.Height()/16;
+         int Xleft = rcBounds.Width()%16;
+         int Yleft = rcBounds.Height()%16;
+         // adjust top left by amount left over
+         int Top = rcBounds.top + Yleft/2;
+         int Left = rcBounds.left + Xleft/2; 
+         CBrush Black;
+         Black.CreateSolidBrush(RGB(0x00,0x00,0x00)); //solid black brush
+         CBrush* savebrush = pdc-&gt;SelectObject(&amp;Black);
+         switch(m_number)
+         {
+         case 1:
+                  ...
+         }
+         pdc-&gt;SelectObject(savebrush);
+       }
+</PRE>
+<PRE>}
+</PRE>
+<P>To give the user a way to set Dots, you build a property page by following these
+steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Click the ResourceView tab in the Project Workspace window and then
+	click the + next to Dialog.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>The OCX has two dialog boxes: one for the About box and one for the
+	property page. Double-click IDD_PROPPAGE_DIEROLL to open it. Figure 17.12 shows the
+	boilerplate property page generated by AppWizard.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Remove the static control with the TODO reminder by highlighting it
+	and pressing Delete.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Drag a check box from the Control Palette onto the dialog box. Choose
+	View, Properties and then pin the Property dialog box in place.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('17uvc12.gif')"><B>FIG. 17.12</B></A><B> </B><I>AppWizard
+generates an empty property page.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+	<P>
+	<DT><I></I></DT>
+	<DD>5. Change the caption to Display Dot Pattern and change the resource ID to IDC_DOTS,
+	as shown in Figure 17.13.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('17uvc13.gif')"><B>FIG. 17.13</B></A><B> </B><I>You
+build the property page for the die-roll control like any other dialog box.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+</DL>
+
+<P>When the user brings up the property page and clicks to set or unset the check
+box, that doesn't directly affect the value of m_dots or the Dots property. To connect
+the dialog box to member variables, use ClassWizard and follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Bring up ClassWizard while the dialog box is still open and on top,
+	and then select the Member Variables tab.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Make sure that CDierollPropPage is the selected class and that the
+	IDC_DOTS resource ID is highlighted, and then click the Add Variable button.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Fill in <B>m_dots</B> as the name and <B>BOOL</B> as the type, and
+	fill in the Optional Property Name combo box with Dots, as shown in Figure 17.14.
+	<P>
+	<DT></DT>
+	<DD><B>4. </B>Click OK, and ClassWizard generates code to connect the property page
+	with the member variables in CDierollPropPage::DoDataExchange().
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('17uvc14.gif')"><B>FIG. 17.14</B></A><B> </B><I>You
+connect the property page to the properties of the control with ClassWizard.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+</DL>
+
+<P>The path that data follows can be a little twisty. When the user brings up the
+property sheet, the value of TRUE or FALSE is in a temporary variable. Clicking the
+check box toggles the value of that temporary variable. When the user clicks OK,
+that value goes into CDierollPropPage::m_dots and also to the Automation property
+Dots. That property has already been connected to CDierollCtrl::m_dots, so the dispatch
+map in CDierollCtrl will make sure that the other m_dots is changed. Because the
+OnDraw() function uses CDierollCtrl::m_dots, the control's appearance changes in
+response to the change made by the user on the property page. Having the same name
+for the two member variables makes things more confusing to first-time control builders
+but less confusing in the long run.</P>
+
+<P>This works now. Build the control and insert it into the test container. To change
+the properties, choose Edit, Dieroll Control Object, and Properties; your own property
+page will appear, as shown in Figure 17.15. (The Extended tab is provided for you,
+but as you can see, it doesn't really do anything. Your General tab is the important
+one at the moment.) Prove to yourself that the control displays dots or a digit,
+depending on the page's setting, by changing the setting, clicking OK, and then watching
+the control redraw.</P>
+<P>When the control is displaying the value as a number, you might want to display
+that number in a font that's more in proportion with the control's current width
+and height and centered within the control. That's a relatively simple modification
+to OnDraw(), which you can investigate on your own.</P>
+<P><A HREF="javascript:popUp('17uvc15.gif')"><B>FIG. 17.15</B></A><B> </B><I>The
+control test container displays your own property page.</I><B></B></P>
+<H3><A NAME="Heading16"></A>User-Selected Colors</H3>
+<P>The die you've created will always have black dots on a white background, but
+giving the user control to change this is remarkably simple. You need a property
+for the foreground color and another for the background color. These have already
+been implemented as stock properties: BackColor and ForeColor.</P>
+<P><B>Stock Properties&#160;&#160;</B>Here is the complete list of stock properties
+available to a control that you write:</P>
+
+<UL>
+	<LI>Appearance. Specifies the control's general look
+	<P>
+	<LI>BackColor. Specifies the control's background color
+	<P>
+	<LI>BorderStyle. Specifies either the standard border or no border
+	<P>
+	<LI>Caption. Specifies the control's caption or text
+	<P>
+	<LI>Enabled. Specifies whether the control can be used
+	<P>
+	<LI>Font. Specifies the control's default font
+	<P>
+	<LI>ForeColor. Specifies the control's foreground color
+	<P>
+	<LI>Text. Also specifies the control's caption or text
+	<P>
+	<LI>hWnd. Specifies the control's window handle
+</UL>
+
+<P><B>Ambient Properties&#160;&#160;</B>Controls can also access <I>ambient properties,</I>
+which are properties of the environment that surrounds the control--that is, properties
+of the container into which you place the control. You can't change ambient properties,
+but the control can use them to adjust its own properties. For example, the control
+can set its background color to match that of the container.</P>
+<P>The container provides all support for ambient properties. Any of your code that
+uses an ambient property should be prepared to use a default value if the container
+doesn't support that property. Here's how to use an ambient property called UserMode:</P>
+<P>
+<PRE>BOOL bUserMode;
+    if( !GetAmbientProperty( DISPID_AMBIENT_USERMODE,
+        VT_BOOL, &amp;bUserMode ) )
+    {
+        bUserMode = TRUE;
+    }
+</PRE>
+<P>This code calls GetAmbientProperty() with the display ID (DISPID) and variable
+type (vartype) required. It also provides a pointer to a variable into which the
+value is placed. This variable's type must match the vartype. If GetAmbientProperty()
+returns FALSE, bUserMode is set to a default value.</P>
+<P>A number of useful DISPIDs are defined in olectl.h, including these:</P>
+<P>DISPID_AMBIENT_BACKCOLOR</P>
+<P>DISPID_AMBIENT_DISPLAYNAME</P>
+<P>DISPID_AMBIENT_FONT</P>
+<P>DISPID_AMBIENT_FORECOLOR</P>
+<P>DISPID_AMBIENT_LOCALEID</P>
+<P>DISPID_AMBIENT_MESSAGEREFLECT</P>
+<P>DISPID_AMBIENT_SCALEUNITS</P>
+<P>DISPID_AMBIENT_TEXTALIGN</P>
+<P>DISPID_AMBIENT_USERMODE</P>
+<P>DISPID_AMBIENT_UIDEAD</P>
+<P>DISPID_AMBIENT_SHOWGRABHANDLES</P>
+<P>DISPID_AMBIENT_SHOWHATCHING</P>
+<P>DISPID_AMBIENT_DISPLAYASDEFAULT</P>
+<P>DISPID_AMBIENT_SUPPORTSMNEMONICS</P>
+<P>DISPID_AMBIENT_AUTOCLIP</P>
+<P>DISPID_AMBIENT_APPEARANCE</P>
+<P>Remember that not all containers support all these properties. Some might not
+support any, and still others might support properties not included in the preceding
+list.</P>
+<P>The vartypes include those shown in Table 17.1.</P>
+<P>
+<H4>Table 17.1&#160;&#160;Variable Types for Ambient Properties</H4>
+<P>
+<TABLE BORDER="1">
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">vartype</TD>
+		<TD ALIGN="LEFT"><B>Description</B></TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">VT_BOOL</TD>
+		<TD ALIGN="LEFT">BOOL</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">VT_BSTR</TD>
+		<TD ALIGN="LEFT">CString</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">VT_I2</TD>
+		<TD ALIGN="LEFT">short</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">VT_I4</TD>
+		<TD ALIGN="LEFT">long</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">VT_R4</TD>
+		<TD ALIGN="LEFT">float</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">VT_R8</TD>
+		<TD ALIGN="LEFT">double</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">VT_CY</TD>
+		<TD ALIGN="LEFT">CY</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">VT_COLOR</TD>
+		<TD ALIGN="LEFT">OLE_COLOR</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">VT_DISPATCH</TD>
+		<TD ALIGN="LEFT">LPDISPATCH</TD>
+	</TR>
+	<TR ALIGN="LEFT" VALIGN="TOP">
+		<TD ALIGN="LEFT">VT_FONT</TD>
+		<TD ALIGN="LEFT">LPFONTDISP</TD>
+	</TR>
+</TABLE>
+</P>
+<P>Remembering which vartype goes with which DISPID and checking the return from
+GetAmbientProperty() are a bothersome process, so the framework provides member functions
+of COleControl to get the most popular ambient properties:</P>
+
+<UL>
+	<LI>OLE_COLOR AmbientBackColor()
+	<P>
+	<LI>CString AmbientDisplayName()
+	<P>
+	<LI>LPFONTDISP AmbientFont() (Don't forget to release the font by using Release().)
+	<P>
+	<LI>OLE_COLOR AmbientForeColor()
+	<P>
+	<LI>LCID AmbientLocaleID()
+	<P>
+	<LI>CString AmbientScaleUnits()
+	<P>
+	<LI>short AmbientTextAlign() (0 means general--numbers right, text left; 1 means
+	left-justify; 2 means center; and 3 means right-justify.)
+	<P>
+	<LI>BOOL AmbientUserMode() (TRUE means user mode; FALSE means design mode.)
+	<P>
+	<LI>BOOL AmbientUIDead()
+	<P>
+	<LI>BOOL AmbientShowHatching()
+	<P>
+	<LI>BOOL AmbientShowGrabHandles()
+</UL>
+
+<P>All these functions assign reasonable defaults if the container doesn't support
+the requested property.</P>
+<P><B>Implementing <I>BackColor</I> and <I>ForeColor&#160;&#160;</I></B>To add BackColor
+and ForeColor to the control, follow these steps:</P>
+
+<DL>
+	<DT></DT>
+	<DD><B>1. </B>Bring up ClassWizard, and select the Automation tab.
+	<P>
+	<DT></DT>
+	<DD><B>2. </B>Make sure that CDierollCtrl is the selected class, and click Add Property.
+	<P>
+	<DT></DT>
+	<DD><B>3. </B>Choose BackColor from the top combo box, and the rest of the dialog
+	box is filled out for you; it is grayed out to remind you that you can't set any
+	of these fields for a stock property. Figure 17.16 shows the values provided for
+	you.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('17uvc16.gif')"><B>FIG. 17.16</B></A><B> </B><I>ClassWizard
+describes stock properties for you.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+	<P>
+	<DT><I></I></DT>
+	<DD><B>4. </B>Click OK and then add ForeColor in the same way. After you click OK,
+	ClassWizard's Automation tab will resemble Figure 17.17. The S next to these new
+	properties reminds you that they are stock properties.
+	<P>
+	<DT></DT>
+	<DD><B>5. </B>Click OK to close ClassWizard.
+	<P>
+</DL>
+
+<P><A HREF="javascript:popUp('17uvc17.gif')"><B>FIG. 17.17</B></A><B> </B><I>An S
+precedes the stock properties in the OLE Automation list of properties and methods.</I></P>
+
+<DL>
+	<DT><I></I></DT>
+	<P>
+</DL>
+
+<P>Setting up the property pages for these colors is almost as simple because there
+is a prewritten page that you can use. Look through DierollCtl.cpp for a block of
+code like Listing 17.14.</P>
+<P>
+<H4>Listing 17.14&#160;&#160;DierollCtl.cpp--Property Pages</H4>
+<PRE>//////////////////////////////////////////////////////////////
+// Property pages
+// TODO: Add more property pages as needed.  Remember to increase the count!
+BEGIN_PROPPAGEIDS(CDierollCtrl, 1)
+     PROPPAGEID(CDierollPropPage::guid)
+</PRE>
+<PRE>END_PROPPAGEIDS(CDierollCtrl)
+</PRE>
+<P>Remove the TODO reminder, change the count to 2, and add another PROPPAGEID so
+that the block looks like Listing 17.15.</P>
+<P>
+<H4>Listing 17.15&#160;&#160;DierollCtl.cpp--Property Pages</H4>
+<PRE>/////////////////////////////////////////////////////////////////////////////
+// Property pages
+BEGIN_PROPPAGEIDS(CDierollCtrl, 2)
+     PROPPAGEID(CDierollPropPage::guid)
+     PROPPAGEID(CLSID_CColorPropPage)
+</PRE>
+<PRE>END_PROPPAGEIDS(CDierollCtrl)
+</PRE>
+<P>CLSID_CColorPropPage is a class ID for a property page that is used to set colors.
+Now when the user brings up the property sheet, there will be two property pages:
+one to set colors and the general page that you already created. Both ForeColor and
+BackColor will be available on this page, so all that remains to be done is using
+the values set by the user. You will have a chance to see that very soon, but first,
+your code needs to use these colors.</P>
+<P><B>Changes to <I>OnDraw()&#160;&#160;</I></B>In OnDraw(), your code can access
+the background color with GetBackColor(). Though you can't see it, this function
+was added by ClassWizard when you added the stock property. The dispatch map for
+CDierollCtrl now looks like Listing 17.16.</P>
+<P>
+<H4>Listing 17.16&#160;&#160;DierollCtl.cpp--Dispatch Map</H4>
+<PRE>BEGIN_DISPATCH_MAP(CDierollCtrl, COleControl)
+     //{{AFX_DISPATCH_MAP(CDierollCtrl)
+     DISP_PROPERTY_NOTIFY(CDierollCtrl, &quot;Number&quot;, m_number,
+    [ccc] OnNumberChanged, VT_I2)
+     DISP_PROPERTY_NOTIFY(CDierollCtrl, &quot;Dots&quot;, m_dots, 
+     [ccc] OnDotsChanged, VT_BOOL)
+     DISP_STOCKPROP_BACKCOLOR()
+     DISP_STOCKPROP_FORECOLOR()
+     //}}AFX_DISPATCH_MAP
+     DISP_FUNCTION_ID(CDierollCtrl, &quot;AboutBox&quot;, 
+     [ccc]DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
+</PRE>
+<PRE>END_DISPATCH_MAP()
+</PRE>
+<P>The macro DISP_STOCKPROP_BACKCOLOR() expands to these lines:</P>
+<P>
+<PRE>#define DISP_STOCKPROP_BACKCOLOR() \
+    DISP_PROPERTY_STOCK(COleControl, &quot;BackColor&quot;, \
+    DISPID_BACKCOLOR,      COleControl::GetBackColor, \
+    COleControl::SetBackColor, VT_COLOR)
+</PRE>
+<P>This code is calling another macro, DISP_PROPERTY_STOCK, which ends up declaring
+the GetBackColor() function as a member of CDierollCtrl, which inherits from COleControl.
+Although you can't see it, this function is available to you. It returns an OLE_COLOR,
+which you translate to a COLORREF with TranslateColor(). You can pass this COLORREF
+to CreateSolidBrush() and use that brush to paint the background. Access the foreground
+color with GetForeColor() and give it the same treatment. (Use SetTextColor() in
+the digit part of the code.) Listing 17.17 shows the completed OnDraw() (with most
+of the switch statement cropped out).</P>
+<P>
+<H4>Listing 17.17&#160;&#160;DierollCtl.cpp--CDierollCtrl::OnDraw()</H4>
+<PRE>void CDierollCtrl::OnDraw(CDC* pdc, const CRect&amp; rcBounds,
+                          const CRect&amp; rcInvalid)
+{
+     COLORREF back = TranslateColor(GetBackColor());
+     CBrush backbrush;
+     backbrush.CreateSolidBrush(back);
+     pdc-&gt;FillRect(rcBounds, &amp;backbrush);
+     if (!m_dots)
+     {
+        CString val; //character representation of the short value   
+        val.Format(&quot;%i&quot;,m_number);
+        pdc-&gt;SetTextColor(TranslateColor(GetForeColor()));
+        pdc-&gt;ExtTextOut( 0, 0, ETO_OPAQUE, rcBounds, val, NULL );
+     }
+     else
+     {
+         //dots are 4 units wide and high, one unit from the edge
+         int Xunit = rcBounds.Width()/16;
+         int Yunit = rcBounds.Height()/16;
+         int Top = rcBounds.top;
+         int Left = rcBounds.left;
+         COLORREF fore = TranslateColor(GetForeColor());
+         CBrush forebrush;
+         forebrush.CreateSolidBrush(fore);
+         CBrush* savebrush = pdc-&gt;SelectObject(&amp;forebrush);
+               
+         switch(m_number)
+         {
+             ...
+         }
+         pdc-&gt;SelectObject(savebrush);
+     }
+</PRE>
+<PRE>}
+</PRE>
+<P>Build the control again, insert it into the test container, and again bring up
+the property sheet by choosing Edit, Dieroll Control Object, Properties. As Figure
+17.18 shows, the new property page is just fine for setting colors. Change the foreground
+and background colors a few times and experiment with both dots and digit display
+to exercise all your new code.</P>
+<P><A HREF="javascript:popUp('17uvc18.gif')"><B>FIG. 17.18</B></A><B> </B><I>Stock
+property pages make short work of letting the user set colors.</I><B></B></P>
+<H2><A NAME="Heading17"></A>Rolling on Demand</H2>
+<P>ActiveX controls expose methods (functions) just as Automation servers do. This
+control rolls when the user clicks it, but you might want the container application
+to request a roll without the user's intervention. To do this, you add a function
+called DoRoll() and expose it.</P>
+<P>Bring up ClassWizard, click the Automation tab, and then click Add Method. Name
+the new function <B>DoRoll</B>, select Return Type of Void, and when it is added,
+click Edit Code and fill it in like this:</P>
+<P>
+<PRE>void CDierollCtrl::DoRoll() 
+{
+     m_number = Roll();
+    InvalidateControl();
+}
+</PRE>
+<P>This simple code rolls the die and requests a redraw. Not everything about ActiveX
+controls needs to be difficult!</P>
+<P>You can test this code by building the project, opening the test container, inserting
+a dieroll control, then choosing Control, Invoke Methods. On the Invoke Methods dialog
+box, shown in Figure 17.19, select DoRoll(Method) from the upper drop-down box; then
+click Invoke. You will see the die roll.</P>
+<P>
+<H2><A NAME="Heading18"></A>Future Improvements</H2>
+<P>The die-rolling control may seem complete, but it could be even better. The following
+sections discuss improvements that can be made to the control for different situations.</P>
+<P>
+<H3><A NAME="Heading19"></A>Enable and Disable Rolling</H3>
+<P>In many dice games, you can roll the die only when it is your turn. At the moment,
+this control rolls whenever it is clicked, no matter what. By adding a custom property
+called RollAllowed, you can allow the container to control the rolling. When RollAllowed
+is FALSE, CDieCtrl::OnLButtonDown should just return without rolling and redrawing.
+Perhaps OnDraw should draw a slightly different die (gray dots?) when RollAllowed
+is FALSE. You decide; it's your control. The container would set this property like
+any Automation property, according to the rules of the game in which the control
+is embedded.</P>
+<P><A HREF="javascript:popUp('17uvc19.gif')"><B>FIG. 17.19</B></A><B> </B><I>You
+can invoke your control's methods in the test container.</I></P>
+
+<P><I></I>
+<H3><A NAME="Heading20"></A>Dice wit
