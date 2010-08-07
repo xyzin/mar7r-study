@@ -2,97 +2,89 @@ package h2o.puzzle;
 
 import android.app.*;
 import android.os.*;
+import android.util.Log;
 import android.view.*;
 import android.view.View.*;
 import android.widget.*;
 
 
 public class h2oPuzzle extends Activity {
+	class ElapsedTime extends Thread {
+		private int mSec = 0;
+		private int mMin = 0;
+		private int mHour = 0;		
+		@Override
+		public void run() {
+			while(mTimerOn)
+			{
+				mSec++;
+				if (mSec > 59)
+				{
+					mSec = 0;
+					mMin++;
+				}
+				if (mMin > 59)
+				{
+					mMin = 0;
+					mHour++;
+				}
+				Message msg = handler.obtainMessage();
+				handler.sendMessage(msg);
+
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					Log.d("THREAD", "Interrupt Exception");
+				}
+			}
+		}
+		
+		public String getTime() {
+			return String.format("%02d:%02d:%02d", mHour, mMin, mSec);
+		}
+	}
+
 	Button mShuffleButton;
 	GameView mGameView;
-	
-	private int mSec = 0;
-	private int mMin = 0;
-	private int mHour = 0;
+
 	private TextView mElapsedTime;
 	private boolean mTimerOn;
 	private boolean mIsPlaying;
 	private Dialog mWinDialog;
 	private Window mWindow;
-	private Thread elapsedTime = new Thread() {
-		private boolean isStart = false;
-		
-		@Override
-		public void run() {
-			while(true)
-			{
-				if (mTimerOn)
-				{
-					mSec++;
-					if (mSec > 59)
-					{
-						mSec = 0;
-						mMin++;
-					}
-					if (mMin > 59)
-					{
-						mMin = 0;
-						mHour++;
-					}
-					Message msg = handler.obtainMessage();
-					handler.sendMessage(msg);
-				}
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
-
-		@Override
-		public synchronized void start() {
-			if (isStart)
-			{
-				super.resume();
-			} else {
-				isStart = true;
-				super.start();
-			}
-		}
-		
-	};
+	private ElapsedTime elapsedTime;
 
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			mElapsedTime.setText(getElapsedTime());
 		}
-		
+
 	};
-	
+
 	private String getElapsedTime() {
-		return String.format("%02d:%02d:%02d", mHour, mMin, mSec);		
+		return elapsedTime.getTime();		
 	}
-	
+
 	/** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        
-        makeWinDialog();
-        
-        mGameView = (GameView)findViewById(R.id.game_view);
-        mGameView.setOnTouchListener(onTouchListener);
-        
-        mShuffleButton = (Button)findViewById(R.id.shuffle);
-        mShuffleButton.setOnClickListener(onShuffleClick);
-        
-        mElapsedTime = (TextView)findViewById(R.id.elapsed_time);
-        mTimerOn = false;
-        mIsPlaying = false;
-    }
-    
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+
+		makeWinDialog();
+
+		mGameView = (GameView)findViewById(R.id.game_view);
+		mGameView.setOnTouchListener(onTouchListener);
+
+		mShuffleButton = (Button)findViewById(R.id.shuffle);
+		mShuffleButton.setOnClickListener(onShuffleClick);
+
+		mElapsedTime = (TextView)findViewById(R.id.elapsed_time);
+		mTimerOn = false;
+		mIsPlaying = false;
+	}
+
 	private void makeWinDialog() {
 		mWinDialog = new Dialog(this);
 		mWindow = mWinDialog.getWindow();
@@ -113,85 +105,87 @@ public class h2oPuzzle extends Activity {
 		});
 		mWinDialog.setTitle(R.string.win_msg);
 	}
-	
-    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+
+	private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
 		public boolean onTouch(View v, MotionEvent event) {
-	    	int action = event.getAction();
-	    	
-	    	if (action == MotionEvent.ACTION_DOWN)
-	    		return true;
-	    	
-	    	if (action == MotionEvent.ACTION_UP)
-	    	{
-	    		int x = (int)event.getX();
-	    		int y = (int)event.getY();
-	    		
-	    		boolean isValidClick = mGameView.TouchCell(x, y);
-	    		
-	    		if (isValidClick && mIsPlaying && mGameView.checkGameStatus())
-	    		{
-	    			mIsPlaying = false;
-	    			timerOff();
-	    			winGame();
-	    		}
-	    		return isValidClick;
-	    	}
+			int action = event.getAction();
+
+			if (action == MotionEvent.ACTION_DOWN)
+				return true;
+
+			if (action == MotionEvent.ACTION_UP)
+			{
+				int x = (int)event.getX();
+				int y = (int)event.getY();
+
+				boolean movedComplete = mGameView.TouchCell(x, y);
+
+				if (movedComplete && mIsPlaying && mGameView.checkGameStatus())
+				{
+					mIsPlaying = false;
+					timerOff();
+					winGame();
+				}
+				return movedComplete;
+			}
 			return false;
 		}
 	};
-	
+
 	private View.OnClickListener onShuffleClick = new OnClickListener() {
 		public void onClick(View v) {
 			mGameView.shuffle();
 			GameStart();
 		}
 	};	
-	
+
 	public void restart() {
 		closeWinDialog();
 		GameStart();
 	}
-	
+
 	public void quit() {
 		closeWinDialog();
 	}
-	
+
 	protected void GameStart() {
 		initTimer();
 		mIsPlaying = true;
 		timerOn();
-		elapsedTime.start();
 	}
-	
+
 	private void winGame() {
 		((TextView)mWindow.findViewById(R.id.txtLeft))
-			.setText(mGameView.getLeftCount());
+		.setText(mGameView.getLeftCount());
 		((TextView)mWindow.findViewById(R.id.txtRight))
-			.setText(mGameView.getRightCount());
+		.setText(mGameView.getRightCount());
 		((TextView)mWindow.findViewById(R.id.txtUp))
-			.setText(mGameView.getUpCount());
+		.setText(mGameView.getUpCount());
 		((TextView)mWindow.findViewById(R.id.txtDown))
-			.setText(mGameView.getDownCount());
+		.setText(mGameView.getDownCount());
 		((TextView)mWindow.findViewById(R.id.txtSecond))
-			.setText(getElapsedTime());
+		.setText(getElapsedTime());
 		mWinDialog.show();
 	}
-	
+
 	private void timerOff() {
 		mTimerOn = false;
 	}
-	
+
 	private void timerOn() {
 		mTimerOn = true;
+		elapsedTime = new ElapsedTime();
+		elapsedTime.start();		
 	}
-	
+
 	private void closeWinDialog() {
 		mWinDialog.dismiss();
 	}
-	
+
 	protected void initTimer() {
-		mSec = 0;
-		mMin = 0;
-		mHour = 0;
+//		mSec = 0;
+//		mMin = 0;
+//		mHour = 0;
+		mTimerOn = false;
 	}	
 }

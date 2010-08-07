@@ -61,7 +61,6 @@ public class GameView extends View {
 		mBackGroundRect = new Rect();
 	}
 	
-	
 	private void initCells() {
 		cells[0] = new Cell(getResBitmap(R.drawable.num01), 0);
 		cells[1] = new Cell(getResBitmap(R.drawable.num02), 1);
